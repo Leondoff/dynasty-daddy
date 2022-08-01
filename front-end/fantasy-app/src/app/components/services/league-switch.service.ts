@@ -26,6 +26,9 @@ export class LeagueSwitchService extends BaseComponent {
   /** event whenever a league has finished changing */
   leagueChanged = new Subject<SleeperLeagueData>();
 
+  /** timestamp of last time refresh was called */
+  lastTimeRefreshed: Date;
+
   constructor(private spinner: NgxSpinnerService,
               private sleeperApiService: SleeperApiService,
               private sleeperService: SleeperService,
@@ -47,32 +50,35 @@ export class LeagueSwitchService extends BaseComponent {
    */
   loadLeague(value: SleeperLeagueData): void {
     this.selectedLeague = value;
-    if (this.selectedLeague !== this.sleeperService.selectedLeague) {
-      this.spinner.show();
-      this.sleeperService.resetLeague();
-      this.powerRankingService.reset();
-      this.mockDraftService.resetLeague();
-      this.playoffCalculatorService.reset();
-      this.matchupService.reset();
-      this.playersService.resetOwners();
-      this.transactionService.reset();
-      this.tradeService.reset();
-      console.time('Fetch Sleeper League Data');
-      this.addSubscriptions(this.sleeperService.$loadNewLeague(this.selectedLeague).subscribe((x) => {
-          this.sleeperService.sleeperTeamDetails.map((team) => {
-            this.playersService.generateRoster(team);
-          });
-          forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
-            this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails),
-            this.matchupService.initMatchUpCharts(this.selectedLeague)]).subscribe(() => {
-            this.sleeperService.leagueLoaded = true;
-            this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
-            console.timeEnd('Fetch Sleeper League Data');
-            this.leagueChanged.next(this.selectedLeague);
-            this.spinner.hide();
-          });
-        }
-      ));
-    }
+    this.spinner.show();
+    this.sleeperService.resetLeague();
+    this.powerRankingService.reset();
+    this.mockDraftService.resetLeague();
+    this.playoffCalculatorService.reset();
+    this.matchupService.reset();
+    this.playersService.resetOwners();
+    this.transactionService.reset();
+    this.tradeService.reset();
+    console.time('Fetch Sleeper League Data');
+    this.addSubscriptions(this.sleeperService.$loadNewLeague(this.selectedLeague).subscribe((x) => {
+        this.sleeperService.sleeperTeamDetails.map((team) => {
+          this.playersService.generateRoster(team);
+        });
+        forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
+          this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails),
+          this.matchupService.initMatchUpCharts(this.selectedLeague)]).subscribe(() => {
+          this.sleeperService.leagueLoaded = true;
+          this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
+          console.timeEnd('Fetch Sleeper League Data');
+          this.leagueChanged.next(this.selectedLeague);
+          this.lastTimeRefreshed = new Date();
+          this.spinner.hide();
+        });
+      }
+    ));
+  }
+
+  getMinutesSinceLastRefresh(): number {
+    return Math.round(Math.abs(new Date().getTime() - this.lastTimeRefreshed.getTime()) / 60000);
   }
 }
