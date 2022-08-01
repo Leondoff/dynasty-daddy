@@ -17,6 +17,9 @@
       <button mat-menu-item routerLink="./players/comparison">Value Comparisons</button>
     </mat-menu>
     <span class="spacer"></span>
+    <button *ngIf="sleeperService.leagueLoaded" mat-button matSuffix mat-icon-button matTooltip="Synced league data {{leagueSwitchService.getMinutesSinceLastRefresh()}} minute{{leagueSwitchService.getMinutesSinceLastRefresh() === 1 ? '' : 's'}} ago" matTooltipPosition="below" aria-label="Clear" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">
+      <mat-icon>refresh</mat-icon>
+    </button>
     <button mat-button routerLink="./login" *ngIf="!sleeperService.sleeperUser"><mat-icon class="header-icon">group_add</mat-icon> Select Username</button>
     <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
       <mat-label>Select a league</mat-label>
