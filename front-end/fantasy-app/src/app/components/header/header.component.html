@@ -1,29 +1,29 @@
 <div class="app-header">
   <mat-toolbar color="primary" *ngIf="!configService.isMobile">
-    <button mat-button routerLink="./home"><mat-icon class="header-icon">home</mat-icon> Home</button>
+    <button mat-button [routerLink]="['./home']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">home</mat-icon> Home</button>
     <button mat-button [matMenuTriggerFor]="leagueMenu"><mat-icon class="header-icon">people</mat-icon> League</button>
     <mat-menu #leagueMenu="matMenu">
-      <button mat-menu-item routerLink="./league/rankings">Power Rankings</button>
-      <button mat-menu-item routerLink="./league/standings">Standings</button>
-      <button mat-menu-item routerLink="./league/probability">Playoff Calculator</button>
-      <button mat-menu-item routerLink="./league/trade/finder">Trade Finder</button>
-      <button mat-menu-item routerLink="./league/draft">Draft Center</button>
+      <button mat-menu-item [routerLink]="['./league/rankings']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Power Rankings</button>
+      <button mat-menu-item [routerLink]="['./league/standings']"  [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Standings</button>
+      <button mat-menu-item [routerLink]="['./league/probability']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Playoff Calculator</button>
+      <button mat-menu-item [routerLink]="['./league/trade/finder']"  [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Trade Finder</button>
+      <button mat-menu-item [routerLink]="['./league/draft']"  [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Draft Center</button>
     </mat-menu>
     <button mat-button [matMenuTriggerFor]="playerMenu"><mat-icon style="font-size: 22px">insights</mat-icon> Players</button>
     <mat-menu #playerMenu="matMenu">
-      <button mat-menu-item routerLink="./players/values">Player Values</button>
-      <button mat-menu-item routerLink="./players/trade">Trade Calculator</button>
-      <button mat-menu-item routerLink="./players/statistics">Positional Statistics</button>
-      <button mat-menu-item routerLink="./players/comparison">Value Comparisons</button>
+      <button mat-menu-item [routerLink]="['./players/values']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Player Values</button>
+      <button mat-menu-item [routerLink]="['./players/trade']"  [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Trade Calculator</button>
+      <button mat-menu-item [routerLink]="['./players/statistics']"  [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Positional Statistics</button>
+      <button mat-menu-item [routerLink]="['./players/comparison']"  [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Value Comparisons</button>
     </mat-menu>
     <span class="spacer"></span>
     <button *ngIf="sleeperService.leagueLoaded" mat-button matSuffix mat-icon-button matTooltip="Synced league data {{leagueSwitchService.getMinutesSinceLastRefresh()}} minute{{leagueSwitchService.getMinutesSinceLastRefresh() === 1 ? '' : 's'}} ago" matTooltipPosition="below" aria-label="Clear" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">
       <mat-icon>refresh</mat-icon>
     </button>
-    <button mat-button routerLink="./login" *ngIf="!sleeperService.sleeperUser"><mat-icon class="header-icon">group_add</mat-icon> Select Username</button>
+    <button mat-button [routerLink]="['./login']" *ngIf="!sleeperService.sleeperUser"><mat-icon class="header-icon">group_add</mat-icon> Select Username</button>
     <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
       <mat-label>Select a league</mat-label>
-      <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
+      <mat-select [(ngModel)]="selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
         <mat-option *ngFor="let league of sleeperService.sleeperUser?.leagues"
                     [value]="league">{{league.name}}</mat-option>
       </mat-select>
@@ -34,19 +34,19 @@
       <mat-icon>menu</mat-icon>
     </button>
     <mat-menu #leagueMenu="matMenu">
-      <button mat-menu-item routerLink="./league/rankings"><mat-icon class="header-icon">stacked_bar_chart</mat-icon>Power Rankings</button>
-      <button mat-menu-item routerLink="./league/standings"><mat-icon class="header-icon">leaderboard</mat-icon>Standings</button>
-      <button mat-menu-item routerLink="./league/probability"><mat-icon class="header-icon">calculate</mat-icon>Playoff Calculator</button>
-      <button mat-menu-item routerLink="./league/trade/finder"><mat-icon class="header-icon">person_search</mat-icon>Trade Finder</button>
-      <button mat-menu-item routerLink="./league/draft"><mat-icon class="header-icon">storage</mat-icon>Draft Center</button>
-      <button mat-menu-item routerLink="./players/values"><mat-icon class="header-icon">trending_up</mat-icon>Player Values</button>
-      <button mat-menu-item routerLink="./players/trade"><mat-icon class="header-icon">compare_arrows</mat-icon>Trade Calculator</button>
-      <button mat-menu-item routerLink="./players/statistics"><mat-icon class="header-icon">topic</mat-icon>Positional Statistics</button>
-      <button mat-menu-item routerLink="./players/comparison"><mat-icon class="header-icon">insights</mat-icon>Value Comparisons</button>
+      <button mat-menu-item [routerLink]="['./league/rankings']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">stacked_bar_chart</mat-icon>Power Rankings</button>
+      <button mat-menu-item [routerLink]="['./league/standings']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">leaderboard</mat-icon>Standings</button>
+      <button mat-menu-item [routerLink]="['./league/probability']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">calculate</mat-icon>Playoff Calculator</button>
+      <button mat-menu-item [routerLink]="['./league/trade/finder']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">person_search</mat-icon>Trade Finder</button>
+      <button mat-menu-item [routerLink]="['./league/draft']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">storage</mat-icon>Draft Center</button>
+      <button mat-menu-item [routerLink]="['./players/values']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">trending_up</mat-icon>Player Values</button>
+      <button mat-menu-item [routerLink]="['./players/trade']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">compare_arrows</mat-icon>Trade Calculator</button>
+      <button mat-menu-item [routerLink]="['./players/statistics']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">topic</mat-icon>Positional Statistics</button>
+      <button mat-menu-item [routerLink]="['./players/comparison']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"><mat-icon class="header-icon">insights</mat-icon>Value Comparisons</button>
     </mat-menu>
     <span>Dynasty Daddy</span>
     <span class="spacer"></span>
-    <button mat-icon-button class="header-icon" routerLink="./home">
+    <button mat-icon-button class="header-icon" [routerLink]="['./home']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">
       <mat-icon>group_add</mat-icon>
     </button>
   </mat-toolbar>

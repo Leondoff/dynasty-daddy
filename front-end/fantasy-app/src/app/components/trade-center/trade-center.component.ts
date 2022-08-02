@@ -11,9 +11,9 @@ import {take, takeUntil} from 'rxjs/operators';
 import {ConfigService} from '../../services/init/config.service';
 import {SleeperService} from '../../services/sleeper.service';
 import {PowerRankingsService} from '../services/power-rankings.service';
-import {TeamPowerRanking, TeamRankingTier} from '../model/powerRankings';
+import {TeamPowerRanking} from '../model/powerRankings';
 import {PlayerComparisonService} from '../services/player-comparison.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {DisplayService} from '../../services/utilities/display.service';
@@ -93,7 +93,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     private leagueSwitchService: LeagueSwitchService,
     public spinner: NgxSpinnerService,
     public displayService: DisplayService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     super();
   }
@@ -109,6 +110,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       }),
       this.leagueSwitchService.leagueChanged.subscribe(() => {
         this.switchLeagueTradePackage();
+      }),
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
       })
     );
   }
@@ -397,7 +401,16 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       this.playerComparisonService.addPlayerToCharts(player, true);
     });
     await timer(1000).pipe(take(1)).toPromise();
-    this.router.navigateByUrl('players/comparison');
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams:
+          {
+            league: this.sleeperService.selectedLeague?.leagueId,
+            user: this.sleeperService.sleeperUser?.userData?.username,
+            year: this.sleeperService.selectedYear
+          }
+      }
+    );
     this.spinner.hide();
   }
 

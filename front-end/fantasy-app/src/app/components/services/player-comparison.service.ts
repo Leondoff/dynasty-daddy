@@ -78,7 +78,7 @@ export class PlayerComparisonService {
     this.group2SelectedPlayers = [];
     return of(forkJoin(playersToUpdate.map(player => {
       this.ktcApiService.getHistoricalPlayerValueById(player.name_id, this.isAllTime).subscribe((data) => {
-        this.addNewPlayer(data, player, group2Players.includes(player.name_id));
+          this.addNewPlayer(data, player, group2Players.includes(player.name_id));
         }
       );
     }))).pipe(() => {
@@ -104,20 +104,26 @@ export class PlayerComparisonService {
           data[index] = this.isSuperFlex ? dataPoint.sf_trade_value : dataPoint.trade_value;
         }
       }
-      if (player[0]) { this.lineChartData.push({data, label: player[0].full_name }); }
+      if (player[0]) {
+        this.lineChartData.push({data, label: player[0].full_name});
+      }
       this.selectedPlayers.push({name: defaultPlayer.full_name, id: defaultPlayer.name_id, data: player} as PlayerComparison);
       this.$updatePlayer.next({name: defaultPlayer.full_name, id: defaultPlayer.name_id, data: player} as PlayerComparison);
     } else {
       this.lineChartData = [];
-      if (isGroup2){
+      if (isGroup2) {
         this.group2SelectedPlayers.push({name: defaultPlayer.full_name, id: defaultPlayer.name_id, data: player} as PlayerComparison);
       } else {
         this.selectedPlayers.push({name: defaultPlayer.full_name, id: defaultPlayer.name_id, data: player} as PlayerComparison);
       }
-      this.lineChartData.push({data: this.calculateGroupValue(this.selectedPlayers),
-        label: `Group 1 (${this.selectedPlayers.length} Players)`});
-      this.lineChartData.push({data: this.calculateGroupValue(this.group2SelectedPlayers),
-        label: `Group 2 (${this.group2SelectedPlayers.length} Players)`});
+      this.lineChartData.push({
+        data: this.calculateGroupValue(this.selectedPlayers),
+        label: `Group 1 (${this.selectedPlayers.length} Players)`
+      });
+      this.lineChartData.push({
+        data: this.calculateGroupValue(this.group2SelectedPlayers),
+        label: `Group 2 (${this.group2SelectedPlayers.length} Players)`
+      });
     }
 
   }
@@ -140,10 +146,14 @@ export class PlayerComparisonService {
         this.lineChartData.push({data, label: player.name});
       }
     } else {
-      this.lineChartData.push({data: this.calculateGroupValue(this.selectedPlayers),
-        label: `Group 1 (${this.selectedPlayers.length} Players)`});
-      this.lineChartData.push({data: this.calculateGroupValue(this.group2SelectedPlayers),
-        label: `Group 2 (${this.group2SelectedPlayers.length} Players)`});
+      this.lineChartData.push({
+        data: this.calculateGroupValue(this.selectedPlayers),
+        label: `Group 1 (${this.selectedPlayers.length} Players)`
+      });
+      this.lineChartData.push({
+        data: this.calculateGroupValue(this.group2SelectedPlayers),
+        label: `Group 2 (${this.group2SelectedPlayers.length} Players)`
+      });
     }
     this.$updatePlayer.next();
   }
@@ -152,9 +162,7 @@ export class PlayerComparisonService {
    * formats date display for table labels
    * @param date string of date to format
    */
-  formatDateForDisplay(date: string): string {
-    return new Date(date).toString().slice(4, 15);
-  }
+  formatDateForDisplay = (date: string) => new Date(date).toString().slice(4, 15);
 
   /**
    * calculates aggregated player values
@@ -184,25 +192,25 @@ export class PlayerComparisonService {
    */
   onRemove(player: PlayerComparison, isGroup2: boolean = false): void {
     if (this.isGroupMode) {
-        if (isGroup2) {
-          this.group2SelectedPlayers = this.group2SelectedPlayers.filter(p => {
-            return p.id !== player.id;
-          });
-        } else {
-          this.selectedPlayers = this.selectedPlayers.filter(p => {
-            return p.id !== player.id;
-          });
-        }
-        this.refreshTable();
-    } else {
+      if (isGroup2) {
+        this.group2SelectedPlayers = this.group2SelectedPlayers.filter(p => {
+          return p.id !== player.id;
+        });
+      } else {
         this.selectedPlayers = this.selectedPlayers.filter(p => {
           return p.id !== player.id;
         });
-        this.lineChartData = this.lineChartData.filter(p => {
-          return p.label !== player.name;
-        });
-        this.$updatePlayer.next();
       }
+      this.refreshTable();
+    } else {
+      this.selectedPlayers = this.selectedPlayers.filter(p => {
+        return p.id !== player.id;
+      });
+      this.lineChartData = this.lineChartData.filter(p => {
+        return p.label !== player.name;
+      });
+      this.$updatePlayer.next();
+    }
   }
 
   /**
@@ -221,7 +229,7 @@ export class PlayerComparisonService {
    * handles toggle group mode
    */
   toggleGroupMode(): void {
-    if (!this.isGroupMode){
+    if (!this.isGroupMode) {
       if (this.selectedPlayers.length === 0) {
         this.selectedPlayers = this.group2SelectedPlayers.slice();
       }

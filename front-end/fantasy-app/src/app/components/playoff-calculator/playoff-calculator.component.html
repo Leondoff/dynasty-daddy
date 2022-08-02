@@ -70,7 +70,7 @@
       <div class="center-text margin-top-50" *ngIf="playoffCalculatorService.matchUpsWithProb.length === 0">
         <div class="warning__alert">Couldn't load match ups properly. Press reselect league.</div>
         <br>
-        <button mat-raised-button color="warn" routerLink="../home">Try Again</button>
+        <button mat-raised-button color="warn" [routerLink]="['../home']">Try Again</button>
       </div>
     </mat-tab>
   </mat-tab-group>

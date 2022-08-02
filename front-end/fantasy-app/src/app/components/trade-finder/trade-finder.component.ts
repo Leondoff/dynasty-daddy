@@ -7,6 +7,7 @@ import {SleeperService} from '../../services/sleeper.service';
 import {KTCPlayer} from '../../model/KTCPlayer';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {TradePackage} from '../model/tradePackage';
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-trade-finder',
@@ -31,6 +32,7 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     public playerService: PlayerService,
     public sleeperService: SleeperService,
     private powerRankingsService: PowerRankingsService,
+    private route: ActivatedRoute,
     public tradeFinderService: TradeFinderService
   ) {
     super();
@@ -47,6 +49,9 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
       }),
       this.leagueSwitchService.leagueChanged.subscribe(() => {
         this.setUpTradeFinder();
+      }),
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
       })
     );
   }

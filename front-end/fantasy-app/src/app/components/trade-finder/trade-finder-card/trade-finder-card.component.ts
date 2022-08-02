@@ -36,7 +36,14 @@ export class TradeFinderCardComponent implements OnInit {
    */
   openTradeCalculator(): void {
     this.tradeService.tradePackage = this.tradePackage;
-    this.router.navigateByUrl('players/trade');
-  }
+    this.router.navigate(['players/trade'],
+      {
+        queryParams:
+          {
+            league: this.sleeperService.selectedLeague?.leagueId,
+            user: this.sleeperService.sleeperUser?.userData?.username,
+            year: this.sleeperService.selectedYear
+          }
+      });  }
 
 }

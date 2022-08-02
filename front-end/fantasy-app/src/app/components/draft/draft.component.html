@@ -43,7 +43,7 @@
 <div class="center-text margin-top-50" *ngIf="!sleeperService.leagueLoaded">
   <div class="warning__alert">Cannot find drafts. Please select a league.</div>
   <br>
-  <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" [routerLink]="['./home']">Choose League</button>
   <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
@@ -56,7 +56,7 @@
 <div class="center-text margin-top-50" *ngIf="mockDraftService.leagueLoaded && mockDraftService.teamPicks.length == 0 && sleeperService.completedDrafts.length == 0 && sleeperService.upcomingDrafts.length == 0 && sleeperService.leagueLoaded">
   <div class="warning__alert">Cannot generate drafts. Please select a different year or league.</div>
   <br>
-  <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" [routerLink]="['./home']" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">Choose League</button>
   <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">

@@ -5,6 +5,7 @@ import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {delay} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-power-rankings',
@@ -16,7 +17,9 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
   constructor(public sleeperService: SleeperService,
               public powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
-              public leagueSwitchService: LeagueSwitchService) {
+              private route: ActivatedRoute,
+              private leagueSwitchService: LeagueSwitchService) {
+
     super();
   }
 
@@ -24,9 +27,12 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     this.mapPowerRankings();
     // TODO potentially improve how this functions
     this.addSubscriptions(this.leagueSwitchService.leagueChanged.pipe(delay(1500)).subscribe(() => {
-        this.mapPowerRankings();
-      }
-    ));
+          this.mapPowerRankings();
+        }
+      ),
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      }));
   }
 
   mapPowerRankings(): void {

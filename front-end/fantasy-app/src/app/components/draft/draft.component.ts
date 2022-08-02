@@ -5,6 +5,7 @@ import {BaseComponent} from '../base-component.abstract';
 import {MockDraftService} from '../services/mock-draft.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {delay} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-draft',
@@ -18,7 +19,8 @@ export class DraftComponent extends BaseComponent implements OnInit {
 
   constructor(public sleeperService: SleeperService,
               private playersService: PlayerService,
-              private leagueSwitchService: LeagueSwitchService,
+              public leagueSwitchService: LeagueSwitchService,
+              private route: ActivatedRoute,
               public mockDraftService: MockDraftService) {
     super();
   }
@@ -37,7 +39,10 @@ export class DraftComponent extends BaseComponent implements OnInit {
       this.leagueSwitchService.leagueChanged.pipe(delay(1000)).subscribe(() => {
           this.initServices();
         }
-      )
+      ),
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      })
     );
   }
 
