@@ -9,6 +9,7 @@ import {ConfigService} from '../../../services/init/config.service';
 import {PlayerService} from '../../../services/player.service';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {DisplayService} from '../../../services/utilities/display.service';
+import {LeagueSwitchService} from "../../services/league-switch.service";
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -59,6 +60,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   constructor(public sleeperService: SleeperService,
               public configService: ConfigService,
               public playerService: PlayerService,
+              public leagueSwitchService: LeagueSwitchService,
               public displayService: DisplayService,
               private clipboard: Clipboard) {
   }

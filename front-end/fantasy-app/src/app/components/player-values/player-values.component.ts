@@ -19,7 +19,7 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
   constructor(public playerService: PlayerService,
               public configService: ConfigService,
               public sleeperService: SleeperService,
-              private leagueSwitchService: LeagueSwitchService,
+              public leagueSwitchService: LeagueSwitchService,
               private route: ActivatedRoute) {
     super();
   }

@@ -55,7 +55,9 @@ export class HomeComponent extends BaseComponent implements OnInit {
         this.leagueSwitchService.loadFromQueryParams(params);
       }),
       this.leagueSwitchService.leagueChanged.subscribe(_ => {
-        this.usernameInput = this.sleeperService.sleeperUser.userData.username;
+        this.usernameInput =
+          this.sleeperService.sleeperUser.userData.username !== 'undefined'
+            ? this.sleeperService.sleeperUser.userData.username : '';
         this.selectedYear = this.sleeperService.selectedYear;
         this.leagueSwitchService.selectedLeague = this.sleeperService.selectedLeague;
       })

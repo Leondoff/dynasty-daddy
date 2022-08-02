@@ -95,10 +95,10 @@
             <button mat-menu-item (click)="openPlayerComparison(element)">
               <span>Add to Player Comparison</span>
             </button>
-            <button *ngIf="element.position !== 'PI'" mat-menu-item [routerLink]="['../details', element.name_id]" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">
+            <button *ngIf="element.position !== 'PI'" mat-menu-item [routerLink]="['../details', element.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">
               <span>View Player Page</span>
             </button>
-            <button mat-menu-item *ngIf="selectedLeague && element.position !== 'PI' && element.owner" [routerLink]="['../../league/team', element.owner?.ownerName]" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">
+            <button mat-menu-item *ngIf="selectedLeague && element.position !== 'PI' && element.owner" [routerLink]="['../../league/team', element.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">
               <span>View Team Page</span>
             </button>
           </mat-menu>
@@ -113,7 +113,7 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row class="ktc-table-element-row" *matRowDef="let row; columns: displayedColumns;"
                [routerLink]="row.position !== 'PI' ? ['../details', row.name_id] : []"
-               [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }"
+               [queryParams]="leagueSwitchService.buildQueryParams()"
                [ngClass]="{'accent__color__background': sleeperService.sleeperUser && sleeperService.sleeperUser?.userData?.user_id === row.owner?.userId && selectedLeague}"></mat-row>
     </mat-table>
     <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>

@@ -11,7 +11,7 @@
       <td class="td-game--team" *ngIf="team1 && team1.owner">
         <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team1.owner?.avatar"
         onerror="style.display = 'none'" class="games-image">
-        <span class="link--text__no__underline" [routerLink]="['../team', team1.owner?.ownerName]" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">
+        <span class="link--text__no__underline" [routerLink]="['../team', team1.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">
           {{displayService.truncate(team1.owner?.teamName, 20)}}
         </span>
         <span class="small-text__light">{{team1.roster.teamMetrics.wins}} - {{team1.roster.teamMetrics.losses}} {{team1.roster.teamMetrics.ties > 0 ? ' - ' + team1.roster.teamMetrics.ties : ''}}</span>
@@ -23,7 +23,7 @@
       <td class="td-game--team" *ngIf="team2 && team2.owner">
         <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team2.owner?.avatar"
              onerror="style.display = 'none'" class="games-image">
-        <span class="link--text__no__underline" [routerLink]="['../team', team2.owner?.ownerName]" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">
+        <span class="link--text__no__underline" [routerLink]="['../team', team2.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">
           {{displayService.truncate(team2.owner?.teamName, 20)}}
         </span>
         <span class="small-text__light">{{team2.roster.teamMetrics.wins}} - {{team2.roster.teamMetrics.losses}} {{team2.roster.teamMetrics.ties > 0 ? ' - ' + team2.roster.teamMetrics.ties : ''}}</span>

@@ -90,7 +90,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     public sleeperService: SleeperService,
     public powerRankingsService: PowerRankingsService,
     public playerComparisonService: PlayerComparisonService,
-    private leagueSwitchService: LeagueSwitchService,
+    public leagueSwitchService: LeagueSwitchService,
     public spinner: NgxSpinnerService,
     public displayService: DisplayService,
     private router: Router,
@@ -403,12 +403,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     await timer(1000).pipe(take(1)).toPromise();
     this.router.navigate(['players/comparison'],
       {
-        queryParams:
-          {
-            league: this.sleeperService.selectedLeague?.leagueId,
-            user: this.sleeperService.sleeperUser?.userData?.username,
-            year: this.sleeperService.selectedYear
-          }
+        queryParams: this.leagueSwitchService.buildQueryParams()
       }
     );
     this.spinner.hide();

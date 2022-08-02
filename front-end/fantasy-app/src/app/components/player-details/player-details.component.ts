@@ -35,7 +35,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
               public sleeperService: SleeperService,
               private router: Router,
               private playerComparisonService: PlayerComparisonService,
-              private leagueSwitchService: LeagueSwitchService,
+              public leagueSwitchService: LeagueSwitchService,
               public configService: ConfigService) {
     super();
   }
@@ -130,12 +130,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
     this.router.navigate(['players/comparison'],
       {
-        queryParams:
-          {
-            league: this.sleeperService.selectedLeague?.leagueId,
-            user: this.sleeperService.sleeperUser?.userData?.username,
-            year: this.sleeperService.selectedYear
-          }
+        queryParams: this.leagueSwitchService.buildQueryParams()
       }
     );
   }

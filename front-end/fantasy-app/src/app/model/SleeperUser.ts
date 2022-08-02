@@ -2,7 +2,7 @@
 import {SleeperCompletedPickData, SleeperRawDraftOrderData, SleeperRawTradePicksData} from './SleeperLeague';
 
 export class SleeperUserData {
-  username: string;
+  username: string = '';
   user_id: string;
   avatar: string;
 }
