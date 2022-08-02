@@ -363,6 +363,15 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    */
   openPlayerComparison(selectedPlayer: KTCPlayer): void {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
-    this.router.navigateByUrl('players/comparison');
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams:
+          {
+            league: this.sleeperService.selectedLeague?.leagueId,
+            user: this.sleeperService.sleeperUser?.userData?.username,
+            year: this.sleeperService.selectedYear
+          }
+      }
+    );
   }
 }

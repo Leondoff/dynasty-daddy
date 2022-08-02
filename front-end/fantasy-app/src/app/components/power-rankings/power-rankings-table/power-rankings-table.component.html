@@ -76,7 +76,7 @@
             <div *ngIf="checkExpanded(element)" class="power-ranking-element-detail">
               <div class="grid-20">
                 <div *ngIf="!configService.isMobile"><span class="text__light">Team</span>
-                  <div class="mid-bold-text link--text__no__underline" [routerLink]="['../team', element.team.owner?.ownerName]" innerHTML="{{ element.team.owner?.teamName | highlight : searchVal}}">{{element.team.owner?.teamName}}</div>
+                  <div class="mid-bold-text link--text__no__underline" [routerLink]="['../team', element.team.owner?.ownerName]" innerHTML="{{ element.team.owner?.teamName | highlight : searchVal}}" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">{{element.team.owner?.teamName}}</div>
                 </div>
                 <br>
                 <div *ngIf="!configService.isMobile"><span class="small-text__light">Owner: </span>

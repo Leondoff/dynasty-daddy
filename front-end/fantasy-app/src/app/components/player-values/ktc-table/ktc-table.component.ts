@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {KTCPlayer} from '../../../model/KTCPlayer';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
@@ -10,17 +10,22 @@ import {Router} from '@angular/router';
 import {ConfigService} from '../../../services/init/config.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
 import {BaseComponent} from '../../base-component.abstract';
+import {SleeperLeagueData} from '../../../model/SleeperUser';
 
 @Component({
   selector: 'app-ktc-table',
   templateUrl: './ktc-table.component.html',
   styleUrls: ['./ktc-table.component.css']
 })
-export class KtcTableComponent extends BaseComponent implements OnInit {
+export class KtcTableComponent extends BaseComponent implements OnInit, OnChanges {
 
   /** all players */
   @Input()
   players: KTCPlayer[];
+
+  /** sleeper selected league */
+  @Input()
+  selectedLeague: SleeperLeagueData;
 
   /** mat paginator */
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -55,15 +60,32 @@ export class KtcTableComponent extends BaseComponent implements OnInit {
   constructor(public sleeperService: SleeperService,
               public playerService: PlayerService,
               private playerComparisonService: PlayerComparisonService,
-              private leagueSwitchService: LeagueSwitchService,
+              public leagueSwitchService: LeagueSwitchService,
               private router: Router,
               public configService: ConfigService) {
     super();
   }
 
   ngOnInit(): void {
-    this.isSuperFlex = this.sleeperService?.selectedLeague?.isSuperflex !== undefined ?
-      this.sleeperService?.selectedLeague?.isSuperflex : true;
+    this.refreshTableDetails();
+    // determine sort on init vs on changes to prevent double sorting
+    this.dataSource.sort.sort({
+      id: this.isSuperFlex ? 'sf_trade_value' : 'trade_value',
+      start: 'desc', // Can be 'asc', 'desc' or null,
+      disableClear: false
+    });
+  }
+
+  ngOnChanges(): void {
+    this.refreshTableDetails();
+  }
+
+  /**
+   * refreshes the table
+   */
+  refreshTableDetails(): void {
+    this.isSuperFlex = this.selectedLeague?.isSuperflex !== undefined ?
+      this.selectedLeague?.isSuperflex : true;
     // create prototype of list and remove players with no value (no data points in over a year)
     this.filteredPlayers = this.playerService.cleanOldPlayerData(this.players);
     this.dataSource = new MatTableDataSource(this.filteredPlayers);
@@ -84,9 +106,6 @@ export class KtcTableComponent extends BaseComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.updateSuperFlex();
-    this.addSubscriptions(this.leagueSwitchService.leagueChanged.subscribe(() => {
-      this.updatePlayerFilters();
-    }));
   }
 
   /**
@@ -125,7 +144,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit {
         return (player.full_name.toLowerCase().indexOf(this.searchVal.toLowerCase()) >= 0
           || player.age?.toString().indexOf(this.searchVal) >= 0
           || ((player.owner?.ownerName.toLowerCase().indexOf(this.searchVal.toLowerCase()) >= 0)
-            && this.sleeperService.selectedLeague));
+            && this.selectedLeague));
       });
     }
     this.paginator.pageIndex = 0;
@@ -137,17 +156,12 @@ export class KtcTableComponent extends BaseComponent implements OnInit {
    */
   updateSuperFlex(): void {
     this.displayedColumns = [];
-    if (this.sleeperService.selectedLeague) {
+    if (this.selectedLeague) {
       this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
     } else {
       this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
     }
     this.dataSource.data = this.filteredPlayers;
-    this.dataSource.sort.sort({
-      id: this.isSuperFlex ? 'sf_trade_value' : 'trade_value', // The column name specified for matColumnDef attribute
-      start: 'desc', // Can be 'asc', 'desc' or null,
-      disableClear: false
-    });
   }
 
   /**
@@ -156,6 +170,15 @@ export class KtcTableComponent extends BaseComponent implements OnInit {
    */
   openPlayerComparison(element: KTCPlayer): void {
     this.playerComparisonService.addPlayerToCharts(element);
-    this.router.navigateByUrl('players/comparison');
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams:
+          {
+            league: this.sleeperService.selectedLeague?.leagueId,
+            user: this.sleeperService.sleeperUser?.userData?.username,
+            year: this.sleeperService.selectedYear
+          }
+      }
+    );
   }
 }

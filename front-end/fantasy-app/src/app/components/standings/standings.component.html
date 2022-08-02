@@ -11,7 +11,7 @@
 
         <ng-container matColumnDef="teamName">
           <mat-header-cell *matHeaderCellDef>Team Name</mat-header-cell>
-          <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.owner?.ownerName]">
+          <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.owner?.ownerName]" [queryParams]="{ league: sleeperService.selectedLeague?.leagueId, user: sleeperService.sleeperUser?.userData?.username, year: sleeperService.selectedYear }">
             {{team.owner?.teamName}} </mat-cell>
         </ng-container>
 

@@ -9,6 +9,7 @@ import {ConfigService} from '../../services/init/config.service';
 import {FormControl} from '@angular/forms';
 import {BaseComponent} from '../base-component.abstract';
 import {LeagueSwitchService} from '../services/league-switch.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-playoff-calculator',
@@ -65,6 +66,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     public powerRankingsService: PowerRankingsService,
     public matchupService: MatchupService,
     public configService: ConfigService,
+    private route: ActivatedRoute,
     public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -74,7 +76,10 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     this.addSubscriptions(this.leagueSwitchService.leagueChanged.subscribe(() => {
         this.initPlayoffCalc();
       }
-    ));
+    ), this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      })
+    );
   }
 
   initPlayoffCalc(): void {

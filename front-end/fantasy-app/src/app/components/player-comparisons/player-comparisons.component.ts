@@ -9,6 +9,8 @@ import {SleeperService} from '../../services/sleeper.service';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
 import {ConfigService} from '../../services/init/config.service';
 import {KTCPlayer} from '../../model/KTCPlayer';
+import {ActivatedRoute} from '@angular/router';
+import {LeagueSwitchService} from '../services/league-switch.service';
 
 @Component({
   selector: 'app-player-comparisons',
@@ -22,6 +24,8 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
               private sleeperService: SleeperService,
               private dialog: MatDialog,
               public playerComparisonService: PlayerComparisonService,
+              private route: ActivatedRoute,
+              private leagueSwitchService: LeagueSwitchService,
               public configService: ConfigService) {
     super();
   }
@@ -35,7 +39,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
     if (this.sleeperService.leagueLoaded) {
       this.playerComparisonService.isSuperFlex = this.sleeperService.selectedLeague.isSuperflex;
     }
-    this.playerService.loadPlayerValuesForToday();
+    if (this.playerService.playerValues.length === 0) { this.playerService.loadPlayerValuesForToday(); }
 
     this.filterActivePlayers();
     this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
@@ -44,7 +48,11 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
         && this.playerComparisonService.selectedPlayers[0] === undefined) {
         this.resetPlayerCompPlayers();
       }
-    }));
+    }),
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      })
+    );
     if (this.playerComparisonService.selectedPlayers.length === 0
       && this.playerComparisonService.selectedPlayers[0] === undefined) {
       this.resetPlayerCompPlayers();

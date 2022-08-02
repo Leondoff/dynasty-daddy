@@ -103,7 +103,16 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
    */
   openPlayerComparison(element: KTCPlayer): void {
     this.playerComparisonService.addPlayerToCharts(element);
-    this.router.navigateByUrl('players/comparison');
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams:
+          {
+            league: this.sleeperService.selectedLeague?.leagueId,
+            user: this.sleeperService.sleeperUser?.userData?.username,
+            year: this.sleeperService.selectedYear
+          }
+      }
+    );
   }
 
   /**
