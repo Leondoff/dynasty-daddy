@@ -25,7 +25,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
               private dialog: MatDialog,
               public playerComparisonService: PlayerComparisonService,
               private route: ActivatedRoute,
-              private leagueSwitchService: LeagueSwitchService,
+              public leagueSwitchService: LeagueSwitchService,
               public configService: ConfigService) {
     super();
   }

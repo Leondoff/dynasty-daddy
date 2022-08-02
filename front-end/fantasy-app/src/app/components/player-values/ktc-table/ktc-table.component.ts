@@ -172,12 +172,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     this.playerComparisonService.addPlayerToCharts(element);
     this.router.navigate(['players/comparison'],
       {
-        queryParams:
-          {
-            league: this.sleeperService.selectedLeague?.leagueId,
-            user: this.sleeperService.sleeperUser?.userData?.username,
-            year: this.sleeperService.selectedYear
-          }
+        queryParams: this.leagueSwitchService.buildQueryParams()
       }
     );
   }

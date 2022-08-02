@@ -106,7 +106,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
 
   constructor(public playerService: PlayerService,
               public configService: ConfigService,
-              private leagueSwitchService: LeagueSwitchService,
+              public leagueSwitchService: LeagueSwitchService,
               private route: ActivatedRoute,
               public sleeperService: SleeperService) {
     super();

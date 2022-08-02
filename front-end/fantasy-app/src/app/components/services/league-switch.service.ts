@@ -120,9 +120,9 @@ export class LeagueSwitchService extends BaseComponent {
    * @param params params to load league from
    */
   loadFromQueryParams(params: Params): void {
-    const user = params['user'];
-    const year = params['year'];
-    const league = params['league'];
+    const user = params.user;
+    const year = params.year;
+    const league = params.league;
     if (league && !this.selectedLeague) {
       this.playersService.loadPlayerValuesForToday();
       this.addSubscriptions(
@@ -135,16 +135,31 @@ export class LeagueSwitchService extends BaseComponent {
   }
 
   /**
+   * Builds valid query params for making requests
+   * TODO create separate request interceptor that handles logic
+   */
+  buildQueryParams(): {} {
+    const queryParams: any = {};
+    if (this.sleeperService.selectedLeague) {
+      queryParams.league = this.sleeperService.selectedLeague.leagueId;
+    }
+    if (this.sleeperService.selectedYear) {
+      queryParams.year = this.sleeperService.selectedYear;
+    }
+    if (this.sleeperService.sleeperUser?.userData?.username !== 'undefined') {
+      queryParams.user = this.sleeperService.sleeperUser?.userData?.username;
+    }
+    return queryParams;
+  }
+
+  /**
    * update the url params in requests when a new league is selected
    */
   updateQueryParams(): void {
+    const queryParams = this.buildQueryParams();
     this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: {
-          league: this.sleeperService.selectedLeague?.leagueId,
-          user: this.sleeperService.sleeperUser?.userData?.username,
-          year: this.sleeperService.selectedYear
-        }
+        queryParams
       }
     );
   }
