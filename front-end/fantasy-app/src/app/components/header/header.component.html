@@ -23,7 +23,7 @@
     <button mat-button [routerLink]="['./login']" *ngIf="!sleeperService.sleeperUser"><mat-icon class="header-icon">group_add</mat-icon> Select Username</button>
     <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
       <mat-label>Select a league</mat-label>
-      <mat-select [(ngModel)]="selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
+      <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
         <mat-option *ngFor="let league of sleeperService.sleeperUser?.leagues"
                     [value]="league">{{league.name}}</mat-option>
       </mat-select>
