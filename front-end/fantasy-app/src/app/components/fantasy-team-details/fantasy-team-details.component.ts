@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {SleeperService} from '../../services/sleeper.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {PlayoffCalculatorService} from '../services/playoff-calculator.service';
-import {SleeperTeam, SleeperTeamTransactionData} from '../../model/SleeperLeague';
-import {MatchupService} from '../services/matchup.service';
+import {SleeperTeam} from '../../model/SleeperLeague';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {PlayerService} from '../../services/player.service';
 import {KTCPlayer} from '../../model/KTCPlayer';
@@ -11,13 +9,15 @@ import {PlayerComparisonService} from '../services/player-comparison.service';
 import {TransactionsService} from '../services/transactions.service';
 import {TransactionUI} from '../model/transaction';
 import {ConfigService} from '../../services/init/config.service';
+import {BaseComponent} from '../base-component.abstract';
+import {LeagueSwitchService} from '../services/league-switch.service';
 
 @Component({
   selector: 'app-fantasy-team-details',
   templateUrl: './fantasy-team-details.component.html',
   styleUrls: ['./fantasy-team-details.component.css']
 })
-export class FantasyTeamDetailsComponent implements OnInit {
+export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit {
 
   /** selected fantasy team */
   selectedTeam: SleeperTeam;
@@ -37,43 +37,65 @@ export class FantasyTeamDetailsComponent implements OnInit {
   /** show more activities */
   activityShowMore: boolean = false;
 
+  /** if false page is not loaded yet */
+  pageLoaded: boolean = false;
+
   constructor(public sleeperService: SleeperService,
               private route: ActivatedRoute,
               public powerRankingsService: PowerRankingsService,
               public playerService: PlayerService,
               private playerComparisonService: PlayerComparisonService,
               private router: Router,
+              public leagueSwitchService: LeagueSwitchService,
               public transactionsService: TransactionsService,
               public configService: ConfigService) {
+    super();
   }
 
   ngOnInit(): void {
-    const ownerName = this.route.snapshot.paramMap.get('ownerName');
-
+    this.addSubscriptions(
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      }),
+      this.leagueSwitchService.leagueChanged.subscribe(() => {
+        this.getSelectedTeam();
+      }),
+    );
     if (this.sleeperService.leagueLoaded && this.sleeperService.selectedLeague) {
-      // get selected team from sleeper data
-      const teamIndex = this.sleeperService.sleeperTeamDetails.map(e => e.owner?.ownerName).indexOf(ownerName);
-      this.selectedTeam = this.sleeperService.sleeperTeamDetails[teamIndex];
-      // generate roster and sort
-      for (const sleeperId of this.selectedTeam.roster.players) {
-        const player = this.playerService.getPlayerBySleeperId(sleeperId);
-        if (player) {
-          this.roster.push(player);
-        }
-      }
-      this.roster.sort((a, b) => {
-        if (this.sleeperService.selectedLeague.isSuperflex) {
-          return b.sf_trade_value - a.sf_trade_value;
-        } else {
-          return b.trade_value - a.trade_value;
-        }
-      });
-
-      // generates team activities and cleans data for display
-      this.teamActivity = this.transactionsService.generateTeamTransactionHistory(this.selectedTeam);
-      this.activityShowMore = this.teamActivity.length <= 5;
-      this.filterTeamActivity = this.teamActivity.slice(0, 5);
+      this.getSelectedTeam();
     }
+  }
+
+  getSelectedTeam(): void {
+    const ownerName = this.route.snapshot.paramMap.get('ownerName');
+    // get selected team from sleeper data
+    const teamIndex = this.sleeperService.sleeperTeamDetails.map(e => e.owner?.ownerName).indexOf(ownerName);
+    this.selectedTeam = this.sleeperService.sleeperTeamDetails[teamIndex];
+    // generate roster and sort
+    for (const sleeperId of this.selectedTeam.roster.players) {
+      const player = this.playerService.getPlayerBySleeperId(sleeperId);
+      if (player) {
+        this.roster.push(player);
+      }
+    }
+    this.roster.sort((a, b) => {
+      if (this.sleeperService.selectedLeague.isSuperflex) {
+        return b.sf_trade_value - a.sf_trade_value;
+      } else {
+        return b.trade_value - a.trade_value;
+      }
+    });
+
+    this.pageLoaded = true;
+
+    this.loadTransactionHistory();
+  }
+
+  loadTransactionHistory(): void {
+    // generates team activities and cleans data for display
+    this.teamActivity = this.transactionsService.generateTeamTransactionHistory(this.selectedTeam);
+    this.activityShowMore = this.teamActivity.length <= 5;
+    this.filterTeamActivity = this.teamActivity.slice(0, 5);
   }
 
   /**
@@ -90,7 +112,11 @@ export class FantasyTeamDetailsComponent implements OnInit {
    */
   openPlayerComparison(selectedPlayer: KTCPlayer): void {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
-    this.router.navigateByUrl('players/comparison');
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams()
+      }
+    );
   }
 
   /**

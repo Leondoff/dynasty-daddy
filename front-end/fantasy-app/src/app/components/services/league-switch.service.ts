@@ -12,6 +12,8 @@ import {SleeperLeagueData} from '../../model/SleeperUser';
 import {forkJoin, Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {BaseComponent} from '../base-component.abstract';
+import {NflService} from '../../services/utilities/nfl.service';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {TradeService} from './trade.service.ts.service';
 import {TradeFinderService} from './trade-finder.service';
 
@@ -26,6 +28,9 @@ export class LeagueSwitchService extends BaseComponent {
   /** event whenever a league has finished changing */
   leagueChanged = new Subject<SleeperLeagueData>();
 
+  /** timestamp of last time refresh was called */
+  lastTimeRefreshed: Date;
+
   constructor(private spinner: NgxSpinnerService,
               private sleeperApiService: SleeperApiService,
               private sleeperService: SleeperService,
@@ -34,9 +39,12 @@ export class LeagueSwitchService extends BaseComponent {
               private tradeService: TradeService,
               private mockDraftService: MockDraftService,
               private matchupService: MatchupService,
+              private nflService: NflService,
               private playoffCalculatorService: PlayoffCalculatorService,
               private tradeFinderService: TradeFinderService,
               private configService: ConfigService,
+              private router: Router,
+              private route: ActivatedRoute,
               private transactionService: TransactionsService) {
     super();
   }
@@ -47,32 +55,112 @@ export class LeagueSwitchService extends BaseComponent {
    */
   loadLeague(value: SleeperLeagueData): void {
     this.selectedLeague = value;
-    if (this.selectedLeague !== this.sleeperService.selectedLeague) {
-      this.spinner.show();
-      this.sleeperService.resetLeague();
-      this.powerRankingService.reset();
-      this.mockDraftService.resetLeague();
-      this.playoffCalculatorService.reset();
-      this.matchupService.reset();
-      this.playersService.resetOwners();
-      this.transactionService.reset();
-      this.tradeService.reset();
-      console.time('Fetch Sleeper League Data');
-      this.addSubscriptions(this.sleeperService.$loadNewLeague(this.selectedLeague).subscribe((x) => {
-          this.sleeperService.sleeperTeamDetails.map((team) => {
-            this.playersService.generateRoster(team);
-          });
-          forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
-            this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails),
-            this.matchupService.initMatchUpCharts(this.selectedLeague)]).subscribe(() => {
-            this.sleeperService.leagueLoaded = true;
-            this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
-            console.timeEnd('Fetch Sleeper League Data');
-            this.leagueChanged.next(this.selectedLeague);
-            this.spinner.hide();
-          });
-        }
-      ));
+    this.spinner.show();
+    this.sleeperService.resetLeague();
+    this.powerRankingService.reset();
+    this.mockDraftService.resetLeague();
+    this.playoffCalculatorService.reset();
+    this.matchupService.reset();
+    this.playersService.resetOwners();
+    this.transactionService.reset();
+    this.tradeService.reset();
+    console.time('Fetch Sleeper League Data');
+    this.addSubscriptions(this.sleeperService.$loadNewLeague(this.selectedLeague).subscribe((x) => {
+        this.sleeperService.sleeperTeamDetails.map((team) => {
+          this.playersService.generateRoster(team);
+        });
+        forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
+          this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails),
+          this.matchupService.initMatchUpCharts(this.selectedLeague)]).subscribe(() => {
+          this.sleeperService.selectedLeague = this.selectedLeague;
+          this.sleeperService.leagueLoaded = true;
+          this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
+          console.timeEnd('Fetch Sleeper League Data');
+          this.leagueChanged.next(this.selectedLeague);
+          this.lastTimeRefreshed = new Date();
+          this.updateQueryParams();
+          this.spinner.hide();
+        });
+      }
+    ));
+  }
+
+  /**
+   * returns the number of minutes since last loading a league
+   */
+  getMinutesSinceLastRefresh(): number {
+    return Math.round(Math.abs(new Date().getTime() - this.lastTimeRefreshed.getTime()) / 60000);
+  }
+
+  /**
+   * loads league user and year based on string
+   * @param user username
+   * @param year year defaults to current year if null
+   */
+  loadUser(user: string, year: string = new Date().getFullYear().toString()): void {
+    this.sleeperService.loadNewUser(user, year);
+    this.sleeperService.selectedYear = year;
+    this.sleeperService.resetLeague();
+
+  }
+
+  /**
+   * load league with league id
+   * @param leagueId string
+   */
+  loadLeagueWithLeagueId(leagueId: string): void {
+    this.addSubscriptions(this.sleeperApiService.getSleeperLeagueByLeagueId(leagueId).subscribe(leagueData => {
+        this.loadLeague(leagueData);
+      })
+    );
+  }
+
+  /**
+   * load league from query params
+   * @param params params to load league from
+   */
+  loadFromQueryParams(params: Params): void {
+    const user = params.user;
+    const year = params.year;
+    const league = params.league;
+    if (league && !this.selectedLeague) {
+      this.playersService.loadPlayerValuesForToday();
+      this.addSubscriptions(
+        this.playersService.$currentPlayerValuesLoaded.subscribe(() => {
+          this.loadUser(user, year);
+          this.loadLeagueWithLeagueId(league);
+        })
+      );
     }
+  }
+
+  /**
+   * Builds valid query params for making requests
+   * TODO create separate request interceptor that handles logic
+   */
+  buildQueryParams(): {} {
+    const queryParams: any = {};
+    if (this.sleeperService.selectedLeague) {
+      queryParams.league = this.sleeperService.selectedLeague.leagueId;
+    }
+    if (this.sleeperService.selectedYear) {
+      queryParams.year = this.sleeperService.selectedYear;
+    }
+    if (this.sleeperService.sleeperUser?.userData?.username !== 'undefined') {
+      queryParams.user = this.sleeperService.sleeperUser?.userData?.username;
+    }
+    return queryParams;
+  }
+
+  /**
+   * update the url params in requests when a new league is selected
+   */
+  updateQueryParams(): void {
+    const queryParams = this.buildQueryParams();
+    this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams
+      }
+    );
   }
 }

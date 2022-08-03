@@ -6,6 +6,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {PlayoffCalculatorService} from '../../services/playoff-calculator.service';
 import {ColorService} from '../../services/color.service';
 import {ConfigService} from '../../../services/init/config.service';
+import {LeagueSwitchService} from "../../services/league-switch.service";
 
 @Component({
   selector: 'app-playoff-calculator-season-table',
@@ -30,6 +31,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
 
   constructor(public sleeperService: SleeperService,
               public powerRankingsService: PowerRankingsService,
+              public leagueSwitchService: LeagueSwitchService,
               public playoffCalculatorService: PlayoffCalculatorService,
               private colorService: ColorService,
               public configService: ConfigService) {

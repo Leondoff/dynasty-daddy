@@ -9,7 +9,7 @@ import {ConfigService} from './services/init/config.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
-  title = 'fantasy-app';
+  title = 'dynasty-daddy';
 
   constructor(public configService: ConfigService) {
   }

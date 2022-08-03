@@ -6,6 +6,7 @@ import {ChartDataSets, ChartOptions} from 'chart.js';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {Router} from '@angular/router';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
+import {LeagueSwitchService} from "../../services/league-switch.service";
 
 @Component({
   selector: 'app-player-details-insights',
@@ -86,6 +87,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
     public playerService: PlayerService,
     public sleeperService: SleeperService,
     private playerComparisonService: PlayerComparisonService,
+    private leagueSwitchService: LeagueSwitchService,
     private cdr: ChangeDetectorRef,
     private router: Router) {
   }
@@ -165,6 +167,10 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
    */
   openPlayerComparison(selectedPlayer: KTCPlayer): void {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
-    this.router.navigateByUrl('players/comparison');
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams()
+      }
+    );
   }
 }

@@ -107,10 +107,10 @@
                   <button mat-menu-item *ngIf="getPlayerBySleeperId(element.sleeperId)" (click)="openPlayerComparison(getPlayerBySleeperId(element.sleeperId))">
                     <span>Add to Player Comparison</span>
                   </button>
-                  <button *ngIf="element.position !== 'PI' && getPlayerBySleeperId(element.sleeperId)" mat-menu-item [routerLink]="['../../players/details/', getPlayerBySleeperId(element.sleeperId)?.name_id]">
+                  <button *ngIf="element.position !== 'PI' && getPlayerBySleeperId(element.sleeperId)" mat-menu-item [routerLink]="['../../players/details/', getPlayerBySleeperId(element.sleeperId)?.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">
                     <span>View Player Page</span>
                   </button>
-                  <button mat-menu-item [routerLink]="['../team', getOwnerName(element.rosterId)]">
+                  <button mat-menu-item [routerLink]="['../team', getOwnerName(element.rosterId)]" [queryParams]="leagueSwitchService.buildQueryParams()">
                     <span>View Team Page</span>
                   </button>
                 </mat-menu>

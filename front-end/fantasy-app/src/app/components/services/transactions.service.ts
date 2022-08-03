@@ -22,20 +22,24 @@ export class TransactionsService {
    */
   generateTeamTransactionHistory(selectedTeam: SleeperTeam): TransactionUI[] {
     const teamActivity = [];
-    for (let i = this.sleeperService.selectedLeague.startWeek; i < this.sleeperService.selectedLeague.playoffStartWeek; i++) {
-      for (const transaction of this.sleeperService.selectedLeague.leagueTransactions[i] as SleeperTeamTransactionData[]) {
-        if (transaction.rosterIds.includes(selectedTeam.roster.rosterId) && transaction.status === 'complete') {
-          teamActivity.push(this.formatTransactionUI(transaction, selectedTeam));
+    if (JSON.stringify(this.sleeperService.selectedLeague.leagueTransactions) !== '{}') {
+      for (let i = this.sleeperService.selectedLeague.startWeek || 1;
+           i <= Object.keys(this.sleeperService.selectedLeague?.leagueTransactions).length;
+           i++) {
+        for (const transaction of this.sleeperService.selectedLeague?.leagueTransactions[i] as SleeperTeamTransactionData[]) {
+          if (transaction.rosterIds.includes(selectedTeam.roster.rosterId) && transaction.status === 'complete') {
+            teamActivity.push(this.formatTransactionUI(transaction, selectedTeam));
+          }
         }
       }
+      for (const activity of teamActivity) {
+        activity.netValue = this.calculateNetValue(activity);
+        activity.headerDisplay = this.getTransactionHeaderDisplay(activity, selectedTeam.roster.rosterId);
+      }
+      teamActivity.sort((a, b) => {
+        return b.createdAt - a.createdAt;
+      });
     }
-    for (const activity of teamActivity) {
-      activity.netValue = this.calculateNetValue(activity);
-      activity.headerDisplay = this.getTransactionHeaderDisplay(activity, selectedTeam.roster.rosterId);
-    }
-    teamActivity.sort((a, b) => {
-      return b.createdAt - a.createdAt;
-    });
     return teamActivity;
   }
 

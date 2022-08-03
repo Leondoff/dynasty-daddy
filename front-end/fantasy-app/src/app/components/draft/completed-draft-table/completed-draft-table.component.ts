@@ -14,6 +14,7 @@ import {Classic10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschem
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {Router} from '@angular/router';
 import {NflService} from '../../../services/utilities/nfl.service';
+import {LeagueSwitchService} from "../../services/league-switch.service";
 
 @Component({
   selector: 'app-completed-draft-table',
@@ -96,6 +97,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
               public playerService: PlayerService,
               public configService: ConfigService,
               public playerComparisonService: PlayerComparisonService,
+              private leagueSwitchService: LeagueSwitchService,
               private nflService: NflService,
               private router: Router) {
   }
@@ -363,6 +365,10 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    */
   openPlayerComparison(selectedPlayer: KTCPlayer): void {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
-    this.router.navigateByUrl('players/comparison');
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams()
+      }
+    );
   }
 }

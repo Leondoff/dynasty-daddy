@@ -8,6 +8,7 @@ import {SleeperService} from '../../services/sleeper.service';
 import {PlayerComparisonService} from '../services/player-comparison.service';
 import {ConfigService} from '../../services/init/config.service';
 import {PlayerInsights} from '../model/playerInsights';
+import {LeagueSwitchService} from '../services/league-switch.service';
 
 @Component({
   selector: 'app-player-details',
@@ -34,6 +35,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
               public sleeperService: SleeperService,
               private router: Router,
               private playerComparisonService: PlayerComparisonService,
+              public leagueSwitchService: LeagueSwitchService,
               public configService: ConfigService) {
     super();
   }
@@ -46,7 +48,9 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
       this.selectedPlayerInsights = this.playerService.getPlayerInsights(this.selectedPlayer,
         this.sleeperService?.selectedLeague?.isSuperflex);
     }
-    this.playerService.loadPlayerValuesForToday();
+    if (this.playerService.playerValues.length === 0) {
+      this.playerService.loadPlayerValuesForToday();
+    }
     this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
         this.playersLoaded = true;
         this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
@@ -54,7 +58,11 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
       this.ktcApiService.getHistoricalPlayerValueById(nameId).subscribe((data) => {
           this.historicalTradeValue = data;
         }
-      ));
+      ),
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      })
+    );
   }
 
   /**
@@ -119,7 +127,11 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
    * @param selectedPlayer player data
    */
   openPlayerComparison(selectedPlayer: KTCPlayer): void {
-      this.playerComparisonService.addPlayerToCharts(selectedPlayer);
-      this.router.navigateByUrl('players/comparison');
+    this.playerComparisonService.addPlayerToCharts(selectedPlayer);
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams()
+      }
+    );
   }
 }

@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {TradeService} from '../../services/trade.service.ts.service';
 import {SleeperService} from '../../../services/sleeper.service';
 import {SleeperOwnerData} from '../../../model/SleeperLeague';
+import {LeagueSwitchService} from "../../services/league-switch.service";
 
 @Component({
   selector: 'app-trade-finder-card',
@@ -22,6 +23,7 @@ export class TradeFinderCardComponent implements OnInit {
 
   constructor(public configService: ConfigService,
               public router: Router,
+              public leagueSwitchService: LeagueSwitchService,
               public sleeperService: SleeperService,
               private tradeService: TradeService,
               private playerService: PlayerService) {
@@ -36,7 +38,10 @@ export class TradeFinderCardComponent implements OnInit {
    */
   openTradeCalculator(): void {
     this.tradeService.tradePackage = this.tradePackage;
-    this.router.navigateByUrl('players/trade');
+    this.router.navigate(['players/trade'],
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams()
+      });
   }
 
 }

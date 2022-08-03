@@ -6,7 +6,8 @@ import {PowerRankingsService} from '../services/power-rankings.service';
 import {PlayerService} from '../../services/player.service';
 import {ConfigKeyDictionary, ConfigService} from '../../services/init/config.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import LogRocket from "logrocket";
+import LogRocket from 'logrocket';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +33,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
               private powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
               public configService: ConfigService,
+              private route: ActivatedRoute,
               public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -45,7 +47,22 @@ export class HomeComponent extends BaseComponent implements OnInit {
     }
     this.usernameInput = this.sleeperService.sleeperUser?.userData?.username || '';
     this.leagueSwitchService.selectedLeague = this.sleeperService.selectedLeague || null;
-    this.playersService.loadPlayerValuesForToday();
+    if (this.playersService.playerValues.length === 0) {
+      this.playersService.loadPlayerValuesForToday();
+    }
+    this.addSubscriptions(
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      }),
+      this.leagueSwitchService.leagueChanged.subscribe(_ => {
+        this.usernameInput =
+          this.sleeperService.sleeperUser.userData.username !== 'undefined'
+            ? this.sleeperService.sleeperUser.userData.username : '';
+        this.selectedYear = this.sleeperService.selectedYear;
+        this.leagueSwitchService.selectedLeague = this.sleeperService.selectedLeague;
+      })
+    )
+    ;
   }
 
   /**
@@ -89,10 +106,10 @@ export class HomeComponent extends BaseComponent implements OnInit {
     this.usernameInput = '';
     this.sleeperService.sleeperUser = null;
     this.sleeperApiService.getSleeperLeagueByLeagueId(demoId || this.leagueIdInput).subscribe(leagueData => {
-       if (this.leagueIdInput) {
-         this.identifySession(this.leagueIdInput);
-       }
-       this.leagueSwitchService.loadLeague(leagueData);
+      if (this.leagueIdInput) {
+        this.identifySession(this.leagueIdInput);
+      }
+      this.leagueSwitchService.loadLeague(leagueData);
     });
   }
 

@@ -60,7 +60,7 @@
       <table class="trade-table">
         <tr *ngFor="let player of team1PlayerList; let i = index">
           <td class="trade-name-col">
-              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]">
+              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">
               {{player.full_name}}
             </span>
             <span *ngIf="player.position == 'PI'">
@@ -115,7 +115,7 @@
       <table class="trade-table">
         <tr *ngFor="let player of team2PlayerList; let i = index">
           <td class="trade-name-col">
-              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]">
+              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">
               {{player.full_name}}
             </span>
             <span *ngIf="player.position == 'PI'">
@@ -176,7 +176,7 @@
         <table class="trade-table-item" *ngFor="let player of recommendedPlayers">
           <tr>
             <td *ngIf="player.position == 'PI'" style="width: 70%">{{player.full_name}}</td>
-            <td *ngIf="player.position != 'PI'" style="width: 70%" class="link--text__no__underline" [routerLink]="['../details', player.name_id]">{{player.full_name}}</td>
+            <td *ngIf="player.position != 'PI'" style="width: 70%" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">{{player.full_name}}</td>
             <td style="width: 30%">{{player.sf_trade_value}}</td>
             <td style="width: 5px" (click)="tradeTool.getWhichSideIsFavored() == 2 ? addPlayerToTeam1(player) : addPlayerToTeam2(player)">
               <mat-icon class="trade-rm-icon">add_circle</mat-icon>

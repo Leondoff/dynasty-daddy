@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
 import {ConfigService} from '../../services/init/config.service';
+import {ActivatedRoute} from '@angular/router';
+import {LeagueSwitchService} from '../services/league-switch.service';
+import {SleeperService} from '../../services/sleeper.service';
 
 @Component({
   selector: 'app-player-values',
@@ -14,16 +17,26 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
   playersLoaded: boolean;
 
   constructor(public playerService: PlayerService,
-              public configService: ConfigService) {
+              public configService: ConfigService,
+              public sleeperService: SleeperService,
+              public leagueSwitchService: LeagueSwitchService,
+              private route: ActivatedRoute) {
     super();
   }
 
   ngOnInit(): void {
     this.playersLoaded = (this.playerService.playerValues.length > 0);
-    this.playerService.loadPlayerValuesForToday();
+    if (!this.playersLoaded) {
+      this.playerService.loadPlayerValuesForToday();
+    }
     this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
-      this.playersLoaded = true;
-    }));
+        this.playersLoaded = true;
+      }),
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      })
+    );
+
   }
 
 }

@@ -8,6 +8,7 @@ import {ConfigService} from '../../../services/init/config.service';
 import {PlayerService} from '../../../services/player.service';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {Router} from '@angular/router';
+import {LeagueSwitchService} from "../../services/league-switch.service";
 
 @Component({
   selector: 'app-player-pos-table',
@@ -60,6 +61,7 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
   constructor(public sleeperService: SleeperService,
               public configService: ConfigService,
               public playerService: PlayerService,
+              private leagueSwitchService: LeagueSwitchService,
               private playerComparisonService: PlayerComparisonService,
               public router: Router
   ) {
@@ -103,7 +105,11 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
    */
   openPlayerComparison(element: KTCPlayer): void {
     this.playerComparisonService.addPlayerToCharts(element);
-    this.router.navigateByUrl('players/comparison');
+    this.router.navigate(['players/comparison'],
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams()
+      }
+    );
   }
 
   /**

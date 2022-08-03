@@ -1,7 +1,7 @@
 <div  *ngIf="isPlayerStatsGenerated()" class="table-container">
 
   <div class="margin-top-10">
-    <span class="link--text__no__underline mid-bold-text" style="padding-right: 3px" [routerLink]="['../../values']">Players</span>
+    <span class="link--text__no__underline mid-bold-text" style="padding-right: 3px" [routerLink]="['../../values']" [queryParams]="leagueSwitchService.buildQueryParams()">Players</span>
     <mat-icon class="arrow-icon__nav">chevron_right</mat-icon>
     <span class="mid-bold-text">{{selectedPlayer.full_name}}</span>
     <div class="link--text__no__underline mid-bold-text button-right" (click)="openPlayerComparison(selectedPlayer)" *ngIf="!configService.isMobile">
@@ -27,7 +27,7 @@
       <div *ngIf="sleeperService.selectedLeague">
         <div *ngIf="selectedPlayer.owner">
           <span class="small-text__light disabled__color">Plays on</span>
-          <span style="padding-left: 10px" class="link--text__no__underline" [routerLink]="['../../../league/team', selectedPlayer.owner?.ownerName]">{{selectedPlayer.owner?.teamName || 'None'}}</span>
+          <span style="padding-left: 10px" class="link--text__no__underline" [routerLink]="['../../../league/team', selectedPlayer.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">{{selectedPlayer.owner?.teamName || 'None'}}</span>
         </div>
         <div *ngIf="!selectedPlayer.owner">
           <span class="small-text__light disabled__color">Free Agent</span>
