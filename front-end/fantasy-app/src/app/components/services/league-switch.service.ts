@@ -16,6 +16,7 @@ import {NflService} from '../../services/utilities/nfl.service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {TradeService} from './trade.service.ts.service';
 import {TradeFinderService} from './trade-finder.service';
+import {LogRocketService} from './logrocket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +46,7 @@ export class LeagueSwitchService extends BaseComponent {
               private configService: ConfigService,
               private router: Router,
               private route: ActivatedRoute,
+              private logRocketService: LogRocketService,
               private transactionService: TransactionsService) {
     super();
   }
@@ -100,6 +102,7 @@ export class LeagueSwitchService extends BaseComponent {
   loadUser(user: string, year: string = new Date().getFullYear().toString()): void {
     this.sleeperService.loadNewUser(user, year);
     this.sleeperService.selectedYear = year;
+    this.logRocketService.identifySession(user);
     this.sleeperService.resetLeague();
 
   }

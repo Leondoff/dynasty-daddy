@@ -6,8 +6,8 @@ import {PowerRankingsService} from '../services/power-rankings.service';
 import {PlayerService} from '../../services/player.service';
 import {ConfigKeyDictionary, ConfigService} from '../../services/init/config.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import LogRocket from 'logrocket';
 import {ActivatedRoute} from '@angular/router';
+import {LogRocketService} from '../services/logrocket.service';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +34,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
               private playersService: PlayerService,
               public configService: ConfigService,
               private route: ActivatedRoute,
+              private logRocketService: LogRocketService,
               public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -72,7 +73,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     this.sleeperService.loadNewUser(this.usernameInput, this.selectedYear);
     this.sleeperService.selectedYear = this.selectedYear;
     this.sleeperService.resetLeague();
-    this.identifySession(this.usernameInput);
+    this.logRocketService.identifySession(this.usernameInput);
   }
 
   /**
@@ -107,7 +108,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     this.sleeperService.sleeperUser = null;
     this.sleeperApiService.getSleeperLeagueByLeagueId(demoId || this.leagueIdInput).subscribe(leagueData => {
       if (this.leagueIdInput) {
-        this.identifySession(this.leagueIdInput);
+        this.logRocketService.identifySession(this.leagueIdInput);
       }
       this.leagueSwitchService.loadLeague(leagueData);
     });
@@ -142,17 +143,4 @@ export class HomeComponent extends BaseComponent implements OnInit {
    */
   getHomeModalBGColor = () =>
     this.configService.getConfigOptionByKey(ConfigKeyDictionary.HOME_DIALOG_BG_COLOR)?.configValue
-
-  /**
-   * identify logrocket session when logging in
-   * @param identifier string indentifier
-   */
-  identifySession(identifier: string): void {
-    if (!window.location.origin.includes('localhost')) {
-      console.log('identify log rocket session', identifier);
-      LogRocket.identify(identifier, {
-        username: identifier,
-      });
-    }
-  }
 }
