@@ -25,9 +25,11 @@ export class TradeService {
    */
   determineTrade(undeterminedTradePackage: TradePackage, isSuperFlex: boolean): TradePackage {
     let processedTrade = this.determineValueAdjustment(undeterminedTradePackage, isSuperFlex);
+    // used for multi-value edge case
+    const initialValueToEvenTrade = processedTrade.valueToEvenTrade;
     if (processedTrade.autoFillTrade) {
       // TODO maybe let it autoselect players in the future... idk
-      while (processedTrade.valueToEvenTrade > processedTrade.acceptanceBufferAmount && this.getWhichSideIsFavored(processedTrade) === 1) {
+      while (processedTrade.valueToEvenTrade > processedTrade.acceptanceBufferAmount && processedTrade.getWhichSideIsFavored() === 1) {
         // get players to even trade
         const playersToEven = this.findBestPlayerForValue(
           processedTrade.valueToEvenTrade,
@@ -50,6 +52,11 @@ export class TradeService {
           processedTrade.addTeam2Assets(playerToAdd),
           isSuperFlex
         );
+        // handles edge case where team selects multiple players and the value needed to even is on the selector
+        if (processedTrade.autoFillTrade && processedTrade.getWhichSideIsFavored() === 2) {
+          // clear out trade and update the value to even trade
+          processedTrade.clearTradeSide(2).setValueToEvenTrade(initialValueToEvenTrade - processedTrade.valueToEvenTrade);
+        }
       }
     }
     return processedTrade;
@@ -168,7 +175,7 @@ export class TradeService {
     tradePackage: TradePackage = this.tradePackage,
     listLength: number = 5): KTCPlayer[] {
     // find user id of weaker side of trade
-    const userIdFilter = this.getWhichSideIsFavored(tradePackage) === 1 ? tradePackage.team2UserId : tradePackage.team1UserId;
+    const userIdFilter = tradePackage.getWhichSideIsFavored() === 1 ? tradePackage.team2UserId : tradePackage.team1UserId;
     // filter list by user id then filter by value last filter by if player is in current trade
     let sortedList = this.filterPlayersList(userIdFilter)
       .filter(player => isSuperFlex ? player.sf_trade_value <= maxValue : player.trade_value <= maxValue)
@@ -181,24 +188,6 @@ export class TradeService {
     return sortedList.sort((a, b) => isSuperFlex ?
       b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value).slice(0, listLength);
   }
-
-  /**
-   * get which side of trade is favored
-   */
-  getWhichSideIsFavored(tradePackage: TradePackage = this.tradePackage): number {
-    // close enough to be a fair trade
-    if (!tradePackage || tradePackage.valueToEvenTrade < tradePackage.acceptanceBufferAmount) {
-      return 0;
-    }
-    const team1 = this.getTradeValueBySide(1, tradePackage);
-    const team2 = this.getTradeValueBySide(2, tradePackage);
-    if (team1 > team2) {
-      return 1;
-    } else {
-      return 2;
-    }
-  }
-
 
   /**
    * Filters list of all players by team.
@@ -249,26 +238,6 @@ export class TradeService {
 
     });
     return valueModifier;
-  }
-
-  /**
-   * get total amount of trade package by side
-   * @param teamNumber 1 or 2
-   * @param tradePackage trade package to evaluate
-   */
-  getTradeValueBySide(teamNumber: number, tradePackage: TradePackage = this.tradePackage): number {
-    if (!tradePackage) {
-      return 0;
-    }
-    if (teamNumber === 1) {
-      return tradePackage?.team1AssetsValue + (
-        tradePackage?.valueAdjustmentSide === 1
-          ? tradePackage.valueAdjustment : 0);
-    } else {
-      return tradePackage?.team2AssetsValue + (
-        tradePackage?.valueAdjustmentSide === 2
-          ? tradePackage.valueAdjustment : 0);
-    }
   }
 
   /**

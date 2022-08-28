@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {KTCPlayer} from '../../model/KTCPlayer';
 import {TradePackage} from '../model/tradePackage';
-import {TradeService} from './trade.service.ts.service';
+import {TradeService} from './trade.service';
 
 @Injectable({
   providedIn: 'root'

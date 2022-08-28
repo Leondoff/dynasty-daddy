@@ -7,7 +7,8 @@ import {SleeperService} from '../../services/sleeper.service';
 import {KTCPlayer} from '../../model/KTCPlayer';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {TradePackage} from '../model/tradePackage';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute} from '@angular/router';
+import {ConfigService} from '../../services/init/config.service';
 
 @Component({
   selector: 'app-trade-finder',
@@ -27,13 +28,17 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
   /** list of team picks */
   teamPicks: KTCPlayer[] = [];
 
+  /** is league a superflex league */
+  isSuperflex: boolean;
+
   constructor(
     public leagueSwitchService: LeagueSwitchService,
     public playerService: PlayerService,
     public sleeperService: SleeperService,
     private powerRankingsService: PowerRankingsService,
     private route: ActivatedRoute,
-    public tradeFinderService: TradeFinderService
+    public tradeFinderService: TradeFinderService,
+    public configService: ConfigService
   ) {
     super();
   }
@@ -64,6 +69,7 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     this.tradeList = [];
     this.teamPlayers = this.filterPlayersByTeam();
     this.teamPicks = this.filterPicksByTeam();
+    this.isSuperflex = this.sleeperService.selectedLeague?.isSuperflex;
   }
 
   /**
@@ -74,7 +80,7 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     const trades = this.tradeFinderService.generateTradeFinderResults(
       this.tradeFinderService.selectedPlayers,
       this.tradeFinderService.selectedTeamUserId,
-      this.sleeperService.selectedLeague.isSuperflex
+      this.isSuperflex
     );
     // filters trades with no players or duplicate trades out
     // TODO do we want to couple this logic in the trade finder service?

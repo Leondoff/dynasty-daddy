@@ -16,8 +16,14 @@
           <td style="width: 50%">{{player.full_name}}</td>
           <td class="small-text__light" style="width: 35%">{{player.position}}<span *ngIf="player.position !== 'PI'">{{tradePackage.isSuperFlex ? player.sf_position_rank : player.position_rank}} {{player.team}}</span></td>
           <td style="width: 15%">{{tradePackage.isSuperFlex ? player.sf_trade_value : player.trade_value}}</td>
+          <td style="width: 15%"></td>
+          <td style="width: 15%"></td>
+        </tr>
+        <tr class="blank_row">
+          <td colspan="3"></td>
         </tr>
       </table>
+      <div class="warning__alert center-text">{{displayValueAdjustment()}}</div>
     </div>
   </div>
 </mat-card>

@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {KTCPlayer} from '../../../model/KTCPlayer';
@@ -13,6 +13,9 @@ export class TradeFinderTableComponent implements OnInit, OnChanges {
 
   @Input()
   assets: KTCPlayer[];
+
+  @Input()
+  isSuperflex: boolean;
 
   // columns to display in table
   columnsToDisplay = ['select', 'playerName', 'value'];
