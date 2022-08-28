@@ -14,7 +14,7 @@ import {Injectable} from '@angular/core';
 import {BaseComponent} from '../base-component.abstract';
 import {NflService} from '../../services/utilities/nfl.service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {TradeService} from './trade.service.ts.service';
+import {TradeService} from './trade.service';
 import {TradeFinderService} from './trade-finder.service';
 import {LogRocketService} from './logrocket.service';
 

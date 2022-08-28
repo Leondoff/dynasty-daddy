@@ -42,6 +42,49 @@ export class TradePackage {
     this.autoFillTrade = true;
     return this;
   }
+
+  setValueToEvenTrade(valueToEvenTrade: number): TradePackage {
+    this.valueToEvenTrade = valueToEvenTrade;
+    return this;
+  }
+
+  clearTradeSide(side: number): TradePackage {
+    if (side === 1) {
+      this.team1Assets = [];
+      this.team1UserId = null;
+      this.team1AssetsValue = 0;
+    } else {
+      this.team2Assets = [];
+      this.team2UserId = null;
+      this.team2AssetsValue = 0;
+    }
+    return this;
+  }
+
+  getTradeValueBySide(teamNumber: number): number {
+    if (teamNumber === 1) {
+      return this.team1AssetsValue + (
+        this.valueAdjustmentSide === 1
+          ? this.valueAdjustment : 0);
+    } else {
+      return this.team2AssetsValue + (
+        this.valueAdjustmentSide === 2
+          ? this.valueAdjustment : 0);
+    }
+  }
+
+  /**
+   * get which side of trade is favored
+   */
+  getWhichSideIsFavored(): number {
+    // close enough to be a fair trade
+    if (this.valueToEvenTrade < this.acceptanceBufferAmount) {
+      return 0;
+    }
+    const team1 = this.getTradeValueBySide(1);
+    const team2 = this.getTradeValueBySide(2);
+    return team1 > team2 ? 1 : 2;
+  }
 }
 
 export class StudPlayerResponse {

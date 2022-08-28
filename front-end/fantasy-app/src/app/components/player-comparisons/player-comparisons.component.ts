@@ -37,7 +37,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
 
   ngAfterViewInit(): void {
     if (this.sleeperService.leagueLoaded) {
-      this.playerComparisonService.isSuperFlex = this.sleeperService.selectedLeague.isSuperflex;
+      this.playerComparisonService.isSuperFlex = this.sleeperService.selectedLeague?.isSuperflex;
     }
     if (this.playerService.playerValues.length === 0) { this.playerService.loadPlayerValuesForToday(); }
 

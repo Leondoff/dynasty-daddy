@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {TradeService} from '../services/trade.service.ts.service';
+import {TradeService} from '../services/trade.service';
 import {TradePackage} from '../model/tradePackage';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
@@ -78,6 +78,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
 
   /** recommended players to add to trade list */
   public recommendedPlayers: KTCPlayer[] = [];
+
+  /** which side of the trade is favored */
+  public favoredSide: number = 0;
 
   @ViewChild('singleSelect', {static: true}) singleSelect: MatSelect;
 
@@ -166,9 +169,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       });
   }
 
-  ngAfterViewInit(): void {
-    this.setInitialValue();
-  }
+  ngAfterViewInit = () =>
+    this.setInitialValue()
 
   ngOnDestroy(): void {
     this._onDestroy.next();
@@ -257,6 +259,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       this.isSuperFlex,
       this.tradeTool.tradePackage
     );
+    this.favoredSide = this.tradeTool.tradePackage.getWhichSideIsFavored();
     this.refreshDisplay();
   }
 
@@ -363,7 +366,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
         return;
       }
       // add player to the team with less value
-      this.tradeTool.getWhichSideIsFavored() === 1 ? this.addPlayerToTeam2(playerToAdd) : this.addPlayerToTeam1(playerToAdd);
+      this.tradeTool.tradePackage.getWhichSideIsFavored() === 1 ? this.addPlayerToTeam2(playerToAdd) : this.addPlayerToTeam1(playerToAdd);
       index++;
     }
   }
