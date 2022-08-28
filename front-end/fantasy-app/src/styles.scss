@@ -94,16 +94,16 @@ html, body, app-root, .app-frame {
 }
 
 .footer {
-    display: flex;
-    flex: 1 1 auto;     /* 1 */
-    position: relative;
-    flex-direction: column;
-    min-width: 1px;
-    max-width: 1400px;
-    margin: auto;
-    z-index: 1;
-    width: 100%;        /* 2 */
-    text-align: left;
+  display: flex;
+  flex: 1 1 auto;     /* 1 */
+  position: relative;
+  flex-direction: column;
+  min-width: 1px;
+  max-width: 1400px;
+  margin: auto;
+  z-index: 1;
+  width: 100%;        /* 2 */
+  text-align: left;
 }
 
 .games-container {
@@ -362,7 +362,7 @@ hr.dark {
  */
 
 .success__alert {
-  color: #009e73;
+  color: palegreen;
 }
 
 .warning__alert {
@@ -370,7 +370,7 @@ hr.dark {
 }
 
 .urgent__alert {
-  color: #BB1C1C;
+  color: #e74c3c;
 }
 
 .info__alert {
