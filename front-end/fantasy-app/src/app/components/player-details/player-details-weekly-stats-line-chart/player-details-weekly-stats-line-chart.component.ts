@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit, ViewChild} f
 import {KTCPlayer} from '../../../model/KTCPlayer';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {Classic10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {PlayerService} from '../../../services/player.service';
 import {BaseComponent} from '../../base-component.abstract';
@@ -78,7 +78,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
 
     plugins: {
       colorschemes: {
-        scheme: Classic10,
+        scheme: ClassicColorBlind10,
         override: true
       }
     }

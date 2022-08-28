@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {Classic10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {SleeperService} from '../../../services/sleeper.service';
 
 @Component({
@@ -50,7 +50,7 @@ export class WeeklyMedianChartComponent implements OnInit {
 
     plugins: {
       colorschemes: {
-        scheme: Classic10,
+        scheme: ClassicColorBlind10,
         override: true
       }
     }

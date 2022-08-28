@@ -10,7 +10,7 @@ import {ConfigService} from '../../../services/init/config.service';
 import {ChartOptions, ChartType} from 'chart.js';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {Classic10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {Router} from '@angular/router';
 import {NflService} from '../../../services/utilities/nfl.service';
@@ -44,7 +44,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     },
     plugins: {
       colorschemes: {
-        scheme: Classic10,
+        scheme: ClassicColorBlind10,
         override: true
       }
     }
