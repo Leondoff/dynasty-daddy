@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {Label} from 'ng2-charts';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {Classic10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {MatchupService} from '../../services/matchup.service';
 import {SleeperTeam} from '../../../model/SleeperLeague';
 import {SleeperService} from '../../../services/sleeper.service';
@@ -65,7 +65,7 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
 
     plugins: {
       colorschemes: {
-        scheme: Classic10,
+        scheme: ClassicColorBlind10,
         override: true
       }
     }

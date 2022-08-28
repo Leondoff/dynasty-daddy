@@ -4,7 +4,7 @@ import {ChartDataSets, ChartOptions} from 'chart.js';
 import {Color} from 'chartjs-plugin-datalabels/types/options';
 import {SleeperService} from '../../../services/sleeper.service';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {Classic10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 
 @Component({
   selector: 'app-team-transactions-chart',
@@ -62,7 +62,7 @@ export class TeamTransactionsChartComponent implements OnInit {
     },
     plugins: {
       colorschemes: {
-        scheme: Classic10,
+        scheme: ClassicColorBlind10,
         override: true
       }
     }

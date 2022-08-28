@@ -4,7 +4,7 @@ import {ChartDataSets, ChartOptions} from 'chart.js';
 import {Color} from 'chartjs-plugin-datalabels/types/options';
 import {TeamPowerRanking, TeamRankingTier} from '../../model/powerRankings';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {Classic10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 
 @Component({
   selector: 'app-team-tiers-chart',
@@ -65,7 +65,7 @@ export class TeamTiersChartComponent implements OnInit {
     },
     plugins: {
       colorschemes: {
-        scheme: Classic10,
+        scheme: ClassicColorBlind10,
         override: true
       }
     }
