@@ -85,6 +85,7 @@
         <span class="warning__alert">{{leagueSwitchService.selectedLeague.season}}</span> season of
         <span class="warning__alert">{{leagueSwitchService.selectedLeague.name}}</span> was loaded successfully!
       </div>
+      <div *ngIf="sleeperService.selectedLeague">You can navigate to other pages or <span class="link--text__no__underline" [routerLink]="['./league/rankings']">click here to checkout out your league power rankings.</span></div>
       <div *ngIf="sleeperService.selectedLeague && sleeperService.selectedLeague.prevLeagueId?.length > 5">
         <div class="mid-bold-text margin-top-25 margin-bot-25">OR</div>
         <button mat-stroked-button
@@ -116,7 +117,7 @@
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
       <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/probability']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="home-icon" style="padding-right: 35px">calculate</mat-icon>Playoff Calculator</div>
       <div class="center-text margin-top-25 margin-bot-50">
-        Calculates Weekly & Season probabilities based on teams' schedules. Using 10,000 simulations, Dynasty Daddy determines a team's odds to make the playoffs, make the finals, win the finals, record, and more. You can also select winners for upcoming weeks to see how the playoffs shake out depending on who wins each match up.
+        Calculates Weekly & Season probabilities based on teams' schedules. Using 10,000 simulations, Dynasty Daddy determines a team's odds to make the playoffs, make the finals, win the finals, record, and more. You can also select winners for upcoming weeks to see how the playoffs shake out depending on who wins each match-up.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
