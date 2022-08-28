@@ -300,6 +300,11 @@ html, body, app-root, .app-frame {
   text-align: right;
 }
 
+.term-description-text {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .link--text__no__underline:hover {
   color: #fdca40;
   cursor: pointer;

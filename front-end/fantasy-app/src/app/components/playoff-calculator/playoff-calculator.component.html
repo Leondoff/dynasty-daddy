@@ -75,7 +75,7 @@
     </mat-tab>
   </mat-tab-group>
   <div class="margin-top-10 margin-bot-20 center-text"><span class="mid-bold-text">How this works:</span> Our forecast uses <span class="info__alert">{{playoffCalculatorService.NUMBER_OF_SIMULATIONS}}</span> simulations of the season and updates after every week. Our traditional model uses team starter value determined by the current player values on <span class="info__alert">KeepTradeCut.com</span>.
-    Our forecast currently doesn't take in to consideration bye weeks.
+    Our forecast currently doesn't take in to consideration bye weeks. So for the playoff calculator, everything is based on starter value. It generates head to head probabilities, then uses each team's schedule to generate weekly odds (that's what you see on the games tab). Using those odds, it runs Monte Carlo simulations of the season and combine the results to generate the playoff calculator table.
   </div>
   <div class="center-text">
     <button mat-stroked-button (click)="downloadPlayoffCalculatorData()">Download this Data</button>
