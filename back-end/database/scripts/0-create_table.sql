@@ -74,7 +74,52 @@ create table config
 -- add active default values
 ALTER TABLE player_info ALTER COLUMN active SET DEFAULT true;
 
--- create material view for player values and initalize data
+-- create player ADP table
+CREATE TABLE player_adp (
+                            name_id varchar(30) UNIQUE,
+                            fantasyPro_adp int,
+                            bb10_adp int,
+                            rtsports_adp int,
+                            underdog_adp int,
+                            drafters_adp int,
+                            avg_adp decimal,
+                            updated_at timestamp not null default CURRENT_TIMESTAMP,
+                            created_at timestamp not null default CURRENT_TIMESTAMP
+);
+
+-- create updated_at trigger
+CREATE OR REPLACE FUNCTION trigger_get_current_timestamp ()
+RETURNS trigger
+AS $$
+BEGIN
+    NEW.updated_at = NOW();
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- add trigger to player adp table
+CREATE TRIGGER player_adp_updated_at
+    BEFORE UPDATE
+    ON player_adp
+    FOR EACH ROW
+    EXECUTE PROCEDURE trigger_get_current_timestamp();
+
+-- add trigger to player ids table
+CREATE TRIGGER player_ids_updated_at
+    BEFORE UPDATE
+    ON player_ids
+    FOR EACH ROW
+    EXECUTE PROCEDURE trigger_get_current_timestamp();
+
+-- add trigger to player info table
+CREATE TRIGGER player_info_updated_at
+    BEFORE UPDATE
+    ON player_info
+    FOR EACH ROW
+    EXECUTE PROCEDURE trigger_get_current_timestamp();
+
+
+-- create material view for player values and initialize data
 DROP MATERIALIZED VIEW if EXISTS mat_vw_players;
 CREATE MATERIALIZED VIEW if not exists mat_vw_players
 AS
@@ -161,7 +206,13 @@ on (player_info.name_id) player_info.name_id              as name_id,
     threeMonthLow.three_month_low,
     lastMonthValue.last_month_value,
     lastMonthValue.last_month_value_sf,
-    mostRecentDataPoint.most_recent_data_point
+    mostRecentDataPoint.most_recent_data_point,
+    pa.avg_adp,
+    pa.fantasyPro_adp,
+    pa.bb10_adp,
+    pa.rtsports_adp,
+    pa.underdog_adp,
+    pa.drafters_adp
 from player_info
     left join player_values pv
 on player_info.name_id = pv.name_id and pv.created_at > now()::date - 1
@@ -176,14 +227,13 @@ on player_info.name_id = pv.name_id and pv.created_at > now()::date - 1
     left join threeMonthLow on threeMonthLow.name_id = player_info.name_id
     left join lastMonthValue on lastMonthValue.name_id = player_info.name_id
     left join mostRecentDataPoint on mostRecentDataPoint.name_id = player_info.name_id
+    left join player_adp pa on pa.name_id = player_info.name_id and pa.updated_at > now()::date - 1
 where player_info.active is not false
 order by player_info.name_id, pv.id desc
     ) as T
 order by sf_trade_value desc
 WITH NO DATA;
 
-
 CREATE UNIQUE INDEX ON mat_vw_players (name_id);
 REFRESH MATERIALIZED VIEW mat_vw_players;
 -- REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;
-
