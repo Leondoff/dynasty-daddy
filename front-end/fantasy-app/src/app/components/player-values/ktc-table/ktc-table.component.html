@@ -72,6 +72,12 @@
           *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pts_half_ppr || '---'}}</mat-cell>
       </ng-container>
 
+      <!-- Avg ADP Column -->
+      <ng-container matColumnDef="avg_adp">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Avg Pos ADP</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.avg_adp || '---'}}</mat-cell>
+      </ng-container>
+
       <!-- Value Column -->
       <ng-container matColumnDef="{{isSuperFlex ? 'sf_trade_value' : 'trade_value'}}">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Trade Value</mat-header-cell>

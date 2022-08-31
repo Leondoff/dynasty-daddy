@@ -8,6 +8,7 @@ import {PlayerService} from '../../../services/player.service';
 import {BaseComponent} from '../../base-component.abstract';
 import {PlayerInsights} from '../../model/playerInsights';
 import {SleeperService} from '../../../services/sleeper.service';
+import {variance} from 'simple-statistics';
 
 @Component({
   selector: 'app-player-details-weekly-stats-line-chart',
@@ -86,9 +87,10 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
   public lineChartLegend = false;
   public lineChartType = 'line';
   public lineChartPlugins = [];
+  public adjacentADP = [];
 
   constructor(public playerService: PlayerService,
-              private sleeperService: SleeperService,
+              public sleeperService: SleeperService,
               private cdr: ChangeDetectorRef) {
     super();
   }
@@ -142,6 +144,24 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
       this.chart.chart.data.datasets = this.lineChartData;
       this.chart.chart.data.labels = this.lineChartLabels;
     }
+
+    this.adjacentADP = this.playerService.getAdjacentADPPlayersByNameId(this.selectedPlayer.name_id, this.selectedPlayer.position);
+  }
+
+  /**
+   * Returns adp plus minus for a player
+   * @param player player to get variance for
+   */
+  getADPPlusMinus(player: KTCPlayer): number {
+    const varianceValues = [];
+
+    if (player.bb10_adp) { varianceValues.push(player.bb10_adp); }
+    if (player.drafters_adp) { varianceValues.push(player.drafters_adp); }
+    if (player.rtsports_adp) { varianceValues.push(player.rtsports_adp); }
+    if (player.underdog_adp) { varianceValues.push(player.underdog_adp); }
+    if (player.fantasypro_adp) { varianceValues.push(player.fantasypro_adp); }
+
+    return Math.round(variance(varianceValues)) / 2;
   }
 
   /**

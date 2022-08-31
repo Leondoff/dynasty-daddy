@@ -26,6 +26,7 @@
   justify-content: flex-start;
 }
 
+.mat-column-avg_adp,
 .mat-column-halfppr,
 .mat-column-trade_value,
 .mat-column-sf_trade_value,
@@ -33,6 +34,15 @@
 .mat-column-actions {
   text-align: right;
   justify-content: flex-end;
+}
+
+.mat-column-age,
+.mat-column-avg_adp,
+.mat-column-halfppr,
+.mat-column-trade_value,
+.mat-column-sf_trade_value,
+.mat-column-change {
+  max-width: 100px;
 }
 
 .ktc-table-element-row {

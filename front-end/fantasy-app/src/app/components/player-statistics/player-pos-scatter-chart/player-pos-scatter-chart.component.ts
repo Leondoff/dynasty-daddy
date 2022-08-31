@@ -129,6 +129,18 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
         return player.sf_trade_value;
       case 'trade_value':
         return player.trade_value;
+      case 'avg_adp':
+        return player.avg_adp;
+      case 'fantasypro_adp':
+        return player.fantasypro_adp;
+      case 'drafters_adp':
+        return player.drafters_adp;
+      case 'bb10_adp':
+        return player.bb10_adp;
+      case 'underdog_adp':
+        return player.underdog_adp;
+      case 'rtsports_adp':
+        return player.rtsports_adp;
       case 'cmp_pct':
         return this.playerService.playerStats[player.sleeper_id]?.cmp_pct / this.playerService.playerStats[player.sleeper_id]?.gp;
       default:

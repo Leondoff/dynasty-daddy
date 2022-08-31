@@ -1,6 +1,5 @@
-
 <div class="center-text" *ngIf="totalProj && totalProj > 0">
-  This player has the tendency to <span class="warning__alert">{{totalPoints/totalProj >= 1 ? 'outperform' : 'underperform'}} their projections by {{generatePerformancePercent()}}%</span> over the past 18 weeks!
+  This player has the tendency to <span class="warning__alert">{{totalPoints / totalProj >= 1 ? 'outperform' : 'underperform'}} their projections by {{generatePerformancePercent()}}%</span> over the past 18 weeks!
 </div>
 
 <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
@@ -56,6 +55,67 @@
         <div class="mid-bold-text">{{selectedPlayerInsights?.valuePerPointRatio || '--'}}</div>
       </div>
     </mat-card>
+  </div>
+</div>
 
+<div class="center-text mid-bold-text margin-top-50">
+  {{selectedPlayer.full_name}}'s ADP & Positional Comparisons
+</div>
+
+<div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
+  <div fxFlex="33%" fxFlex.xs="100%" fxFlex.sm="80%" class="item">
+    <mat-card style="min-height: 260px">
+      <div class="mid-bold-text center-text margin-bot-10">Expert Positional ADPs</div>
+      <div class="insight__row">
+        <div class="text__light">Fantasy Pros</div>
+        <div class="mid-bold-text">{{selectedPlayer.fantasypro_adp || '--'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">BestBall10s</div>
+        <div class="mid-bold-text">{{selectedPlayer.bb10_adp || '--'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">Real Time Fantasy Sports</div>
+        <div class="mid-bold-text">{{selectedPlayer.rtsports_adp || '--'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">Underdog Fantasy</div>
+        <div class="mid-bold-text">{{selectedPlayer.underdog_adp || '--'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">Drafters Fantasy Sports</div>
+        <div class="mid-bold-text">{{selectedPlayer.drafters_adp || '--'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="mid-bold-text">Average Position ADP</div>
+        <div class="mid-bold-text">{{selectedPlayer.avg_adp || '--'}}</div>
+      </div>
+    </mat-card>
+  </div>
+  <div fxFlex="33%" fxFlex.xs="100%" fxFlex.sm="80%" class="item"  *ngIf="selectedPlayer.avg_adp">
+    <mat-table [dataSource]="adjacentADP" class="mat-elevation-z8">
+      <ng-container matColumnDef="rank">
+        <mat-header-cell *matHeaderCellDef>Average</mat-header-cell>
+        <mat-cell *matCellDef="let player;">{{player.avg_adp}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let player">{{player.full_name}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="adp">
+        <mat-header-cell *matHeaderCellDef>Plus/Minus</mat-header-cell>
+        <mat-cell *matCellDef="let player"><div><span class="small-text__light">+/-</span> {{getADPPlusMinus(player)}}</div></mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="value">
+        <mat-header-cell *matHeaderCellDef>Trade Value</mat-header-cell>
+        <mat-cell *matCellDef="let player">{{sleeperService.leagueLoaded && !sleeperService.selectedLeague.isSuperflex ? player.trade_value : player.sf_trade_value}}</mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="['value', 'name', 'adp', 'rank']"></mat-header-row>
+      <mat-row class="box-score-element-row" *matRowDef="let row; columns: ['value', 'name', 'adp', 'rank'];" [ngClass]="{'mat-table-highlight': selectedPlayer.name_id === row.name_id}"></mat-row>
+    </mat-table>
   </div>
 </div>

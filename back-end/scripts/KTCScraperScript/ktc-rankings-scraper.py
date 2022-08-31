@@ -3,13 +3,9 @@ import os
 import requests
 import psycopg2
 from sleeper_wrapper import Players
-
-
-# cleans player ids in order to map ktc value to sleeper data
-def cleanPlayerIdString(playerId):
-    return playerId.lower().replace("jr.", "").replace("sr.", "").replace("iii", "").replace(" ", "").replace(".",
-                                                                                                              "").replace(
-        "-", "").replace("'", "")
+from FantasyProsADPScraper import scrapeADP
+from BeautifulSoupService import setUpSoup
+from PlayerService import cleanPlayerIdString
 
 
 # API calls to sleeper
@@ -41,7 +37,7 @@ def getSleeperData():
             if value['last_name'] == 'Pacheco':
                 sleepervalue = cleanPlayerIdString(str('isiah' + value['last_name'] + str(value['position'])).lower())
                 temp[sleepervalue] = playerId
-    return temp;
+    return temp
 
 
 # Player class that is inserted into table
@@ -82,20 +78,18 @@ class Player:
 
 # URL to scrape data uses requests import
 sf_URL = 'https://keeptradecut.com/dynasty-rankings?format=2'
-sf_page = requests.get(sf_URL)
 
 # Set up scraper
-sf_soup = BeautifulSoup(sf_page.content, 'html.parser')
+sf_soup = setUpSoup(sf_URL)
 
 # fetch each ranking div
 sf_rankings = sf_soup.find_all("div", {"class": "onePlayer"})
 
 # URL to scrape data uses requests import
 URL = 'https://keeptradecut.com/dynasty-rankings?format=1'
-page = requests.get(URL)
 
 # Set up scraper
-soup = BeautifulSoup(page.content, 'html.parser')
+soup = setUpSoup(URL)
 
 # fetch each ranking div
 rankings = soup.find_all("div", {"class": "onePlayer"})
@@ -173,8 +167,13 @@ for player in sf_rankings:
 # for player in players:
 #      player.toString()
 
+# invoke ADP scraper for all position groups
+print('Start scrape ADP rankings')
+playerADPs = scrapeADP('qb') + scrapeADP('rb') + scrapeADP('wr') + scrapeADP('te')
+print('Successfully scraped adp rankings')
+
 #################################
-#    Insert data into table     #
+#    Insert data into tables    #
 #  written by: Jeremy Timperio  #
 #################################
 
@@ -239,6 +238,20 @@ try:
             cursor.execute('''INSERT into player_values(name_id, sf_position_rank, position_rank, sf_trade_value, trade_value)
             VALUES (%s, %s, %s, %s, %s)''', (
                 player.id, player.sfPositionRank, player.positionRank, player.sf_value, player.value))
+
+        # player adp rankings updated
+        for adp in playerADPs:
+            playerADPStatement = '''INSERT INTO player_adp (name_id, fantasypro_adp, bb10_adp, rtsports_adp, underdog_adp, drafters_adp, avg_adp) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (name_id) DO UPDATE
+                SET
+                name_id = %s,
+                fantasypro_adp = %s,
+                bb10_adp = %s,
+                rtsports_adp = %s,
+                underdog_adp = %s,
+                drafters_adp = %s,
+                avg_adp = %s; '''
+            cursor.execute(playerADPStatement, (adp.nameId, adp.fantasyProADP, adp.bb10ADP, adp.rtsportsADP, adp.underdogADP, adp.draftersADP, adp.avgADP, adp.nameId, adp.fantasyProADP, adp.bb10ADP, adp.rtsportsADP, adp.underdogADP, adp.draftersADP, adp.avgADP))
 
         # update mat view for players
         cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')
