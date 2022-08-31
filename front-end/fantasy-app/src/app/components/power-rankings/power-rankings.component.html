@@ -3,12 +3,36 @@
   Team power rankings are determined by <a class="info__alert" href="https://keeptradecut.com/" target="_blank">KeepTradeCut.com</a> value calculations taken from over <span class="info__alert">2.5 million</span> data points.
 </div>
 
-<div  *ngIf="sleeperService.leagueLoaded && powerRankingService.powerRankings.length > 0" class="power-ranking-container">
+<div *ngIf="sleeperService.leagueLoaded && powerRankingService.powerRankings.length > 0" class="power-ranking-container">
   <div>
     <app-power-rankings-chart [powerRankings]="powerRankingService.powerRankings"></app-power-rankings-chart>
   </div>
   <div>
     <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="sleeperService.selectedLeague.isSuperflex"></app-power-rankings-table>
+  </div>
+
+  <div class="margin-top-50 center-text">
+    <div class="large-bold-header-text center-text margin-bot-20">
+      Starter Value
+    </div>
+    <div class="center-text" style="max-width: 800px; margin: 0 auto">
+      Starter Value is calculated by selecting the best possible roster based on trade value. It does factor in significant status like IR, SUS, COV, or OUT. A starter is denoted by the star next to the players name in the roster table.
+    </div>
+  </div>
+
+  <div class="margin-top-50 center-text">
+    <div class="large-bold-header-text center-text margin-bot-20">
+      Team Tiers
+    </div>
+    <div class="center-text" style="max-width: 800px; margin: 0 auto">
+      Super Team (If there is only one team classified as a contender)<br>
+      Contender<br>
+      Frisky<br>
+      Fraud<br>
+      Rebuilding<br>
+      Trust the Process (If there is only one team classified as a rebuilding team)<br><br>
+      The Tiers are determined by Starter Value and all teams are bucketed together. The Super Team and Trust the Process are conditional tiers if they are separated far enough from the league they will appear.
+    </div>
   </div>
 </div>
 

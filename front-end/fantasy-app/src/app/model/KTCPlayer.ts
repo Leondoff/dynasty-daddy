@@ -32,6 +32,12 @@ export class KTCPlayer {
   most_recent_data_point: string;
   sf_change: number = null;
   standard_change: number = null;
+  avg_adp: number = null;
+  fantasypro_adp: number = null;
+  bb10_adp: number = null;
+  rtsports_adp: number = null;
+  underdog_adp: number = null;
+  drafters_adp: number = null;
 }
 
 export class KTCPlayerDataPoint {

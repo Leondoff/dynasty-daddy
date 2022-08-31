@@ -71,7 +71,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     // determine sort on init vs on changes to prevent double sorting
     this.dataSource.sort.sort({
       id: this.isSuperFlex ? 'sf_trade_value' : 'trade_value',
-      start: 'desc', // Can be 'asc', 'desc' or null,
+      start: 'desc',
       disableClear: false
     });
   }
@@ -99,6 +99,11 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
           return item.sf_trade_value;
         case 'trade_value':
           return item.trade_value;
+        case 'avg_adp':
+          if (item.avg_adp == null) {
+            return 'desc' === this.sort.direction ? Number.MIN_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
+          }
+          return Number(item.avg_adp);
         default:
           return item[property];
       }
@@ -157,9 +162,9 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   updateSuperFlex(): void {
     this.displayedColumns = [];
     if (this.selectedLeague) {
-      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
+      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', 'avg_adp', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
     } else {
-      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
+      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
     }
     this.dataSource.data = this.filteredPlayers;
   }
