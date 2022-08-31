@@ -1,6 +1,6 @@
 /* tslint:disable:object-literal-key-quotes */
 import {Injectable} from '@angular/core';
-import {KTCPlayer, KTCPlayerDataPoint} from '../model/KTCPlayer';
+import {KTCPlayer} from '../model/KTCPlayer';
 import {KTCApiService} from './api/ktc-api.service';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
@@ -21,9 +21,6 @@ export class PlayerService {
 
   /** player values for today with no filtering */
   unfilteredPlayerValues: KTCPlayer[] = [];
-
-  /** player values for last month */
-  prevPlayerValues: KTCPlayerDataPoint[] = [];
 
   /** player yearly stats dict from sleeper */
   playerStats = {};
@@ -68,13 +65,7 @@ export class PlayerService {
    */
   loadPlayerValuesForToday(): void {
     this.spinner.show();
-    forkJoin(
-      [
-        this.ktcApiService.getPlayerValuesForToday(),
-        this.ktcApiService.getPrevPlayerValues()
-      ]
-    ).subscribe(([currentPlayers, pastPlayers]) => {
-      this.prevPlayerValues = pastPlayers;
+    this.ktcApiService.getPlayerValuesForToday().subscribe((currentPlayers) => {
       this.unfilteredPlayerValues = currentPlayers;
       this.playerValues = currentPlayers.filter(player => {
         if (player.position === 'PI') {
@@ -190,20 +181,6 @@ export class PlayerService {
   }
 
   /**
-   * get player based on name id for previous month
-   * @param id
-   * TODO change value percent to be based on date passed in?
-   */
-  getPrevPlayerValueByNameId(nameId: string): KTCPlayerDataPoint {
-    for (const player of this.prevPlayerValues) {
-      if (nameId === player.name_id) {
-        return player;
-      }
-    }
-    return null;
-  }
-
-  /**
    * reset players owners when changing leagues
    */
   resetOwners(): void {
@@ -297,12 +274,42 @@ export class PlayerService {
    */
   getAdjacentPlayersByNameId(nameId: string, posFilter: string = '', isSuperflex: boolean = true): KTCPlayer[] {
     const cleanedPlayerList = this.cleanOldPlayerData(this.playerValues);
-    const players = [];
     if (!isSuperflex) {
       cleanedPlayerList.sort((a, b) => {
         return b.trade_value - a.trade_value;
       });
     }
+    const players = this.getAdjacentPlayersFromList(nameId, cleanedPlayerList, posFilter);
+    return players.sort((a, b) => {
+      return isSuperflex ? b.sf_trade_value - a.sf_trade_value
+        : b.trade_value - a.trade_value;
+    });
+  }
+
+  /**
+   * get Adjacent players by ADP
+   * @param nameId name of player to get adj to
+   * @param posFilter what pos to filter on, if empty include all
+   */
+  getAdjacentADPPlayersByNameId(nameId: string, posFilter: string = ''): KTCPlayer[] {
+    const cleanedPlayerList = this.cleanOldPlayerData(this.playerValues).filter(it => it.position === posFilter && it.avg_adp !== null);
+    cleanedPlayerList.sort((a, b) => {
+      return a.avg_adp - b.avg_adp;
+    });
+    return this.getAdjacentPlayersFromList(nameId, cleanedPlayerList).sort((a, b) => {
+      return a.avg_adp - b.avg_adp;
+    });
+  }
+
+  /**
+   * Returns adjacent players based on name id and cleaned list passed in
+   * @param nameId player name id
+   * @param cleanedPlayerList cleaned list of players to get adjacents from
+   * @param posFilter position to filter from
+   * @private
+   */
+  private getAdjacentPlayersFromList(nameId: string, cleanedPlayerList: KTCPlayer[], posFilter: string = ''): KTCPlayer[] {
+    const players = [];
     const playerRank = this.getRankOfPlayerByNameId(nameId, cleanedPlayerList);
     for (let upInd = playerRank - 1; upInd >= 0 && players.length < 4; upInd--) {
       if (posFilter.length === 0 || cleanedPlayerList[upInd].position === posFilter) {
@@ -314,10 +321,7 @@ export class PlayerService {
         players.push(cleanedPlayerList[downInd]);
       }
     }
-    return players.sort((a, b) => {
-      return isSuperflex ? b.sf_trade_value - a.sf_trade_value
-        : b.trade_value - a.trade_value;
-    });
+    return players;
   }
 
   /**
@@ -331,29 +335,6 @@ export class PlayerService {
       }
     });
     return draftpicks;
-  }
-
-  /**
-   * calculate and return percent change over a month
-   * @param element ktcplayer
-   * @param isSuperFlex boolean
-   */
-  getPercentChange(element: KTCPlayer, isSuperFlex: boolean): number {
-    const playerDataPoint = this.getPrevPlayerValueByNameId(element.name_id);
-    // check if data point is older than 2 days
-    const yesterdayDate = new Date().getTime() - 1000 * 60 * 60 * 24;
-    const isCurrent = new Date(element.date).setHours(0, 0, 0, 0) >= new Date(yesterdayDate).setHours(0, 0, 0, 0);
-    if (playerDataPoint) {
-      const changeAmount = isSuperFlex ? (isCurrent ? element.sf_trade_value : 0) - playerDataPoint.sf_trade_value
-        : (isCurrent ? element.trade_value : 0) - playerDataPoint.trade_value;
-      const prevAmount = isSuperFlex ? (playerDataPoint.sf_trade_value > 0 ? playerDataPoint.sf_trade_value : 1)
-        : (playerDataPoint.trade_value > 0 ? playerDataPoint.trade_value : 1);
-      return Math.round(changeAmount / prevAmount * 100);
-    } else {
-      const changeAmount = isSuperFlex ? (isCurrent ? element.sf_trade_value : 0) - 0
-        : (isCurrent ? element.trade_value : 0) - 0;
-      return Math.round(changeAmount);
-    }
   }
 
   /**

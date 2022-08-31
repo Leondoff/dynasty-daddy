@@ -6,7 +6,7 @@ import {ChartDataSets, ChartOptions} from 'chart.js';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {Router} from '@angular/router';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
-import {LeagueSwitchService} from "../../services/league-switch.service";
+import {LeagueSwitchService} from '../../services/league-switch.service';
 
 @Component({
   selector: 'app-player-details-insights',

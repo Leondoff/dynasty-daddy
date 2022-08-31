@@ -179,14 +179,14 @@ print('Successfully scraped adp rankings')
 
 try:
     # Establishing the connection
-    # conn = psycopg2.connect(
-    #     database=os.environ['DO_DATABASE'], user=os.environ['DO_DB_USER'], password=os.environ['DO_DB_PASSWORD'], host=os.environ['DO_DB_HOST'], port=os.environ['DO_DB_PORT']
-    # )
+    conn = psycopg2.connect(
+        database=os.environ['DO_DATABASE'], user=os.environ['DO_DB_USER'], password=os.environ['DO_DB_PASSWORD'], host=os.environ['DO_DB_HOST'], port=os.environ['DO_DB_PORT']
+    )
 
     # Connect to local test database
-    conn = psycopg2.connect(
-        database="player_rankings", user='postgres', password='postgres', host='localhost', port='5432'
-    )
+    # conn = psycopg2.connect(
+    #     database="player_rankings", user='postgres', password='postgres', host='localhost', port='5432'
+    # )
 
     # Setting auto commit false
     conn.autocommit = True

@@ -70,13 +70,13 @@
   </div>
 
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
-    <mat-tab label="Past Week Summary">
+    <mat-tab label="Current Outlook">
       <div class="mid-bold-text margin-top-10 center-text">Past 18 Week Summary</div>
       <div class="margin-top-10 center-text">Below is the past 18 weeks of points and projections based on Sleeper's <span class="info__alert">0.5 PPR scoring</span>.
       </div>
       <app-player-details-weekly-stats-line-chart  [selectedPlayerInsights]="selectedPlayerInsights" [selectedPlayer]="selectedPlayer"></app-player-details-weekly-stats-line-chart>
     </mat-tab>
-    <mat-tab label="Insights">
+    <mat-tab label="Future Insights">
       <div class="mid-bold-text margin-top-10 center-text">Player Insights</div>
       <div class="margin-top-10 center-text">A collection of metrics and insights on {{selectedPlayer.full_name}}.
       </div>

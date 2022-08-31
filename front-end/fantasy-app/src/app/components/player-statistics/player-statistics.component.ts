@@ -92,7 +92,18 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
     {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex)'},
     {value: 'trade_value', displayName: 'Trade Value (Standard)'},
     {value: 'gp', displayName: 'Games Played'},
+    {value: 'avg_adp', displayName: 'Average ADP'}
   ];
+
+  /** general metrics */
+  expertADP: { value: string, displayName: string }[] = [
+    {value: 'bb10_adp', displayName: 'BestBall10s ADP'},
+    {value: 'fantasypro_adp', displayName: 'Fantasy Pros ADP'},
+    {value: 'drafters_adp', displayName: 'Drafters ADP'},
+    {value: 'underdog_adp', displayName: 'Underdog ADP'},
+    {value: 'rtsports', displayName: 'Real Time Sports ADP'}
+  ];
+
 
   /** receiving Metrics */
   receivingMetrics: { value: string, displayName: string }[] = [
@@ -122,7 +133,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
     if (this.playerService) {
       this.updatePlayerFilters();
     }
-    if (!this.playersLoaded) {this.playerService.loadPlayerValuesForToday()};
+    if (!this.playersLoaded) {this.playerService.loadPlayerValuesForToday();};
     this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
         this.playersLoaded = true;
         this.updatePlayerFilters();
@@ -183,20 +194,23 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
           this.passingMetrics,
           this.rushingMetrics,
           this.sackMetrics,
-          this.turnoverMetrics
+          this.turnoverMetrics,
+          this.expertADP
         );
       case 'rb':
         return newMetrics.concat(
           this.generalMetrics,
           this.rushingMetrics,
           this.turnoverMetrics,
-          this.receivingMetrics
+          this.receivingMetrics,
+          this.expertADP
         );            // wr/te
       default:
         return newMetrics.concat(
           this.generalMetrics,
           this.receivingMetrics,
-          this.turnoverMetrics
+          this.turnoverMetrics,
+          this.expertADP
         );
     }
   }
