@@ -166,7 +166,12 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     } else {
       this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
     }
-    this.dataSource.data = this.filteredPlayers;
+
+    this.dataSource.sort.sort({
+      id: this.isSuperFlex ? 'sf_trade_value' : 'trade_value',
+      start: 'desc',
+      disableClear: false
+    });
   }
 
   /**
