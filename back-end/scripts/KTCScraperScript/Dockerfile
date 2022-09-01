@@ -7,6 +7,9 @@ RUN pip install -r requirements.txt
 
 RUN echo "00 8 * * * /usr/local/bin/python /app/ktc-rankings-scraper.py >> /var/log/cron.log 2>&1" >> /etc/cron.d/ktc-crontab
 COPY back-end/scripts/KTCScraperScript/ktc-rankings-scraper.py /app/ktc-rankings-scraper.py
+COPY back-end/scripts/KTCScraperScript/FantasyProsADPScraper.py /app/FantasyProsADPScraper.py
+COPY back-end/scripts/KTCScraperScript/PlayerService.py /app/PlayerService.py
+COPY back-end/scripts/KTCScraperScript/BeautifulSoupService.py /app/BeautifulSoupService.py
 # execution rights to cron
 RUN chmod 0644 /etc/cron.d/ktc-crontab
 # Apply cron job
