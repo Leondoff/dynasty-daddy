@@ -179,7 +179,8 @@ export class TradeService {
     // filter list by user id then filter by value last filter by if player is in current trade
     let sortedList = this.filterPlayersList(userIdFilter)
       .filter(player => isSuperFlex ? player.sf_trade_value <= maxValue : player.trade_value <= maxValue)
-      .filter(player => !tradePackage?.team1Assets.includes(player) && !tradePackage?.team2Assets.includes(player));
+      .filter(player => !tradePackage?.team1Assets.includes(player) && !tradePackage?.team2Assets.includes(player))
+      .filter(player => !tradePackage.excludePosGroup.includes(player.position));
     if (tradePackage.autoFillTrade) {
       sortedList = sortedList.filter(player => (player.position === 'PI'
         || player.owner !== null && player.owner.userId !== tradePackage.team1UserId));

@@ -31,6 +31,12 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
   /** is league a superflex league */
   isSuperflex: boolean;
 
+  /** filter trade finder results by position */
+  filterPosGroup: boolean[] = [true, true, true, true, true];
+
+  /** Toggle the advanced filters  */
+  showAdvancedSettings: boolean = false;
+
   constructor(
     public leagueSwitchService: LeagueSwitchService,
     public playerService: PlayerService,
@@ -80,7 +86,8 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     const trades = this.tradeFinderService.generateTradeFinderResults(
       this.tradeFinderService.selectedPlayers,
       this.tradeFinderService.selectedTeamUserId,
-      this.isSuperflex
+      this.isSuperflex,
+      this.filterPosGroup
     );
     // filters trades with no players or duplicate trades out
     // TODO do we want to couple this logic in the trade finder service?
