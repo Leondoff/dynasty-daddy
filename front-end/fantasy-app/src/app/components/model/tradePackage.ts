@@ -16,6 +16,7 @@ export class TradePackage {
   acceptanceBufferAmount: number = 1000;
   isSuperFlex: boolean = true;
   autoFillTrade: boolean = false;
+  excludePosGroup: string[] = [];
 
   constructor(team1Assets: KTCPlayer[], team2Assets: KTCPlayer[], acceptanceVariance: number = 5) {
     this.team1Assets = team1Assets;
@@ -40,6 +41,11 @@ export class TradePackage {
 
   setAutofill(): TradePackage {
     this.autoFillTrade = true;
+    return this;
+  }
+
+  setExcludePlayerList(excludeList: string[]): TradePackage {
+    this.excludePosGroup = excludeList;
     return this;
   }
 

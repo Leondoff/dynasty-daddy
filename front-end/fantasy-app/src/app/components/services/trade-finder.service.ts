@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {KTCPlayer} from '../../model/KTCPlayer';
 import {TradePackage} from '../model/tradePackage';
 import {TradeService} from './trade.service';
@@ -12,7 +12,8 @@ export class TradeFinderService {
 
   selectedPlayers: KTCPlayer[] = [];
 
-  constructor(private tradeService: TradeService) { }
+  constructor(private tradeService: TradeService) {
+  }
 
   /**
    * Generate list of valid trade packages
@@ -22,15 +23,47 @@ export class TradeFinderService {
    * @param limit how many results to return. DEFAULT 10
    * @return list of trade packages
    */
-  generateTradeFinderResults(players: KTCPlayer[], userId: string, isSuperFlex: boolean = true, limit: number = 10): TradePackage[] {
+  generateTradeFinderResults(
+    players: KTCPlayer[],
+    userId: string,
+    isSuperFlex: boolean = true,
+    posFilterList: boolean[],
+    limit: number = 10
+  ): TradePackage[] {
     const tradePackages = [];
     for (let i = 0; i < limit; i++) {
       const newTrade = new TradePackage(players, [])
         .setTeam1(userId)
+        .setExcludePlayerList(this.buildExcludePlayerList(posFilterList))
         .setAutofill();
       const processedTrade = this.tradeService.determineTrade(newTrade, isSuperFlex);
       tradePackages.push(processedTrade);
     }
     return tradePackages;
+  }
+
+  /**
+   * Builds the pos exclude list from boolean list
+   * @param posList list of boolean checkboxes
+   * @private
+   */
+  private buildExcludePlayerList(posList: boolean[]): string[] {
+    const list = [];
+    if (!posList[0]) {
+      list.push('QB');
+    }
+    if (!posList[1]) {
+      list.push('RB');
+    }
+    if (!posList[2]) {
+      list.push('WR');
+    }
+    if (!posList[3]) {
+      list.push('TE');
+    }
+    if (!posList[4]) {
+      list.push('PI');
+    }
+    return list;
   }
 }
