@@ -31,6 +31,9 @@ def processNameId(playername, pos):
         return nameIdMap.get(nameId)
     return nameId
 
+# get average of List
+def averageOfList(lst):
+    return sum(lst) / len(lst)
 
 # scrape adp from fantasy pros best ball pages
 def scrapeADP(position):
@@ -51,7 +54,9 @@ def scrapeADP(position):
         rtsports_adp = tds[4].text.strip() or None
         underdog_adp = tds[5].text.strip() or None
         drafters_adp = tds[6].text.strip() or None
-        avg_adp = tds[7].text.strip()
+        # determine average based on values
+        adp_list = list(filter(None,[fantasyPro_adp, bb10_adp, rtsports_adp, underdog_adp, drafters_adp]))
+        avg_adp = round(averageOfList(list(map(int,adp_list))), 1)
 
         players.append(PlayerADP(nameId, fantasyPro_adp, bb10_adp, rtsports_adp, underdog_adp, drafters_adp, avg_adp))
     return players
