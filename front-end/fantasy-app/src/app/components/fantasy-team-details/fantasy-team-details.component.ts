@@ -11,6 +11,7 @@ import {TransactionUI} from '../model/transaction';
 import {ConfigService} from '../../services/init/config.service';
 import {BaseComponent} from '../base-component.abstract';
 import {LeagueSwitchService} from '../services/league-switch.service';
+import {DisplayService} from "../../services/utilities/display.service";
 
 @Component({
   selector: 'app-fantasy-team-details',
@@ -48,6 +49,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
               private router: Router,
               public leagueSwitchService: LeagueSwitchService,
               public transactionsService: TransactionsService,
+              public displayService: DisplayService,
               public configService: ConfigService) {
     super();
   }
@@ -64,6 +66,23 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     if (this.sleeperService.leagueLoaded && this.sleeperService.selectedLeague) {
       this.getSelectedTeam();
     }
+  }
+
+  /**
+   * returns a list of the biggest risers/fallers
+   * @param isRiser true if rising/false if fallers
+   */
+  getBiggestMovers(isRiser: boolean): KTCPlayer[] {
+    const tempRoster = this.roster?.slice();
+    return tempRoster.filter(player => {
+      return (this.sleeperService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value) > 1000;
+    }).sort((a, b) => {
+      if (isRiser) {
+        return this.sleeperService.selectedLeague.isSuperflex ? b.sf_change - a.sf_change : b.standard_change - a.standard_change;
+      } else {
+        return this.sleeperService.selectedLeague.isSuperflex ? a.sf_change - b.sf_change : a.standard_change - b.standard_change;
+      }
+    }).slice(0, 5);
   }
 
   getSelectedTeam(): void {

@@ -31,6 +31,10 @@
       <br>
       <div class="standings-row" *ngIf="selectedTeam">
         <div class="standings-col vertical-break__right__dark">
+          <div class="small-text__light text__light disabled__color">Tier</div>
+          <div class="mid-bold-text">{{displayService.getTierFromNumber(powerRankingsService.findTeamFromRankingsByRosterId(selectedTeam?.roster.rosterId).tier)}}</div>
+        </div>
+        <div class="standings-col vertical-break__right__dark">
           <div class="small-text__light text__light disabled__color">Starter Rank</div>
           <div class="mid-bold-text">{{powerRankingsService.findTeamFromRankingsByRosterId(selectedTeam?.roster.rosterId).starterRank}}</div>
         </div>
@@ -70,11 +74,33 @@
       <app-fantasy-team-details-weekly-points-chart
         [selectedTeam]="selectedTeam"></app-fantasy-team-details-weekly-points-chart>
     </mat-tab>
-    <mat-tab label="Roster">
-      <div class="mid-bold-text margin-top-10 center-text">Team Roster</div>
-      <div class="margin-top-10 center-text">Below are the players sorted by most valuable to least valuable.</div>
+    <mat-tab label="Roster Management">
+      <div class="mid-bold-text margin-top-10 center-text">Roster Trends</div>
+      <div class="margin-top-10 center-text">Biggest movers in the past month for {{selectedTeam?.owner?.teamName}}'s roster.</div>
       <div class="content">
-        <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-50" *ngIf="roster.length > 0">
+        <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25" *ngIf="roster.length > 0">
+          <mat-card fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="30%" class="item mat-elevation-z4">
+            <div class="mid-bold-text center-text"><mat-icon style="font-size: 16px">trending_up</mat-icon>Biggest Risers</div>
+            <table>
+              <tr *ngFor="let player of getBiggestMovers(true)">
+                <th style="text-align: left">{{player.full_name}}</th>
+                <th style="text-align: right">+{{sleeperService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
+              </tr>
+            </table>
+          </mat-card>
+          <mat-card fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="30%" class="item mat-elevation-z4">
+            <div class="mid-bold-text center-text"><mat-icon style="font-size: 16px">trending_down</mat-icon>Biggest Fallers</div>
+            <table>
+              <tr *ngFor="let player of getBiggestMovers(false)">
+                <th style="text-align: left">{{player.full_name}}</th>
+                <th style="text-align: right">{{sleeperService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
+              </tr>
+            </table>
+          </mat-card>
+        </div>
+        <div class="mid-bold-text margin-top-25 center-text">Team Roster</div>
+        <div class="margin-top-10 center-text">Below are the players sorted by most valuable to least valuable.</div>
+        <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25" *ngIf="roster.length > 0">
           <mat-card fxFlex="25%" fxFlex.xs="100%" fxFlex.sm="33%" class="item mat-elevation-z4"
                     *ngFor="let player of roster">
             <mat-card-header>
