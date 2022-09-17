@@ -100,7 +100,7 @@ export class StrengthOfScheduleChartComponent implements OnInit {
               if (oppMatchup.matchupId === matchupId && oppMatchup.rosterId !== team.roster.rosterId) {
                 this.powerRankingsService.powerRankings.map(teamValue => {
                   if (teamValue.team.roster.rosterId === oppMatchup.rosterId) {
-                    competitionStarterValue += teamValue.sfTradeValueStarter;
+                    competitionStarterValue += teamValue.adpValueStarter;
                     return teamValue;
                   }
                 });

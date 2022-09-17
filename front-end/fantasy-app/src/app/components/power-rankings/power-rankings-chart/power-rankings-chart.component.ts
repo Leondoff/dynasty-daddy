@@ -43,7 +43,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
           display: true
         },
         scaleLabel: {
-          display: this.configService.isMobile ? false : true,
+          display: !this.configService.isMobile,
           labelString: 'Team',
           fontColor: '#d3d3d3'
         }
@@ -56,7 +56,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
         },
         scaleLabel: {
           display: true,
-          labelString: 'Value',
+          labelString: 'Overall Trade Value',
           fontColor: '#d3d3d3'
         }
       }]

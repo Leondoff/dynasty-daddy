@@ -42,6 +42,9 @@ export class PlayoffCalculatorService {
   /** total number of simulations, if changed make sure to update percentage function */
   NUMBER_OF_SIMULATIONS = 10000;
 
+  /** forecast model from radio group */
+  forecastModel: ForecastTypes = ForecastTypes.ADP_STARTER;
+
   constructor(
     private sleeperService: SleeperService,
     private powerRankingsService: PowerRankingsService,
@@ -56,7 +59,7 @@ export class PlayoffCalculatorService {
   calculateGamesWithProbability(week: number): void {
     // get mean of team ratings
     const ratings = this.powerRankingsService.powerRankings.map(team => {
-      return this.sleeperService.selectedLeague.isSuperflex ? team.sfTradeValueStarter : team.tradeValueStarter;
+      return this.forecastModel === ForecastTypes.ADP_STARTER ? team.adpValueStarter : team.eloAdpValueStarter;
     });
     const meanRating = mean(ratings);
 
@@ -65,10 +68,9 @@ export class PlayoffCalculatorService {
 
     // get z scores and p values for each team
     for (const team of this.powerRankingsService.powerRankings) {
-      const teamZ = zScore(this.sleeperService.selectedLeague.isSuperflex
-        ? team.sfTradeValueStarter : team.tradeValueStarter, meanRating, stdRating);
-      const teamP = cumulativeStdNormalProbability(teamZ);
-      this.teamRatingsPValues[team.team.roster.rosterId] = teamP;
+      const starterValue = this.forecastModel === ForecastTypes.ADP_STARTER ? team.adpValueStarter : team.eloAdpValueStarter;
+      const teamZ = zScore(starterValue, meanRating, stdRating);
+      this.teamRatingsPValues[team.team.roster.rosterId] = cumulativeStdNormalProbability(teamZ);
     }
     // generate mean value score and save it to position 0 of dict
     this.generateMedianProbabilities(meanRating, stdRating);
@@ -852,13 +854,7 @@ export class PlayoffCalculatorService {
    * @private
    */
   public getStartWeek(): number {
-    if (
-      this.nflService.stateOfNFL.season === this.sleeperService.selectedLeague.season
-      && this.nflService.stateOfNFL.seasonType !== 'post'
-    ) {
-      return this.nflService.stateOfNFL.completedWeek + 1;
-    }
-    return Number(this.sleeperService.selectedLeague.season) < 2021 ? 17 : 18;
+    return this.nflService.getCompletedWeekForSeason(this.sleeperService?.selectedLeague?.season)
   }
 
   /**
@@ -890,14 +886,14 @@ export class PlayoffCalculatorService {
     // sort array based on starter value to find the middle two
     const rankings = this.powerRankingsService.powerRankings.slice();
     rankings.sort((a, b) => {
-      return this.sleeperService.selectedLeague.isSuperflex ? a.sfTradeValueStarter - b.sfTradeValueStarter
-        : a.tradeValueStarter - b.tradeValueStarter;
+      return this.forecastModel === ForecastTypes.ADP_STARTER ?
+        a.adpValueStarter - b.adpValueStarter : a.eloAdpValueStarter - b.eloAdpValueChange;
     });
 
     // get median of middle two teams value wise
-    const medianStarterValue = median(this.sleeperService.selectedLeague.isSuperflex ?
-      [rankings[rankings.length / 2 - 1].sfTradeValueStarter, rankings[rankings.length / 2].sfTradeValueStarter]
-      : [rankings[rankings.length / 2 - 1].tradeValueStarter, rankings[rankings.length / 2].tradeValueStarter]);
+    const medianStarterValue = median(this.forecastModel === ForecastTypes.ADP_STARTER ?
+      [rankings[rankings.length / 2 - 1].adpValueStarter, rankings[rankings.length / 2].adpValueStarter] :
+      [rankings[rankings.length / 2 - 1].eloAdpValueStarter, rankings[rankings.length / 2].eloAdpValueStarter]);
 
     // add median probability to pValues at pos 0
     const medianZ = zScore(medianStarterValue, meanRating, stdRating);
@@ -949,4 +945,9 @@ export class PlayoffCalculatorService {
     }
     this.teamPlayoffOdds[selectedTeam.team.roster.rosterId].timesWithWorstRecord += 1;
   }
+}
+
+enum ForecastTypes {
+  ADP_STARTER = 0,
+  ELO_ADJUSTED = 1,
 }

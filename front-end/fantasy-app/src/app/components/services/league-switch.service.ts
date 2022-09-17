@@ -71,17 +71,19 @@ export class LeagueSwitchService extends BaseComponent {
         this.sleeperService.sleeperTeamDetails.map((team) => {
           this.playersService.generateRoster(team);
         });
-        forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
-          this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails),
-          this.matchupService.initMatchUpCharts(this.selectedLeague)]).subscribe(() => {
-          this.sleeperService.selectedLeague = this.selectedLeague;
-          this.sleeperService.leagueLoaded = true;
-          this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
-          console.timeEnd('Fetch Sleeper League Data');
-          this.leagueChanged.next(this.selectedLeague);
-          this.lastTimeRefreshed = new Date();
-          this.updateQueryParams();
-          this.spinner.hide();
+        this.matchupService.initMatchUpCharts(this.selectedLeague).subscribe(() => {
+          forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
+            this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails)]).subscribe(() => {
+            this.sleeperService.selectedLeague = this.selectedLeague;
+            this.sleeperService.leagueLoaded = true;
+            this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
+            console.timeEnd('Fetch Sleeper League Data');
+            this.leagueChanged.next(this.selectedLeague);
+            this.lastTimeRefreshed = new Date();
+            this.updateQueryParams();
+            this.spinner.hide();
+          });
+
         });
       }
     ));
