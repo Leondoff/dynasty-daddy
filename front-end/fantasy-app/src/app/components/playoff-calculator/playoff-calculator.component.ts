@@ -74,9 +74,9 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   ngOnInit(): void {
     this.initPlayoffCalc();
     this.addSubscriptions(this.leagueSwitchService.leagueChanged.subscribe(() => {
-        this.initPlayoffCalc();
-      }
-    ), this.route.queryParams.subscribe(params => {
+          this.initPlayoffCalc();
+        }
+      ), this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
       })
     );
@@ -89,7 +89,8 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
         console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
         this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague);
       }
-      this.playoffMachineWeek = this.nflService.stateOfNFL.completedWeek;
+      this.playoffMachineWeek = this.nflService.getCompletedWeekForSeason(this.sleeperService.selectedLeague.season);
+      this.powerRankingsService.calculateEloAdjustedADPValue();
       this.refreshGames();
       this.generateSelectableWeeks();
       this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
@@ -162,8 +163,18 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
    */
   updateProbability(value: number): void {
     this.selectedWeek = value;
+    if (this.playoffCalculatorService.forecastModel === 1) {
+      this.powerRankingsService.calculateEloAdjustedADPValue(this.selectedWeek - 1);
+      this.refreshGames();
+    }
     this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
     this.playoffCalculatorService.updateSeasonOdds(value);
+  }
+
+  changeForecastModel(): void {
+    this.refreshGames();
+    this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
+    this.playoffCalculatorService.updateSeasonOdds(this.selectedWeek);
   }
 
   /**
@@ -172,27 +183,28 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   downloadPlayoffCalculatorData(): void {
 
     const seasonData: any[][] = [
-      ['rosterId', 'teamName', 'teamOwner', 'week', 'starterValue', 'projWins', 'projLosses', 'medianWins', 'medianLosses', 'makePlayoffOdds', 'winDivisionOdds', 'winByeOdds', 'bestRecord', 'worstRecord', 'winOut', 'makeConfOdds', 'makeChampOdds', 'winChampOdds'],
+      ['rosterId', 'teamName', 'teamOwner', 'week', 'adpStarterValue', 'eloAdjustedADPValue', 'projWins', 'projLosses', 'medianWins', 'medianLosses', 'makePlayoffOdds', 'winDivisionOdds', 'winByeOdds', 'bestRecord', 'worstRecord', 'winOut', 'makeConfOdds', 'makeChampOdds', 'winChampOdds'],
     ];
-    for (const team of this.sleeperService.sleeperTeamDetails) {
-      const row = [team.roster.rosterId, team.owner.teamName, team.owner.ownerName, this.selectedWeek];
-      row.push(this.sleeperService.selectedLeague.isSuperflex
-        ? this.powerRankingsService.findTeamFromRankingsByRosterId(team.roster.rosterId).sfTradeValueStarter
-        : this.powerRankingsService.findTeamFromRankingsByRosterId(team.roster.rosterId).tradeValueStarter);
-      row.push(this.playoffCalculatorService.teamsProjectedRecord[team.roster.rosterId].projWins);
-      row.push(this.playoffCalculatorService.teamsProjectedRecord[team.roster.rosterId].projLoss);
-      row.push(this.playoffCalculatorService.teamsProjectedRecord[team.roster.rosterId].medianWins);
-      row.push(this.playoffCalculatorService.teamsProjectedRecord[team.roster.rosterId].medianLoss);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesMakingPlayoffs);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesWinningDivision);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesWithBye);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesWithBestRecord);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesWithWorstRecord);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesTeamWonOut);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesMakeConfRd);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesMakeChampionship);
-      row.push(this.playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId].timesWinChampionship);
-      seasonData.push(row);
+    for (const team of this.powerRankingsService.powerRankings) {
+      const row = [team.team.roster.rosterId, team.team.owner.teamName, team.team.owner.ownerName, this.selectedWeek];
+      const teamRecords = this.playoffCalculatorService.teamsProjectedRecord[team.team.roster.rosterId];
+      const teamOdds = this.playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId];
+      const teamRatings = [team.adpValueStarter, team.eloAdpValueStarter, team.eloAdpValueChange];
+      const teamDataList = [
+        teamRecords.projWins,
+        teamRecords.projLoss,
+        teamRecords.medianWins,
+        teamRecords.medianLoss,
+        teamOdds.timesMakingPlayoffs,
+        teamOdds.timesWinningDivision,
+        teamOdds.timesWithBye,
+        teamOdds.timesWithBestRecord,
+        teamOdds.timesWithWorstRecord,
+        teamOdds.timesTeamWonOut,
+        teamOdds.timesMakeConfRd,
+        teamOdds.timesMakeChampionship,
+        teamOdds.timesWinChampionship];
+      seasonData.push(row.concat(teamRatings, teamDataList));
     }
 
     const seasonOddsCSV = seasonData.map(e => e.join(',')).join('\n');

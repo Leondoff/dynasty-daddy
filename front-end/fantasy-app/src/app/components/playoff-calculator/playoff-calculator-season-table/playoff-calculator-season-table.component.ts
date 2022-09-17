@@ -6,7 +6,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {PlayoffCalculatorService} from '../../services/playoff-calculator.service';
 import {ColorService} from '../../services/color.service';
 import {ConfigService} from '../../../services/init/config.service';
-import {LeagueSwitchService} from "../../services/league-switch.service";
+import {LeagueSwitchService} from '../../services/league-switch.service';
 
 @Component({
   selector: 'app-playoff-calculator-season-table',
@@ -24,7 +24,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
 
   /** selected metrics to display in table */
   @Input()
-  selectedMetrics: {display: string, value: string, isDisabled: boolean}[];
+  selectedMetrics: { display: string, value: string, isDisabled: boolean }[];
 
   /** datasource for table */
   public dataSource: MatTableDataSource<any>;
@@ -38,7 +38,10 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   }
 
   /** team properties like name division value */
-  teamDetails = [];
+  teamCols = ['teamName'];
+
+  /** ratings properties like elo change and team rating */
+  ratingsCols = ['teamRating'];
 
   /** probability properties */
   probabilityCols = ['record', 'makePlayoffs', 'winDivision', 'getBye', 'winChampionship'];
@@ -46,20 +49,17 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   /** combined properties to display */
   divisionTableCols = [];
 
-  /** wins at a current point in time */
-  realizedWins: number = 0;
-
   /** color gradient */
   probGradient: string[] = [];
 
   ngOnInit(): void {
-    this.dataSource = new MatTableDataSource(this.sleeperService.sleeperTeamDetails);
+    this.dataSource = new MatTableDataSource(this.powerRankingsService.powerRankings);
     if (this.playoffCalculatorService.divisions.length === 1 || this.configService.isMobile) {
-      this.teamDetails = ['teamRating', 'teamName'];
+      this.teamCols = ['teamName'];
     } else {
-      this.teamDetails = ['teamRating', 'teamName', 'teamDivision'];
+      this.teamCols = ['teamName', 'teamDivision'];
     }
-    this.divisionTableCols = this.teamDetails.concat(this.probabilityCols);
+    this.divisionTableCols = this.ratingsCols.concat(this.teamCols, this.probabilityCols);
     this.probGradient = this.colorService.getColorGradientArray(101, '#434243', '#0173aa');
   }
 
@@ -68,28 +68,30 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'teamRating':
-          return this.powerRankingsService.findTeamFromRankingsByRosterId(item.roster.rosterId).sfTradeValueStarter;
+          return this.playoffCalculatorService.forecastModel === 0 ? item.adpValueStarter : item.eloAdpValueStarter;
+        case 'eloChange':
+          return item.eloAdpValueChange;
         case 'record':
-          return this.playoffCalculatorService.teamsProjectedRecord[item.roster.rosterId]?.projWins
-            + this.playoffCalculatorService.teamsProjectedRecord[item.roster.rosterId]?.medianWins;
+          return this.playoffCalculatorService.teamsProjectedRecord[item.team.roster.rosterId]?.projWins
+            + this.playoffCalculatorService.teamsProjectedRecord[item.team.roster.rosterId]?.medianWins;
         case 'makePlayoffs':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesMakingPlayoffs;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakingPlayoffs;
         case 'winDivision':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesWinningDivision;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWinningDivision;
         case 'getBye':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesWithBye;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithBye;
         case 'makeConfChamp':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesMakeConfRd;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakeConfRd;
         case 'makeChampionship':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesMakeChampionship;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakeChampionship;
         case 'winOut':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesTeamWonOut;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesTeamWonOut;
         case 'worstRecord':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesWithWorstRecord;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithWorstRecord;
         case 'bestRecord':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesWithBestRecord;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithBestRecord;
         case 'winChampionship':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.roster.rosterId]?.timesWinChampionship;
+          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWinChampionship;
         default:
           return item[property];
       }
@@ -102,10 +104,11 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
    * TODO clean up this function
    */
   ngOnChanges(): void {
+    this.ratingsCols = this.playoffCalculatorService.forecastModel === 0 ? ['teamRating'] : ['teamRating', 'eloChange'];
     this.probabilityCols = this.selectedMetrics.map(element => element.value);
-    this.divisionTableCols = this.teamDetails.concat(this.probabilityCols);
+    this.divisionTableCols = this.ratingsCols.concat(this.teamCols, this.probabilityCols);
     if (this.dataSource) {
-      this.dataSource.data = this.sleeperService.sleeperTeamDetails;
+      this.dataSource.data = this.powerRankingsService.powerRankings;
     }
   }
 
@@ -133,7 +136,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
         if (this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek) {
           return '>99%';
         }
-        return '100%';
+        return '';
       }
       default: {
         return percent + '%';
@@ -148,9 +151,9 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   getProjRecord(rosterId: number): string {
     if (this.sleeperService.selectedLeague.medianWins) {
       return (this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.projWins +
-        this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.medianWins) + ' - '
+          this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.medianWins) + ' - '
         + (this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.projLoss +
-        this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.medianLoss);
+          this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.medianLoss);
     }
     return this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.projWins + ' - '
       + this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.projLoss;
@@ -167,10 +170,10 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
     if (this.sleeperService.selectedLeague.medianWins) {
       return (this.playoffCalculatorService.selectedGameResults[rosterId].selectedWins +
           this.playoffCalculatorService.selectedGameResults[rosterId].selectedMedianWins +
-         winsAtDate.totalWins) + ' - '
+          winsAtDate.totalWins) + ' - '
         + (this.playoffCalculatorService.selectedGameResults[rosterId].selectedLosses +
           this.playoffCalculatorService.selectedGameResults[rosterId].selectedMedianLosses +
-        lossesAtDate.totalLosses);
+          lossesAtDate.totalLosses);
     }
     return (this.playoffCalculatorService.selectedGameResults[rosterId].selectedWins + winsAtDate.wins) + ' - '
       + (this.playoffCalculatorService.selectedGameResults[rosterId].selectedLosses + lossesAtDate.losses);

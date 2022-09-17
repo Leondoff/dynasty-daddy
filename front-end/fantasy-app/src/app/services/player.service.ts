@@ -256,6 +256,7 @@ export class PlayerService {
   /**
    * return index of player in player values
    * @param nameId
+   * @param playerList
    */
   getRankOfPlayerByNameId(nameId: string, playerList: KTCPlayer[] = this.playerValues): number {
     for (let i = 0; i < playerList.length; i++) {
@@ -292,7 +293,7 @@ export class PlayerService {
    * @param posFilter what pos to filter on, if empty include all
    */
   getAdjacentADPPlayersByNameId(nameId: string, posFilter: string = ''): KTCPlayer[] {
-    const cleanedPlayerList = this.cleanOldPlayerData(this.playerValues).filter(it => it.position === posFilter && it.avg_adp !== null);
+    const cleanedPlayerList = this.cleanOldPlayerData(this.playerValues).filter(it => it.position === posFilter && it.avg_adp !== 0);
     cleanedPlayerList.sort((a, b) => {
       return a.avg_adp - b.avg_adp;
     });
@@ -329,12 +330,11 @@ export class PlayerService {
    * @param season season defaults to next season
    */
   getDraftPicksForYear(season: string = (Number(this.nflService.stateOfNFL.season) + 1).toString()): KTCPlayer[] {
-    const draftpicks = this.playerValues.filter(pick => {
+    return this.playerValues.filter(pick => {
       if (pick.position === 'PI' && pick.full_name.includes(season)) {
         return pick;
       }
     });
-    return draftpicks;
   }
 
   /**
@@ -355,6 +355,7 @@ export class PlayerService {
   /**
    * calculate the player insights for a player
    * @param player
+   * @param isSuperFlex
    */
   getPlayerInsights(player: KTCPlayer, isSuperFlex: boolean = true): PlayerInsights {
     const dataSet = [];

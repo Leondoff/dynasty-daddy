@@ -1,5 +1,5 @@
 <div class="power-ranking-container">
-  <div class="margin-bot-10">
+  <div>
     <div [ngClass]="{'button-left': !configService.isMobile, 'margin-top-10': configService.isMobile}">
       <mat-form-field class="button-left player-value-checkbox-margin" [ngClass]="{'mat-dropdown-wide-300': !configService.isMobile, 'mat-dropdown-wide-100': configService.isMobile}" color="accent">
         <mat-label>Search Player</mat-label>
@@ -10,11 +10,22 @@
       </mat-form-field>
     </div>
     <span class="container_spacer"></span>
-    <button mat-raised-button color="accent" [ngClass]="{'button-right': !configService.isMobile, 'button-left': configService.isMobile}"
-            (click)="expandCollapseAll()">{{getToggleButtonText()}}
-    </button>
+    <div [ngClass]="{'button-right': !configService.isMobile, 'button-left': configService.isMobile}">
+      <button mat-raised-button color="accent"
+              (click)="expandCollapseAll()">{{getToggleButtonText()}}
+      </button>
+      <button mat-icon-button *ngIf="!configService.isMobile" (click)="showAdvancedSettings = !showAdvancedSettings">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
   </div>
-  <div [hidden]="this.displayedRankingsSize === 0">
+  <div *ngIf="showAdvancedSettings">
+    <span class="container_spacer"></span>
+    <div class="button-right">
+      <mat-slide-toggle color="primary" [(ngModel)]="toggleADPValues">Toggle Value/ADP</mat-slide-toggle>
+    </div>
+  </div>
+  <div [hidden]="this.displayedRankingsSize === 0" class="margin-top-10">
     <table mat-table
            [dataSource]="dataSource" multiTemplateDataRows
            class="mat-elevation-z8" matSort matSortActive="overallRank" matSortDirection="asc">
@@ -94,7 +105,7 @@
                 <div>
                   <span class="small-text__light">Starter Value: </span>
                   <div><span
-                    class="mid-bold-text">{{isSuperFlex ? element.sfTradeValueStarter : element.tradeValueStarter}}</span>
+                    class="mid-bold-text">{{element.adpValueStarter}}</span>
                     <span class="small-text__light"> (Rank: <span
                       [ngClass]="{'success__alert': element.starterRank < alertThreshold, 'warning__alert': element.starterRank > alertThreshold * 2}">{{element.starterRank}}</span>)</span>
                   </div>
@@ -123,7 +134,8 @@
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isStarter(element, player)">grade</mat-icon></span>
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isInjured(player)">healing</mat-icon></span>
                   <span innerHTML="{{ player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}}</span>
-                  <span [ngClass]="{'success__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) > 6000, 'urgent__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) < 2000}"> {{isSuperFlex ? player.sf_trade_value : player.trade_value}}</span>
+                  <span *ngIf="!toggleADPValues" [ngClass]="{'success__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) > 6000, 'urgent__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) < 2000}"> {{isSuperFlex ? player.sf_trade_value : player.trade_value}}</span>
+                  <span *ngIf="toggleADPValues" [ngClass]="{'success__alert': player.avg_adp < sleeperService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (sleeperService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '--'}}</span>
                 </div>
               </div>
               <div class="grid-16">

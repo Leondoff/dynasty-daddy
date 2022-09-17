@@ -9,7 +9,7 @@ import {ConfigService} from '../../../services/init/config.service';
 import {PlayerService} from '../../../services/player.service';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {DisplayService} from '../../../services/utilities/display.service';
-import {LeagueSwitchService} from "../../services/league-switch.service";
+import {LeagueSwitchService} from '../../services/league-switch.service';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -35,6 +35,12 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   // is league superflex, input
   @Input()
   isSuperFlex: boolean;
+
+  // toggles the advanced setting bar
+  showAdvancedSettings: boolean = false;
+
+  // toggle trade value vs adp value in expanded table
+  toggleADPValues: boolean = false;
 
   // datasource for mat table
   dataSource: MatTableDataSource<TeamPowerRanking> = new MatTableDataSource<TeamPowerRanking>();

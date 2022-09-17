@@ -1,4 +1,5 @@
 .mat-column-teamRating,
+.mat-column-eloChange,
 .mat-column-record,
 .mat-column-winChampionship,
 .mat-column-winDivision,
@@ -30,6 +31,7 @@
 }
 
 .mat-column-teamRating,
+.mat-column-eloChange,
 .mat-column-teamDivision,
 .mat-column-teamName {
   text-align: left;
@@ -47,4 +49,12 @@
 .mat-row,
 .mat-footer-row {
   max-height: 48px;
+}
+
+.positive-mat-chip {
+  background-color: #008500;
+}
+
+.negative-mat-chip {
+  background-color: #9a0000;
 }
