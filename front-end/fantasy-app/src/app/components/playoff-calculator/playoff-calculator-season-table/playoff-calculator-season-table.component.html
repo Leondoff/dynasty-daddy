@@ -1,100 +1,105 @@
-<div class="playoff-calc-table-container" [ngStyle]="divisionTableCols.indexOf('teamDivision') !== -1?{'max-width': '1500px', 'min-width': '500px'} : {'max-width': '1100px', 'min-width': '500px'}">
+<div class="playoff-calc-table-container" [ngStyle]="divisionTableCols.indexOf('teamDivision') !== -1?{'max-width': '1600px', 'min-width': '500px'} : {'max-width': '1200px', 'min-width': '500px'}">
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort matSortActive="teamRating" matSortDirection="desc">
 
     <ng-container matColumnDef="teamRating">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Team Rating</mat-header-cell>
-      <mat-cell *matCellDef="let team">{{sleeperService.selectedLeague.isSuperflex ? powerRankingsService.findTeamFromRankingsByRosterId(team.roster.rosterId).sfTradeValueStarter : powerRankingsService.findTeamFromRankingsByRosterId(team.roster.rosterId).tradeValueStarter}}</mat-cell>
+      <mat-cell *matCellDef="let team">{{playoffCalculatorService.forecastModel == 0 ? team.adpValueStarter : team.eloAdpValueStarter}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="eloChange">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Change</mat-header-cell>
+      <mat-cell *matCellDef="let team"><mat-chip-list><mat-chip [ngClass]="{'positive-mat-chip': team.eloAdpValueChange > 0, 'negative-mat-chip': team.eloAdpValueChange < 0}">{{team.eloAdpValueChange > 0 ? '+' + team.eloAdpValueChange : team.eloAdpValueChange}}</mat-chip></mat-chip-list></mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="teamName">
       <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
-      <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">
-        <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team.owner?.avatar"
+      <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">
+        <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team.team.owner?.avatar"
              onerror="style.display = 'none'" class="table-image" *ngIf="!configService.isMobile">
-        {{team.owner?.teamName}}
+        {{team.team.owner?.teamName}}
         <span *ngIf="(forecastWeek > 1 || playoffCalculatorService.forceShowRecord) && !configService.isMobile"
-              class="small-text__light" style="padding-left: 5px">{{getActualRecord(team.roster.rosterId)}}</span>
+              class="small-text__light" style="padding-left: 5px">{{getActualRecord(team.team.roster.rosterId)}}</span>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="teamDivision">
       <mat-header-cell *matHeaderCellDef>Team Division</mat-header-cell>
-      <mat-cell *matCellDef="let team">{{sleeperService.selectedLeague.divisionNames[playoffCalculatorService.getDivisionByRosterId(team.roster.rosterId)?.divisionId - 1] || '---'}}</mat-cell>
+      <mat-cell *matCellDef="let team">{{sleeperService.selectedLeague.divisionNames[playoffCalculatorService.getDivisionByRosterId(team.team.roster.rosterId)?.divisionId - 1] || '---'}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="record">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Projected Record</mat-header-cell>
-      <mat-cell *matCellDef="let team">{{getProjRecord(team.roster.rosterId)}}</mat-cell>
+      <mat-cell *matCellDef="let team">{{getProjRecord(team.team.roster.rosterId)}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="makePlayoffs">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Make Playoffs</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakingPlayoffs)}}">
-        <span *ngIf="this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek || (this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakingPlayoffs !== 100)">{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakingPlayoffs)}}</span>
-        <mat-icon *ngIf="this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakingPlayoffs === 100">check</mat-icon>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakingPlayoffs)}}">
+        <span *ngIf="this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek || (this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakingPlayoffs !== 100)">{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakingPlayoffs)}}</span>
+        <mat-icon *ngIf="this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakingPlayoffs === 100">check</mat-icon>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="winDivision">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Win Division</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWinningDivision)}}">
-        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWinningDivision)}}</span>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinningDivision)}}">
+        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinningDivision)}}</span>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="getBye">
       <mat-header-cell *matHeaderCellDef mat-sort-header>1st-Round Bye</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWithBye)}}">
-        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWithBye)}}</span>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWithBye)}}">
+        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWithBye)}}</span>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="winOut">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Run The Table</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesTeamWonOut)}}">
-        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesTeamWonOut)}}</span>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesTeamWonOut)}}">
+        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesTeamWonOut)}}</span>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="worstRecord">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Worst Record</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWithWorstRecord)}}">
-        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWithWorstRecord)}}</span>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWithWorstRecord)}}">
+        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWithWorstRecord)}}</span>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="bestRecord">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Best Record</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWithBestRecord)}}">
-        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWithBestRecord)}}</span>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWithBestRecord)}}">
+        <span>{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWithBestRecord)}}</span>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="makeConfChamp">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Make Semi-Finals</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeConfRd)}}">
-        <span *ngIf="this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek || (this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeConfRd !== 100)">{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeConfRd)}}</span>
-        <mat-icon *ngIf="this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeConfRd === 100">check</mat-icon>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeConfRd)}}">
+        <span *ngIf="this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek || (this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeConfRd !== 100)">{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeConfRd)}}</span>
+        <mat-icon *ngIf="this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeConfRd === 100">check</mat-icon>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="makeChampionship">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Make Finals</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeChampionship)}}">
-        <span *ngIf="this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek || (this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeChampionship !== 100)">{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeChampionship)}}</span>
-        <mat-icon *ngIf="this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeChampionship === 100">check</mat-icon>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeChampionship)}}">
+        <span *ngIf="this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek || (this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesMakeChampionship !== 100)">{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeChampionship)}}</span>
+        <mat-icon *ngIf="this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeChampionship === 100">check</mat-icon>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="winChampionship">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Win Finals</mat-header-cell>
-      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWinChampionship)}}">
-        <span *ngIf="this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek || (this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWinChampionship !== 100)">{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWinChampionship)}}</span>
-        <mat-icon *ngIf="this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWinChampionship === 100">check</mat-icon>
+      <mat-cell *matCellDef="let team" style="background: {{getProbColor(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinChampionship)}}">
+        <span *ngIf="this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek || (this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.roster.rosterId]?.timesWinChampionship !== 100)">{{getDisplayValue(playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinChampionship)}}</span>
+        <mat-icon *ngIf="this.sleeperService.selectedLeague.playoffStartWeek <= this.forecastWeek && playoffCalculatorService.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinChampionship === 100">check</mat-icon>
       </mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="divisionTableCols"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: divisionTableCols;" [ngClass]="{'mat-table-highlight': row.roster.teamMetrics.rank <= sleeperService.selectedLeague.playoffTeams && row.roster.teamMetrics.wins > 0}"></mat-row>
+    <mat-row *matRowDef="let row; columns: divisionTableCols;"></mat-row>
   </mat-table>
 </div>

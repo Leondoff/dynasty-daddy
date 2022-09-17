@@ -69,11 +69,6 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   ngOnInit(): void {
     this.refreshTableDetails();
     // determine sort on init vs on changes to prevent double sorting
-    this.dataSource.sort.sort({
-      id: this.isSuperFlex ? 'sf_trade_value' : 'trade_value',
-      start: 'desc',
-      disableClear: false
-    });
   }
 
   ngOnChanges(): void {
@@ -84,6 +79,11 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
    * refreshes the table
    */
   refreshTableDetails(): void {
+    if (this.sleeperService.selectedLeague != null) {
+      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner',  'trade_value'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
+    } else {
+      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position',  'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
+    }
     this.isSuperFlex = this.selectedLeague?.isSuperflex !== undefined ?
       this.selectedLeague?.isSuperflex : true;
     // create prototype of list and remove players with no value (no data points in over a year)
@@ -100,17 +100,16 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
         case 'trade_value':
           return item.trade_value;
         case 'avg_adp':
-          if (item.avg_adp == null) {
+          if (item.avg_adp === 0) {
             return 'desc' === this.sort.direction ? Number.MIN_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
           }
-          return Number(item.avg_adp);
+          return item.avg_adp;
         default:
           return item[property];
       }
     };
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.updateSuperFlex();
   }
 
   /**
@@ -156,17 +155,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     this.dataSource.data = this.filteredPlayers;
   }
 
-  /**
-   * toggle between superflex or regular trade values
-   */
   updateSuperFlex(): void {
-    this.displayedColumns = [];
-    if (this.selectedLeague) {
-      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', 'avg_adp', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
-    } else {
-      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'halfppr', this.isSuperFlex ? 'sf_trade_value' : 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', this.isSuperFlex ? 'sf_trade_value' : 'trade_value', 'change', 'actions'];
-    }
-
     this.dataSource.sort.sort({
       id: this.isSuperFlex ? 'sf_trade_value' : 'trade_value',
       start: 'desc',

@@ -18,8 +18,9 @@ export class TeamPowerRanking {
   tradeValueOverall: number = 0;
   overallRank: number;
   starterRank: number;
-  sfTradeValueStarter: number = 0;
-  tradeValueStarter: number = 0;
+  adpValueStarter: number = 0;
+  eloAdpValueStarter: number = 0;
+  eloAdpValueChange: number = 0;
   tier: number;
 }
 
