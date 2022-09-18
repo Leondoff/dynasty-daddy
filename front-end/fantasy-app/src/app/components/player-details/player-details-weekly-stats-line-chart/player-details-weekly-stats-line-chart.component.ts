@@ -155,13 +155,22 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
   getADPPlusMinus(player: KTCPlayer): number {
     const varianceValues = [];
 
-    if (player.bb10_adp !== 0) { varianceValues.push(player.bb10_adp); }
-    if (player.drafters_adp !== 0) { varianceValues.push(player.drafters_adp); }
-    if (player.rtsports_adp !== 0) { varianceValues.push(player.rtsports_adp); }
-    if (player.underdog_adp !== 0) { varianceValues.push(player.underdog_adp); }
-    if (player.fantasypro_adp !== 0) { varianceValues.push(player.fantasypro_adp); }
-
-    return Math.round(variance(varianceValues)) / 2 || 0;
+    if (player.bb10_adp !== 0) {
+      varianceValues.push(player.bb10_adp);
+    }
+    if (player.drafters_adp !== 0) {
+      varianceValues.push(player.drafters_adp);
+    }
+    if (player.rtsports_adp !== 0) {
+      varianceValues.push(player.rtsports_adp);
+    }
+    if (player.underdog_adp !== 0) {
+      varianceValues.push(player.underdog_adp);
+    }
+    if (player.fantasypro_adp !== 0) {
+      varianceValues.push(player.fantasypro_adp);
+    }
+    return Math.round(variance(varianceValues) / 2) || 0;
   }
 
   /**

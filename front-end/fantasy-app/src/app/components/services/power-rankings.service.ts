@@ -288,10 +288,10 @@ export class PowerRankingsService {
    * @param endWeek current week to evaluate elo to
    */
   calculateEloAdjustedADPValue(
-    endWeek: number = this.nflService.getCompletedWeekForSeason(this.sleeperService?.selectedLeague?.season
-    )): void {
+    endWeek: number = this.nflService.getCompletedWeekForSeason(this.sleeperService?.selectedLeague?.season)
+  ): void {
     // handles 0 case
-    if (endWeek <= 0) {
+    if (endWeek <= this.sleeperService.selectedLeague.startWeek - 1) {
       this.powerRankings.forEach((team) => {
         team.eloAdpValueStarter = team.adpValueStarter;
         team.eloAdpValueChange = 0;
@@ -305,7 +305,7 @@ export class PowerRankingsService {
       rosterIdMap[team.team.roster.rosterId] = ind;
       team.eloAdpValueStarter = team.adpValueStarter;
     });
-    for (let i = 0; i < endWeek; i++) {
+    for (let i = this.sleeperService.selectedLeague.startWeek - 1; i < endWeek; i++) {
       // process this weeks match ups and set new elo
       this.matchupService.leagueMatchUpUI[i]?.forEach(matchUp => {
         const kValue = Math.max(10, Math.min(40, Math.round(Math.abs(matchUp.team1Points - matchUp.team2Points))));
