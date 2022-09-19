@@ -177,7 +177,7 @@
 </div>
 
 
-<div class="center-text margin-top-50" *ngIf="!sleeperService.leagueLoaded && pageLoaded">
+<div class="center-text margin-top-50" *ngIf="!sleeperService.isLeagueLoaded() && pageLoaded">
   <div class="warning__alert">Cannot fetch team information. Please select a league.</div>
   <br>
   <button mat-raised-button color="warn" routerLink="./home">Choose League</button>

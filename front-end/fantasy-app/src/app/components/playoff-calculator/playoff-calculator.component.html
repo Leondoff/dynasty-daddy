@@ -2,7 +2,7 @@
 <div class="center-text margin-top-10">
   Calculate game probability and playoff odds based on current week. Updated every week to be more accurate.
 </div>
-<div *ngIf="sleeperService.leagueLoaded && playoffCalculatorService.matchUpsWithProb.length != 0 && playoffCalculatorService.divisions.length > 0 && (sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting')" class="margin-top-10 table-container">
+<div *ngIf="sleeperService.isLeagueLoaded() && playoffCalculatorService.matchUpsWithProb.length != 0 && playoffCalculatorService.divisions.length > 0 && (sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting')" class="margin-top-10 table-container">
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
     <mat-tab label="Season" style="overflow: hidden">
       <div class="mid-bold-text margin-top-10 center-text">Season Predictions</div>
@@ -88,12 +88,16 @@
   </div>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="sleeperService.leagueLoaded && playoffCalculatorService.matchUpsWithProb.length == 0 && sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting'">
+<div class="center-text margin-top-50" *ngIf="sleeperService.isLeagueLoaded() && playoffCalculatorService.matchUpsWithProb.length == 0 && sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting'">
   <div class="warning__alert">There was an issue loading match ups. Try navigating to another page and coming back or reloading your league.</div>
   <div class="margin-top-25" ><button mat-flat-button color="warn" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">Reload league</button></div>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="!sleeperService.leagueLoaded && sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting'">
+<div class="center-spinner margin-top-120" *ngIf="sleeperService.leagueStatus === 'LOADING'">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="center-text margin-top-50" *ngIf="sleeperService.leagueStatus === 'NONE'">
   <div class="warning__alert">Cannot generate league analytics cause no league was selected. Please select a league.</div>
   <br>
   <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>

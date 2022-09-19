@@ -36,7 +36,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
   activePlayers: KTCPlayer[] = [];
 
   ngAfterViewInit(): void {
-    if (this.sleeperService.leagueLoaded) {
+    if (this.sleeperService.isLeagueLoaded()) {
       this.playerComparisonService.isSuperFlex = this.sleeperService.selectedLeague?.isSuperflex;
     }
     if (this.playerService.playerValues.length === 0) { this.playerService.loadPlayerValuesForToday(); }
