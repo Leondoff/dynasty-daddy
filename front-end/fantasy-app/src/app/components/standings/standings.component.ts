@@ -94,4 +94,8 @@ export class StandingsComponent extends BaseComponent implements OnInit {
   isTransactionAggComplete(): boolean {
     return JSON.stringify(this.transactionService.transactionAggregate) !== '{}';
   }
+
+  isNaN(num: number): boolean {
+    return isNaN(num);
+  }
 }

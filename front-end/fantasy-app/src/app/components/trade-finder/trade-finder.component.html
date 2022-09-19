@@ -2,7 +2,7 @@
 <div class="center-text margin-top-10">
   Select players to generate potential trades.
 </div>
-<div class="trade-table-container" *ngIf="sleeperService.leagueLoaded">
+<div class="trade-table-container" *ngIf="sleeperService.isLeagueLoaded()">
   <div class="margin-top-10">
     <span class="button-left">
       <mat-form-field appearance="outline" color="accent">
@@ -55,7 +55,11 @@
   </div>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="!sleeperService.leagueLoaded || teamPlayers.length == 0">
+<div class="center-spinner margin-top-120" *ngIf="sleeperService.leagueStatus === 'LOADING'">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="center-text margin-top-50" *ngIf="sleeperService.leagueStatus === 'NONE' || teamPlayers.length == 0">
   <div class="warning__alert">Cannot find any trades. Please select a league.</div>
   <br>
   <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>

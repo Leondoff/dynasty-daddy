@@ -2,10 +2,7 @@ import {Injectable} from '@angular/core';
 import {CompletedDraft, DraftCapital, SleeperData, SleeperLeagueData, SleeperUserData} from '../model/SleeperUser';
 import {SleeperApiService} from './api/sleeper/sleeper-api.service';
 import {NgxSpinnerService} from 'ngx-spinner';
-import {
-  SleeperOwnerData, SleeperPlayoffMatchUp, SleeperRawDraftOrderData, SleeperRawTradePicksData,
-  SleeperRosterData, SleeperTeam, SleeperTeamMatchUpData, SleeperTeamTransactionData, TeamMetrics
-} from '../model/SleeperLeague';
+import {SleeperOwnerData, SleeperPlayoffMatchUp, SleeperRawDraftOrderData, SleeperRawTradePicksData, SleeperRosterData, SleeperTeam, SleeperTeamMatchUpData, SleeperTeamTransactionData, TeamMetrics} from '../model/SleeperLeague';
 import {forkJoin, Observable, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 
@@ -24,7 +21,7 @@ export class SleeperService {
   selectedYear: string;
 
   /** is league loaded */
-  leagueLoaded: boolean = false;
+  leagueStatus: string = 'NONE';
 
   /** selected league team data */
   sleeperTeamDetails: SleeperTeam[];
@@ -44,11 +41,18 @@ export class SleeperService {
   }
 
   /**
+   * returns true if league is loaded
+   */
+  isLeagueLoaded(): boolean {
+    return this.leagueStatus === 'DONE';
+  }
+
+  /**
    * loads team data, roster, and draft picks by league
    * @param selectedLeague selected league
    */
   $loadNewLeague(selectedLeague: SleeperLeagueData): Observable<any> {
-    this.leagueLoaded = false;
+    this.leagueStatus = 'LOADING';
     this.selectedLeague = selectedLeague;
     if (this.selectedLeague.rosterPositions.filter(x => x === 'QB').length > 1) {
       this.selectedLeague.isSuperflex = true;
@@ -258,7 +262,7 @@ export class SleeperService {
    * reset league data
    */
   resetLeague(): void {
-    this.leagueLoaded = false;
+    this.leagueStatus = 'NONE';
     this.selectedLeague = null;
     this.sleeperTeamDetails = [];
     this.completedDrafts = [];

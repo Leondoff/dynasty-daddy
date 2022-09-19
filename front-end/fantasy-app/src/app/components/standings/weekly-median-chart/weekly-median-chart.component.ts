@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
@@ -10,7 +10,7 @@ import {SleeperService} from '../../../services/sleeper.service';
   templateUrl: './weekly-median-chart.component.html',
   styleUrls: ['./weekly-median-chart.component.css']
 })
-export class WeeklyMedianChartComponent implements OnInit {
+export class WeeklyMedianChartComponent implements OnInit, OnChanges {
 
   /** input of array of medians per week */
   @Input()
@@ -63,6 +63,10 @@ export class WeeklyMedianChartComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.generateDataSets();
+  }
+
+  ngOnChanges(): void {
     this.generateDataSets();
   }
 

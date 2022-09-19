@@ -25,13 +25,14 @@
         <span>{{selectedPlayer.age != -1 ? selectedPlayer.age : '??'}} y.o.</span>
       </div>
       <div *ngIf="sleeperService.selectedLeague">
-        <div *ngIf="selectedPlayer.owner">
+        <div *ngIf="sleeperService.isLeagueLoaded() && selectedPlayer.owner">
           <span class="small-text__light disabled__color">Plays on</span>
           <span style="padding-left: 10px" class="link--text__no__underline" [routerLink]="['../../../league/team', selectedPlayer.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">{{selectedPlayer.owner?.teamName || 'None'}}</span>
         </div>
-        <div *ngIf="!selectedPlayer.owner">
+        <div *ngIf="sleeperService.isLeagueLoaded() && !selectedPlayer.owner">
           <span class="small-text__light disabled__color">Free Agent</span>
         </div>
+        <mat-progress-bar *ngIf="sleeperService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent" style="max-width: 200px"></mat-progress-bar>
       </div>
       <br>
       <div class="standings-row">

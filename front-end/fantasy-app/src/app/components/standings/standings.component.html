@@ -2,7 +2,7 @@
 <div class="center-text margin-top-10">
   Team standings from the league with points for and realized points. Realized points is calculated by dividing the actual points for and the max potential points for.
 </div>
-<div *ngIf="sleeperService.leagueLoaded && playoffCalculatorService.divisions.length > 0 && (sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting')" class="margin-top-10">
+<div *ngIf="sleeperService.isLeagueLoaded() && playoffCalculatorService.divisions.length > 0 && (sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting')" class="margin-top-10">
   <div class="standings-row">
     <div *ngFor="let division of playoffCalculatorService.divisions" [ngClass]="{'standings-col': !configService.isMobile}">
     <div
@@ -88,7 +88,7 @@
             <mat-row *matRowDef="let row; columns: closestWinsCols;"></mat-row>
           </mat-table>
         </mat-card>
-        <mat-card fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="100%" class="league-metric__card mat-elevation-z4" *ngIf="matchupService.leagueMedians.length !== 0">
+        <mat-card fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="100%" class="league-metric__card mat-elevation-z4" *ngIf="sleeperService.isLeagueLoaded() && matchupService.leagueMedians.length !== 0 && !isNaN(matchupService.leagueMedians[0])">
           <mat-card-header>
             <mat-card-title>Weekly Medians</mat-card-title>
           </mat-card-header>
@@ -160,8 +160,12 @@
   </mat-tab-group>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="!sleeperService.leagueLoaded && sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting'">
-  <div class="warning__alert">Cannot generate league analytics cause no league was selected or the league hasn't started. Please select a league.</div>
+<div class="center-spinner margin-top-120" *ngIf="sleeperService.leagueStatus === 'LOADING'">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="center-text margin-top-50" *ngIf="sleeperService.leagueStatus === 'NONE'">
+  <div class="warning__alert">Cannot generate league analytics cause no league was selected. Please select a league.</div>
   <br>
   <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
   <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
@@ -173,7 +177,7 @@
   </mat-form-field>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="sleeperService.selectedLeague?.status === 'pre_draft' || sleeperService.selectedLeague?.status === 'drafting'">
+<div class="center-text margin-top-50" *ngIf="(sleeperService.selectedLeague?.status === 'pre_draft' || sleeperService.selectedLeague?.status === 'drafting') && sleeperService.isLeagueLoaded()">
   <div class="warning__alert">Cannot generate league analytics because season hasn't started yet. Please select a different league or year.</div>
   <br>
   <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>

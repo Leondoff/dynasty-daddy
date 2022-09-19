@@ -63,7 +63,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
         this.getSelectedTeam();
       }),
     );
-    if (this.sleeperService.leagueLoaded && this.sleeperService.selectedLeague) {
+    if (this.sleeperService.isLeagueLoaded() && this.sleeperService.selectedLeague) {
       this.getSelectedTeam();
     }
   }

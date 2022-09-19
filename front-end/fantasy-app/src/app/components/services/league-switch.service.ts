@@ -75,7 +75,7 @@ export class LeagueSwitchService extends BaseComponent {
           forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
             this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails)]).subscribe(() => {
             this.sleeperService.selectedLeague = this.selectedLeague;
-            this.sleeperService.leagueLoaded = true;
+            this.sleeperService.leagueStatus = 'DONE';
             this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
             console.timeEnd('Fetch Sleeper League Data');
             this.leagueChanged.next(this.selectedLeague);

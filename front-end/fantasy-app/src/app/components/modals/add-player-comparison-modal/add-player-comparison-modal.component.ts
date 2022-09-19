@@ -140,7 +140,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
     this.filterPosGroup = [true, true, true, true, true, false];
     this.filteredList = this.playerService.playerValues.slice(0, 11);
     // add fantasy owners if league is logged in
-    if (this.sleeperService.leagueLoaded) {
+    if (this.sleeperService.isLeagueLoaded()) {
       this.config.fields.owner = {
         name: 'Fantasy Owner',
         type: 'category',

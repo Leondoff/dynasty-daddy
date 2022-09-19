@@ -40,7 +40,7 @@
 
 </div>
 
-<div class="center-text margin-top-50" *ngIf="!sleeperService.leagueLoaded">
+<div class="center-text margin-top-50" *ngIf="!sleeperService.isLeagueLoaded()">
   <div class="warning__alert">Cannot find drafts. Please select a league.</div>
   <br>
   <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" [routerLink]="['./home']">Choose League</button>
@@ -53,7 +53,7 @@
   </mat-form-field>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="mockDraftService.leagueLoaded && mockDraftService.teamPicks.length == 0 && sleeperService.completedDrafts.length == 0 && sleeperService.upcomingDrafts.length == 0 && sleeperService.leagueLoaded">
+<div class="center-text margin-top-50" *ngIf="mockDraftService.leagueLoaded && mockDraftService.teamPicks.length == 0 && sleeperService.completedDrafts.length == 0 && sleeperService.upcomingDrafts.length == 0 && sleeperService.isLeagueLoaded()">
   <div class="warning__alert">Cannot generate drafts. Please select a different year or league.</div>
   <br>
   <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()">Choose League</button>
@@ -66,7 +66,7 @@
   </mat-form-field>
 </div>
 
-<div *ngIf="sleeperService.leagueLoaded && (!mockDraftService.leagueLoaded || (mockDraftService.selectedDraft == 'upcoming' && mockDraftService.teamPicks.length == 0))">
+<div *ngIf="sleeperService.isLeagueLoaded() && (!mockDraftService.leagueLoaded || (mockDraftService.selectedDraft == 'upcoming' && mockDraftService.teamPicks.length == 0))">
   <div style="min-height: 300px" class="center-spinner">
     <mat-spinner></mat-spinner>
   </div>
