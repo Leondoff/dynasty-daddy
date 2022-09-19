@@ -8,8 +8,9 @@ import {MatchUpUI} from '../model/matchup';
 import {TransactionsService} from '../services/transactions.service';
 import {BaseComponent} from '../base-component.abstract';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import {PowerRankingsService} from "../services/power-rankings.service";
-import {ActivatedRoute} from "@angular/router";
+import {PowerRankingsService} from '../services/power-rankings.service';
+import {ActivatedRoute} from '@angular/router';
+import {NflService} from '../../services/utilities/nfl.service';
 
 @Component({
   selector: 'app-standings',
@@ -24,6 +25,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
               public configService: ConfigService,
               private route: ActivatedRoute,
               public powerRankingsService: PowerRankingsService,
+              private nflService: NflService,
               public leagueSwitchService: LeagueSwitchService,
               public transactionService: TransactionsService) {
     super();
@@ -54,7 +56,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
         console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
         this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague);
       }
-      const endWeek = this.playoffCalculatorService.getStartWeek();
+      const endWeek = this.nflService.getCurrentWeekForSeason(this.sleeperService.selectedLeague?.season);
       if (this.matchupService.leagueMedians.length === 0) {
         this.playoffCalculatorService.calculateLeagueMedians();
       }
@@ -65,7 +67,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
         this.matchupService.getMostPointsForInWeek(this.sleeperService.selectedLeague.startWeek, endWeek);
       }
       if (!this.isTransactionAggComplete()) {
-        this.transactionService.generateTransactionAggregate(this.playoffCalculatorService.getStartWeek());
+        this.transactionService.generateTransactionAggregate(endWeek);
       }
     }
   }
