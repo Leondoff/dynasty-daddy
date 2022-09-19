@@ -19,8 +19,8 @@
                     (change)="updatePlayerFilters()">Picks</mat-checkbox>
     </span>
     <span *ngIf="!configService.isMobile" class="container_spacer"></span>
-    <div [ngClass]="{'button-right': !configService.isMobile, 'margin-top-10': configService.isMobile}">
-      <mat-slide-toggle *ngIf="sleeperService.leagueLoaded" color="primary" [(ngModel)]="showFreeAgents" (change)="updatePlayerFilters()" class="player-value-checkbox-margin">
+    <span [ngClass]="{'button-right': !configService.isMobile, 'margin-top-10': configService.isMobile}">
+      <mat-slide-toggle *ngIf="sleeperService.leagueStatus !== 'NONE'" color="primary" [(ngModel)]="showFreeAgents" (change)="updatePlayerFilters()" class="player-value-checkbox-margin">
         {{configService.isMobile ? 'FA' : 'Free Agents'}}
       </mat-slide-toggle>
           <mat-slide-toggle color="primary" [(ngModel)]="showRookies" (change)="updatePlayerFilters()" class="player-value-checkbox-margin">
@@ -29,7 +29,7 @@
           <mat-slide-toggle color="primary" [(ngModel)]="isSuperFlex" (change)="updateSuperFlex()" class="player-value-checkbox-margin" >
       {{configService.isMobile ? 'SF' : 'SuperFlex'}}
     </mat-slide-toggle>
-    </div>
+    </span>
   </div>
   <div class="margin-top-10 mat-elevation-z8" [hidden]="filteredPlayers.length === 0">
     <mat-table [dataSource]="dataSource" matSort matSortActive="{{isSuperFlex ? 'sf_trade_value' : 'trade_value'}}"
@@ -112,7 +112,10 @@
 
           <ng-container *ngIf="selectedLeague" matColumnDef="owner">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Owner</mat-header-cell>
-            <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">{{element.owner?.ownerName || '---'}}</mat-cell>
+            <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">
+              <div *ngIf="sleeperService.isLeagueLoaded()">{{element.owner?.ownerName || '---'}}</div>
+              <mat-progress-bar *ngIf="sleeperService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent" style="max-width: 200px"></mat-progress-bar>
+            </mat-cell>
           </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

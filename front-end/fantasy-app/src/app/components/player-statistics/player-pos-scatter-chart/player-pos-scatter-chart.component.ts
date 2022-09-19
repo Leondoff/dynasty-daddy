@@ -91,9 +91,9 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
     const pointBackgroundColors = [];
     const pointBorderColors = [];
     const playerData = this.players?.map(player => {
-      const isOwnedByUser = this.sleeperService.leagueLoaded &&
+      const isOwnedByUser = this.sleeperService.isLeagueLoaded() &&
         player.owner && player.owner?.userId === this.sleeperService.sleeperUser?.userData?.user_id;
-      const isFreeAgent = this.sleeperService.leagueLoaded && !player.owner;
+      const isFreeAgent = this.sleeperService.isLeagueLoaded() && !player.owner;
       pointBackgroundColors.push(this.colorService.getPointBackgroundColor(this.highlightFreeAgents,
         this.highlightYourTeam, isOwnedByUser, isFreeAgent));
       pointBorderColors.push(this.colorService.getPointBorderColor(this.highlightFreeAgents, this.highlightYourTeam,
