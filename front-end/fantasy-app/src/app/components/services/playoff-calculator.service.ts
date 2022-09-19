@@ -854,7 +854,7 @@ export class PlayoffCalculatorService {
    * @private
    */
   public getStartWeek(): number {
-    return this.nflService.getCompletedWeekForSeason(this.sleeperService?.selectedLeague?.season)
+    return this.nflService.getCurrentWeekForSeason(this.sleeperService?.selectedLeague?.season);
   }
 
   /**

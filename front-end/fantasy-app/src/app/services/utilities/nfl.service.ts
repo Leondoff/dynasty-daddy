@@ -99,4 +99,16 @@ export class NflService {
     }
     return this.stateOfNFL.completedWeek;
   }
+
+  /**
+   * returns the current week for a season
+   * @param season season of selected league
+   */
+  getCurrentWeekForSeason(season: string): number {
+    const seasonNum = Number(season);
+    if (new Date().getFullYear() > seasonNum) {
+      return seasonNum < 2021 ? 17 : 18;
+    }
+    return this.stateOfNFL.completedWeek + 1;
+  }
 }

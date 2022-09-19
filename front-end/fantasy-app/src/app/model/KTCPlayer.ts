@@ -40,6 +40,7 @@ export class KTCPlayer {
   drafters_adp: number = null;
 }
 
+
 export class KTCPlayerDataPoint {
   name_id: string;
   full_name: string;
