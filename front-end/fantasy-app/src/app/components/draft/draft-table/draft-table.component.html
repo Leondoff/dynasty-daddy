@@ -1,4 +1,4 @@
-<div *ngIf="mockDraftService.teamPicks.length > 0 && mockDraftService.leagueLoaded && dataSource" class="margin-top-10">
+<div *ngIf="mockDraftService.teamPicks.length > 0 && sleeperService.isLeagueLoaded() && dataSource" class="margin-top-10">
   <mat-table [dataSource]="dataSource">
 
     <!-- Name Column -->

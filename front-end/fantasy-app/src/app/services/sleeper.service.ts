@@ -245,7 +245,9 @@ export class SleeperService {
                 }
               });
             });
-            this.completedDrafts.push(new CompletedDraft(draft, picks));
+            if (this.completedDrafts.filter(d => d.draft.draftId === draft.draftId).length === 0) {
+              this.completedDrafts.push(new CompletedDraft(draft, picks));
+            }
           }
         );
       }

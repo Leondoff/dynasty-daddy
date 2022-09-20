@@ -59,7 +59,7 @@
   <mat-spinner></mat-spinner>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="sleeperService.leagueStatus === 'NONE' || teamPlayers.length == 0">
+<div class="center-text margin-top-50" *ngIf="sleeperService.leagueStatus === 'NONE' || (sleeperService.leagueStatus === 'DONE' && teamPlayers.length === 0)">
   <div class="warning__alert">Cannot find any trades. Please select a league.</div>
   <br>
   <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>

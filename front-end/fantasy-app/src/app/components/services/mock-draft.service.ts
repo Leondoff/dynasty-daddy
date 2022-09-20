@@ -19,9 +19,6 @@ export class MockDraftService {
   /** currently selected draft */
   selectedDraft: CompletedDraft | string;
 
-  /** is league draft data loaded. */
-  leagueLoaded: boolean = false;
-
   /** current filter for mock draft */
   mockDraftConfig: string = 'player';
 
@@ -31,7 +28,7 @@ export class MockDraftService {
   /** state of custom selected players */
   customSelectedPlayers: KTCPlayer[] = [];
 
-  constructor(private sleeperService: SleeperService) {
+  constructor(public sleeperService: SleeperService) {
   }
 
   /**
@@ -121,7 +118,6 @@ export class MockDraftService {
     this.selectedDraft = null;
     this.selectablePlayers = [];
     this.teamPicks = [];
-    this.leagueLoaded = false;
     this.mockDraftConfig = 'player';
     this.valueSelectedPlayers = [];
     this.customSelectedPlayers = [];
