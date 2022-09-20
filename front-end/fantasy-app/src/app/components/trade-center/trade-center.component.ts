@@ -15,7 +15,6 @@ import {TeamPowerRanking} from '../model/powerRankings';
 import {PlayerComparisonService} from '../services/player-comparison.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import {NgxSpinnerService} from 'ngx-spinner';
 import {DisplayService} from '../../services/utilities/display.service';
 
 @Component({
@@ -94,7 +93,6 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     public powerRankingsService: PowerRankingsService,
     public playerComparisonService: PlayerComparisonService,
     public leagueSwitchService: LeagueSwitchService,
-    public spinner: NgxSpinnerService,
     public displayService: DisplayService,
     private router: Router,
     private route: ActivatedRoute
@@ -393,7 +391,6 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * opens trade package in player comparison service.
    */
   async openPlayerComparisonPage(): Promise<any> {
-    this.spinner.show();
     this.playerComparisonService.selectedPlayers = [];
     this.playerComparisonService.group2SelectedPlayers = [];
     this.playerComparisonService.isGroupMode = true;
@@ -409,7 +406,6 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
         queryParams: this.leagueSwitchService.buildQueryParams()
       }
     );
-    this.spinner.hide();
   }
 
   /**

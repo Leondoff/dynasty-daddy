@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {CompletedDraft, DraftCapital, SleeperData, SleeperLeagueData, SleeperUserData} from '../model/SleeperUser';
 import {SleeperApiService} from './api/sleeper/sleeper-api.service';
-import {NgxSpinnerService} from 'ngx-spinner';
 import {SleeperOwnerData, SleeperPlayoffMatchUp, SleeperRawDraftOrderData, SleeperRawTradePicksData, SleeperRosterData, SleeperTeam, SleeperTeamMatchUpData, SleeperTeamTransactionData, TeamMetrics} from '../model/SleeperLeague';
 import {forkJoin, Observable, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
@@ -21,7 +20,7 @@ export class SleeperService {
   selectedYear: string;
 
   /** is league loaded */
-  leagueStatus: string = 'NONE';
+  leagueStatus: string = 'LOADING';
 
   /** selected league team data */
   sleeperTeamDetails: SleeperTeam[];
@@ -37,7 +36,7 @@ export class SleeperService {
 
   playoffMatchUps: SleeperPlayoffMatchUp[] = [];
 
-  constructor(private sleeperApiService: SleeperApiService, private spinner: NgxSpinnerService) {
+  constructor(private sleeperApiService: SleeperApiService) {
   }
 
   /**
@@ -134,25 +133,21 @@ export class SleeperService {
    * @param year
    */
   loadNewUser(userName: string, year: string): Observable<any> {
-    this.spinner.show();
     console.time('Fetch Sleeper User Data');
     this.selectedYear = year;
     try {
       this.sleeperApiService.getSleeperUserInformation(userName).subscribe((userData: SleeperUserData) => {
         if (userData == null) {
-          this.spinner.hide();
           this.sleeperUser = null;
           throw new Error('User data could not be found. Try again!');
         }
         this.sleeperApiService.getSleeperLeaguesByUserID(userData.user_id, year).subscribe((response: SleeperLeagueData[]) => {
           this.sleeperUser = {leagues: response, userData};
-          this.spinner.hide();
           console.timeEnd('Fetch Sleeper User Data');
           return of();
         });
       });
     } catch (e: any) {
-      this.spinner.hide();
       console.error('Failed to get data for user ', e);
       return of();
     }
@@ -262,7 +257,6 @@ export class SleeperService {
    * reset league data
    */
   resetLeague(): void {
-    this.leagueStatus = 'NONE';
     this.selectedLeague = null;
     this.sleeperTeamDetails = [];
     this.completedDrafts = [];

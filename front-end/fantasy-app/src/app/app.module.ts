@@ -10,7 +10,6 @@ import {HomeComponent} from './components/home/home.component';
 import {PowerRankingsComponent} from './components/power-rankings/power-rankings.component';
 import {AppRoutingModule} from './app-routing.module';
 import {HeaderComponent} from './components/header/header.component';
-import {NgxSpinnerModule} from 'ngx-spinner';
 import {KtcTableComponent} from './components/player-values/ktc-table/ktc-table.component';
 import {PlayerValuesComponent} from './components/player-values/player-values.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
@@ -145,7 +144,6 @@ let UniversalDeviceDetectorService;
         MatToolbarModule,
         MatIconModule,
         MatButtonModule,
-        NgxSpinnerModule,
         MatTableModule,
         MatPaginatorModule,
         MatSortModule,
