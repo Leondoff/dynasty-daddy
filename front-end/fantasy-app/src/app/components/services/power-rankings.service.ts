@@ -313,7 +313,7 @@ export class PowerRankingsService {
       rosterIdMap[team.team.roster.rosterId] = ind;
       team.eloAdpValueStarter = team.adpValueStarter;
     });
-    for (let i = this.sleeperService.selectedLeague.startWeek - 1; i < endWeek; i++) {
+    for (let i = 0; i < endWeek - (this.sleeperService.selectedLeague.startWeek - 1); i++) {
       // process this weeks match ups and set new elo
       this.matchupService.leagueMatchUpUI[i]?.forEach(matchUp => {
         const kValue = Math.max(10, Math.min(40, Math.round(Math.abs(matchUp.team1Points - matchUp.team2Points))));
