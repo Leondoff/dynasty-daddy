@@ -31,11 +31,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
     } else {
       this.playersService.loadPlayerValuesForToday();
     }
-    this.addSubscriptions(this.playersService.$currentPlayerValuesLoaded.subscribe(() => {
-        if (this.sleeperService.sleeperTeamDetails) {
-          this.initServices();
-        }
-      }),
+    this.addSubscriptions(
       this.leagueSwitchService.leagueChanged.pipe(delay(1000)).subscribe(() => {
           this.initServices();
         }
@@ -62,7 +58,6 @@ export class DraftComponent extends BaseComponent implements OnInit {
     } else {
       this.mockDraftService.selectedDraft = this.sleeperService.completedDrafts[0] || null;
     }
-    this.mockDraftService.leagueLoaded = true;
   }
 
   /**
