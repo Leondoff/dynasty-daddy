@@ -5,7 +5,6 @@ import {PlayerComparison} from '../model/playerComparison';
 import {ChartDataSets} from 'chart.js';
 import {Label} from 'ng2-charts';
 import {KTCApiService} from '../../services/api/ktc-api.service';
-import {NgxSpinnerService} from 'ngx-spinner';
 import {PlayerService} from '../../services/player.service';
 
 @Injectable({
@@ -56,7 +55,6 @@ export class PlayerComparisonService {
 
   constructor(
     private ktcApiService: KTCApiService,
-    private spinner: NgxSpinnerService,
     private playerService: PlayerService
   ) {
   }

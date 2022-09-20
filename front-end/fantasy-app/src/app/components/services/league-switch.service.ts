@@ -1,4 +1,3 @@
-import {NgxSpinnerService} from 'ngx-spinner';
 import {SleeperApiService} from '../../services/api/sleeper/sleeper-api.service';
 import {SleeperService} from '../../services/sleeper.service';
 import {PowerRankingsService} from './power-rankings.service';
@@ -32,8 +31,7 @@ export class LeagueSwitchService extends BaseComponent {
   /** timestamp of last time refresh was called */
   lastTimeRefreshed: Date;
 
-  constructor(private spinner: NgxSpinnerService,
-              private sleeperApiService: SleeperApiService,
+  constructor(private sleeperApiService: SleeperApiService,
               private sleeperService: SleeperService,
               private powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
@@ -56,8 +54,8 @@ export class LeagueSwitchService extends BaseComponent {
    * @param value league data
    */
   loadLeague(value: SleeperLeagueData): void {
+    this.sleeperService.leagueStatus = 'LOADING';
     this.selectedLeague = value;
-    this.spinner.show();
     this.sleeperService.resetLeague();
     this.powerRankingService.reset();
     this.mockDraftService.resetLeague();
@@ -81,7 +79,6 @@ export class LeagueSwitchService extends BaseComponent {
             this.leagueChanged.next(this.selectedLeague);
             this.lastTimeRefreshed = new Date();
             this.updateQueryParams();
-            this.spinner.hide();
           });
 
         });
@@ -106,7 +103,6 @@ export class LeagueSwitchService extends BaseComponent {
     this.sleeperService.selectedYear = year;
     this.logRocketService.identifySession(user);
     this.sleeperService.resetLeague();
-
   }
 
   /**
@@ -136,6 +132,9 @@ export class LeagueSwitchService extends BaseComponent {
           this.loadLeagueWithLeagueId(league);
         })
       );
+    }
+    if (!league && !this.selectedLeague) {
+      this.sleeperService.leagueStatus = 'NONE';
     }
   }
 

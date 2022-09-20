@@ -53,7 +53,7 @@
           <br>
           <mat-form-field appearance="standard" color="accent" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
             <mat-label>Select a league</mat-label>
-            <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
+            <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)" [disabled]="sleeperService.leagueStatus === 'LOADING'">
               <mat-option *ngFor="let league of sleeperService.sleeperUser?.leagues"
                           [value]="league">{{league.name}}</mat-option>
             </mat-select>
@@ -80,7 +80,11 @@
                 color="accent" (click)="loginWithDemo()">Try a Demo
         </button>
       </div>
-      <div class="margin-top-25" *ngIf="sleeperService.sleeperTeamDetails && sleeperService.sleeperTeamDetails.length > 0">
+      <div *ngIf="sleeperService.leagueStatus === 'LOADING'" class="center-spinner margin-top-25">
+        <mat-spinner [diameter]="50"></mat-spinner>
+      </div>
+      <div *ngIf="sleeperService.isLeagueLoaded()">
+      <div class="margin-top-25">
         Congratulations<span class="warning__alert" *ngIf="sleeperService.sleeperUser"> {{sleeperService.sleeperUser?.userData.username}}</span>! The
         <span class="warning__alert">{{leagueSwitchService.selectedLeague.season}}</span> season of
         <span class="warning__alert">{{leagueSwitchService.selectedLeague.name}}</span> was loaded successfully!
@@ -92,6 +96,7 @@
                 color="accent" (click)="loginWithPrevSeason()">View {{leagueSwitchService.selectedLeague.season - 1}} Season
         </button>
       </div>
+    </div>
     </div>
     <div [ngClass]="{'flex-item-home': !configService.isMobile, 'margin-top-50': configService.isMobile}">
       <div class="center-text">

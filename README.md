@@ -60,7 +60,6 @@ First, clone repo and open up in your preferred IDE.
 - simple-statistics - statistics and probability calculations
 - angular2-query-builder - query builder for player comparison advanced search
 - ngx-device-detector - detects if using mobile device, tablet, or desktop
-- ngx-spinner - displays spinner when waiting for api calls to return
 - ngx-mat-select-search - custom mat select search box with dropdown
 
 ## Deployment

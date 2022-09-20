@@ -2,7 +2,6 @@
 import {Injectable} from '@angular/core';
 import {KTCPlayer} from '../model/KTCPlayer';
 import {KTCApiService} from './api/ktc-api.service';
-import {NgxSpinnerService} from 'ngx-spinner';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {SleeperTeam} from '../model/SleeperLeague';
 import {SleeperApiService} from './api/sleeper/sleeper-api.service';
@@ -56,7 +55,6 @@ export class PlayerService {
 
   constructor(private ktcApiService: KTCApiService,
               private sleeperApiService: SleeperApiService,
-              private spinner: NgxSpinnerService,
               private nflService: NflService) {
   }
 
@@ -64,7 +62,6 @@ export class PlayerService {
    * loads all player data upon entering site
    */
   loadPlayerValuesForToday(): void {
-    this.spinner.show();
     this.ktcApiService.getPlayerValuesForToday().subscribe((currentPlayers) => {
       this.unfilteredPlayerValues = currentPlayers;
       this.playerValues = currentPlayers.filter(player => {
@@ -75,17 +72,14 @@ export class PlayerService {
         }
       });
       this.$loadPlayerStatsForSeason().subscribe((playerStatsResponse) => {
-        this.spinner.hide();
         console.log('state of nfl: ', this.nflService.stateOfNFL);
         this.$currentPlayerValuesLoaded.next();
       }, sleeperError => {
         console.error(`Could Not Load Player Points from sleeper - ${sleeperError}`);
-        this.spinner.hide();
       });
       return of(this.playerValues);
     }, error => {
       console.error(`Could Not Load Player Values - ${error}`);
-      this.spinner.hide();
       return of(null);
     });
   }

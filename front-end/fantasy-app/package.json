@@ -37,7 +37,6 @@
     "ng2-charts": "^2.4.3",
     "ngx-device-detector": "^2.1.1",
     "ngx-mat-select-search": "^3.3.3",
-    "ngx-spinner": "^11.0.1",
     "path": "^0.12.7",
     "rxjs": "~6.6.0",
     "simple-statistics": "^7.7.0",
