@@ -75,11 +75,13 @@ import {TradeCenterComponent} from './components/trade-center/trade-center.compo
 import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import { TradeFinderComponent } from './components/trade-finder/trade-finder.component';
-import { TradeFinderTableComponent } from './components/trade-finder/trade-finder-table/trade-finder-table.component';
-import { TradeFinderCardComponent } from './components/trade-finder/trade-finder-card/trade-finder-card.component';
-import { TeamTiersChartComponent } from './components/standings/team-tiers-chart/team-tiers-chart.component';
+import {TradeFinderComponent} from './components/trade-finder/trade-finder.component';
+import {TradeFinderTableComponent} from './components/trade-finder/trade-finder-table/trade-finder-table.component';
+import {TradeFinderCardComponent} from './components/trade-finder/trade-finder-card/trade-finder-card.component';
+import {TeamTiersChartComponent} from './components/standings/team-tiers-chart/team-tiers-chart.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {NgxGoogleAnalyticsModule, NgxGoogleAnalyticsRouterModule} from 'ngx-google-analytics';
+import {environment} from '../environments';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -136,43 +138,45 @@ let UniversalDeviceDetectorService;
     TradeFinderCardComponent,
     TeamTiersChartComponent,
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        HttpClientModule,
-        AppRoutingModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatButtonModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatBadgeModule,
-        NgxMatSelectSearchModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatDividerModule,
-        MatMenuModule,
-        MatButtonToggleModule,
-        MatSlideToggleModule,
-        MatCheckboxModule,
-        MatTabsModule,
-        ChartsModule,
-        MatChipsModule,
-        MatDialogModule,
-        DragDropModule,
-        MatTooltipModule,
-        MatCardModule,
-        FlexLayoutModule,
-        MatRadioModule,
-        QueryBuilderModule,
-        ReactiveFormsModule,
-        MatSliderModule,
-        MatProgressSpinnerModule,
-        MatProgressBarModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    AppRoutingModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatBadgeModule,
+    NgxMatSelectSearchModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDividerModule,
+    MatMenuModule,
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    MatCheckboxModule,
+    MatTabsModule,
+    ChartsModule,
+    MatChipsModule,
+    MatDialogModule,
+    DragDropModule,
+    MatTooltipModule,
+    MatCardModule,
+    FlexLayoutModule,
+    MatRadioModule,
+    QueryBuilderModule,
+    ReactiveFormsModule,
+    MatSliderModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    NgxGoogleAnalyticsModule.forRoot(environment.gaMeasurementId),
+    NgxGoogleAnalyticsRouterModule
+  ],
   providers: [EndpointsService,
     ConfigService,
     StartupService,
