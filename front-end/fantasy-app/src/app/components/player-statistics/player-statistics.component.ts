@@ -6,7 +6,7 @@ import {ConfigService} from '../../services/init/config.service';
 import {SleeperService} from '../../services/sleeper.service';
 import {MatOptionSelectionChange} from '@angular/material/core';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-player-statistics',
@@ -138,7 +138,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
         this.playersLoaded = true;
         this.updatePlayerFilters();
       }),
-      this.leagueSwitchService.leagueChanged.subscribe(() => {
+      this.leagueSwitchService.leagueChanged$.subscribe(() => {
         this.updatePlayerFilters();
       }),
       this.route.queryParams.subscribe(params => {

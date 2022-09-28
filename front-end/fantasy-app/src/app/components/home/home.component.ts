@@ -55,7 +55,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
       }),
-      this.leagueSwitchService.leagueChanged.subscribe(_ => {
+      this.leagueSwitchService.leagueChanged$.subscribe(_ => {
         this.usernameInput =
           this.sleeperService.sleeperUser?.userData?.username == null || this.sleeperService.sleeperUser?.userData?.username === 'undefined'
             ? '' : this.sleeperService.sleeperUser?.userData?.username;

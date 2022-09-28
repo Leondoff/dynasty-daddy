@@ -58,7 +58,7 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
         this.setUpTradeFinder();
       }),
-      this.leagueSwitchService.leagueChanged.subscribe(() => {
+      this.leagueSwitchService.leagueChanged$.subscribe(() => {
         this.setUpTradeFinder();
       }),
       this.route.queryParams.subscribe(params => {

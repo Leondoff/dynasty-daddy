@@ -27,6 +27,5 @@ export class AppComponent implements OnInit{
     }
 
     this.configService.checkIfMobile();
-    console.log('isMobile ' + this.configService.isMobile);
   }
 }

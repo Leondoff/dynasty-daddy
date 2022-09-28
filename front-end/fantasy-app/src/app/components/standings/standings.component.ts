@@ -41,7 +41,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.setUpStandings();
-    this.addSubscriptions(this.leagueSwitchService.leagueChanged.subscribe(() => {
+    this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
         this.setUpStandings();
       }
     ), this.route.queryParams.subscribe(params => {

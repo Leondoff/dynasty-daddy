@@ -11,6 +11,7 @@ import {ConfigService} from '../../../services/init/config.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
 import {BaseComponent} from '../../base-component.abstract';
 import {SleeperLeagueData} from '../../../model/SleeperUser';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-ktc-table',
@@ -54,8 +55,13 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   /** show free agents, only show if league is loaded */
   showFreeAgents: boolean = false;
 
+  /** behavior subject for search */
+  playerSearch$ = new BehaviorSubject<string>('');
+
   /** search value from search box */
   searchVal: string;
+
+  pageIndex: number = 0;
 
   constructor(public sleeperService: SleeperService,
               public playerService: PlayerService,
@@ -67,8 +73,20 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   }
 
   ngOnInit(): void {
-    this.refreshTableDetails();
-    // determine sort on init vs on changes to prevent double sorting
+    this.addSubscriptions(
+      // reset settings when changing league (we need to load league with players before filtering)
+      this.leagueSwitchService.leagueChanged$.subscribe(() => {
+        this.showFreeAgents = false;
+        this.showRookies = false;
+        this.filterPosGroup = [true, true, true, true, true];
+        this.pageIndex = 0;
+
+        this.refreshTableDetails();
+      }),
+      this.playerSearch$.subscribe(value => {
+        this.updatePlayerFilters();
+      })
+    );
   }
 
   ngOnChanges(): void {
@@ -80,9 +98,9 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
    */
   refreshTableDetails(): void {
     if (this.sleeperService.selectedLeague != null) {
-      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner',  'trade_value'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
+      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner', 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
     } else {
-      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position',  'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
+      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
     }
     this.isSuperFlex = this.selectedLeague?.isSuperflex !== undefined ?
       this.selectedLeague?.isSuperflex : true;
@@ -109,6 +127,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
       }
     };
     this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator.pageIndex = this.pageIndex;
     this.dataSource.sort = this.sort;
   }
 
@@ -151,7 +170,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
             && this.selectedLeague));
       });
     }
-    this.paginator.pageIndex = 0;
+    this.paginator.pageIndex = this.pageIndex;
     this.dataSource.data = this.filteredPlayers;
   }
 
