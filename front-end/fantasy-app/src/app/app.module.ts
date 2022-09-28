@@ -82,6 +82,7 @@ import {TeamTiersChartComponent} from './components/standings/team-tiers-chart/t
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {NgxGoogleAnalyticsModule, NgxGoogleAnalyticsRouterModule} from 'ngx-google-analytics';
 import {environment} from '../environments';
+import { AdsenseModule } from 'ng2-adsense';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -175,7 +176,8 @@ let UniversalDeviceDetectorService;
     MatProgressSpinnerModule,
     MatProgressBarModule,
     NgxGoogleAnalyticsModule.forRoot(environment.gaMeasurementId),
-    NgxGoogleAnalyticsRouterModule
+    NgxGoogleAnalyticsRouterModule,
+    AdsenseModule.forRoot()
   ],
   providers: [EndpointsService,
     ConfigService,

@@ -61,6 +61,8 @@ First, clone repo and open up in your preferred IDE.
 - angular2-query-builder - query builder for player comparison advanced search
 - ngx-device-detector - detects if using mobile device, tablet, or desktop
 - ngx-mat-select-search - custom mat select search box with dropdown
+- ngx-google-analytics - used to track user metadata and build reports on features
+- ng2-adsense - used to add google ads to the application to help pay server cost :)
 
 ## Deployment
 - CI/CD using Github Actions to build and push images to docker hub when a PR to main is created.
