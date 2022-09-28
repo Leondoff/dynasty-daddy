@@ -8,7 +8,7 @@ import {PlayoffCalculatorService} from './playoff-calculator.service';
 import {ConfigService} from '../../services/init/config.service';
 import {TransactionsService} from './transactions.service';
 import {SleeperLeagueData} from '../../model/SleeperUser';
-import {forkJoin, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {BaseComponent} from '../base-component.abstract';
 import {NflService} from '../../services/utilities/nfl.service';
@@ -26,7 +26,9 @@ export class LeagueSwitchService extends BaseComponent {
   selectedLeague: SleeperLeagueData;
 
   /** event whenever a league has finished changing */
-  leagueChanged = new Subject<SleeperLeagueData>();
+  leagueChanged$ = new Subject<SleeperLeagueData>();
+
+  extraParams$ = new BehaviorSubject<{}>({});
 
   /** timestamp of last time refresh was called */
   lastTimeRefreshed: Date;
@@ -76,7 +78,7 @@ export class LeagueSwitchService extends BaseComponent {
             this.sleeperService.leagueStatus = 'DONE';
             this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
             console.timeEnd('Fetch Sleeper League Data');
-            this.leagueChanged.next(this.selectedLeague);
+            this.leagueChanged$.next(this.selectedLeague);
             this.lastTimeRefreshed = new Date();
             this.updateQueryParams();
           });
@@ -143,12 +145,9 @@ export class LeagueSwitchService extends BaseComponent {
    * TODO create separate request interceptor that handles logic
    */
   buildQueryParams(): {} {
-    const queryParams: any = {};
+    const queryParams: any = this.extraParams$.value;
     if (this.sleeperService.selectedLeague) {
       queryParams.league = this.sleeperService.selectedLeague.leagueId;
-    }
-    if (this.sleeperService.selectedYear) {
-      queryParams.year = this.sleeperService.selectedYear;
     }
     if (this.sleeperService.sleeperUser?.userData?.username !== 'undefined') {
       queryParams.user = this.sleeperService.sleeperUser?.userData?.username;

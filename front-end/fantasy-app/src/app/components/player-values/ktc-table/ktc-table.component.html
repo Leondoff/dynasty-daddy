@@ -2,7 +2,7 @@
   <div>
     <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" color="accent">
       <mat-label>Search Player</mat-label>
-      <input matInput type="text" (keyup)="updatePlayerFilters()" [(ngModel)]="searchVal">
+      <input matInput type="text" (keyup)="playerSearch$.next(searchVal)" [(ngModel)]="searchVal">
     </mat-form-field>
   </div>
   <div [ngClass]="{'center-text': configService.isMobile}">

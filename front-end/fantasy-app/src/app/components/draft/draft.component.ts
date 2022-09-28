@@ -32,7 +32,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
       this.playersService.loadPlayerValuesForToday();
     }
     this.addSubscriptions(
-      this.leagueSwitchService.leagueChanged.pipe(delay(1000)).subscribe(() => {
+      this.leagueSwitchService.leagueChanged$.pipe(delay(1000)).subscribe(() => {
           this.initServices();
         }
       ),

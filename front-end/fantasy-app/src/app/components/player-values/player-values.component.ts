@@ -36,7 +36,6 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
         this.leagueSwitchService.loadFromQueryParams(params);
       })
     );
-
   }
 
 }

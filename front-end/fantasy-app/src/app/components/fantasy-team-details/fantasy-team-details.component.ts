@@ -59,7 +59,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
       }),
-      this.leagueSwitchService.leagueChanged.subscribe(() => {
+      this.leagueSwitchService.leagueChanged$.subscribe(() => {
         this.getSelectedTeam();
       }),
     );

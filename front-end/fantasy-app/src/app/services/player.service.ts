@@ -72,7 +72,6 @@ export class PlayerService {
         }
       });
       this.$loadPlayerStatsForSeason().subscribe((playerStatsResponse) => {
-        console.log('state of nfl: ', this.nflService.stateOfNFL);
         this.$currentPlayerValuesLoaded.next();
       }, sleeperError => {
         console.error(`Could Not Load Player Points from sleeper - ${sleeperError}`);
