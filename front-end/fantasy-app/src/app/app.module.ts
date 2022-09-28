@@ -177,7 +177,10 @@ let UniversalDeviceDetectorService;
     MatProgressBarModule,
     NgxGoogleAnalyticsModule.forRoot(environment.gaMeasurementId),
     NgxGoogleAnalyticsRouterModule,
-    AdsenseModule.forRoot()
+    AdsenseModule.forRoot({
+      adClient: environment.adSenseClientId,
+      adSlot: environment.adSlot,
+    })
   ],
   providers: [EndpointsService,
     ConfigService,
