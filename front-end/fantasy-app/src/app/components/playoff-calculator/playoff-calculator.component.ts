@@ -73,7 +73,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
 
   ngOnInit(): void {
     this.initPlayoffCalc();
-    this.addSubscriptions(this.leagueSwitchService.leagueChanged.subscribe(() => {
+    this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
           this.initPlayoffCalc();
         }
       ), this.route.queryParams.subscribe(params => {

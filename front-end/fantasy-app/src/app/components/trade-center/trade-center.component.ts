@@ -109,7 +109,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
         this.initializeTradeCalculator();
       }),
-      this.leagueSwitchService.leagueChanged.subscribe(() => {
+      this.leagueSwitchService.leagueChanged$.subscribe(() => {
         this.switchLeagueTradePackage();
       }),
       this.route.queryParams.subscribe(params => {
