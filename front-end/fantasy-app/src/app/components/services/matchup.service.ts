@@ -35,8 +35,8 @@ export class MatchupService {
    * initializes matchup data
    * @param selectedLeague selected League data
    */
-  initMatchUpCharts(selectedLeague: SleeperLeagueData): Observable<any> {
-    return forkJoin([this.generateWeeklyRecords(selectedLeague),
+  initMatchUpCharts(selectedLeague: SleeperLeagueData, completedWeek: number = null): Observable<any> {
+    return forkJoin([this.generateWeeklyRecords(selectedLeague, completedWeek || selectedLeague.playoffStartWeek),
       this.generateScheduleComparison(selectedLeague),
       this.calculateLeagueMatchUps(selectedLeague)]).pipe(() => {
         return of(true);
@@ -49,10 +49,10 @@ export class MatchupService {
    * helper to generate all weekly records
    * @param selectedLeague league data
    */
-  generateWeeklyRecords(selectedLeague: SleeperLeagueData): Observable<any[]> {
+  generateWeeklyRecords(selectedLeague: SleeperLeagueData, completedWeek: number): Observable<any[]> {
     this.weeklyComparison = [];
     for (let rosterId = 1; rosterId < selectedLeague.totalRosters + 1; rosterId++) {
-      this.weeklyComparison.push(this.calculateWeeklyRecordsForTeam(selectedLeague, rosterId));
+      this.weeklyComparison.push(this.calculateWeeklyRecordsForTeam(selectedLeague, rosterId, completedWeek));
     }
     return of(this.weeklyComparison);
   }
@@ -158,7 +158,7 @@ export class MatchupService {
    * @param rosterId selected roster
    * @private
    */
-  private calculateWeeklyRecordsForTeam(selectedLeague: SleeperLeagueData, rosterId: number): WeeklyRecordComp {
+  private calculateWeeklyRecordsForTeam(selectedLeague: SleeperLeagueData, rosterId: number, completedWeek: number): WeeklyRecordComp {
     const weeklyRecords = {};
     let totalWins = 0;
     let totalLosses = 0;
@@ -167,7 +167,7 @@ export class MatchupService {
       let wins = 0;
       let losses = 0;
       let ties = 0;
-      if (selectedLeague.leagueMatchUps && selectedLeague.leagueMatchUps[week] !== undefined) {
+      if (selectedLeague.leagueMatchUps && selectedLeague.leagueMatchUps[week] !== undefined && week <= completedWeek) {
         const teamPoints = selectedLeague.leagueMatchUps[week]?.filter(matchup => {
           return matchup.rosterId === rosterId;
         })[0]?.points;

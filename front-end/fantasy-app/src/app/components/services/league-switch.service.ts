@@ -71,7 +71,10 @@ export class LeagueSwitchService extends BaseComponent {
         this.sleeperService.sleeperTeamDetails.map((team) => {
           this.playersService.generateRoster(team);
         });
-        this.matchupService.initMatchUpCharts(this.selectedLeague).subscribe(() => {
+        this.matchupService.initMatchUpCharts(
+          this.selectedLeague,
+          this.nflService.getCompletedWeekForSeason(this.selectedLeague.season)
+        ).subscribe(() => {
           forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
             this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails)]).subscribe(() => {
             this.sleeperService.selectedLeague = this.selectedLeague;

@@ -6,6 +6,7 @@ import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/
 import {MatchupService} from '../../services/matchup.service';
 import {SleeperTeam} from '../../../model/SleeperLeague';
 import {SleeperService} from '../../../services/sleeper.service';
+import {NflService} from "../../../services/utilities/nfl.service";
 
 @Component({
   selector: 'app-fantasy-team-details-weekly-points-chart',
@@ -74,14 +75,15 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
   public lineChartType = 'line';
   public lineChartPlugins = [];
 
-  constructor(private sleeperService: SleeperService, private matchupService: MatchupService) {
+  constructor(private sleeperService: SleeperService, private matchupService: MatchupService, private nflService: NflService) {
   }
 
   ngOnInit(): void {
     // TODO fix this
     if (this.matchupService.leagueMatchUpUI.length === 0) {
       console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
-      this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague);
+      this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague,
+        this.nflService.getCompletedWeekForSeason(this.sleeperService.selectedLeague.season));
     }
     this.createMatchupDataSets();
   }
