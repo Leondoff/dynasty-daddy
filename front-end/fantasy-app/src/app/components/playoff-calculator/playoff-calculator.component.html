@@ -70,7 +70,7 @@
       <div *ngIf="completedMatchUps.length > 0">
         <div class="center-text mid-bold-text margin-top-50">Completed Games</div>
         <div *ngFor="let weekGames of completedMatchUps">
-          <app-playoff-calculator-games-container [weekMatchUps]="weekGames"></app-playoff-calculator-games-container>
+          <app-playoff-calculator-games-container [weekMatchUps]="weekGames" [isCompleted]="true"></app-playoff-calculator-games-container>
         </div>
       </div>
       <div class="center-text margin-top-50" *ngIf="playoffCalculatorService.matchUpsWithProb.length === 0">

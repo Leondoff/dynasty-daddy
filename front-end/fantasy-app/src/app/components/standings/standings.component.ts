@@ -42,9 +42,9 @@ export class StandingsComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.setUpStandings();
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
-        this.setUpStandings();
-      }
-    ), this.route.queryParams.subscribe(params => {
+          this.setUpStandings();
+        }
+      ), this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
       })
     );
@@ -54,7 +54,9 @@ export class StandingsComponent extends BaseComponent implements OnInit {
     if (this.sleeperService.selectedLeague) {
       if (this.matchupService.leagueMatchUpUI.length === 0 || this.playoffCalculatorService.matchUpsWithProb.length === 0) {
         console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
-        this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague);
+        this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague,
+          this.nflService.getCompletedWeekForSeason(this.sleeperService.selectedLeague.season)
+        );
       }
       const endWeek = this.nflService.getCurrentWeekForSeason(this.sleeperService.selectedLeague?.season);
       if (this.matchupService.leagueMedians.length === 0) {

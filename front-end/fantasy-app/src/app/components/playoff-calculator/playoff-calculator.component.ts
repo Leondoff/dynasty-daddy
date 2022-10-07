@@ -87,7 +87,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
       // TODO fix this
       if (this.matchupService.leagueMatchUpUI.length === 0 || this.playoffCalculatorService.matchUpsWithProb.length === 0) {
         console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
-        this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague);
+        this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague, this.nflService.getCompletedWeekForSeason(this.sleeperService.selectedLeague.season));
       }
       this.playoffMachineWeek = this.nflService.getCompletedWeekForSeason(this.sleeperService.selectedLeague.season);
       this.powerRankingsService.calculateEloAdjustedADPValue();
