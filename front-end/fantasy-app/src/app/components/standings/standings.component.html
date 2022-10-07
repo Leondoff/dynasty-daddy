@@ -37,7 +37,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="divisionTableCols"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: divisionTableCols;" [ngClass]="{'mat-table-highlight': row.roster.teamMetrics.rank <= sleeperService.selectedLeague.playoffTeams && row.roster.teamMetrics.wins > 0}"></mat-row>
+        <mat-row *matRowDef="let row; columns: divisionTableCols;"></mat-row>
       </mat-table>
     </div>
   </div>

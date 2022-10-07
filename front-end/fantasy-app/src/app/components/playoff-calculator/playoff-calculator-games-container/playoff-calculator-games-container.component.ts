@@ -19,6 +19,9 @@ export class PlayoffCalculatorGamesContainerComponent implements OnInit {
   @Input()
   selectable?: boolean = false;
 
+  @Input()
+  isCompleted: boolean = false;
+
   /** record string */
   recordString: string = '';
 

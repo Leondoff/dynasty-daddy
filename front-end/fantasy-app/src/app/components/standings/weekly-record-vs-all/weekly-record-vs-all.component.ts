@@ -21,7 +21,7 @@ export class WeeklyRecordVsAllComponent implements OnInit, AfterViewInit {
   /** datasource for table */
   dataSource: MatTableDataSource<WeeklyRecordComp> = new MatTableDataSource<WeeklyRecordComp>();
 
-  constructor(private sleeperService: SleeperService, private matchupService: MatchupService) { }
+  constructor(public sleeperService: SleeperService, public matchupService: MatchupService) { }
 
   ngOnInit(): void {
     this.displayColumns = this.generateCols();
