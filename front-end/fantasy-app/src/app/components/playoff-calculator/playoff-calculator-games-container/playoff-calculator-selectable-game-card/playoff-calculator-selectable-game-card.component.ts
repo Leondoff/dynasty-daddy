@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatchUpProbability} from '../../../model/playoffCalculator';
-import {SleeperTeam} from '../../../../model/SleeperLeague';
-import {SleeperService} from '../../../../services/sleeper.service';
+import {LeagueTeam} from '../../../../model/LeagueTeam';
+import {LeagueService} from '../../../../services/league.service';
 import {PlayoffCalculatorService} from '../../../services/playoff-calculator.service';
 import {DisplayService} from '../../../../services/utilities/display.service';
 
@@ -16,20 +16,20 @@ export class PlayoffCalculatorSelectableGameCardComponent implements OnInit {
   @Input()
   game: MatchUpProbability;
 
-  /** team 1 sleeper object */
-  team1: SleeperTeam;
+  /** team 1 league object */
+  team1: LeagueTeam;
 
-  /** team 2 sleeper object */
-  team2: SleeperTeam;
+  /** team 2 league object */
+  team2: LeagueTeam;
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               private playoffCalculatorService: PlayoffCalculatorService,
               public displayService: DisplayService) {
   }
 
   ngOnInit(): void {
-    this.team1 = this.sleeperService.getTeamByRosterId(this.game?.matchUpDetails.team1RosterId);
-    this.team2 = this.sleeperService.getTeamByRosterId(this.game?.matchUpDetails.team2RosterId);
+    this.team1 = this.leagueService.getTeamByRosterId(this.game?.matchUpDetails.team1RosterId);
+    this.team2 = this.leagueService.getTeamByRosterId(this.game?.matchUpDetails.team2RosterId);
   }
 
   /**
@@ -39,7 +39,7 @@ export class PlayoffCalculatorSelectableGameCardComponent implements OnInit {
   updateGameResultOption(winner: number): void {
     this.playoffCalculatorService.forceShowRecord = true;
     // if game is being decided for first time select default median options
-    if (this.game.matchUpDetails.selectedWinner === 0 && this.sleeperService.selectedLeague.medianWins) {
+    if (this.game.matchUpDetails.selectedWinner === 0 && this.leagueService.selectedLeague.medianWins) {
       if (winner === 1) {
         this.game.matchUpDetails.selectedTeam1MedianWin = 1;
         this.game.matchUpDetails.selectedTeam2MedianWin = -1;
@@ -52,7 +52,7 @@ export class PlayoffCalculatorSelectableGameCardComponent implements OnInit {
     this.game.matchUpDetails.selectedWinner = winner === this.game.matchUpDetails.selectedWinner ? 0 : winner;
 
     // if game is going back to unselected deselect median wins
-    if (this.sleeperService.selectedLeague.medianWins) {
+    if (this.leagueService.selectedLeague.medianWins) {
       if (this.game.matchUpDetails.selectedWinner === 0) {
         this.game.matchUpDetails.selectedTeam1MedianWin = 0;
         this.game.matchUpDetails.selectedTeam2MedianWin = 0;

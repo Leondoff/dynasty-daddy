@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {TeamMockDraftPick} from '../model/mockDraft';
-import {SleeperTeam} from '../../model/SleeperLeague';
-import {CompletedDraft, DraftCapital} from '../../model/SleeperUser';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueTeam} from '../../model/LeagueTeam';
+import {CompletedDraft, DraftCapital} from '../../model/LeagueUser';
+import {LeagueService} from '../../services/league.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class MockDraftService {
   teamPicks: TeamMockDraftPick[] = [];
 
   /** available players */
-  selectablePlayers: KTCPlayer[] = [];
+  selectablePlayers: FantasyPlayer[] = [];
 
   /** currently selected draft */
   selectedDraft: CompletedDraft | string;
@@ -23,12 +23,12 @@ export class MockDraftService {
   mockDraftConfig: string = 'player';
 
   /** state of value selected players */
-  valueSelectedPlayers: KTCPlayer[] = [];
+  valueSelectedPlayers: FantasyPlayer[] = [];
 
   /** state of custom selected players */
-  customSelectedPlayers: KTCPlayer[] = [];
+  customSelectedPlayers: FantasyPlayer[] = [];
 
-  constructor(public sleeperService: SleeperService) {
+  constructor(public leagueService: LeagueService) {
   }
 
   /**
@@ -37,7 +37,7 @@ export class MockDraftService {
    * @param isSuperFlex is draft super flex
    * @param playerType draft type, 1 == rookies only, 2 == vets only, 3 == all players
    */
-  generateDraft(players: KTCPlayer[], isSuperFlex: boolean = true, playerType: number = 3): void {
+  generateDraft(players: FantasyPlayer[], isSuperFlex: boolean = true, playerType: number = 3): void {
     if (playerType === 1) { // rookies only
       this.selectablePlayers = players.filter(player => {
         return player.experience === 0 && player.position !== 'PI';
@@ -54,7 +54,7 @@ export class MockDraftService {
     // sort players by value
     // TODO refactor
     this.selectablePlayers.sort((playerA, playerB) => {
-      if (this.sleeperService.selectedLeague.isSuperflex){
+      if (this.leagueService.selectedLeague.isSuperflex){
         return playerB.sf_trade_value - playerA.sf_trade_value;
       } else {
         return playerB.trade_value - playerA.trade_value;
@@ -67,11 +67,11 @@ export class MockDraftService {
    * map draft objects to teams
    * @param teams fantasy teams
    */
-  mapDraftObjects(teams: SleeperTeam[]): void  {
+  mapDraftObjects(teams: LeagueTeam[]): void  {
     if (this.teamPicks.length === 0) {
       teams.map(team => {
         for (const pick of team.draftCapital) {
-          if (pick.year === this.sleeperService.selectedLeague.season) {
+          if (pick.year === this.leagueService.selectedLeague.season) {
             this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * 12) + pick.pick,
               this.createPickString(pick),
               team.owner?.ownerName,

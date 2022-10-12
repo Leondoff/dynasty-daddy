@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PlayoffCalculatorService} from '../services/playoff-calculator.service';
-import {SleeperTeam} from '../../model/SleeperLeague';
+import {LeagueTeam} from '../../model/LeagueTeam';
 import {MatchupService} from '../services/matchup.service';
 import {ConfigService} from '../../services/init/config.service';
 import {MatchUpUI} from '../model/matchup';
@@ -19,7 +19,7 @@ import {NflService} from '../../services/utilities/nfl.service';
 })
 export class StandingsComponent extends BaseComponent implements OnInit {
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public playoffCalculatorService: PlayoffCalculatorService,
               public matchupService: MatchupService,
               public configService: ConfigService,
@@ -51,22 +51,22 @@ export class StandingsComponent extends BaseComponent implements OnInit {
   }
 
   setUpStandings(): void {
-    if (this.sleeperService.selectedLeague) {
+    if (this.leagueService.selectedLeague) {
       if (this.matchupService.leagueMatchUpUI.length === 0 || this.playoffCalculatorService.matchUpsWithProb.length === 0) {
         console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
-        this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague,
-          this.nflService.getCompletedWeekForSeason(this.sleeperService.selectedLeague.season)
+        this.matchupService.initMatchUpCharts(this.leagueService.selectedLeague,
+          this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season)
         );
       }
-      const endWeek = this.nflService.getCurrentWeekForSeason(this.sleeperService.selectedLeague?.season);
+      const endWeek = this.nflService.getCurrentWeekForSeason(this.leagueService.selectedLeague?.season);
       if (this.matchupService.leagueMedians.length === 0) {
         this.playoffCalculatorService.calculateLeagueMedians();
       }
       if (this.matchupService.leagueClosestWins.length === 0) {
-        this.matchupService.getClosestWins(this.sleeperService.selectedLeague.startWeek, endWeek);
+        this.matchupService.getClosestWins(this.leagueService.selectedLeague.startWeek, endWeek);
       }
       if (this.matchupService.leagueMostPointsFor.length === 0) {
-        this.matchupService.getMostPointsForInWeek(this.sleeperService.selectedLeague.startWeek, endWeek);
+        this.matchupService.getMostPointsForInWeek(this.leagueService.selectedLeague.startWeek, endWeek);
       }
       if (!this.isTransactionAggComplete()) {
         this.transactionService.generateTransactionAggregate(endWeek);
@@ -78,7 +78,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
     return Math.round(num);
   }
 
-  getPointPotentialPercent(team: SleeperTeam): number {
+  getPointPotentialPercent(team: LeagueTeam): number {
     return Math.round(team.roster.teamMetrics.fpts / team.roster.teamMetrics.ppts * 100);
   }
 

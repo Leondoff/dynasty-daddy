@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {PowerRankingsService} from '../../services/power-rankings.service';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {ConfigService} from '../../../services/init/config.service';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
@@ -82,7 +82,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
   dataLabels: Label[] = [];
 
   constructor(private powerRankingService: PowerRankingsService,
-              private sleeperService: SleeperService,
+              private leagueService: LeagueService,
               public configService: ConfigService) {
   }
 
@@ -115,14 +115,14 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
       const temp = [];
       for (const team of this.powerRankingService.powerRankings) {
         const rosterInd = this.dataLabels.indexOf(team.team.owner?.ownerName);
-        temp[rosterInd] = this.sleeperService.selectedLeague.isSuperflex ? team.roster[index].sfTradeValue : team.roster[index].tradeValue;
+        temp[rosterInd] = this.leagueService.selectedLeague.isSuperflex ? team.roster[index].sfTradeValue : team.roster[index].tradeValue;
         this.data[index] = {data: temp, label: pos, hoverBackgroundColor: []};
       }
     });
     const tempPicks = [];
     for (const team of this.powerRankingService.powerRankings) {
       const index = this.dataLabels.indexOf(team.team.owner?.ownerName);
-      tempPicks[index] = this.sleeperService.selectedLeague.isSuperflex ? team.picks.sfTradeValue : team.picks.tradeValue;
+      tempPicks[index] = this.leagueService.selectedLeague.isSuperflex ? team.picks.sfTradeValue : team.picks.tradeValue;
       this.data[4] = {data: tempPicks, label: 'Draft Capital', hoverBackgroundColor: []};
     }
   }

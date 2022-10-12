@@ -5,7 +5,7 @@
 
 <div class="pos-table-container" *ngIf="playerService.playerStats[playerService.playerValues[0]?.sleeper_id]">
   <div class="margin-top-25" *ngIf="!configService.isMobile">
-    <app-player-pos-scatter-chart *ngIf="playerService.playerValues && playerService.playerStats[playerService.playerValues[0]?.sleeper_id] && this.selectableMetrics" [players]="filteredPlayers" [isSuperFlex]="sleeperService.selectedLeague?.isSuperflex || true" [selectedMetrics]="selectedMetrics" [highlightFreeAgents]="highlightFreeAgents" [highlightYourTeam]="highlightYourTeam"></app-player-pos-scatter-chart>
+    <app-player-pos-scatter-chart *ngIf="playerService.playerValues && playerService.playerStats[playerService.playerValues[0]?.sleeper_id] && this.selectableMetrics" [players]="filteredPlayers" [isSuperFlex]="leagueService.selectedLeague?.isSuperflex || true" [selectedMetrics]="selectedMetrics" [highlightFreeAgents]="highlightFreeAgents" [highlightYourTeam]="highlightYourTeam"></app-player-pos-scatter-chart>
   </div>
   <div class="margin-top-10">
     <div [ngClass]="{'button-left': !configService.isMobile, 'margin-top-10': configService.isMobile}">
@@ -49,8 +49,8 @@
       </mat-form-field>
     </div>
     <span class="container_spacer"></span>
-    <div class="button-right margin-top-25" *ngIf="sleeperService.selectedLeague">
-      <mat-slide-toggle color="accent" *ngIf="sleeperService.sleeperUser" [(ngModel)]="highlightYourTeam">
+    <div class="button-right margin-top-25" *ngIf="leagueService.selectedLeague">
+      <mat-slide-toggle color="accent" *ngIf="leagueService.leagueUser" [(ngModel)]="highlightYourTeam">
         Your Team
       </mat-slide-toggle>
       <mat-slide-toggle color="accent" style="margin-left: 15px; margin-right: 10px" [(ngModel)]="highlightFreeAgents">

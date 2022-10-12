@@ -1,4 +1,4 @@
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {TeamPowerRanking} from './powerRankings';
 
 export class TeamMockDraftPick {

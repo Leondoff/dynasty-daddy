@@ -33,14 +33,14 @@
     <div fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="100%">
       <div class="mid-bold-text center-text margin-bot-10 margin-top-25">
         <mat-icon (click)=team2Select.open()
-                  *ngIf="sleeperService.selectedLeague"
+                  *ngIf="leagueService.selectedLeague"
                   class="team-dropdown-arrow-icon">arrow_drop_down
           <mat-select
             #team2Select
             [(ngModel)]="selectedTeam2"
             class="langSelect">
             <mat-option class="teamSelect" (click)="selectionMadeTeam2()" [value]="null">None</mat-option>
-            <mat-option class="teamSelect" (click)="selectionMadeTeam2()" *ngFor="let team of sleeperService.sleeperTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
+            <mat-option class="teamSelect" (click)="selectionMadeTeam2()" *ngFor="let team of leagueService.leagueTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
           </mat-select>
         </mat-icon>
         {{team2Rankings?.team.owner.ownerName || 'Team 1'}} gets...
@@ -88,14 +88,14 @@
     <div fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="100%">
       <div class="mid-bold-text center-text margin-bot-10 margin-top-25">
         <mat-icon (click)=team1Select.open()
-                  *ngIf="sleeperService.selectedLeague"
+                  *ngIf="leagueService.selectedLeague"
                   class="team-dropdown-arrow-icon">arrow_drop_down
           <mat-select
             #team1Select
             [(ngModel)]="selectedTeam1"
           class="langSelect">
             <mat-option class="teamSelect" [value]="null" (click)="selectionMadeTeam1()">None</mat-option>
-            <mat-option class="teamSelect" (click)="selectionMadeTeam1()" *ngFor="let team of sleeperService.sleeperTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
+            <mat-option class="teamSelect" (click)="selectionMadeTeam1()" *ngFor="let team of leagueService.leagueTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
           </mat-select>
         </mat-icon>
         {{team1Rankings?.team.owner.ownerName || 'Team 2'}} gets...
@@ -171,7 +171,7 @@
     <div *ngIf="tradeTool.tradePackage && (tradeTool.tradePackage.team2Assets.length != 0 || tradeTool.tradePackage.team1Assets.length != 0) && tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount && recommendedPlayers.length != 0" class="trade_insights" fxFlex="37.5%" fxFlex.xs="80%" fxFlex.sm="80%">
       <mat-card>
         <mat-card-content>
-          <div class="center-text mid-bold-text margin-bot-10">Players to Even the Trade<span *ngIf="sleeperService.selectedLeague && team1Rankings && team2Rankings">{{(favoredSide == 2 ? ' from ' + team1Rankings?.team.owner.ownerName : ' from ' + team2Rankings?.team.owner.ownerName)}}</span></div>
+          <div class="center-text mid-bold-text margin-bot-10">Players to Even the Trade<span *ngIf="leagueService.selectedLeague && team1Rankings && team2Rankings">{{(favoredSide == 2 ? ' from ' + team1Rankings?.team.owner.ownerName : ' from ' + team2Rankings?.team.owner.ownerName)}}</span></div>
         </mat-card-content>
         <table class="trade-table-item" *ngFor="let player of recommendedPlayers">
           <tr>
@@ -185,7 +185,7 @@
         </table>
       </mat-card>
     </div>
-    <div *ngIf="tradeTool.tradePackage && sleeperService.selectedLeague" class="trade_insights" fxFlex="37.5%" fxFlex.xs="80%" fxFlex.sm="80%">
+    <div *ngIf="tradeTool.tradePackage && leagueService.selectedLeague" class="trade_insights" fxFlex="37.5%" fxFlex.xs="80%" fxFlex.sm="80%">
       <mat-card style="min-height: 245px">
         <div class="center-text mid-bold-text" style="margin-bottom: 5px">Team Position Ranks</div>
         <table style="border-collapse: separate; border-spacing: 0 10px;">
@@ -227,7 +227,7 @@
         </table>
       </mat-card>
     </div>
-    <div *ngIf="!sleeperService.selectedLeague" class="trade_insights" fxFlex="37.5%" fxFlex.xs="80%" fxFlex.sm="80%">
+    <div *ngIf="!leagueService.selectedLeague" class="trade_insights" fxFlex="37.5%" fxFlex.xs="80%" fxFlex.sm="80%">
       <mat-card class="center-text" style="min-height: 245px">
         <div class="mid-bold-text center-text">Log into your League</div>
         <div class="margin-bot-10 center-text" style="margin-top: 80px">

@@ -1,7 +1,7 @@
 /* tslint:disable */
-import {SleeperOwnerData} from "./SleeperLeague";
+import {LeagueOwnerData} from "./LeagueTeam";
 
-export class KTCPlayer {
+export class FantasyPlayer {
   id: number;
   name_id: string;
   sleeper_id: string;
@@ -17,7 +17,7 @@ export class KTCPlayer {
   injury_status: string;
   sf_trade_value: number;
   trade_value: number;
-  owner: SleeperOwnerData = null;
+  owner: LeagueOwnerData = null;
   date: string;
   all_time_high_sf: number;
   all_time_low_sf: number;
@@ -41,7 +41,7 @@ export class KTCPlayer {
 }
 
 
-export class KTCPlayerDataPoint {
+export class FantasyPlayerDataPoint {
   name_id: string;
   full_name: string;
   sf_position_rank: string;

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {BaseComponent} from '../base-component.abstract';
 import {SleeperApiService} from '../../services/api/sleeper/sleeper-api.service';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {PlayerService} from '../../services/player.service';
 import {ConfigKeyDictionary, ConfigService} from '../../services/init/config.service';
@@ -29,7 +29,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
   DEMO_ID: string = '553670046391185408';
 
   constructor(private sleeperApiService: SleeperApiService,
-              public sleeperService: SleeperService,
+              public leagueService: LeagueService,
               private powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
               public configService: ConfigService,
@@ -41,13 +41,13 @@ export class HomeComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.supportedYears = this.generateYears();
-    if (!this.sleeperService.selectedYear) {
+    if (!this.leagueService.selectedYear) {
       this.selectedYear = this.supportedYears[1];
     } else {
-      this.selectedYear = this.sleeperService.selectedYear;
+      this.selectedYear = this.leagueService.selectedYear;
     }
-    this.usernameInput = this.sleeperService.sleeperUser?.userData?.username || '';
-    this.leagueSwitchService.selectedLeague = this.sleeperService.selectedLeague || null;
+    this.usernameInput = this.leagueService.leagueUser?.userData?.username || '';
+    this.leagueSwitchService.selectedLeague = this.leagueService.selectedLeague || null;
     if (this.playersService.playerValues.length === 0) {
       this.playersService.loadPlayerValuesForToday();
     }
@@ -57,10 +57,10 @@ export class HomeComponent extends BaseComponent implements OnInit {
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(_ => {
         this.usernameInput =
-          this.sleeperService.sleeperUser?.userData?.username == null || this.sleeperService.sleeperUser?.userData?.username === 'undefined'
-            ? '' : this.sleeperService.sleeperUser?.userData?.username;
-        this.selectedYear = this.sleeperService.selectedYear;
-        this.leagueSwitchService.selectedLeague = this.sleeperService.selectedLeague;
+          this.leagueService.leagueUser?.userData?.username == null || this.leagueService.leagueUser?.userData?.username === 'undefined'
+            ? '' : this.leagueService.leagueUser?.userData?.username;
+        this.selectedYear = this.leagueService.selectedYear;
+        this.leagueSwitchService.selectedLeague = this.leagueService.selectedLeague;
       })
     )
     ;
@@ -70,9 +70,9 @@ export class HomeComponent extends BaseComponent implements OnInit {
    * loads sleeper data for user
    */
   fetchSleeperInfo(): void {
-    this.sleeperService.loadNewUser(this.usernameInput, this.selectedYear);
-    this.sleeperService.selectedYear = this.selectedYear;
-    this.sleeperService.resetLeague();
+    this.leagueService.loadNewUser(this.usernameInput, this.selectedYear);
+    this.leagueService.selectedYear = this.selectedYear;
+    this.leagueService.resetLeague();
     this.logRocketService.identifySession(this.usernameInput);
   }
 
@@ -95,7 +95,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
    * handles logging in for demo
    */
   loginWithDemo(): void {
-    this.sleeperService.sleeperUser = null;
+    this.leagueService.leagueUser = null;
     this.loginWithLeagueId(this.DEMO_ID);
   }
 
@@ -105,7 +105,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
    */
   loginWithLeagueId(demoId?: string): void {
     this.usernameInput = '';
-    this.sleeperService.sleeperUser = null;
+    this.leagueService.leagueUser = null;
     this.sleeperApiService.getSleeperLeagueByLeagueId(demoId || this.leagueIdInput).subscribe(leagueData => {
       if (this.leagueIdInput) {
         this.logRocketService.identifySession(this.leagueIdInput);
@@ -118,7 +118,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
    * log in with a previous year league id
    */
   loginWithPrevSeason = () =>
-    this.loginWithLeagueId(this.sleeperService.selectedLeague.prevLeagueId)
+    this.loginWithLeagueId(this.leagueService.selectedLeague.prevLeagueId)
 
   /**
    * returns true if we should display home modal

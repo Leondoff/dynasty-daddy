@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PlayoffCalculatorService} from '../services/playoff-calculator.service';
 import {NflService} from '../../services/utilities/nfl.service';
 import {MatchUpProbability} from '../model/playoffCalculator';
@@ -60,7 +60,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
 
 
   constructor(
-    public sleeperService: SleeperService,
+    public leagueService: LeagueService,
     public playoffCalculatorService: PlayoffCalculatorService,
     public nflService: NflService,
     public powerRankingsService: PowerRankingsService,
@@ -83,13 +83,13 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   }
 
   initPlayoffCalc(): void {
-    if (this.sleeperService.selectedLeague) {
+    if (this.leagueService.selectedLeague) {
       // TODO fix this
       if (this.matchupService.leagueMatchUpUI.length === 0 || this.playoffCalculatorService.matchUpsWithProb.length === 0) {
         console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
-        this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague, this.nflService.getCompletedWeekForSeason(this.sleeperService.selectedLeague.season));
+        this.matchupService.initMatchUpCharts(this.leagueService.selectedLeague, this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season));
       }
-      this.playoffMachineWeek = this.nflService.getCompletedWeekForSeason(this.sleeperService.selectedLeague.season);
+      this.playoffMachineWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
       this.powerRankingsService.calculateEloAdjustedADPValue();
       this.refreshGames();
       this.generateSelectableWeeks();
@@ -103,20 +103,20 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
    */
   private generateSelectableWeeks(): void {
     this.selectableWeeks = [];
-    this.selectableWeeks.push({week: this.sleeperService.selectedLeague.startWeek, value: 'Preseason'});
-    const selectableWeekMax = this.sleeperService.selectedLeague.season === this.nflService.stateOfNFL.season
+    this.selectableWeeks.push({week: this.leagueService.selectedLeague.startWeek, value: 'Preseason'});
+    const selectableWeekMax = this.leagueService.selectedLeague.season === this.nflService.stateOfNFL.season
     && this.nflService.stateOfNFL.seasonType !== 'post' ?
       this.nflService.stateOfNFL.completedWeek : this.playoffCalculatorService.matchUpsWithProb.length;
-    for (let i = this.sleeperService.selectedLeague.startWeek; i <= selectableWeekMax; i++) {
-      const disclaimer = this.sleeperService.selectedLeague.playoffStartWeek === i + 1 ? ' (End of regular season)' : '';
+    for (let i = this.leagueService.selectedLeague.startWeek; i <= selectableWeekMax; i++) {
+      const disclaimer = this.leagueService.selectedLeague.playoffStartWeek === i + 1 ? ' (End of regular season)' : '';
       this.selectableWeeks.push({
         week: i + 1, value: 'Before Week '
           + (i + 1) + disclaimer
       });
     }
-    if (this.sleeperService.selectedLeague.status === 'complete') {
+    if (this.leagueService.selectedLeague.status === 'complete') {
       this.selectableWeeks.push({
-        week: this.sleeperService.selectedLeague.startWeek
+        week: this.leagueService.selectedLeague.startWeek
           + this.playoffCalculatorService.matchUpsWithProb.length + 1, value: 'Today'
       });
     }
@@ -129,20 +129,20 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   refreshGames(): void {
     this.playoffCalculatorService.calculateGamesWithProbability(this.selectedWeek);
     if (this.playoffCalculatorService.matchUpsWithProb.length > 0) {
-      if (this.sleeperService.selectedLeague.season === this.nflService.stateOfNFL.season && this.nflService.stateOfNFL.seasonType !== 'post') {
+      if (this.leagueService.selectedLeague.season === this.nflService.stateOfNFL.season && this.nflService.stateOfNFL.seasonType !== 'post') {
         // get upcoming match ups
         this.upcomingMatchUps = this.playoffCalculatorService.matchUpsWithProb.slice(
-          this.nflService.stateOfNFL.completedWeek - this.sleeperService.selectedLeague.startWeek + 1,
-          this.sleeperService.selectedLeague.playoffStartWeek - this.sleeperService.selectedLeague.startWeek,
+          this.nflService.stateOfNFL.completedWeek - this.leagueService.selectedLeague.startWeek + 1,
+          this.leagueService.selectedLeague.playoffStartWeek - this.leagueService.selectedLeague.startWeek,
         );
         // get upcoming playoff match ups
-        if (this.sleeperService.selectedLeague.season === this.nflService.stateOfNFL.season) {
+        if (this.leagueService.selectedLeague.season === this.nflService.stateOfNFL.season) {
           // week diff if mid playoffs
-          const activeWeekDiff = this.nflService.stateOfNFL.week - this.sleeperService.selectedLeague.playoffStartWeek;
+          const activeWeekDiff = this.nflService.stateOfNFL.week - this.leagueService.selectedLeague.playoffStartWeek;
           // set week diff value for slice
           const weekOffset = activeWeekDiff > 0 ? activeWeekDiff : 0;
           this.playoffMatchUps = this.playoffCalculatorService.matchUpsWithProb.slice(
-            this.sleeperService.selectedLeague.playoffStartWeek - this.sleeperService.selectedLeague.startWeek + weekOffset
+            this.leagueService.selectedLeague.playoffStartWeek - this.leagueService.selectedLeague.startWeek + weekOffset
           );
         } else {
           this.playoffMatchUps = [];
@@ -150,7 +150,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
         // get completed match ups
         this.completedMatchUps =
           this.playoffCalculatorService.matchUpsWithProb.slice(0, this.nflService.stateOfNFL.completedWeek
-            - this.sleeperService.selectedLeague.startWeek + 1).reverse();
+            - this.leagueService.selectedLeague.startWeek + 1).reverse();
       } else {
         this.completedMatchUps = this.playoffCalculatorService.matchUpsWithProb.slice().reverse();
       }
@@ -209,7 +209,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
 
     const seasonOddsCSV = seasonData.map(e => e.join(',')).join('\n');
 
-    const filename = `${this.sleeperService.selectedLeague.name.replace(/ /g, '_')}_Season_Projections_${this.sleeperService.selectedLeague.season}_${this.selectedWeek}.csv`;
+    const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Season_Projections_${this.leagueService.selectedLeague.season}_${this.selectedWeek}.csv`;
 
     const blob = new Blob([seasonOddsCSV], {type: 'text/csv;charset=utf-8;'});
     if (navigator.msSaveBlob) { // IE 10+
@@ -245,14 +245,14 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   private setDefaultSelectedMetrics(): { display: string, name: string, isDisabled: boolean }[] {
     let defaultMetrics = [];
     this.updateDisabledSelectedMetrics();
-    if (this.selectedWeek >= this.sleeperService.selectedLeague.playoffStartWeek) {
+    if (this.selectedWeek >= this.leagueService.selectedLeague.playoffStartWeek) {
       defaultMetrics = this.buildMetricsListOnValues(['makePlayoffs', 'makeConfChamp', 'makeChampionship', 'winChampionship']);
     } else {
       defaultMetrics = this.buildMetricsListOnValues(['record', 'makePlayoffs', 'winDivision', 'getBye', 'winChampionship']);
-      if (this.sleeperService.selectedLeague.playoffTeams % 4 === 0) {
+      if (this.leagueService.selectedLeague.playoffTeams % 4 === 0) {
         defaultMetrics.splice(3, 1);
       }
-      if (this.sleeperService.selectedLeague.divisions < 2) {
+      if (this.leagueService.selectedLeague.divisions < 2) {
         defaultMetrics.splice(2, 1);
       }
       if (defaultMetrics.length <= 3) {
@@ -283,7 +283,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
    * @private
    */
   private updateDisabledSelectedMetrics(): void {
-    if (this.selectedWeek >= this.sleeperService.selectedLeague.playoffStartWeek) {
+    if (this.selectedWeek >= this.leagueService.selectedLeague.playoffStartWeek) {
       // disable during season metrics
       this.selectableMetrics[0].isDisabled = true;
       this.selectableMetrics[2].isDisabled = true;
@@ -299,10 +299,10 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
       this.selectableMetrics[5].isDisabled = false;
       this.selectableMetrics[6].isDisabled = false;
     }
-    if (this.sleeperService.selectedLeague.divisions <= 1) {
+    if (this.leagueService.selectedLeague.divisions <= 1) {
       this.selectableMetrics[2].isDisabled = true;
     }
-    if (this.sleeperService.selectedLeague.playoffTeams % 4 === 0) {
+    if (this.leagueService.selectedLeague.playoffTeams % 4 === 0) {
       this.selectableMetrics[3].isDisabled = true;
     }
   }

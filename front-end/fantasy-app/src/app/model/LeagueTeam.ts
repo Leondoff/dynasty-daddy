@@ -1,5 +1,5 @@
 /* tslint:disable:variable-name */
-import {DraftCapital} from './SleeperUser';
+import {DraftCapital} from './LeagueUser';
 import set = Reflect.set;
 
 export class TeamMetrics {
@@ -28,7 +28,7 @@ export class TeamMetrics {
   division: number;
 }
 
-export class SleeperRosterData {
+export class LeagueRosterData {
   constructor(roster_id: number, owner_id: string, players: string[], settings: TeamMetrics) {
     this.rosterId = roster_id;
     this.ownerId = owner_id;
@@ -42,7 +42,7 @@ export class SleeperRosterData {
   teamMetrics: TeamMetrics;
 }
 
-export class SleeperOwnerData {
+export class LeagueOwnerData {
   constructor(user_id: string, display_name: string, team_name: string, avatar: string) {
     this.userId = user_id;
     this.ownerName = display_name;
@@ -56,19 +56,19 @@ export class SleeperOwnerData {
   avatar: string;
 }
 
-export class SleeperTeam {
-  constructor(owner: SleeperOwnerData, roster: SleeperRosterData) {
+export class LeagueTeam {
+  constructor(owner: LeagueOwnerData, roster: LeagueRosterData) {
     this.owner = owner;
     this.roster = roster;
   }
 
-  owner: SleeperOwnerData;
-  roster: SleeperRosterData;
+  owner: LeagueOwnerData;
+  roster: LeagueRosterData;
   draftCapital: DraftCapital[] = [];
   futureDraftCapital: DraftCapital[] = [];
 }
 
-export class SleeperRawDraftOrderData {
+export class LeagueRawDraftOrderData {
   constructor(draft_id: string,
               league_id: string,
               status: string,
@@ -99,7 +99,7 @@ export class SleeperRawDraftOrderData {
   playerType: number;
 }
 
-export class SleeperRawTradePicksData {
+export class LeagueRawTradePicksData {
   constructor(owner_id: number, previous_owner_id: number, roster_id: number, round: number, season: string) {
     this.ownerId = owner_id;
     this.previousOwnerId = previous_owner_id;
@@ -115,7 +115,7 @@ export class SleeperRawTradePicksData {
   season: string;
 }
 
-export class SleeperTeamMatchUpData {
+export class LeagueTeamMatchUpData {
   constructor(matchup: any) {
     this.starterPoints = matchup.starters_points;
     this.starters = matchup.starters;
@@ -135,8 +135,8 @@ export class SleeperTeamMatchUpData {
   customPoints: number;
 }
 
-export class SleeperTeamTransactionData {
-  constructor(transaction: any, picks: SleeperRawTradePicksData[] = []) {
+export class LeagueTeamTransactionData {
+  constructor(transaction: any, picks: LeagueRawTradePicksData[] = []) {
     this.type = transaction.type;
     this.transactionId = transaction.transaction_id;
     this.status = transaction.status;
@@ -156,11 +156,11 @@ export class SleeperTeamTransactionData {
   rosterIds: number[];
   drops: {};
   adds: {};
-  draftpicks: SleeperRawTradePicksData[];
+  draftpicks: LeagueRawTradePicksData[];
   createdAt: number;
 }
 
-export class SleeperCompletedPickData {
+export class LeagueCompletedPickData {
 
   constructor(pick: any) {
     this.round = pick.round;
@@ -187,7 +187,7 @@ export class SleeperCompletedPickData {
   position: string;
 }
 
-export class SleeperStateOfNFL {
+export class LeagueStateOfNFL {
   constructor(season: any) {
     this.week = season.week;
     this.season = season.season;
@@ -202,7 +202,7 @@ export class SleeperStateOfNFL {
   completedWeek: number;
 }
 
-export class SleeperPlayoffMatchUp {
+export class LeaguePlayoffMatchUp {
   constructor(game: any) {
     this.round = game.r;
     this.matchUpId = game.m;

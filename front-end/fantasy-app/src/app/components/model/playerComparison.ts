@@ -1,7 +1,7 @@
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 
 export class PlayerComparison {
   name: string;
   id: string;
-  data: KTCPlayer[];
+  data: FantasyPlayer[];
 }

@@ -2,7 +2,7 @@
 <div class="center-text margin-top-10">
   Calculate game probability and playoff odds based on current week. Updated every week to be more accurate.
 </div>
-<div *ngIf="sleeperService.isLeagueLoaded() && playoffCalculatorService.matchUpsWithProb.length != 0 && playoffCalculatorService.divisions.length > 0 && (sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting')" class="margin-top-10 table-container">
+<div *ngIf="leagueService.isLeagueLoaded() && playoffCalculatorService.matchUpsWithProb.length != 0 && playoffCalculatorService.divisions.length > 0 && (leagueService.selectedLeague?.status !== 'pre_draft' && leagueService.selectedLeague?.status !== 'drafting')" class="margin-top-10 table-container">
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
     <mat-tab label="Season" style="overflow: hidden">
       <div class="mid-bold-text margin-top-10 center-text">Season Predictions</div>
@@ -43,9 +43,9 @@
         </div>
         <div *ngIf="showPlayoffMachine" class="margin-bot-20">
           <div class="center-text">
-            <button mat-icon-button [disabled]="playoffMachineWeek === (this.nflService.stateOfNFL.completedWeek < this.sleeperService.selectedLeague.startWeek - 1 ? this.sleeperService.selectedLeague.startWeek : this.nflService.stateOfNFL.completedWeek)" (click)="updatePlayoffMachineWeek(-1)"><mat-icon>chevron_left</mat-icon></button>
+            <button mat-icon-button [disabled]="playoffMachineWeek === (this.nflService.stateOfNFL.completedWeek < this.leagueService.selectedLeague.startWeek - 1 ? this.leagueService.selectedLeague.startWeek : this.nflService.stateOfNFL.completedWeek)" (click)="updatePlayoffMachineWeek(-1)"><mat-icon>chevron_left</mat-icon></button>
             <span class="mid-bold-text">Week {{playoffMachineWeek + 1}}</span>
-            <button mat-icon-button [disabled]="playoffMachineWeek + 1 === this.sleeperService.selectedLeague.playoffStartWeek - 1" (click)="updatePlayoffMachineWeek(1)"><mat-icon >chevron_right</mat-icon></button>
+            <button mat-icon-button [disabled]="playoffMachineWeek + 1 === this.leagueService.selectedLeague.playoffStartWeek - 1" (click)="updatePlayoffMachineWeek(1)"><mat-icon >chevron_right</mat-icon></button>
           </div>
           <app-playoff-calculator-games-container *ngIf="upcomingMatchUps.length > 0" [weekMatchUps]="upcomingMatchUps[matchupOffset]" [selectable]="true"></app-playoff-calculator-games-container>
         </div>
@@ -88,36 +88,36 @@
   </div>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="sleeperService.isLeagueLoaded() && playoffCalculatorService.matchUpsWithProb.length == 0 && sleeperService.selectedLeague?.status !== 'pre_draft' && sleeperService.selectedLeague?.status !== 'drafting'">
+<div class="center-text margin-top-50" *ngIf="leagueService.isLeagueLoaded() && playoffCalculatorService.matchUpsWithProb.length == 0 && leagueService.selectedLeague?.status !== 'pre_draft' && leagueService.selectedLeague?.status !== 'drafting'">
   <div class="warning__alert">There was an issue loading match ups. Try navigating to another page and coming back or reloading your league.</div>
   <div class="margin-top-25" ><button mat-flat-button color="warn" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">Reload league</button></div>
 </div>
 
-<div class="center-spinner margin-top-120" *ngIf="sleeperService.leagueStatus === 'LOADING'">
+<div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">
   <mat-spinner></mat-spinner>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="sleeperService.leagueStatus === 'NONE'">
+<div class="center-text margin-top-50" *ngIf="leagueService.leagueStatus === 'NONE'">
   <div class="warning__alert">Cannot generate league analytics cause no league was selected. Please select a league.</div>
   <br>
-  <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
-  <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
+  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
-      <mat-option *ngFor="let league of sleeperService.sleeperUser?.leagues"
+      <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
                   [value]="league">{{league.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="sleeperService.selectedLeague?.status === 'pre_draft' || sleeperService.selectedLeague?.status === 'drafting'">
+<div class="center-text margin-top-50" *ngIf="leagueService.selectedLeague?.status === 'pre_draft' || leagueService.selectedLeague?.status === 'drafting'">
   <div class="warning__alert">Cannot generate league analytics because season hasn't started yet. Please select a different league or year.</div>
   <br>
-  <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
-  <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
+  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
-      <mat-option *ngFor="let league of sleeperService.sleeperUser?.leagues"
+      <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
                   [value]="league">{{league.name}}</mat-option>
     </mat-select>
   </mat-form-field>

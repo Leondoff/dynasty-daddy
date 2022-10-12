@@ -3,7 +3,7 @@ import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 
 @Component({
   selector: 'app-weekly-median-chart',
@@ -59,7 +59,7 @@ export class WeeklyMedianChartComponent implements OnInit, OnChanges {
   public lineChartType = 'line';
   public lineChartPlugins = [];
 
-  constructor(private sleeperService: SleeperService) {
+  constructor(private leagueService: LeagueService) {
   }
 
   ngOnInit(): void {
@@ -80,7 +80,7 @@ export class WeeklyMedianChartComponent implements OnInit, OnChanges {
     for (let i = 0; i <= this.medians.length; i++) {
       if (!isNaN(this.medians[i])) {
         completedMedians.push(Math.round(this.medians[i] * 100) / 100);
-        this.lineChartLabels.push('Week ' + (this.sleeperService.selectedLeague.startWeek + i));
+        this.lineChartLabels.push('Week ' + (this.leagueService.selectedLeague.startWeek + i));
       }
     }
     this.lineChartData.push({data: completedMedians});

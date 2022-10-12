@@ -5,7 +5,7 @@
 </div>
 
 <div class="margin-top-25">
-  <app-ktc-table *ngIf="playersLoaded" [players]="playerService.playerValues" [selectedLeague]="sleeperService.selectedLeague"></app-ktc-table>
+  <app-ktc-table *ngIf="playersLoaded" [players]="playerService.playerValues" [selectedLeague]="leagueService.selectedLeague"></app-ktc-table>
   <div *ngIf="!playersLoaded">
     <div style="min-height: 300px" class="center-spinner">
       <mat-spinner></mat-spinner>

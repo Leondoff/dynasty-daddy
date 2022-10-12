@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {PowerRankingsService} from '../../services/power-rankings.service';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {Color} from 'chartjs-plugin-datalabels/types/options';
 import {ColorService} from '../../services/color.service';
 
@@ -64,7 +64,7 @@ export class StrengthOfScheduleChartComponent implements OnInit {
 
   constructor(
     public powerRankingsService: PowerRankingsService,
-    private sleeperService: SleeperService,
+    private leagueService: LeagueService,
     private colorService: ColorService
   ) {
   }
@@ -89,10 +89,10 @@ export class StrengthOfScheduleChartComponent implements OnInit {
    */
   private generateStrengthOfSchedule(): { value: any, team: string }[] {
     const teamData = [];
-    for (const team of this.sleeperService.sleeperTeamDetails) {
+    for (const team of this.leagueService.leagueTeamDetails) {
       let competitionStarterValue = 0;
-      for (let week = this.sleeperService.selectedLeague.startWeek; week < this.sleeperService.selectedLeague.playoffStartWeek; week++) {
-        const matchupData = this.sleeperService.selectedLeague.leagueMatchUps[week];
+      for (let week = this.leagueService.selectedLeague.startWeek; week < this.leagueService.selectedLeague.playoffStartWeek; week++) {
+        const matchupData = this.leagueService.selectedLeague.leagueMatchUps[week];
         for (const matchup of matchupData) {
           if (matchup.rosterId === team.roster.rosterId) {
             const matchupId = matchup.matchupId;
@@ -112,7 +112,7 @@ export class StrengthOfScheduleChartComponent implements OnInit {
       teamData.push(
         {
           value: Math.round(competitionStarterValue /
-            (this.sleeperService.selectedLeague.playoffStartWeek - this.sleeperService.selectedLeague.startWeek)),
+            (this.leagueService.selectedLeague.playoffStartWeek - this.leagueService.selectedLeague.startWeek)),
           team: team.owner?.teamName
         });
     }

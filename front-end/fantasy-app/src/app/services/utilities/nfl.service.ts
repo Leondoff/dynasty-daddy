@@ -1,4 +1,4 @@
-import {SleeperStateOfNFL} from '../../model/SleeperLeague';
+import {LeagueStateOfNFL} from '../../model/LeagueTeam';
 import {Injectable} from '@angular/core';
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
@@ -10,7 +10,7 @@ import {SleeperApiService} from '../api/sleeper/sleeper-api.service';
 export class NflService {
 
   /** state of nfl from sleeper */
-  stateOfNFL: SleeperStateOfNFL;
+  stateOfNFL: LeagueStateOfNFL;
 
   /** full team name based on acc */
   public teamAccToFullName = {
@@ -55,7 +55,7 @@ export class NflService {
   /**
    * save state of nfl to service for other services to reference
    */
-  public $initStateOfNfl(): Observable<SleeperStateOfNFL> {
+  public $initStateOfNfl(): Observable<LeagueStateOfNFL> {
     return this.sleeperApiService.getSleeperStateOfNFL().pipe(map((season) => {
       this.stateOfNFL = season;
       this.stateOfNFL.completedWeek = season.seasonType !== 'pre' && season.week > 0 ? season.week - 1 : 0;

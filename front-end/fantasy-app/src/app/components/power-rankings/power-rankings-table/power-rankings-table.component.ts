@@ -3,8 +3,8 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {TeamPowerRanking, TeamRankingTier} from '../../model/powerRankings';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
-import {KTCPlayer} from '../../../model/KTCPlayer';
-import {SleeperService} from '../../../services/sleeper.service';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {LeagueService} from '../../../services/league.service';
 import {ConfigService} from '../../../services/init/config.service';
 import {PlayerService} from '../../../services/player.service';
 import {Clipboard} from '@angular/cdk/clipboard';
@@ -63,7 +63,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   // used to keep track of the displayed teams in table
   displayedRankingsSize: number;
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public configService: ConfigService,
               public playerService: PlayerService,
               public leagueSwitchService: LeagueSwitchService,
@@ -126,7 +126,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    * @param player player to check
    * returns true if player is starter on team
    */
-  isStarter(team: TeamPowerRanking, player: KTCPlayer): boolean {
+  isStarter(team: TeamPowerRanking, player: FantasyPlayer): boolean {
     return team.starters.includes(player);
   }
 
@@ -135,7 +135,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    * @param player player to check
    * returns true if player is injured
    */
-  isInjured(player: KTCPlayer): boolean {
+  isInjured(player: FantasyPlayer): boolean {
     const injuries = ['PUP', 'IR', 'Sus', 'COV'];
     return injuries.includes(player.injury_status);
   }
@@ -173,7 +173,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    * @param players list of players
    * @private
    */
-  private getListOfPlayerNames(pos: string, players: KTCPlayer[]): string {
+  private getListOfPlayerNames(pos: string, players: FantasyPlayer[]): string {
     const filteredPlayers = [];
     players.map(player => {
       if (player.position.toLowerCase() === pos.toLowerCase()) {

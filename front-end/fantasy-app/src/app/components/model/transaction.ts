@@ -1,7 +1,7 @@
-import {SleeperTeamTransactionData} from '../../model/SleeperLeague';
+import {LeagueTeamTransactionData} from '../../model/LeagueTeam';
 
 export class TransactionUI {
-  constructor(transaction: SleeperTeamTransactionData, adds: any[], drops: any[]) {
+  constructor(transaction: LeagueTeamTransactionData, adds: any[], drops: any[]) {
     this.type = transaction.type;
     this.adds = adds;
     this.drops = drops;
