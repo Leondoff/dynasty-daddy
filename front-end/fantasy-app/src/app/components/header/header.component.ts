@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {BaseComponent} from '../base-component.abstract';
 import {ConfigService} from '../../services/init/config.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
@@ -13,7 +13,7 @@ import {Router} from '@angular/router';
 export class HeaderComponent extends BaseComponent implements OnInit {
 
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public configService: ConfigService,
               private router: Router,
               public leagueSwitchService: LeagueSwitchService) {
@@ -24,6 +24,6 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   }
 
   openLeague(): void {
-    window.open('https://sleeper.com/leagues/' + this.sleeperService.selectedLeague.leagueId + '/team', '_blank');
+    window.open('https://sleeper.com/leagues/' + this.leagueService.selectedLeague.leagueId + '/team', '_blank');
   }
 }

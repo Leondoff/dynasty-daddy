@@ -1,10 +1,10 @@
 import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {ChartDataSets, ChartOptions, ChartType} from 'chart.js';
-import {KTCPlayer} from '../../../model/KTCPlayer';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
 import {PlayerService} from '../../../services/player.service';
 import {ColorService} from '../../services/color.service';
 import {BaseChartDirective} from 'ng2-charts';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 
 @Component({
   selector: 'app-player-pos-scatter-chart',
@@ -15,7 +15,7 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
 
   /** filtered players */
   @Input()
-  players: KTCPlayer[];
+  players: FantasyPlayer[];
 
   /** is league superflex */
   @Input()
@@ -73,7 +73,7 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
 
   constructor(private playerService: PlayerService,
               private colorService: ColorService,
-              private sleeperService: SleeperService) {
+              private leagueService: LeagueService) {
   }
 
   ngOnInit(): void {
@@ -91,9 +91,9 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
     const pointBackgroundColors = [];
     const pointBorderColors = [];
     const playerData = this.players?.map(player => {
-      const isOwnedByUser = this.sleeperService.isLeagueLoaded() &&
-        player.owner && player.owner?.userId === this.sleeperService.sleeperUser?.userData?.user_id;
-      const isFreeAgent = this.sleeperService.isLeagueLoaded() && !player.owner;
+      const isOwnedByUser = this.leagueService.isLeagueLoaded() &&
+        player.owner && player.owner?.userId === this.leagueService.leagueUser?.userData?.user_id;
+      const isFreeAgent = this.leagueService.isLeagueLoaded() && !player.owner;
       pointBackgroundColors.push(this.colorService.getPointBackgroundColor(this.highlightFreeAgents,
         this.highlightYourTeam, isOwnedByUser, isFreeAgent));
       pointBorderColors.push(this.colorService.getPointBorderColor(this.highlightFreeAgents, this.highlightYourTeam,
@@ -123,7 +123,7 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
    * @param player player object
    * @private
    */
-  private getMetricForPlayer(value: string, player: KTCPlayer): number {
+  private getMetricForPlayer(value: string, player: FantasyPlayer): number {
     switch (value) {
       case 'sf_trade_value':
         return player.sf_trade_value;

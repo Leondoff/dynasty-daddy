@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {PowerRankingsService} from '../../services/power-rankings.service';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -29,7 +29,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   /** datasource for table */
   public dataSource: MatTableDataSource<any>;
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public powerRankingsService: PowerRankingsService,
               public leagueSwitchService: LeagueSwitchService,
               public playoffCalculatorService: PlayoffCalculatorService,
@@ -127,13 +127,13 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   getDisplayValue(percent: number): string {
     switch (percent) {
       case 0: {
-        if (this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek) {
+        if (this.leagueService.selectedLeague.playoffStartWeek > this.forecastWeek) {
           return '<1%';
         }
         return '-';
       }
       case 100: {
-        if (this.sleeperService.selectedLeague.playoffStartWeek > this.forecastWeek) {
+        if (this.leagueService.selectedLeague.playoffStartWeek > this.forecastWeek) {
           return '>99%';
         }
         return '';
@@ -149,7 +149,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
    * @param rosterId number
    */
   getProjRecord(rosterId: number): string {
-    if (this.sleeperService.selectedLeague.medianWins) {
+    if (this.leagueService.selectedLeague.medianWins) {
       return (this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.projWins +
           this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.medianWins) + ' - '
         + (this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.projLoss +
@@ -167,7 +167,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   getActualRecord(rosterId: number): string {
     const winsAtDate = this.playoffCalculatorService.getWinsAtWeek(rosterId, this.forecastWeek - 1);
     const lossesAtDate = this.playoffCalculatorService.getLossesAtWeek(rosterId, this.forecastWeek - 1);
-    if (this.sleeperService.selectedLeague.medianWins) {
+    if (this.leagueService.selectedLeague.medianWins) {
       return (this.playoffCalculatorService.selectedGameResults[rosterId].selectedWins +
           this.playoffCalculatorService.selectedGameResults[rosterId].selectedMedianWins +
           winsAtDate.totalWins) + ' - '

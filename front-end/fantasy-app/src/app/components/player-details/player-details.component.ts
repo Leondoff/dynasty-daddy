@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
-import {KTCPlayer, KTCPlayerDataPoint} from '../../model/KTCPlayer';
-import {KTCApiService} from '../../services/api/ktc-api.service';
+import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/FantasyPlayer';
+import {FantasyPlayerApiService} from '../../services/api/fantasy-player-api.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PlayerComparisonService} from '../services/player-comparison.service';
 import {ConfigService} from '../../services/init/config.service';
 import {PlayerInsights} from '../model/playerInsights';
@@ -21,18 +21,18 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
   playersLoaded: boolean;
 
   /** selected player */
-  selectedPlayer: KTCPlayer;
+  selectedPlayer: FantasyPlayer;
 
   /** selected player insights */
   selectedPlayerInsights: PlayerInsights;
 
   /** historical player value data */
-  historicalTradeValue: KTCPlayerDataPoint[];
+  historicalTradeValue: FantasyPlayerDataPoint[];
 
   constructor(public playerService: PlayerService,
-              private ktcApiService: KTCApiService,
+              private fantasyPlayerApiService: FantasyPlayerApiService,
               private route: ActivatedRoute,
-              public sleeperService: SleeperService,
+              public leagueService: LeagueService,
               private router: Router,
               private playerComparisonService: PlayerComparisonService,
               public leagueSwitchService: LeagueSwitchService,
@@ -46,7 +46,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
     if (this.playersLoaded) {
       this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
       this.selectedPlayerInsights = this.playerService.getPlayerInsights(this.selectedPlayer,
-        this.sleeperService?.selectedLeague?.isSuperflex);
+        this.leagueService?.selectedLeague?.isSuperflex);
     }
     if (this.playerService.playerValues.length === 0) {
       this.playerService.loadPlayerValuesForToday();
@@ -55,7 +55,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
         this.playersLoaded = true;
         this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
       }),
-      this.ktcApiService.getHistoricalPlayerValueById(nameId).subscribe((data) => {
+      this.fantasyPlayerApiService.getHistoricalPlayerValueById(nameId).subscribe((data) => {
           this.historicalTradeValue = data;
         }
       ),
@@ -126,7 +126,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
    * open up player comparison with selected player
    * @param selectedPlayer player data
    */
-  openPlayerComparison(selectedPlayer: KTCPlayer): void {
+  openPlayerComparison(selectedPlayer: FantasyPlayer): void {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
     this.router.navigate(['players/comparison'],
       {

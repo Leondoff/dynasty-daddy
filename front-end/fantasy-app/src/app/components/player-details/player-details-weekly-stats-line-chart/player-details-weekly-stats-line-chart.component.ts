@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {KTCPlayer} from '../../../model/KTCPlayer';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
@@ -7,7 +7,7 @@ import {BaseChartDirective, Label} from 'ng2-charts';
 import {PlayerService} from '../../../services/player.service';
 import {BaseComponent} from '../../base-component.abstract';
 import {PlayerInsights} from '../../model/playerInsights';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {variance} from 'simple-statistics';
 
 @Component({
@@ -22,7 +22,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
 
   /** selected player data */
   @Input()
-  selectedPlayer: KTCPlayer;
+  selectedPlayer: FantasyPlayer;
 
   /** selected player insights */
   @Input()
@@ -90,7 +90,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
   public adjacentADP = [];
 
   constructor(public playerService: PlayerService,
-              public sleeperService: SleeperService,
+              public leagueService: LeagueService,
               private cdr: ChangeDetectorRef) {
     super();
   }
@@ -108,7 +108,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
     if (!this.selectedPlayerInsights) {
       this.selectedPlayerInsights = this.playerService.getPlayerInsights(
         this.selectedPlayer,
-        this.sleeperService.selectedLeague?.isSuperflex || true
+        this.leagueService.selectedLeague?.isSuperflex || true
       );
     }
     this.cdr.detectChanges();
@@ -152,7 +152,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
    * Returns adp plus minus for a player
    * @param player player to get variance for
    */
-  getADPPlusMinus(player: KTCPlayer): number {
+  getADPPlusMinus(player: FantasyPlayer): number {
     const varianceValues = [];
 
     if (player.bb10_adp !== 0) {

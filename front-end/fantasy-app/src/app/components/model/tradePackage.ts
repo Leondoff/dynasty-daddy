@@ -1,11 +1,11 @@
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 
 export class TradePackage {
   team1UserId: string = null;
-  team1Assets: KTCPlayer[] = [];
+  team1Assets: FantasyPlayer[] = [];
   team1AssetsValue: number = 0;
   team2UserId: string = null;
-  team2Assets: KTCPlayer[] = [];
+  team2Assets: FantasyPlayer[] = [];
   team2AssetsValue: number = 0;
   valueAdjustment: number = 0;
   // if applies to team 1's side this would be 1 or team 2 this would be 2
@@ -18,7 +18,7 @@ export class TradePackage {
   autoFillTrade: boolean = false;
   excludePosGroup: string[] = [];
 
-  constructor(team1Assets: KTCPlayer[], team2Assets: KTCPlayer[], acceptanceVariance: number = 5) {
+  constructor(team1Assets: FantasyPlayer[], team2Assets: FantasyPlayer[], acceptanceVariance: number = 5) {
     this.team1Assets = team1Assets;
     this.team2Assets = team2Assets;
     this.acceptanceVariance = acceptanceVariance;
@@ -34,7 +34,7 @@ export class TradePackage {
     return this;
   }
 
-  addTeam2Assets(player: KTCPlayer): TradePackage {
+  addTeam2Assets(player: FantasyPlayer): TradePackage {
     this.team2Assets.push(player);
     return this;
   }
@@ -94,10 +94,10 @@ export class TradePackage {
 }
 
 export class StudPlayerResponse {
-  studPlayer: KTCPlayer = null;
+  studPlayer: FantasyPlayer = null;
   adjustmentMultiplier: number = 1;
 
-  constructor(player: KTCPlayer, value: number = 1) {
+  constructor(player: FantasyPlayer, value: number = 1) {
     this.studPlayer = player;
     this.adjustmentMultiplier = value;
   }

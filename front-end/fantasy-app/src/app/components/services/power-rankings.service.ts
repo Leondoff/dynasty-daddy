@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {SleeperTeam} from '../../model/SleeperLeague';
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {LeagueTeam} from '../../model/LeagueTeam';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {PositionPowerRanking, TeamPowerRanking} from '../model/powerRankings';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PlayerService} from '../../services/player.service';
 import {Observable, of} from 'rxjs';
 import {max, min} from 'simple-statistics';
@@ -15,7 +15,7 @@ import {EloService} from '../../services/utilities/elo.service';
 })
 export class PowerRankingsService {
 
-  constructor(private sleeperService: SleeperService,
+  constructor(private leagueService: LeagueService,
               public playerService: PlayerService,
               private matchupService: MatchupService,
               private eloService: EloService,
@@ -44,7 +44,7 @@ export class PowerRankingsService {
    * @param player2
    * @private
    */
-  private static getBetterPlayer(player1: KTCPlayer, player2: KTCPlayer): KTCPlayer {
+  private static getBetterPlayer(player1: FantasyPlayer, player2: FantasyPlayer): FantasyPlayer {
     if (player1 && player2) {
       if (player1.avg_adp < player2.avg_adp) {
         return player1.avg_adp === 0 ? player2 : player1;
@@ -63,7 +63,7 @@ export class PowerRankingsService {
    * @param teams
    * @param players
    */
-  mapPowerRankings(teams: SleeperTeam[], players: KTCPlayer[]): Observable<any> {
+  mapPowerRankings(teams: LeagueTeam[], players: FantasyPlayer[]): Observable<any> {
     try {
       if (this.powerRankings.length === 0) {
         teams?.map((team) => {
@@ -85,7 +85,7 @@ export class PowerRankingsService {
           for (const group of this.positionGroups) {
             let sfTradeValue = 0;
             let tradeValue = 0;
-            let groupList: KTCPlayer[] = [];
+            let groupList: FantasyPlayer[] = [];
             groupList = roster.filter(player => {
               if (player.position === group) {
                 sfTradeValue += player.sf_trade_value;
@@ -98,7 +98,7 @@ export class PowerRankingsService {
           const pickValues = players.filter(player => {
             return player.position === 'PI';
           });
-          const picks: KTCPlayer[] = [];
+          const picks: FantasyPlayer[] = [];
           let sfPickTradeValue = 0;
           let pickTradeValue = 0;
           // combine upcoming and future draft capital for rankings
@@ -135,7 +135,7 @@ export class PowerRankingsService {
           const rankedPicks = new PositionPowerRanking('PI', sfPickTradeValue, pickTradeValue, picks);
           this.powerRankings.push(new TeamPowerRanking(team, positionRoster, sfTradeValueTotal, tradeValueTotal, rankedPicks));
         });
-        this.rankTeams(this.sleeperService.selectedLeague.isSuperflex);
+        this.rankTeams(this.leagueService.selectedLeague.isSuperflex);
       }
     } catch (e: any) {
       console.error('Error Mapping League Data: ', e);
@@ -287,7 +287,7 @@ export class PowerRankingsService {
    * Sort a list of players by Average ADP
    * @param players
    */
-  sortPlayersByADP(players: KTCPlayer[]): KTCPlayer[] {
+  sortPlayersByADP(players: FantasyPlayer[]): FantasyPlayer[] {
     return players.slice().sort((a, b) => (a.avg_adp || 100) - (b.avg_adp || 100));
   }
 
@@ -296,10 +296,10 @@ export class PowerRankingsService {
    * @param endWeek current week to evaluate elo to
    */
   calculateEloAdjustedADPValue(
-    endWeek: number = this.nflService.getCompletedWeekForSeason(this.sleeperService?.selectedLeague?.season)
+    endWeek: number = this.nflService.getCompletedWeekForSeason(this.leagueService?.selectedLeague?.season)
   ): void {
     // handles 0 case
-    if (endWeek <= this.sleeperService.selectedLeague.startWeek - 1) {
+    if (endWeek <= this.leagueService.selectedLeague.startWeek - 1) {
       this.powerRankings.forEach((team) => {
         team.eloAdpValueStarter = team.adpValueStarter;
         team.eloAdpValueChange = 0;
@@ -313,7 +313,7 @@ export class PowerRankingsService {
       rosterIdMap[team.team.roster.rosterId] = ind;
       team.eloAdpValueStarter = team.adpValueStarter;
     });
-    for (let i = 0; i < endWeek - (this.sleeperService.selectedLeague.startWeek - 1); i++) {
+    for (let i = 0; i < endWeek - (this.leagueService.selectedLeague.startWeek - 1); i++) {
       // process this weeks match ups and set new elo
       this.matchupService.leagueMatchUpUI[i]?.forEach(matchUp => {
         const kValue = Math.max(10, Math.min(40, Math.round(Math.abs(matchUp.team1Points - matchUp.team2Points))));
@@ -397,11 +397,11 @@ export class PowerRankingsService {
    * @private
    */
   private getHealthyPlayersFromList(
-    players: KTCPlayer[],
+    players: FantasyPlayer[],
     numberOfPlayer: number,
-    excludedPlayers: KTCPlayer[] = [],
+    excludedPlayers: FantasyPlayer[] = [],
     excludedStatus: string[] = ['PUP', 'IR', 'Sus', 'COV']
-  ): KTCPlayer[] {
+  ): FantasyPlayer[] {
     const activePlayers = [];
     players.map(player => {
       if (!excludedStatus.includes(player.injury_status) && activePlayers.length < numberOfPlayer && !excludedPlayers.includes(player)) {
@@ -452,7 +452,7 @@ export class PowerRankingsService {
    * @private
    */
   private getCountForPosition(position: string): number {
-    return this.sleeperService.selectedLeague.rosterPositions.filter(x => x === position).length;
+    return this.leagueService.selectedLeague.rosterPositions.filter(x => x === position).length;
   }
 
   /**

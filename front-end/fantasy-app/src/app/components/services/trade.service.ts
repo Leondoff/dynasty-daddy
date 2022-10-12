@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {StudPlayerResponse, TradePackage} from '../model/tradePackage';
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {PlayerService} from '../../services/player.service';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class TradeService {
 
   constructor(
     private playerService: PlayerService,
-    private sleeperService: SleeperService
+    private leagueService: LeagueService
   ) {
   }
 
@@ -108,11 +108,11 @@ export class TradeService {
    * @param isSuperFlex boolean
    * @private
    */
-  private determineValuePlayer(team1: KTCPlayer[], team2: KTCPlayer[], isSuperFlex: boolean): StudPlayerResponse {
+  private determineValuePlayer(team1: FantasyPlayer[], team2: FantasyPlayer[], isSuperFlex: boolean): StudPlayerResponse {
     let valueAdjustmentMultiplier = 1;
-    const filteredTeam1Players: KTCPlayer[] = team1.slice().sort((a, b) =>
+    const filteredTeam1Players: FantasyPlayer[] = team1.slice().sort((a, b) =>
       isSuperFlex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value);
-    const filteredTeam2Players: KTCPlayer[] = team2.slice().sort((a, b) =>
+    const filteredTeam2Players: FantasyPlayer[] = team2.slice().sort((a, b) =>
       isSuperFlex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value);
     // loop through trade package and remove "equal" value players
     while (filteredTeam1Players.length > 0 && filteredTeam2Players.length > 0) {
@@ -173,7 +173,7 @@ export class TradeService {
     maxValue: number,
     isSuperFlex: boolean = true,
     tradePackage: TradePackage = this.tradePackage,
-    listLength: number = 5): KTCPlayer[] {
+    listLength: number = 5): FantasyPlayer[] {
     // find user id of weaker side of trade
     const userIdFilter = tradePackage.getWhichSideIsFavored() === 1 ? tradePackage.team2UserId : tradePackage.team1UserId;
     // filter list by user id then filter by value last filter by if player is in current trade
@@ -196,14 +196,14 @@ export class TradeService {
    * @param userId string
    * @private
    */
-  filterPlayersList(userId: string = null): KTCPlayer[] {
+  filterPlayersList(userId: string = null): FantasyPlayer[] {
     if (userId) {
       // filter players by team
       const playerList = this.playerService.playerValues.filter(it => it.owner?.userId === userId);
       // get draft capital for team in filter
-      const team = this.sleeperService.getTeamByUserId(userId);
+      const team = this.leagueService.getTeamByUserId(userId);
       if (team) {
-        const picks = this.sleeperService.getDraftCapitalToNameId([...team.futureDraftCapital, ...team.draftCapital]);
+        const picks = this.leagueService.getDraftCapitalToNameId([...team.futureDraftCapital, ...team.draftCapital]);
         picks.map(pick => {
           const pickPlayer = this.playerService.getPlayerByNameId(pick);
           if (pickPlayer) {
@@ -224,7 +224,7 @@ export class TradeService {
    * @param isSuperFlex is super flex
    * @private
    */
-  private getValueAdjustmentMultiplier(stud: KTCPlayer, otherTeam: KTCPlayer[], isSuperFlex: boolean): number {
+  private getValueAdjustmentMultiplier(stud: FantasyPlayer, otherTeam: FantasyPlayer[], isSuperFlex: boolean): number {
     let valueModifier = 1;
     const studPosition = this.playerService.getPlayersValueIndex(stud, isSuperFlex);
     otherTeam.forEach(player => {

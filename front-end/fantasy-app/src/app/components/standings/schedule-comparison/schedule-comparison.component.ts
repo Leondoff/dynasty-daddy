@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {TeamMockDraftPick} from '../../model/mockDraft';
 import {MatchupService} from '../../services/matchup.service';
@@ -18,7 +18,7 @@ export class ScheduleComparisonComponent implements OnInit {
   /** datasource for table */
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
 
-  constructor(public sleeperService: SleeperService, public matchupService: MatchupService) { }
+  constructor(public leagueService: LeagueService, public matchupService: MatchupService) { }
 
   ngOnInit(): void {
     this.displayColumns = this.generateCols();
@@ -31,7 +31,7 @@ export class ScheduleComparisonComponent implements OnInit {
    */
   private generateCols(): string[] {
     const rosterIds = ['team'];
-    for (const team of this.sleeperService.sleeperTeamDetails){
+    for (const team of this.leagueService.leagueTeamDetails){
       rosterIds.push(team.roster.rosterId.toString());
     }
     return rosterIds;

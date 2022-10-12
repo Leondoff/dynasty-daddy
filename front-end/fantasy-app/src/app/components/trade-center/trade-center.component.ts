@@ -6,10 +6,10 @@ import {BaseComponent} from '../base-component.abstract';
 import {FormControl} from '@angular/forms';
 import {ReplaySubject, Subject, timer} from 'rxjs';
 import {MatSelect} from '@angular/material/select';
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {take, takeUntil} from 'rxjs/operators';
 import {ConfigService} from '../../services/init/config.service';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {TeamPowerRanking} from '../model/powerRankings';
 import {PlayerComparisonService} from '../services/player-comparison.service';
@@ -25,7 +25,7 @@ import {DisplayService} from '../../services/utilities/display.service';
 export class TradeCenterComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** list of players */
-  protected players: KTCPlayer[] = [];
+  protected players: FantasyPlayer[] = [];
 
   /** control for the selected player */
   public playerCtrl: FormControl = new FormControl();
@@ -34,7 +34,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   public playerFilterCtrl: FormControl = new FormControl();
 
   /** list of players filtered by search keyword */
-  public filteredTeam1Players: ReplaySubject<KTCPlayer[]> = new ReplaySubject<KTCPlayer[]>(1);
+  public filteredTeam1Players: ReplaySubject<FantasyPlayer[]> = new ReplaySubject<FantasyPlayer[]>(1);
 
   /** control for the selected player */
   public player2Ctrl: FormControl = new FormControl();
@@ -43,16 +43,16 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   public player2FilterCtrl: FormControl = new FormControl();
 
   /** list of players filtered by search keyword */
-  public filteredTeam2Players: ReplaySubject<KTCPlayer[]> = new ReplaySubject<KTCPlayer[]>(1);
+  public filteredTeam2Players: ReplaySubject<FantasyPlayer[]> = new ReplaySubject<FantasyPlayer[]>(1);
 
   /** Subject that emits when the component has been destroyed. */
   protected _onDestroy = new Subject<void>();
 
   /** list of players from trade */
-  public team1PlayerList: KTCPlayer[] = [];
+  public team1PlayerList: FantasyPlayer[] = [];
 
   /** list of player for team 2 */
-  public team2PlayerList: KTCPlayer[] = [];
+  public team2PlayerList: FantasyPlayer[] = [];
 
   /** is super flex toggle for trade package */
   public isSuperFlex: boolean;
@@ -76,7 +76,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   public selectedTeam2: string = null;
 
   /** recommended players to add to trade list */
-  public recommendedPlayers: KTCPlayer[] = [];
+  public recommendedPlayers: FantasyPlayer[] = [];
 
   /** which side of the trade is favored */
   public favoredSide: number = 0;
@@ -89,7 +89,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     public tradeTool: TradeService,
     public playerService: PlayerService,
     public configService: ConfigService,
-    public sleeperService: SleeperService,
+    public leagueService: LeagueService,
     public powerRankingsService: PowerRankingsService,
     public playerComparisonService: PlayerComparisonService,
     public leagueSwitchService: LeagueSwitchService,
@@ -128,7 +128,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     if (this.tradeTool.tradePackage) {
       this.isSuperFlex = this.tradeTool.tradePackage?.isSuperFlex;
     } else {
-      this.isSuperFlex = this.sleeperService.selectedLeague?.isSuperflex || true;
+      this.isSuperFlex = this.leagueService.selectedLeague?.isSuperflex || true;
     }
     this.acceptanceVariance = this.tradeTool.tradePackage?.acceptanceVariance || 5;
 
@@ -139,11 +139,11 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     this.players = this.playerService.playerValues.slice();
 
     // if logged in set initial user id to team 2 user id
-    if (this.sleeperService.selectedLeague &&
-      this.sleeperService.sleeperUser &&
+    if (this.leagueService.selectedLeague &&
+      this.leagueService.leagueUser &&
       this.team1PlayerList.length === 0 &&
       this.team2PlayerList.length === 0) {
-      this.selectedTeam2 = this.sleeperService.sleeperUser?.userData?.user_id;
+      this.selectedTeam2 = this.leagueService.leagueUser?.userData?.user_id;
       this.team2Rankings = this.powerRankingsService.findTeamFromRankingsByUserId(this.selectedTeam2);
     }
 
@@ -189,11 +189,11 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * @param filterSubscription replay subject
    * @private
    */
-  private initializeSubscriptions(selectObject: MatSelect, filterSubscription: ReplaySubject<KTCPlayer[]>): void {
+  private initializeSubscriptions(selectObject: MatSelect, filterSubscription: ReplaySubject<FantasyPlayer[]>): void {
     filterSubscription
       .pipe(take(1), takeUntil(this._onDestroy))
       .subscribe(() => {
-        selectObject.compareWith = (a: KTCPlayer, b: KTCPlayer) => a && b && a.name_id === b.name_id;
+        selectObject.compareWith = (a: FantasyPlayer, b: FantasyPlayer) => a && b && a.name_id === b.name_id;
       });
   }
 
@@ -201,7 +201,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * filter players for selected dropdown
    * @protected
    */
-  protected filterTeamPlayers(filterCtrl: FormControl, userId: string, filterSubscription: ReplaySubject<KTCPlayer[]>): any {
+  protected filterTeamPlayers(filterCtrl: FormControl, userId: string, filterSubscription: ReplaySubject<FantasyPlayer[]>): any {
     if (!this.players) {
       return;
     }
@@ -232,7 +232,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       player2,
       this.acceptanceVariance
     );
-    if (this.sleeperService.selectedLeague) {
+    if (this.leagueService.selectedLeague) {
       trade.team1UserId = this.selectedTeam1 || this.tradeTool.tradePackage?.team1UserId;
       trade.team2UserId = this.selectedTeam2 || this.tradeTool.tradePackage?.team2UserId;
       // set player if null
@@ -281,7 +281,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * add player to team 2 list
    * @param player selected player
    */
-  addPlayerToTeam1(player: KTCPlayer): void {
+  addPlayerToTeam1(player: FantasyPlayer): void {
     if (player) {
       this.team1PlayerList.push(player);
       this.processTrade();
@@ -292,7 +292,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * add player to team 2 list
    * @param player selected player
    */
-  addPlayerToTeam2(player: KTCPlayer): void {
+  addPlayerToTeam2(player: FantasyPlayer): void {
     if (player) {
       this.team2PlayerList.push(player);
       this.processTrade();

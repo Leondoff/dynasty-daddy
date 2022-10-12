@@ -4,8 +4,8 @@ import {ConfigService} from '../../../services/init/config.service';
 import {PlayerService} from '../../../services/player.service';
 import {Router} from '@angular/router';
 import {TradeService} from '../../services/trade.service';
-import {SleeperService} from '../../../services/sleeper.service';
-import {SleeperOwnerData} from '../../../model/SleeperLeague';
+import {LeagueService} from '../../../services/league.service';
+import {LeagueOwnerData} from '../../../model/LeagueTeam';
 import {LeagueSwitchService} from "../../services/league-switch.service";
 
 @Component({
@@ -16,7 +16,7 @@ import {LeagueSwitchService} from "../../services/league-switch.service";
 export class TradeFinderCardComponent implements OnInit {
 
   @Input()
-  owner: SleeperOwnerData = null;
+  owner: LeagueOwnerData = null;
 
   @Input()
   tradePackage: TradePackage;
@@ -24,7 +24,7 @@ export class TradeFinderCardComponent implements OnInit {
   constructor(public configService: ConfigService,
               public router: Router,
               public leagueSwitchService: LeagueSwitchService,
-              public sleeperService: SleeperService,
+              public leagueService: LeagueService,
               private tradeService: TradeService,
               private playerService: PlayerService) {
   }
@@ -50,11 +50,11 @@ export class TradeFinderCardComponent implements OnInit {
     } else {
       if (this.tradePackage.getWhichSideIsFavored() === 1) {
         return 'Favors ' +
-          (this.sleeperService.getTeamByUserId(this.tradePackage.team2UserId)?.owner?.ownerName || 'Team 2') +
+          (this.leagueService.getTeamByUserId(this.tradePackage.team2UserId)?.owner?.ownerName || 'Team 2') +
           ' by ' + this.tradePackage.valueToEvenTrade;
       } else {
         return 'Favors ' +
-          (this.sleeperService.getTeamByUserId(this.tradePackage.team1UserId)?.owner?.ownerName || 'Team 1') +
+          (this.leagueService.getTeamByUserId(this.tradePackage.team1UserId)?.owner?.ownerName || 'Team 1') +
           ' by ' + this.tradePackage.valueToEvenTrade;
       }
     }

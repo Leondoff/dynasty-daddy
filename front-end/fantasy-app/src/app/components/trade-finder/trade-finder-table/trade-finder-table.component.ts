@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {KTCPlayer} from '../../../model/KTCPlayer';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
 import {TradeFinderService} from '../../services/trade-finder.service';
 
 @Component({
@@ -12,7 +12,7 @@ import {TradeFinderService} from '../../services/trade-finder.service';
 export class TradeFinderTableComponent implements OnInit, OnChanges {
 
   @Input()
-  assets: KTCPlayer[];
+  assets: FantasyPlayer[];
 
   @Input()
   isSuperflex: boolean;
@@ -21,7 +21,7 @@ export class TradeFinderTableComponent implements OnInit, OnChanges {
   columnsToDisplay = ['select', 'playerName', 'value'];
 
   // datasource for mat table
-  dataSource: MatTableDataSource<KTCPlayer> = new MatTableDataSource<KTCPlayer>();
+  dataSource: MatTableDataSource<FantasyPlayer> = new MatTableDataSource<FantasyPlayer>();
 
   constructor(public playerService: PlayerService,
               private tradeFinderService: TradeFinderService) {
@@ -41,7 +41,7 @@ export class TradeFinderTableComponent implements OnInit, OnChanges {
    * @param asset player to add/remove
    * @param index index of player
    */
-  addAssetToTrade(event: any, asset: KTCPlayer, index: number): void {
+  addAssetToTrade(event: any, asset: FantasyPlayer, index: number): void {
     if (event.checked) {
       this.tradeFinderService.selectedPlayers.push(asset);
     } else {

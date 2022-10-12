@@ -4,7 +4,7 @@ import {BaseComponent} from '../base-component.abstract';
 import {ConfigService} from '../../services/init/config.service';
 import {ActivatedRoute} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 
 @Component({
   selector: 'app-player-values',
@@ -18,7 +18,7 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
 
   constructor(public playerService: PlayerService,
               public configService: ConfigService,
-              public sleeperService: SleeperService,
+              public leagueService: LeagueService,
               public leagueSwitchService: LeagueSwitchService,
               private route: ActivatedRoute) {
     super();
