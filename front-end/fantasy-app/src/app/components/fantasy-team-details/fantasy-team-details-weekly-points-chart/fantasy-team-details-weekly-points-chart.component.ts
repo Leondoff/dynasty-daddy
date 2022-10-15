@@ -4,8 +4,9 @@ import {Label} from 'ng2-charts';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {MatchupService} from '../../services/matchup.service';
-import {SleeperTeam} from '../../../model/SleeperLeague';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueTeam} from '../../../model/LeagueTeam';
+import {LeagueService} from '../../../services/league.service';
+import {NflService} from "../../../services/utilities/nfl.service";
 
 @Component({
   selector: 'app-fantasy-team-details-weekly-points-chart',
@@ -18,7 +19,7 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
    * team selected
    */
   @Input()
-  selectedTeam: SleeperTeam;
+  selectedTeam: LeagueTeam;
 
   /** line chart data */
   public lineChartData: ChartDataSets[] = [];
@@ -74,14 +75,15 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
   public lineChartType = 'line';
   public lineChartPlugins = [];
 
-  constructor(private sleeperService: SleeperService, private matchupService: MatchupService) {
+  constructor(private leagueService: LeagueService, private matchupService: MatchupService, private nflService: NflService) {
   }
 
   ngOnInit(): void {
     // TODO fix this
     if (this.matchupService.leagueMatchUpUI.length === 0) {
       console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
-      this.matchupService.initMatchUpCharts(this.sleeperService.selectedLeague);
+      this.matchupService.initMatchUpCharts(this.leagueService.selectedLeague,
+        this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season));
     }
     this.createMatchupDataSets();
   }
@@ -93,21 +95,21 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
     const weeklyPoints = [];
     const oppPoints = [];
     for (const weekMatchups of this.matchupService.leagueMatchUpUI) {
-      const weekNumber = weekMatchups[0]?.week - this.sleeperService.selectedLeague.startWeek;
+      const weekNumber = weekMatchups[0]?.week - this.leagueService.selectedLeague.startWeek;
       weeklyPoints[weekNumber] = 0;
       oppPoints[weekNumber] = 0;
       for (const matchUp of weekMatchups) {
         if (matchUp.team1RosterId === this.selectedTeam.roster.rosterId) {
           weeklyPoints[weekNumber] = matchUp.team1Points;
           oppPoints[weekNumber] = matchUp.team2Points;
-          this.lineChartLabels[matchUp.week - this.sleeperService.selectedLeague.startWeek] = ('Week ' + matchUp.week + ' vs. ' +
-                        this.sleeperService.getTeamByRosterId(matchUp.team2RosterId).owner?.teamName);
+          this.lineChartLabels[matchUp.week - this.leagueService.selectedLeague.startWeek] = ('Week ' + matchUp.week + ' vs. ' +
+                        this.leagueService.getTeamByRosterId(matchUp.team2RosterId).owner?.teamName);
           break;
         } else if (matchUp.team2RosterId === this.selectedTeam.roster.rosterId) {
           weeklyPoints[weekNumber] = matchUp.team2Points;
           oppPoints[weekNumber] = matchUp.team1Points;
-          this.lineChartLabels[matchUp.week - this.sleeperService.selectedLeague.startWeek] = ('Week ' + matchUp.week + ' vs. ' +
-            this.sleeperService.getTeamByRosterId(matchUp.team1RosterId).owner?.teamName);
+          this.lineChartLabels[matchUp.week - this.leagueService.selectedLeague.startWeek] = ('Week ' + matchUp.week + ' vs. ' +
+            this.leagueService.getTeamByRosterId(matchUp.team1RosterId).owner?.teamName);
           break;
         }
       }

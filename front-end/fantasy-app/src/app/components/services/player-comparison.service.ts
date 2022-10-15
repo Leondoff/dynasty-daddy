@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {KTCPlayer, KTCPlayerDataPoint} from '../../model/KTCPlayer';
+import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/FantasyPlayer';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {PlayerComparison} from '../model/playerComparison';
 import {ChartDataSets} from 'chart.js';
 import {Label} from 'ng2-charts';
-import {KTCApiService} from '../../services/api/ktc-api.service';
+import {FantasyPlayerApiService} from '../../services/api/fantasy-player-api.service';
 import {PlayerService} from '../../services/player.service';
 
 @Injectable({
@@ -54,7 +54,7 @@ export class PlayerComparisonService {
   isOrderByDesc: boolean = true;
 
   constructor(
-    private ktcApiService: KTCApiService,
+    private fantasyPlayerApiService: FantasyPlayerApiService,
     private playerService: PlayerService
   ) {
   }
@@ -75,7 +75,7 @@ export class PlayerComparisonService {
     });
     this.group2SelectedPlayers = [];
     return of(forkJoin(playersToUpdate.map(player => {
-      this.ktcApiService.getHistoricalPlayerValueById(player.name_id, this.isAllTime).subscribe((data) => {
+      this.fantasyPlayerApiService.getHistoricalPlayerValueById(player.name_id, this.isAllTime).subscribe((data) => {
           this.addNewPlayer(data, player, group2Players.includes(player.name_id));
         }
       );
@@ -90,7 +90,7 @@ export class PlayerComparisonService {
    * @private
    * TODO clean up redundant code
    */
-  private addNewPlayer(player: KTCPlayerDataPoint[], defaultPlayer: KTCPlayer, isGroup2: boolean = false): void {
+  private addNewPlayer(player: FantasyPlayerDataPoint[], defaultPlayer: FantasyPlayer, isGroup2: boolean = false): void {
     if (this.lineChartData[0]?.data.length === 0) {
       this.lineChartData.splice(0, 1);
     }
@@ -216,8 +216,8 @@ export class PlayerComparisonService {
    * @param player
    * @param isGroup2
    */
-  addPlayerToCharts(player: KTCPlayer, isGroup2: boolean = false): void {
-    this.ktcApiService.getHistoricalPlayerValueById(player.name_id, this.isAllTime).subscribe((data) => {
+  addPlayerToCharts(player: FantasyPlayer, isGroup2: boolean = false): void {
+    this.fantasyPlayerApiService.getHistoricalPlayerValueById(player.name_id, this.isAllTime).subscribe((data) => {
         !this.isGroupMode ? this.addNewPlayer(data, player) : this.addNewPlayer(data, player, isGroup2);
       }
     );

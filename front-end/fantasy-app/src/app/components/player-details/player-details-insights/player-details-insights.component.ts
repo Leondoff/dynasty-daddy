@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {KTCPlayer, KTCPlayerDataPoint} from '../../../model/KTCPlayer';
+import {FantasyPlayer, FantasyPlayerDataPoint} from '../../../model/FantasyPlayer';
 import {PlayerService} from '../../../services/player.service';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {Router} from '@angular/router';
@@ -20,17 +20,17 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
 
   /** selected player info */
   @Input()
-  selectedPlayer: KTCPlayer;
+  selectedPlayer: FantasyPlayer;
 
   /** past month selected data points */
   @Input()
-  selectedPlayerValues: KTCPlayerDataPoint[];
+  selectedPlayerValues: FantasyPlayerDataPoint[];
 
   /** list of adjacent players overall */
-  overallAdjPlayers: KTCPlayer[];
+  overallAdjPlayers: FantasyPlayer[];
 
   /** list of adjacent players based on position */
-  positionAdjPlayers: KTCPlayer[];
+  positionAdjPlayers: FantasyPlayer[];
 
   /** display columns */
   displayedColumns: string[] = ['rank', 'name', 'value'];
@@ -85,7 +85,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
 
   constructor(
     public playerService: PlayerService,
-    public sleeperService: SleeperService,
+    public leagueService: LeagueService,
     private playerComparisonService: PlayerComparisonService,
     private leagueSwitchService: LeagueSwitchService,
     private cdr: ChangeDetectorRef,
@@ -97,11 +97,11 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   }
 
   ngOnInit(): void {
-    this.isSuperflex = this.sleeperService.selectedLeague ? this.sleeperService.selectedLeague.isSuperflex : true;
+    this.isSuperflex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : true;
     this.overallAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
-      this.selectedPlayer?.name_id, '', this.sleeperService.selectedLeague?.isSuperflex);
+      this.selectedPlayer?.name_id, '', this.leagueService.selectedLeague?.isSuperflex);
     this.positionAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
-      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.sleeperService.selectedLeague?.isSuperflex);
+      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.leagueService.selectedLeague?.isSuperflex);
   }
 
   ngOnChanges(): void {
@@ -125,7 +125,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
           this.selectedPlayerValues.map(dataPoint => {
             if (new Date(new Date(dateLabel).setHours(0, 0, 0, 0)).getTime()
               === new Date(new Date(dataPoint.date).setHours(0, 0, 0, 0)).getTime()) {
-              dataList.push(this.sleeperService.selectedLeague?.isSuperflex === false ? dataPoint.trade_value : dataPoint.sf_trade_value);
+              dataList.push(this.leagueService.selectedLeague?.isSuperflex === false ? dataPoint.trade_value : dataPoint.sf_trade_value);
               this.lineChartLabels.push(this.playerComparisonService.formatDateForDisplay(dataPoint.date));
               dataPointInd++;
             }
@@ -165,7 +165,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
    * open up player comparison with selected player
    * @param selectedPlayer player data
    */
-  openPlayerComparison(selectedPlayer: KTCPlayer): void {
+  openPlayerComparison(selectedPlayer: FantasyPlayer): void {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
     this.router.navigate(['players/comparison'],
       {

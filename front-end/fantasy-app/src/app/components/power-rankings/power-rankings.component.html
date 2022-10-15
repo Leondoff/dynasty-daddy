@@ -3,12 +3,12 @@
   Team power rankings are determined by <a class="info__alert" href="https://keeptradecut.com/" target="_blank">KeepTradeCut.com</a> value calculations taken from over <span class="info__alert">2.5 million</span> data points.
 </div>
 
-<div *ngIf="sleeperService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0" class="power-ranking-container">
+<div *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0" class="power-ranking-container">
   <div>
     <app-power-rankings-chart [powerRankings]="powerRankingService.powerRankings"></app-power-rankings-chart>
   </div>
   <div>
-    <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="sleeperService.selectedLeague.isSuperflex"></app-power-rankings-table>
+    <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="leagueService.selectedLeague.isSuperflex"></app-power-rankings-table>
   </div>
 
   <div class="margin-top-50 center-text">
@@ -36,31 +36,31 @@
   </div>
 </div>
 
-<div class="center-spinner margin-top-120" *ngIf="sleeperService.leagueStatus === 'LOADING'">
+<div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">
   <mat-spinner></mat-spinner>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="sleeperService.leagueStatus === 'NONE'">
+<div class="center-text margin-top-50" *ngIf="leagueService.leagueStatus === 'NONE'">
   <div class="warning__alert">Cannot generate Power Rankings. Please select a league.</div>
   <br>
-  <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
-  <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
+  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
-      <mat-option *ngFor="let league of sleeperService.sleeperUser?.leagues"
+      <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
                   [value]="league">{{league.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="sleeperService.isLeagueLoaded() && powerRankingService.powerRankings.length === 0">
+<div class="center-text margin-top-50" *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length === 0">
   <div class="warning__alert">Error creating power rankings. Please select a different league.</div>
   <br>
-  <button *ngIf="!sleeperService.sleeperUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
-  <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="sleeperService.sleeperUser?.leagues.length > 0">
+  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
-      <mat-option *ngFor="let league of sleeperService.sleeperUser?.leagues"
+      <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
                   [value]="league">{{league.name}}</mat-option>
     </mat-select>
   </mat-form-field>

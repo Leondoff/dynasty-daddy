@@ -1,23 +1,23 @@
 /* tslint:disable:variable-name */
-import {SleeperCompletedPickData, SleeperRawDraftOrderData, SleeperRawTradePicksData} from './SleeperLeague';
+import {LeagueCompletedPickData, LeagueRawDraftOrderData, LeagueRawTradePicksData} from './LeagueTeam';
 
-export class SleeperUserData {
+export class LeagueUserData {
   username: string = '';
   user_id: string;
   avatar: string;
 }
 
 export class CompletedDraft {
-  constructor(draft: SleeperRawDraftOrderData, picks: SleeperCompletedPickData[]) {
+  constructor(draft: LeagueRawDraftOrderData, picks: LeagueCompletedPickData[]) {
     this.draft = draft;
     this.picks = picks;
   }
 
-  draft: SleeperRawDraftOrderData;
-  picks: SleeperCompletedPickData[];
+  draft: LeagueRawDraftOrderData;
+  picks: LeagueCompletedPickData[];
 }
 
-export class SleeperLeagueData {
+export class LeagueData {
   constructor(b: boolean,
               name: string,
               league_id: string,
@@ -68,9 +68,9 @@ export class SleeperLeagueData {
   medianWins: boolean;
 }
 
-export class SleeperData {
-  userData: SleeperUserData;
-  leagues: SleeperLeagueData[];
+export class FantasyPlatformData {
+  userData: LeagueUserData;
+  leagues: LeagueData[];
 }
 
 export class DraftCapital {
@@ -85,4 +85,8 @@ export class DraftCapital {
   round: number;
   pick: number;
   year: string;
+}
+
+export enum LeaguePlatform {
+  SLEEPER
 }

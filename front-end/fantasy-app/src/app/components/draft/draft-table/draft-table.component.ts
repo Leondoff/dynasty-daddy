@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
-import {KTCPlayer} from '../../../model/KTCPlayer';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
 import {TeamMockDraftPick} from '../../model/mockDraft';
 import {MockDraftService} from '../../services/mock-draft.service';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 
 @Component({
   selector: 'app-draft-table',
@@ -29,7 +29,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
   displayedColumns: string[] = [];
 
   /** currently selected players */
-  selectedPlayers: KTCPlayer[] = [];
+  selectedPlayers: FantasyPlayer[] = [];
 
   /** page length set to size of league */
   pageLength: number = 12;
@@ -41,7 +41,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
   dataSource: MatTableDataSource<TeamMockDraftPick> = new MatTableDataSource<TeamMockDraftPick>();
 
   constructor(public mockDraftService: MockDraftService,
-              public sleeperService: SleeperService) {
+              public leagueService: LeagueService) {
   }
 
   ngOnInit(): void {
@@ -53,7 +53,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   initializeMockDraft(): void {
     this.displayedColumns = ['pickNumber', 'team', 'owner', 'projectedPlayer'];
-    this.pageLength = this.sleeperService.selectedLeague.totalRosters;
+    this.pageLength = this.leagueService.selectedLeague.totalRosters;
     this.dataSource = new MatTableDataSource(this.mockDraftService.teamPicks);
     this.dataSource.paginator = this.paginator;
   }
@@ -89,7 +89,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
    * @param pick modified pick number
    * @param selectedDraft selected players
    */
-  private generateNewDraftOrder(pick: number, selectedDraft: KTCPlayer[]): KTCPlayer[] {
+  private generateNewDraftOrder(pick: number, selectedDraft: FantasyPlayer[]): FantasyPlayer[] {
     const staticPicks = this.selectedPlayers.slice(0, pick);
     const newDropDown = [];
     for (const player of selectedDraft) {
@@ -106,7 +106,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
    * disable player in custom mode dropdown if already selected
    * @param player player data
    */
-  isPlayerAlreadySelected(player: KTCPlayer, players: KTCPlayer[]): boolean {
+  isPlayerAlreadySelected(player: FantasyPlayer, players: FantasyPlayer[]): boolean {
     return players.some(picked => picked?.name_id === player?.name_id);
   }
 }

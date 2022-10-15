@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {KTCApiConfigService} from './api/ktc-api-config.service';
+import {FantasyPlayerApiConfigService} from './api/fantasy-player-api-config.service';
 import {SleeperApiConfigService} from './api/sleeper/sleeper-api-config.service';
 import {ConfigApiConfigService} from './api/config/config-api-config.service';
 
@@ -13,7 +13,7 @@ export class EndpointsService {
   // uncomment for dev environment
   // private baseUrl = 'http://localhost:3000/api';
 
-  constructor(private ktcApiConfigService: KTCApiConfigService,
+  constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
               private sleeperApiConfigService: SleeperApiConfigService,
               private configApiConfigService: ConfigApiConfigService) {
   }
@@ -23,10 +23,10 @@ export class EndpointsService {
     // config option endpoint
     this.configApiConfigService.getConfigOptionsEndpoint = this.baseUrl + '/v1/config/all';
 
-    // KTC Database Endpoints
-    this.ktcApiConfigService.getPlayerValuesForTodayEndpoint = this.baseUrl + '/v1/player/all/today';
-    this.ktcApiConfigService.getPrevPlayerValuesEndpoint = this.baseUrl + '/v1/player/all/prev/';
-    this.ktcApiConfigService.getHistoricalPlayerValues = this.baseUrl + '/v1/player/sleeper/';
+    // Fantasy Player Database Endpoints
+    this.fantasyPlayerApiConfigService.getPlayerValuesForTodayEndpoint = this.baseUrl + '/v1/player/all/today';
+    this.fantasyPlayerApiConfigService.getPrevPlayerValuesEndpoint = this.baseUrl + '/v1/player/all/prev/';
+    this.fantasyPlayerApiConfigService.getHistoricalPlayerValues = this.baseUrl + '/v1/player/sleeper/';
 
     // Sleeper Endpoints
     this.sleeperApiConfigService.getSleeperUsernameEndpoint = 'https://api.sleeper.app/v1/user/';

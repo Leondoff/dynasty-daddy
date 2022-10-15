@@ -1,17 +1,17 @@
 import {Component, OnInit} from '@angular/core';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {SleeperTeam} from '../../model/SleeperLeague';
+import {LeagueTeam} from '../../model/LeagueTeam';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {PlayerService} from '../../services/player.service';
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {PlayerComparisonService} from '../services/player-comparison.service';
 import {TransactionsService} from '../services/transactions.service';
 import {TransactionUI} from '../model/transaction';
 import {ConfigService} from '../../services/init/config.service';
 import {BaseComponent} from '../base-component.abstract';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import {DisplayService} from "../../services/utilities/display.service";
+import {DisplayService} from '../../services/utilities/display.service';
 
 @Component({
   selector: 'app-fantasy-team-details',
@@ -21,7 +21,7 @@ import {DisplayService} from "../../services/utilities/display.service";
 export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit {
 
   /** selected fantasy team */
-  selectedTeam: SleeperTeam;
+  selectedTeam: LeagueTeam;
 
   /** full list of team activites */
   teamActivity: TransactionUI[] = [];
@@ -30,7 +30,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   filterTeamActivity: TransactionUI[] = [];
 
   /** roster of players */
-  roster: KTCPlayer[] = [];
+  roster: FantasyPlayer[] = [];
 
   /** activity filter */
   activitySearchVal: string;
@@ -41,7 +41,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   /** if false page is not loaded yet */
   pageLoaded: boolean = false;
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               private route: ActivatedRoute,
               public powerRankingsService: PowerRankingsService,
               public playerService: PlayerService,
@@ -63,7 +63,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
         this.getSelectedTeam();
       }),
     );
-    if (this.sleeperService.isLeagueLoaded() && this.sleeperService.selectedLeague) {
+    if (this.leagueService.isLeagueLoaded() && this.leagueService.selectedLeague) {
       this.getSelectedTeam();
     }
   }
@@ -72,15 +72,15 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
    * returns a list of the biggest risers/fallers
    * @param isRiser true if rising/false if fallers
    */
-  getBiggestMovers(isRiser: boolean): KTCPlayer[] {
+  getBiggestMovers(isRiser: boolean): FantasyPlayer[] {
     const tempRoster = this.roster?.slice();
     return tempRoster.filter(player => {
-      return (this.sleeperService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value) > 1000;
+      return (this.leagueService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value) > 1000;
     }).sort((a, b) => {
       if (isRiser) {
-        return this.sleeperService.selectedLeague.isSuperflex ? b.sf_change - a.sf_change : b.standard_change - a.standard_change;
+        return this.leagueService.selectedLeague.isSuperflex ? b.sf_change - a.sf_change : b.standard_change - a.standard_change;
       } else {
-        return this.sleeperService.selectedLeague.isSuperflex ? a.sf_change - b.sf_change : a.standard_change - b.standard_change;
+        return this.leagueService.selectedLeague.isSuperflex ? a.sf_change - b.sf_change : a.standard_change - b.standard_change;
       }
     }).slice(0, 5);
   }
@@ -88,8 +88,8 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   getSelectedTeam(): void {
     const ownerName = this.route.snapshot.paramMap.get('ownerName');
     // get selected team from sleeper data
-    const teamIndex = this.sleeperService.sleeperTeamDetails.map(e => e.owner?.ownerName).indexOf(ownerName);
-    this.selectedTeam = this.sleeperService.sleeperTeamDetails[teamIndex];
+    const teamIndex = this.leagueService.leagueTeamDetails.map(e => e.owner?.ownerName).indexOf(ownerName);
+    this.selectedTeam = this.leagueService.leagueTeamDetails[teamIndex];
     // generate roster and sort
     for (const sleeperId of this.selectedTeam.roster.players) {
       const player = this.playerService.getPlayerBySleeperId(sleeperId);
@@ -98,7 +98,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
       }
     }
     this.roster.sort((a, b) => {
-      if (this.sleeperService.selectedLeague.isSuperflex) {
+      if (this.leagueService.selectedLeague.isSuperflex) {
         return b.sf_trade_value - a.sf_trade_value;
       } else {
         return b.trade_value - a.trade_value;
@@ -122,14 +122,14 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
    */
   getAveragePoints(): number {
     return Math.round(this.selectedTeam.roster.teamMetrics.fpts
-      / (this.sleeperService.selectedLeague.playoffStartWeek - this.sleeperService.selectedLeague.startWeek));
+      / (this.leagueService.selectedLeague.playoffStartWeek - this.leagueService.selectedLeague.startWeek));
   }
 
   /**
    * open player comparison page
    * @param selectedPlayer selected player
    */
-  openPlayerComparison(selectedPlayer: KTCPlayer): void {
+  openPlayerComparison(selectedPlayer: FantasyPlayer): void {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
     this.router.navigate(['players/comparison'],
       {

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
@@ -14,7 +14,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class PowerRankingsComponent extends BaseComponent implements OnInit {
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
               private route: ActivatedRoute,
@@ -37,9 +37,9 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
 
   mapPowerRankings(): void {
     // TODO ugly fix for race condition on adding upcoming draft picks to playoff calculator
-    if (this.sleeperService.upcomingDrafts.length !== 0) {
+    if (this.leagueService.upcomingDrafts.length !== 0) {
       this.powerRankingService.reset();
-      this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues);
+      this.powerRankingService.mapPowerRankings(this.leagueService.leagueTeamDetails, this.playersService.playerValues);
     }
   }
 }

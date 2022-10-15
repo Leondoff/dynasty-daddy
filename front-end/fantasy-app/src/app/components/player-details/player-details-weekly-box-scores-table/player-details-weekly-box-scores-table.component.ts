@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {KTCPlayer} from '../../../model/KTCPlayer';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
 import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ChartOptions, ChartType} from 'chart.js';
@@ -14,7 +14,7 @@ export class PlayerDetailsWeeklyBoxScoresTableComponent implements OnInit {
 
   /** selected player data */
   @Input()
-  selectedPlayer: KTCPlayer;
+  selectedPlayer: FantasyPlayer;
 
   /** general box score cols */
   generalBoxScore = ['week', 'points', 'off_snp'];

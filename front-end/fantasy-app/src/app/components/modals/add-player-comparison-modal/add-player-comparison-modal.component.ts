@@ -1,12 +1,12 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
-import {KTCPlayer} from '../../../model/KTCPlayer';
-import {KTCApiService} from '../../../services/api/ktc-api.service';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayerApiService} from '../../../services/api/fantasy-player-api.service';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {QueryBuilderClassNames, QueryBuilderConfig} from 'angular2-query-builder';
-import {SleeperOwnerData} from '../../../model/SleeperLeague';
+import {LeagueOwnerData} from '../../../model/LeagueTeam';
 import {ConfigService} from '../../../services/init/config.service';
 
 @Component({
@@ -20,10 +20,10 @@ export class AddPlayerComparisonModalComponent implements OnInit {
   playerSearch = '';
 
   /** filtered search list */
-  filteredList: KTCPlayer[];
+  filteredList: FantasyPlayer[];
 
   /** query filtered list */
-  queryList: KTCPlayer[] = [];
+  queryList: FantasyPlayer[] = [];
 
   /** filter grouping options */
   filterPosGroup: boolean[];
@@ -128,11 +128,11 @@ export class AddPlayerComparisonModalComponent implements OnInit {
   ];
 
   constructor(private playerService: PlayerService,
-              private ktcApiService: KTCApiService,
+              private fantasyPlayerApiService: FantasyPlayerApiService,
               public playerComparisonService: PlayerComparisonService,
               private dialog: MatDialog,
               @Inject(MAT_DIALOG_DATA) public data: { isGroup2: boolean },
-              public sleeperService: SleeperService,
+              public leagueService: LeagueService,
               public configService: ConfigService) {
   }
 
@@ -140,7 +140,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
     this.filterPosGroup = [true, true, true, true, true, false];
     this.filteredList = this.playerService.playerValues.slice(0, 11);
     // add fantasy owners if league is logged in
-    if (this.sleeperService.isLeagueLoaded()) {
+    if (this.leagueService.isLeagueLoaded()) {
       this.config.fields.owner = {
         name: 'Fantasy Owner',
         type: 'category',
@@ -153,7 +153,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
    * add player to comparison
    * @param player selected player to add
    */
-  addPlayer(player: KTCPlayer): void {
+  addPlayer(player: FantasyPlayer): void {
     let addable = true;
     if (this.playerComparisonService.isGroupMode && this.data.isGroup2) {
       for (const p of this.playerComparisonService.group2SelectedPlayers) {
@@ -179,7 +179,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
    * @param player player to remove
    * @param isGroup2 is group 2 or not
    */
-  onRemove(player: KTCPlayer, isGroup2: boolean = false): void {
+  onRemove(player: FantasyPlayer, isGroup2: boolean = false): void {
     this.playerComparisonService.onRemove({name: player.full_name, data: [], id: player.name_id}, isGroup2);
   }
 
@@ -219,7 +219,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
         return player.full_name.toLowerCase().includes(this.playerSearch.toLowerCase())
           || player.position.toLowerCase().includes(this.playerSearch.toLowerCase())
           || player.team.toLowerCase().includes(this.playerSearch.toLowerCase())
-          || (player.owner?.ownerName.toLowerCase().includes(this.playerSearch.toLowerCase()) && this.sleeperService.selectedLeague);
+          || (player.owner?.ownerName.toLowerCase().includes(this.playerSearch.toLowerCase()) && this.leagueService.selectedLeague);
       }).slice(0, 11);
     }
   }
@@ -251,9 +251,9 @@ export class AddPlayerComparisonModalComponent implements OnInit {
    * @param ruleset ruleset from query builder
    * @return list of players filtered
    */
-  private processRuleset(playersSubset: KTCPlayer[], ruleset: any): KTCPlayer[] {
+  private processRuleset(playersSubset: FantasyPlayer[], ruleset: any): FantasyPlayer[] {
     const ruleResults = [];
-    let rulesetResults: KTCPlayer[] = [];
+    let rulesetResults: FantasyPlayer[] = [];
     for (const rule of ruleset.rules) {
       ruleResults.push(this.processRule(playersSubset.slice(), rule));
     }
@@ -281,7 +281,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
    * @param players list of players to apply filters on
    * @param rule rule from query builder
    */
-  private processRule(players: KTCPlayer[], rule: any): KTCPlayer[] {
+  private processRule(players: FantasyPlayer[], rule: any): FantasyPlayer[] {
     if (rule.condition !== undefined) {
       return this.processRuleset(players, rule);
     } else {
@@ -333,9 +333,9 @@ export class AddPlayerComparisonModalComponent implements OnInit {
    * @return list of objects
    * @private
    */
-  private generateSleeperOwnerList(): {value: SleeperOwnerData, name: string}[] {
+  private generateSleeperOwnerList(): {value: LeagueOwnerData, name: string}[] {
     const list = [];
-    for (const owner of this.sleeperService.sleeperTeamDetails) {
+    for (const owner of this.leagueService.leagueTeamDetails) {
       list.push({value: owner.owner, name: owner.owner.ownerName});
     }
     return list;

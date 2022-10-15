@@ -20,7 +20,7 @@
     </span>
     <span *ngIf="!configService.isMobile" class="container_spacer"></span>
     <span [ngClass]="{'button-right': !configService.isMobile, 'margin-top-10': configService.isMobile}">
-      <mat-slide-toggle *ngIf="sleeperService.leagueStatus !== 'NONE'" color="primary" [(ngModel)]="showFreeAgents" (change)="updatePlayerFilters()" class="player-value-checkbox-margin">
+      <mat-slide-toggle *ngIf="leagueService.leagueStatus !== 'NONE'" color="primary" [(ngModel)]="showFreeAgents" (change)="updatePlayerFilters()" class="player-value-checkbox-margin">
         {{configService.isMobile ? 'FA' : 'Free Agents'}}
       </mat-slide-toggle>
           <mat-slide-toggle color="primary" [(ngModel)]="showRookies" (change)="updatePlayerFilters()" class="player-value-checkbox-margin">
@@ -113,8 +113,8 @@
           <ng-container *ngIf="selectedLeague" matColumnDef="owner">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Owner</mat-header-cell>
             <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">
-              <div *ngIf="sleeperService.isLeagueLoaded()">{{element.owner?.ownerName || '---'}}</div>
-              <mat-progress-bar *ngIf="sleeperService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent" style="max-width: 200px"></mat-progress-bar>
+              <div *ngIf="leagueService.isLeagueLoaded()">{{element.owner?.ownerName || '---'}}</div>
+              <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent" style="max-width: 200px"></mat-progress-bar>
             </mat-cell>
           </ng-container>
 
@@ -122,7 +122,7 @@
       <mat-row class="ktc-table-element-row" *matRowDef="let row; columns: displayedColumns;"
                [routerLink]="row.position !== 'PI' ? ['../details', row.name_id] : []"
                [queryParams]="leagueSwitchService.buildQueryParams()"
-               [ngClass]="{'accent__color__background': sleeperService.sleeperUser && sleeperService.sleeperUser?.userData?.user_id === row.owner?.userId && selectedLeague}"></mat-row>
+               [ngClass]="{'accent__color__background': leagueService.leagueUser && leagueService.leagueUser?.userData?.user_id === row.owner?.userId && selectedLeague}"></mat-row>
     </mat-table>
     <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
   </div>

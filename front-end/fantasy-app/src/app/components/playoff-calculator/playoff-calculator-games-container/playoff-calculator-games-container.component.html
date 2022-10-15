@@ -2,17 +2,17 @@
   <div class="margin-top-25" *ngIf="!selectable && weekMatchUps[0]">
     <span class="mid-bold-text">Week {{weekMatchUps[0]?.matchUpDetails.week}}</span>
     <span *ngIf="recordString.length > 0" class="small-text__light" style="padding-left: 15px">({{recordString}})</span>
-    <span *ngIf="weekMatchUps[0]?.matchUpDetails.week === sleeperService.selectedLeague.playoffStartWeek - 1" class="small-text__light" style="padding-left: 15px">Last week of the regular season.</span>
-    <span *ngIf="weekMatchUps[0]?.matchUpDetails.week === sleeperService.selectedLeague.playoffStartWeek" class="small-text__light" style="padding-left: 15px">Start of Playoffs</span>
-    <span *ngIf="weekMatchUps[0]?.matchUpDetails.week === sleeperService.selectedLeague.startWeek" class="small-text__light" style="padding-left: 15px">Start of Regular Season</span>
+    <span *ngIf="weekMatchUps[0]?.matchUpDetails.week === leagueService.selectedLeague.playoffStartWeek - 1" class="small-text__light" style="padding-left: 15px">Last week of the regular season.</span>
+    <span *ngIf="weekMatchUps[0]?.matchUpDetails.week === leagueService.selectedLeague.playoffStartWeek" class="small-text__light" style="padding-left: 15px">Start of Playoffs</span>
+    <span *ngIf="weekMatchUps[0]?.matchUpDetails.week === leagueService.selectedLeague.startWeek" class="small-text__light" style="padding-left: 15px">Start of Regular Season</span>
   </div>
   <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
     <div *ngFor="let game of weekMatchUps; let i = index" class="item">
-      <app-playoff-calculator-games-card [game]="game" *ngIf="!selectable"></app-playoff-calculator-games-card>
+      <app-playoff-calculator-games-card [game]="game" [isCompleted]="isCompleted" *ngIf="!selectable"></app-playoff-calculator-games-card>
       <app-playoff-calculator-selectable-game-card [game]="game" *ngIf="selectable"></app-playoff-calculator-selectable-game-card>
     </div>
   </div>
-  <div class="margin-top-10 center-text small-text__light" *ngIf="selectable && sleeperService.selectedLeague.medianWins">
+  <div class="margin-top-10 center-text small-text__light" *ngIf="selectable && leagueService.selectedLeague.medianWins">
     The max medians wins/losses per week are not enforced so make sure you don't choose more than half.
   </div>
   <div class="margin-top-10 center-text" *ngIf="selectable">

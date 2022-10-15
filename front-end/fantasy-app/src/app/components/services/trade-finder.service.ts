@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {TradePackage} from '../model/tradePackage';
 import {TradeService} from './trade.service';
 
@@ -10,7 +10,7 @@ export class TradeFinderService {
 
   selectedTeamUserId: string;
 
-  selectedPlayers: KTCPlayer[] = [];
+  selectedPlayers: FantasyPlayer[] = [];
 
   constructor(private tradeService: TradeService) {
   }
@@ -24,7 +24,7 @@ export class TradeFinderService {
    * @return list of trade packages
    */
   generateTradeFinderResults(
-    players: KTCPlayer[],
+    players: FantasyPlayer[],
     userId: string,
     isSuperFlex: boolean = true,
     posFilterList: boolean[],

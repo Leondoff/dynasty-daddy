@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {Color} from 'chartjs-plugin-datalabels/types/options';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 
@@ -74,7 +74,7 @@ export class TeamTransactionsChartComponent implements OnInit {
   public dataLabels: Label[] = [];
   public chartColors: Color;
 
-  constructor(private sleeperService: SleeperService) {
+  constructor(private leagueService: LeagueService) {
   }
 
   ngOnInit(): void {
@@ -87,11 +87,11 @@ export class TeamTransactionsChartComponent implements OnInit {
     this.dataLabels = [];
     const trades: number[] = [];
     const waiver: number[] = [];
-    for (let i = 1; i <= this.sleeperService.selectedLeague.totalRosters; i++) {
+    for (let i = 1; i <= this.leagueService.selectedLeague.totalRosters; i++) {
       if (this.transactionsAggregate[i]) {
         trades.push(this.transactionsAggregate[i].trades);
         waiver.push(this.transactionsAggregate[i].actions);
-        this.dataLabels.push(this.sleeperService.getTeamByRosterId(i).owner.teamName);
+        this.dataLabels.push(this.leagueService.getTeamByRosterId(i).owner.teamName);
       }
     }
     this.data.push({label: 'Trades', data: trades, hoverBackgroundColor: []});

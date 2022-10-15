@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class KTCApiConfigService {
+export class FantasyPlayerApiConfigService {
 
   // tslint:disable-next-line:variable-name
   private _getPlayerValuesForTodayEndpoint = '';

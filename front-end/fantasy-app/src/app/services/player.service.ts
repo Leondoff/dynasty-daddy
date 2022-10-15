@@ -1,9 +1,9 @@
 /* tslint:disable:object-literal-key-quotes */
 import {Injectable} from '@angular/core';
-import {KTCPlayer} from '../model/KTCPlayer';
-import {KTCApiService} from './api/ktc-api.service';
+import {FantasyPlayer} from '../model/FantasyPlayer';
+import {FantasyPlayerApiService} from './api/fantasy-player-api.service';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
-import {SleeperTeam} from '../model/SleeperLeague';
+import {LeagueTeam} from '../model/LeagueTeam';
 import {SleeperApiService} from './api/sleeper/sleeper-api.service';
 import {map} from 'rxjs/operators';
 import {NflService} from './utilities/nfl.service';
@@ -16,10 +16,10 @@ import {PlayerInsights} from '../components/model/playerInsights';
 export class PlayerService {
 
   /** player values for today */
-  playerValues: KTCPlayer[] = [];
+  playerValues: FantasyPlayer[] = [];
 
   /** player values for today with no filtering */
-  unfilteredPlayerValues: KTCPlayer[] = [];
+  unfilteredPlayerValues: FantasyPlayer[] = [];
 
   /** player yearly stats dict from sleeper */
   playerStats = {};
@@ -53,7 +53,7 @@ export class PlayerService {
   /** subject for loading player values */
   $currentPlayerValuesLoaded: Subject<void> = new Subject<void>();
 
-  constructor(private ktcApiService: KTCApiService,
+  constructor(private fantasyPlayerApiService: FantasyPlayerApiService,
               private sleeperApiService: SleeperApiService,
               private nflService: NflService) {
   }
@@ -62,7 +62,7 @@ export class PlayerService {
    * loads all player data upon entering site
    */
   loadPlayerValuesForToday(): void {
-    this.ktcApiService.getPlayerValuesForToday().subscribe((currentPlayers) => {
+    this.fantasyPlayerApiService.getPlayerValuesForToday().subscribe((currentPlayers) => {
       this.unfilteredPlayerValues = currentPlayers;
       this.playerValues = currentPlayers.filter(player => {
         if (player.position === 'PI') {
@@ -143,7 +143,7 @@ export class PlayerService {
    * assign players to fantasy teams
    * @param team
    */
-  generateRoster(team: SleeperTeam): KTCPlayer[] {
+  generateRoster(team: LeagueTeam): FantasyPlayer[] {
     const roster = [];
     if (!team.roster.players) {
       return [];
@@ -164,7 +164,7 @@ export class PlayerService {
    * get player based on sleeper id
    * @param id
    */
-  getPlayerBySleeperId(id: string): KTCPlayer {
+  getPlayerBySleeperId(id: string): FantasyPlayer {
     for (const player of this.playerValues) {
       if (id === player.sleeper_id) {
         return player;
@@ -194,7 +194,7 @@ export class PlayerService {
    * returns players current value based name id
    * @param id
    */
-  getPlayerByNameId(id: string): KTCPlayer {
+  getPlayerByNameId(id: string): FantasyPlayer {
     for (const player of this.playerValues) {
       if (id === player.name_id) {
         return player;
@@ -229,7 +229,7 @@ export class PlayerService {
    * @param round
    * @param season
    */
-  getEstimatePickValueBy(round: number, season: string): KTCPlayer {
+  getEstimatePickValueBy(round: number, season: string): FantasyPlayer {
     for (const player of this.playerValues) {
       if (player.first_name === season) {
         if (round === 1 && player.full_name.includes('Mid 1st')) {
@@ -251,7 +251,7 @@ export class PlayerService {
    * @param nameId
    * @param playerList
    */
-  getRankOfPlayerByNameId(nameId: string, playerList: KTCPlayer[] = this.playerValues): number {
+  getRankOfPlayerByNameId(nameId: string, playerList: FantasyPlayer[] = this.playerValues): number {
     for (let i = 0; i < playerList.length; i++) {
       if (nameId === playerList[i].name_id) {
         return i;
@@ -266,7 +266,7 @@ export class PlayerService {
    * @param posFilter what pos to filter on, if empty include all
    * @param isSuperflex is value superflex or standard, default to true
    */
-  getAdjacentPlayersByNameId(nameId: string, posFilter: string = '', isSuperflex: boolean = true): KTCPlayer[] {
+  getAdjacentPlayersByNameId(nameId: string, posFilter: string = '', isSuperflex: boolean = true): FantasyPlayer[] {
     const cleanedPlayerList = this.cleanOldPlayerData(this.playerValues);
     if (!isSuperflex) {
       cleanedPlayerList.sort((a, b) => {
@@ -285,7 +285,7 @@ export class PlayerService {
    * @param nameId name of player to get adj to
    * @param posFilter what pos to filter on, if empty include all
    */
-  getAdjacentADPPlayersByNameId(nameId: string, posFilter: string = ''): KTCPlayer[] {
+  getAdjacentADPPlayersByNameId(nameId: string, posFilter: string = ''): FantasyPlayer[] {
     const cleanedPlayerList = this.cleanOldPlayerData(this.playerValues).filter(it => it.position === posFilter && it.avg_adp !== 0);
     cleanedPlayerList.sort((a, b) => {
       return a.avg_adp - b.avg_adp;
@@ -302,7 +302,7 @@ export class PlayerService {
    * @param posFilter position to filter from
    * @private
    */
-  private getAdjacentPlayersFromList(nameId: string, cleanedPlayerList: KTCPlayer[], posFilter: string = ''): KTCPlayer[] {
+  private getAdjacentPlayersFromList(nameId: string, cleanedPlayerList: FantasyPlayer[], posFilter: string = ''): FantasyPlayer[] {
     const players = [];
     const playerRank = this.getRankOfPlayerByNameId(nameId, cleanedPlayerList);
     for (let upInd = playerRank - 1; upInd >= 0 && players.length < 4; upInd--) {
@@ -322,7 +322,7 @@ export class PlayerService {
    * returns draft picks values for year
    * @param season season defaults to next season
    */
-  getDraftPicksForYear(season: string = (Number(this.nflService.stateOfNFL.season) + 1).toString()): KTCPlayer[] {
+  getDraftPicksForYear(season: string = (Number(this.nflService.stateOfNFL.season) + 1).toString()): FantasyPlayer[] {
     return this.playerValues.filter(pick => {
       if (pick.position === 'PI' && pick.full_name.includes(season)) {
         return pick;
@@ -332,10 +332,10 @@ export class PlayerService {
 
   /**
    * returns current value of player with a week buffer
-   * @param player ktc player
+   * @param player fantasy player
    * @param isSuperFlex boolean
    */
-  getCurrentPlayerValue(player: KTCPlayer, isSuperFlex: boolean): number {
+  getCurrentPlayerValue(player: FantasyPlayer, isSuperFlex: boolean): number {
     const now = new Date();
     const lastWeekMs = now.getTime() - 1000 * 60 * 60 * 24 * 7;
     if (player.position !== 'PI' && new Date(player.date).setHours(0, 0, 0, 0) < new Date(lastWeekMs).setHours(0, 0, 0, 0)) {
@@ -350,7 +350,7 @@ export class PlayerService {
    * @param player
    * @param isSuperFlex
    */
-  getPlayerInsights(player: KTCPlayer, isSuperFlex: boolean = true): PlayerInsights {
+  getPlayerInsights(player: FantasyPlayer, isSuperFlex: boolean = true): PlayerInsights {
     const dataSet = [];
     let high = 0;
     let low = 100;
@@ -396,7 +396,7 @@ export class PlayerService {
    * returns a list of player values excluding old draft picks and players
    * @param inputPlayers list of players and picks
    */
-  cleanOldPlayerData(inputPlayers: KTCPlayer[]): KTCPlayer[] {
+  cleanOldPlayerData(inputPlayers: FantasyPlayer[]): FantasyPlayer[] {
     return inputPlayers.filter((player) => {
       if (player.position === 'PI') {
         return this.getCurrentPlayerValue(player, true) !== 0;
@@ -412,7 +412,7 @@ export class PlayerService {
   /**
    * accepts a list of players and returns the total trade value of list
    */
-  getTotalValueOfPlayersFromList(players: KTCPlayer[], isSuperFlex: boolean = true): number {
+  getTotalValueOfPlayersFromList(players: FantasyPlayer[], isSuperFlex: boolean = true): number {
     let totalValue = 0;
     players?.map(player => {
       totalValue += isSuperFlex ? player.sf_trade_value : player.trade_value;
@@ -426,7 +426,7 @@ export class PlayerService {
    * @param player2 player
    * @param isSuperflex boolean
    */
-  comparePlayersValue(player1: KTCPlayer, player2: KTCPlayer, isSuperflex: boolean = true): boolean {
+  comparePlayersValue(player1: FantasyPlayer, player2: FantasyPlayer, isSuperflex: boolean = true): boolean {
     return isSuperflex ? player1.sf_trade_value > player2.sf_trade_value : player1.trade_value > player2.trade_value;
   }
 
@@ -435,7 +435,7 @@ export class PlayerService {
    * @param player1 player
    * @param isSuperflex boolean
    */
-  getPlayersValueIndex(player1: KTCPlayer, isSuperflex: boolean = true): number {
+  getPlayersValueIndex(player1: FantasyPlayer, isSuperflex: boolean = true): number {
     const sortedList = isSuperflex ? this.playerValues.slice() :
       this.playerValues.sort((a, b) => b.trade_value - a.trade_value);
     return sortedList.findIndex(player => player.name_id === player1.name_id);
@@ -446,7 +446,7 @@ export class PlayerService {
    * @param players unsorted players list
    * @param isSuperFlex is league super flex
    */
-  sortListOfPlayers(players: KTCPlayer[], isSuperFlex: boolean = true): KTCPlayer[] {
+  sortListOfPlayers(players: FantasyPlayer[], isSuperFlex: boolean = true): FantasyPlayer[] {
     return players.sort((playerA, playerB) => {
       if (isSuperFlex) {
         return playerB.sf_trade_value - playerA.sf_trade_value;

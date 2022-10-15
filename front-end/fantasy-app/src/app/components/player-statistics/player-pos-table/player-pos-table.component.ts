@@ -1,9 +1,9 @@
 import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {KTCPlayer} from '../../../model/KTCPlayer';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {ConfigService} from '../../../services/init/config.service';
 import {PlayerService} from '../../../services/player.service';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
@@ -19,7 +19,7 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
 
   /** all players */
   @Input()
-  players: KTCPlayer[];
+  players: FantasyPlayer[];
 
   /** selection position group */
   @Input()
@@ -56,12 +56,12 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
   isSuperFlex: boolean;
 
   /** mat table datasource */
-  dataSource: MatTableDataSource<KTCPlayer> = new MatTableDataSource<KTCPlayer>();
+  dataSource: MatTableDataSource<FantasyPlayer> = new MatTableDataSource<FantasyPlayer>();
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public configService: ConfigService,
               public playerService: PlayerService,
-              private leagueSwitchService: LeagueSwitchService,
+              public leagueSwitchService: LeagueSwitchService,
               private playerComparisonService: PlayerComparisonService,
               public router: Router
   ) {
@@ -103,7 +103,7 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
    * route ot player comparison page
    * @param element player to add to comparison
    */
-  openPlayerComparison(element: KTCPlayer): void {
+  openPlayerComparison(element: FantasyPlayer): void {
     this.playerComparisonService.addPlayerToCharts(element);
     this.router.navigate(['players/comparison'],
       {

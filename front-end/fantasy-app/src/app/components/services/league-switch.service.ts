@@ -1,5 +1,5 @@
 import {SleeperApiService} from '../../services/api/sleeper/sleeper-api.service';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PowerRankingsService} from './power-rankings.service';
 import {PlayerService} from '../../services/player.service';
 import {MockDraftService} from './mock-draft.service';
@@ -7,7 +7,7 @@ import {MatchupService} from './matchup.service';
 import {PlayoffCalculatorService} from './playoff-calculator.service';
 import {ConfigService} from '../../services/init/config.service';
 import {TransactionsService} from './transactions.service';
-import {SleeperLeagueData} from '../../model/SleeperUser';
+import {LeagueData} from '../../model/LeagueUser';
 import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {BaseComponent} from '../base-component.abstract';
@@ -23,10 +23,10 @@ import {LogRocketService} from './logrocket.service';
 export class LeagueSwitchService extends BaseComponent {
 
   /** selected league data */
-  selectedLeague: SleeperLeagueData;
+  selectedLeague: LeagueData;
 
   /** event whenever a league has finished changing */
-  leagueChanged$ = new Subject<SleeperLeagueData>();
+  leagueChanged$ = new Subject<LeagueData>();
 
   extraParams$ = new BehaviorSubject<{}>({});
 
@@ -34,7 +34,7 @@ export class LeagueSwitchService extends BaseComponent {
   lastTimeRefreshed: Date;
 
   constructor(private sleeperApiService: SleeperApiService,
-              private sleeperService: SleeperService,
+              private leagueService: LeagueService,
               private powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
               private tradeService: TradeService,
@@ -55,10 +55,10 @@ export class LeagueSwitchService extends BaseComponent {
    * load league data
    * @param value league data
    */
-  loadLeague(value: SleeperLeagueData): void {
-    this.sleeperService.leagueStatus = 'LOADING';
+  loadLeague(value: LeagueData): void {
+    this.leagueService.leagueStatus = 'LOADING';
     this.selectedLeague = value;
-    this.sleeperService.resetLeague();
+    this.leagueService.resetLeague();
     this.powerRankingService.reset();
     this.mockDraftService.resetLeague();
     this.playoffCalculatorService.reset();
@@ -67,16 +67,19 @@ export class LeagueSwitchService extends BaseComponent {
     this.transactionService.reset();
     this.tradeService.reset();
     console.time('Fetch Sleeper League Data');
-    this.addSubscriptions(this.sleeperService.$loadNewLeague(this.selectedLeague).subscribe((x) => {
-        this.sleeperService.sleeperTeamDetails.map((team) => {
+    this.addSubscriptions(this.leagueService.$loadNewLeague(this.selectedLeague).subscribe((x) => {
+        this.leagueService.leagueTeamDetails.map((team) => {
           this.playersService.generateRoster(team);
         });
-        this.matchupService.initMatchUpCharts(this.selectedLeague).subscribe(() => {
-          forkJoin([this.powerRankingService.mapPowerRankings(this.sleeperService.sleeperTeamDetails, this.playersService.playerValues),
-            this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.sleeperService.sleeperTeamDetails)]).subscribe(() => {
-            this.sleeperService.selectedLeague = this.selectedLeague;
-            this.sleeperService.leagueStatus = 'DONE';
-            this.tradeFinderService.selectedTeamUserId = this.sleeperService.sleeperUser?.userData?.user_id;
+        this.matchupService.initMatchUpCharts(
+          this.selectedLeague,
+          this.nflService.getCompletedWeekForSeason(this.selectedLeague.season)
+        ).subscribe(() => {
+          forkJoin([this.powerRankingService.mapPowerRankings(this.leagueService.leagueTeamDetails, this.playersService.playerValues),
+            this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
+            this.leagueService.selectedLeague = this.selectedLeague;
+            this.leagueService.leagueStatus = 'DONE';
+            this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id;
             console.timeEnd('Fetch Sleeper League Data');
             this.leagueChanged$.next(this.selectedLeague);
             this.lastTimeRefreshed = new Date();
@@ -101,10 +104,10 @@ export class LeagueSwitchService extends BaseComponent {
    * @param year year defaults to current year if null
    */
   loadUser(user: string, year: string = new Date().getFullYear().toString()): void {
-    this.sleeperService.loadNewUser(user, year);
-    this.sleeperService.selectedYear = year;
+    this.leagueService.loadNewUser(user, year);
+    this.leagueService.selectedYear = year;
     this.logRocketService.identifySession(user);
-    this.sleeperService.resetLeague();
+    this.leagueService.resetLeague();
   }
 
   /**
@@ -136,7 +139,7 @@ export class LeagueSwitchService extends BaseComponent {
       );
     }
     if (!league && !this.selectedLeague) {
-      this.sleeperService.leagueStatus = 'NONE';
+      this.leagueService.leagueStatus = 'NONE';
     }
   }
 
@@ -146,11 +149,11 @@ export class LeagueSwitchService extends BaseComponent {
    */
   buildQueryParams(): {} {
     const queryParams: any = this.extraParams$.value;
-    if (this.sleeperService.selectedLeague) {
-      queryParams.league = this.sleeperService.selectedLeague.leagueId;
+    if (this.leagueService.selectedLeague) {
+      queryParams.league = this.leagueService.selectedLeague.leagueId;
     }
-    if (this.sleeperService.sleeperUser?.userData?.username !== 'undefined') {
-      queryParams.user = this.sleeperService.sleeperUser?.userData?.username;
+    if (this.leagueService.leagueUser?.userData?.username !== 'undefined') {
+      queryParams.user = this.leagueService.leagueUser?.userData?.username;
     }
     return queryParams;
   }

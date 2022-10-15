@@ -1,8 +1,8 @@
-import {KTCPlayer} from '../../model/KTCPlayer';
-import {SleeperTeam} from '../../model/SleeperLeague';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {LeagueTeam} from '../../model/LeagueTeam';
 
 export class TeamPowerRanking {
-  constructor(team: SleeperTeam, players: PositionPowerRanking[], sfTradeValue: number, tradeValue: number, picks: PositionPowerRanking) {
+  constructor(team: LeagueTeam, players: PositionPowerRanking[], sfTradeValue: number, tradeValue: number, picks: PositionPowerRanking) {
     this.team = team;
     this.roster = players;
     this.sfTradeValueOverall = sfTradeValue;
@@ -10,10 +10,10 @@ export class TeamPowerRanking {
     this.picks = picks;
   }
 
-  team: SleeperTeam;
+  team: LeagueTeam;
   roster: PositionPowerRanking[];
   picks: PositionPowerRanking;
-  starters: KTCPlayer[] = [];
+  starters: FantasyPlayer[] = [];
   sfTradeValueOverall: number = 0;
   tradeValueOverall: number = 0;
   overallRank: number;
@@ -25,7 +25,7 @@ export class TeamPowerRanking {
 }
 
 export class PositionPowerRanking {
-  constructor(pos: string, sfTradeValue: number, tradeValue: number, groupList: KTCPlayer[]) {
+  constructor(pos: string, sfTradeValue: number, tradeValue: number, groupList: FantasyPlayer[]) {
     this.sfTradeValue = sfTradeValue;
     this.tradeValue = tradeValue;
     this.players = groupList;
@@ -36,7 +36,7 @@ export class PositionPowerRanking {
   position: string;
   sfTradeValue: number;
   tradeValue: number;
-  players: KTCPlayer[];
+  players: FantasyPlayer[];
 }
 
 export enum TeamRankingTier {
