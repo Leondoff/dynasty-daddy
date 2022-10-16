@@ -106,17 +106,15 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
       this.selectedLeague?.isSuperflex : true;
     // create prototype of list and remove players with no value (no data points in over a year)
     this.filteredPlayers = this.playerService.cleanOldPlayerData(this.players);
-    this.dataSource = new MatTableDataSource(this.filteredPlayers);
+    this.dataSource = new MatTableDataSource(this.playerService.sortListOfPlayers(this.filteredPlayers, this.isSuperFlex));
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'halfppr':
           return this.playerService.playerStats[item.sleeper_id]?.pts_half_ppr;
         case 'change':
           return this.isSuperFlex ? item.sf_change : item.standard_change;
-        case 'sf_trade_value':
-          return item.sf_trade_value;
         case 'trade_value':
-          return item.trade_value;
+          return this.isSuperFlex ? item.sf_trade_value : item.trade_value;
         case 'avg_adp':
           if (item.avg_adp === 0) {
             return 'desc' === this.sort.direction ? Number.MIN_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
@@ -175,11 +173,8 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   }
 
   updateSuperFlex(): void {
-    this.dataSource.sort.sort({
-      id: this.isSuperFlex ? 'sf_trade_value' : 'trade_value',
-      start: 'desc',
-      disableClear: false
-    });
+    this.dataSource.data = this.playerService.sortListOfPlayers(this.players, this.isSuperFlex);
+    this.updatePlayerFilters();
   }
 
   /**
