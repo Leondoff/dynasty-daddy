@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {MatchupService} from '../../services/matchup.service';
 import { WeeklyRecordComp} from '../../model/matchup';
 import {MatSort} from '@angular/material/sort';
@@ -21,7 +21,7 @@ export class WeeklyRecordVsAllComponent implements OnInit, AfterViewInit {
   /** datasource for table */
   dataSource: MatTableDataSource<WeeklyRecordComp> = new MatTableDataSource<WeeklyRecordComp>();
 
-  constructor(public sleeperService: SleeperService, public matchupService: MatchupService) { }
+  constructor(public leagueService: LeagueService, public matchupService: MatchupService) { }
 
   ngOnInit(): void {
     this.displayColumns = this.generateCols();
@@ -45,7 +45,7 @@ export class WeeklyRecordVsAllComponent implements OnInit, AfterViewInit {
    */
   private generateCols(): string[] {
     const list = ['teams'];
-    for (let i = this.sleeperService.selectedLeague.startWeek; i < this.sleeperService.selectedLeague.playoffStartWeek; i++){
+    for (let i = this.leagueService.selectedLeague.startWeek; i < this.leagueService.selectedLeague.playoffStartWeek; i++){
       list.push(i.toString());
     }
     list.push('total');

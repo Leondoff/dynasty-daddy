@@ -1,11 +1,11 @@
 import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {SleeperCompletedPickData, SleeperTeam} from '../../../model/SleeperLeague';
-import {CompletedDraft} from '../../../model/SleeperUser';
+import {LeagueCompletedPickData, LeagueTeam} from '../../../model/LeagueTeam';
+import {CompletedDraft} from '../../../model/LeagueUser';
 import {MatPaginator} from '@angular/material/paginator';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {PlayerService} from '../../../services/player.service';
-import {KTCPlayer} from '../../../model/KTCPlayer';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
 import {ConfigService} from '../../../services/init/config.service';
 import {ChartOptions, ChartType} from 'chart.js';
 import {BaseChartDirective, Label} from 'ng2-charts';
@@ -58,7 +58,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   pageLength: number;
 
   /** mat datasource */
-  dataSource: MatTableDataSource<SleeperCompletedPickData> = new MatTableDataSource<SleeperCompletedPickData>();
+  dataSource: MatTableDataSource<LeagueCompletedPickData> = new MatTableDataSource<LeagueCompletedPickData>();
 
   /** search value */
   searchVal: string = '';
@@ -76,7 +76,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   keepersByTeam: {} = {};
 
   /** filtered draft list */
-  filteredDraftPicks: SleeperCompletedPickData[] = [];
+  filteredDraftPicks: LeagueCompletedPickData[] = [];
 
   /** display string for best overall pick */
   bestOverallPickStr: string = '';
@@ -85,27 +85,27 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   bestValuePickStr: string = '';
 
   /** best team draft data */
-  bestTeamDraft: { team: SleeperTeam, valueAdded: number } = null;
+  bestTeamDraft: { team: LeagueTeam, valueAdded: number } = null;
 
   /** worst team draft data */
-  worstTeamDraft: { team: SleeperTeam, valueAdded: number } = null;
+  worstTeamDraft: { team: LeagueTeam, valueAdded: number } = null;
 
   /** pick array of values */
-  pickValues: KTCPlayer[] = [];
+  pickValues: FantasyPlayer[] = [];
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public playerService: PlayerService,
               public configService: ConfigService,
               public playerComparisonService: PlayerComparisonService,
-              private leagueSwitchService: LeagueSwitchService,
+              public leagueSwitchService: LeagueSwitchService,
               private nflService: NflService,
               private router: Router) {
   }
 
   ngOnInit(): void {
     this.pieChartLegend = !this.configService.isMobile;
-    this.pageLength = this.sleeperService.selectedLeague.totalRosters;
-    this.isSuperFlex = this.sleeperService.selectedLeague.isSuperflex;
+    this.pageLength = this.leagueService.selectedLeague.totalRosters;
+    this.isSuperFlex = this.leagueService.selectedLeague.isSuperflex;
     this.pickValues = this.playerService.getDraftPicksForYear(this.nflService.stateOfNFL.seasonType === 'pre'
       ? this.nflService.stateOfNFL.season : null);
     this.refreshMetrics();
@@ -114,7 +114,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.isSuperFlex = this.sleeperService.selectedLeague.isSuperflex;
+    this.isSuperFlex = this.leagueService.selectedLeague.isSuperflex;
     this.dataSource = new MatTableDataSource(this.selectedDraft.picks);
     this.refreshMetrics();
     this.paginator.pageIndex = 0;
@@ -140,7 +140,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * return name
    */
   getTeamName(rosterId: string): string {
-    for (const team of this.sleeperService.sleeperTeamDetails) {
+    for (const team of this.leagueService.leagueTeamDetails) {
       if (team.roster.rosterId.toString() === rosterId.toString()) {
         return team.owner?.teamName;
       }
@@ -153,7 +153,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * @param rosterId roster id
    */
   getOwnerName(rosterId: number): string {
-    for (const team of this.sleeperService.sleeperTeamDetails) {
+    for (const team of this.leagueService.leagueTeamDetails) {
       if (team.roster.rosterId === rosterId) {
         return team.owner?.ownerName;
       }
@@ -165,7 +165,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * get player by sleeper id
    * @param sleeperId sleeper id
    */
-  getPlayerBySleeperId(sleeperId: string): KTCPlayer {
+  getPlayerBySleeperId(sleeperId: string): FantasyPlayer {
     return this.playerService.getPlayerBySleeperId(sleeperId);
   }
 
@@ -201,16 +201,16 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    */
   getBestOverallPick(): string {
     let topPick = this.selectedDraft.picks[0];
-    let ktcPlayer = this.playerService.getPlayerBySleeperId(topPick.sleeperId);
+    let fantasyPlayer = this.playerService.getPlayerBySleeperId(topPick.sleeperId);
     for (const pick of this.selectedDraft.picks.slice(1)) {
       const tempPlayer = this.playerService.getPlayerBySleeperId(pick.sleeperId);
-      if (this.isSuperFlex ? ktcPlayer?.sf_trade_value < tempPlayer?.sf_trade_value
-        : ktcPlayer?.trade_value < tempPlayer?.trade_value) {
+      if (this.isSuperFlex ? fantasyPlayer?.sf_trade_value < tempPlayer?.sf_trade_value
+        : fantasyPlayer?.trade_value < tempPlayer?.trade_value) {
         topPick = pick;
-        ktcPlayer = tempPlayer;
+        fantasyPlayer = tempPlayer;
       }
     }
-    return 'Pick ' + topPick.pickNumber + ': ' + ktcPlayer.position + ' - ' + ktcPlayer.last_name;
+    return 'Pick ' + topPick.pickNumber + ': ' + fantasyPlayer.position + ' - ' + fantasyPlayer.last_name;
   }
 
   /**
@@ -226,8 +226,8 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
         topValue = tempValue;
       }
     }
-    const ktcPlayer = this.playerService.getPlayerBySleeperId(topPick.sleeperId);
-    return 'Pick ' + topPick.pickNumber + ': ' + ktcPlayer.position + ' - ' + ktcPlayer.last_name;
+    const fantasyPlayer = this.playerService.getPlayerBySleeperId(topPick.sleeperId);
+    return 'Pick ' + topPick.pickNumber + ': ' + fantasyPlayer.position + ' - ' + fantasyPlayer.last_name;
   }
 
   /**
@@ -235,7 +235,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * @param pick
    * @private
    */
-  private getPickValueRatio(pick: SleeperCompletedPickData): number {
+  private getPickValueRatio(pick: LeagueCompletedPickData): number {
     const pickValue = this.getPickValue(pick.round);
     return this.isSuperFlex ? (this.playerService.getPlayerBySleeperId(pick.sleeperId)?.sf_trade_value || 0) / pickValue :
       (this.playerService.getPlayerBySleeperId(pick.sleeperId)?.trade_value || 0) / pickValue;
@@ -246,7 +246,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * @param pick
    * @private
    */
-  private getPickValueAdded(pick: SleeperCompletedPickData): number {
+  private getPickValueAdded(pick: LeagueCompletedPickData): number {
     const pickValue = this.getPickValue(pick.round);
     return this.isSuperFlex ? (this.playerService.getPlayerBySleeperId(pick.sleeperId)?.sf_trade_value || 0) - pickValue :
       (this.playerService.getPlayerBySleeperId(pick.sleeperId)?.trade_value || 0) - pickValue;
@@ -265,8 +265,8 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * sets worst and best teams draft value added
    */
   findBestAndWorstDraftsForTeams(): void {
-    const teams: { team: SleeperTeam, valueAdded: number }[] = [];
-    for (const team of this.sleeperService.sleeperTeamDetails) {
+    const teams: { team: LeagueTeam, valueAdded: number }[] = [];
+    for (const team of this.leagueService.leagueTeamDetails) {
       let valueAdded = 0;
       for (const pick of this.selectedDraft.picks) {
         if (pick.rosterId === team.roster.rosterId) {
@@ -290,7 +290,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     const labels: string[] = [];
     const data: number[] = [];
     for (const pick of this.selectedDraft.picks) {
-      const player = this.sleeperService.sleeperPlayers[pick.sleeperId];
+      const player = this.leagueService.sleeperPlayers[pick.sleeperId];
       const index = labels.indexOf(player.position);
       if (index === -1) {
         labels.push(player.position);
@@ -313,16 +313,16 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     const roundValue = [];
     for (let round = 0; round < this.selectedDraft.draft.rounds; round++) {
       let totalValue = 0;
-      for (let pickNum = 0; pickNum < this.sleeperService.selectedLeague.totalRosters; pickNum++) {
-        totalValue += this.sleeperService.selectedLeague.isSuperflex ?
+      for (let pickNum = 0; pickNum < this.leagueService.selectedLeague.totalRosters; pickNum++) {
+        totalValue += this.leagueService.selectedLeague.isSuperflex ?
           this.getPlayerBySleeperId(
-            this.selectedDraft.picks[round * this.sleeperService.selectedLeague.totalRosters + pickNum]?.sleeperId
+            this.selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.sleeperId
           )?.sf_trade_value || 0 :
           this.getPlayerBySleeperId(
-            this.selectedDraft.picks[round * this.sleeperService.selectedLeague.totalRosters + pickNum]?.sleeperId
+            this.selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.sleeperId
           )?.trade_value || 0;
       }
-      roundValue.push(Math.round(totalValue / this.sleeperService.selectedLeague.totalRosters));
+      roundValue.push(Math.round(totalValue / this.leagueService.selectedLeague.totalRosters));
     }
     return roundValue;
   }
@@ -332,20 +332,20 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    */
   getTopKeeperForEachTeam(): {} {
     const keeperPlayersByTeam = {};
-    for (const team of this.sleeperService.sleeperTeamDetails) {
+    for (const team of this.leagueService.leagueTeamDetails) {
       const pickWithValues = [];
       for (const sleeperId of team.roster.players) {
         for (const pick of this.selectedDraft.picks) {
           // if player is picked by team
           if (pick.sleeperId === sleeperId) {
-            const ktcPlayer = this.getPlayerBySleeperId(pick.sleeperId);
+            const fantasyPlayer = this.getPlayerBySleeperId(pick.sleeperId);
             // if player exists
-            if (ktcPlayer) {
+            if (fantasyPlayer) {
               pickWithValues.push({
-                player: ktcPlayer.full_name,
-                pick: `${pick.round}.${pick.pickNumber % this.sleeperService.selectedLeague.totalRosters}`,
-                value: this.isSuperFlex ? ktcPlayer.sf_trade_value - this.roundPickValue[pick.round - 1]
-                  : ktcPlayer.sf_trade_value - this.roundPickValue[pick.round - 1]
+                player: fantasyPlayer.full_name,
+                pick: `${pick.round}.${pick.pickNumber % this.leagueService.selectedLeague.totalRosters}`,
+                value: this.isSuperFlex ? fantasyPlayer.sf_trade_value - this.roundPickValue[pick.round - 1]
+                  : fantasyPlayer.sf_trade_value - this.roundPickValue[pick.round - 1]
               });
             }
           }
@@ -363,7 +363,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * open player comparison page
    * @param selectedPlayer selected player
    */
-  openPlayerComparison(selectedPlayer: KTCPlayer): void {
+  openPlayerComparison(selectedPlayer: FantasyPlayer): void {
     this.playerComparisonService.addPlayerToCharts(selectedPlayer);
     this.router.navigate(['players/comparison'],
       {

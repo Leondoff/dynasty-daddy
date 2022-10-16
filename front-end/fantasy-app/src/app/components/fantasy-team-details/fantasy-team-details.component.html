@@ -69,7 +69,7 @@
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
     <mat-tab label="Weekly MatchUps">
       <div class="mid-bold-text margin-top-10 center-text">Weekly Points Vs. Opponents</div>
-      <div class="margin-top-10 center-text">Below is the {{sleeperService.selectedYear}} Season match ups vs opponents.
+      <div class="margin-top-10 center-text">Below is the {{leagueService.selectedYear}} Season match ups vs opponents.
       </div>
       <app-fantasy-team-details-weekly-points-chart
         [selectedTeam]="selectedTeam"></app-fantasy-team-details-weekly-points-chart>
@@ -84,7 +84,7 @@
             <table>
               <tr *ngFor="let player of getBiggestMovers(true)">
                 <th style="text-align: left">{{player.full_name}}</th>
-                <th style="text-align: right">+{{sleeperService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
+                <th style="text-align: right">+{{leagueService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
               </tr>
             </table>
           </mat-card>
@@ -93,7 +93,7 @@
             <table>
               <tr *ngFor="let player of getBiggestMovers(false)">
                 <th style="text-align: left">{{player.full_name}}</th>
-                <th style="text-align: right">{{sleeperService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
+                <th style="text-align: right">{{leagueService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
               </tr>
             </table>
           </mat-card>
@@ -177,7 +177,7 @@
 </div>
 
 
-<div class="center-text margin-top-50" *ngIf="!sleeperService.isLeagueLoaded() && pageLoaded">
+<div class="center-text margin-top-50" *ngIf="!leagueService.isLeagueLoaded() && pageLoaded">
   <div class="warning__alert">Cannot fetch team information. Please select a league.</div>
   <br>
   <button mat-raised-button color="warn" routerLink="./home">Choose League</button>

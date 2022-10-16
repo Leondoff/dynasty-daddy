@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {KTCPlayer, KTCPlayerDataPoint} from '../../model/KTCPlayer';
+import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/FantasyPlayer';
 import {HttpClient} from '@angular/common/http';
-import {KTCApiConfigService} from './ktc-api-config.service';
+import {FantasyPlayerApiConfigService} from './fantasy-player-api-config.service';
 import {Observable, of} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
@@ -9,36 +9,36 @@ import {tap} from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class KTCApiService {
+export class FantasyPlayerApiService {
 
   /**
    * cached players list
    * @private
    */
-  private playersList: KTCPlayer[];
+  private playersList: FantasyPlayer[];
 
   /**
    * cached prev month player list
    * @private
    */
-  private prevPlayerList: KTCPlayerDataPoint[];
+  private prevPlayerList: FantasyPlayerDataPoint[];
 
-  constructor(private http: HttpClient, private ktcApiConfigService: KTCApiConfigService) {
+  constructor(private http: HttpClient, private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService) {
   }
 
   /**
    * get player values for today
    */
-  getPlayerValuesForToday(): Observable<KTCPlayer[]> {
+  getPlayerValuesForToday(): Observable<FantasyPlayer[]> {
     return this.playersList ? of(this.playersList) : this.refreshPlayerValuesForToday();
   }
 
   /**
    * refresh cached player values for today
    */
-  refreshPlayerValuesForToday(): Observable<KTCPlayer[]> {
-    return this.http.get<KTCPlayer[]>(this.ktcApiConfigService.getPlayerValuesForTodayEndpoint)
-      .pipe(tap((players: KTCPlayer[]) => {
+  refreshPlayerValuesForToday(): Observable<FantasyPlayer[]> {
+    return this.http.get<FantasyPlayer[]>(this.fantasyPlayerApiConfigService.getPlayerValuesForTodayEndpoint)
+      .pipe(tap((players: FantasyPlayer[]) => {
         this.playersList = players.map(player => {
           player.avg_adp = Number(player.avg_adp);
           player.sf_change = Math.round(
@@ -56,16 +56,16 @@ export class KTCApiService {
   /**
    * get player values for last month
    */
-  getPrevPlayerValues(days: number = 30): Observable<KTCPlayerDataPoint[]> {
+  getPrevPlayerValues(days: number = 30): Observable<FantasyPlayerDataPoint[]> {
     return this.prevPlayerList ? of(this.prevPlayerList) : this.refreshPrevPlayerValues(days);
   }
 
   /**
    * refresh cached player values for last month
    */
-  refreshPrevPlayerValues(days: number): Observable<KTCPlayerDataPoint[]> {
-    return this.http.get<KTCPlayerDataPoint[]>(this.ktcApiConfigService.getPrevPlayerValuesEndpoint + days)
-      .pipe(tap((players: KTCPlayerDataPoint[]) => this.prevPlayerList = players, err => {
+  refreshPrevPlayerValues(days: number): Observable<FantasyPlayerDataPoint[]> {
+    return this.http.get<FantasyPlayerDataPoint[]>(this.fantasyPlayerApiConfigService.getPrevPlayerValuesEndpoint + days)
+      .pipe(tap((players: FantasyPlayerDataPoint[]) => this.prevPlayerList = players, err => {
           throw new Error(err);
         }
       ));
@@ -76,9 +76,9 @@ export class KTCApiService {
    * get historical player value over time by id
    * @param nameId player name id
    */
-  getHistoricalPlayerValueById(nameId: string, isAllTime: boolean = false): Observable<KTCPlayerDataPoint[]> {
-    return this.http.get<KTCPlayerDataPoint[]>(this.ktcApiConfigService.getHistoricalPlayerValues + nameId + `?isAllTime=${isAllTime}`)
-      .pipe(tap((players: KTCPlayerDataPoint[]) => players
+  getHistoricalPlayerValueById(nameId: string, isAllTime: boolean = false): Observable<FantasyPlayerDataPoint[]> {
+    return this.http.get<FantasyPlayerDataPoint[]>(this.fantasyPlayerApiConfigService.getHistoricalPlayerValues + nameId + `?isAllTime=${isAllTime}`)
+      .pipe(tap((players: FantasyPlayerDataPoint[]) => players
       ));
   }
 }

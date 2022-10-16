@@ -1,4 +1,4 @@
-import {SleeperTeam, SleeperTeamMatchUpData} from '../../model/SleeperLeague';
+import {LeagueTeam, LeagueTeamMatchUpData} from '../../model/LeagueTeam';
 import {MatchUpUI} from './matchup';
 
 export class Division {
@@ -9,7 +9,7 @@ export class Division {
 
   divisionId: number;
   divisionName: string;
-  teams: SleeperTeam[];
+  teams: LeagueTeam[];
 }
 
 export class MatchUpProbability {
@@ -25,6 +25,6 @@ export class MatchUpProbability {
 }
 
 export class SimulatedTeamInfo {
-  team: SleeperTeam;
+  team: LeagueTeam;
   projWins: number;
 }

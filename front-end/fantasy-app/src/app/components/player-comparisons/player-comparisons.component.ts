@@ -1,14 +1,14 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {KTCApiService} from '../../services/api/ktc-api.service';
+import {FantasyPlayerApiService} from '../../services/api/fantasy-player-api.service';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
 import {MatDialog} from '@angular/material/dialog';
 import {AddPlayerComparisonModalComponent} from '../modals/add-player-comparison-modal/add-player-comparison-modal.component';
 import {PlayerComparisonService} from '../services/player-comparison.service';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
 import {ConfigService} from '../../services/init/config.service';
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {ActivatedRoute} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
 
@@ -19,9 +19,9 @@ import {LeagueSwitchService} from '../services/league-switch.service';
 })
 export class PlayerComparisonsComponent extends BaseComponent implements AfterViewInit {
 
-  constructor(private ktcApiService: KTCApiService,
+  constructor(private fantasyPlayerApiService: FantasyPlayerApiService,
               private playerService: PlayerService,
-              private sleeperService: SleeperService,
+              private leagueService: LeagueService,
               private dialog: MatDialog,
               public playerComparisonService: PlayerComparisonService,
               private route: ActivatedRoute,
@@ -33,11 +33,11 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
   /**
    * active players filtered from players service
    */
-  activePlayers: KTCPlayer[] = [];
+  activePlayers: FantasyPlayer[] = [];
 
   ngAfterViewInit(): void {
-    if (this.sleeperService.isLeagueLoaded()) {
-      this.playerComparisonService.isSuperFlex = this.sleeperService.selectedLeague?.isSuperflex;
+    if (this.leagueService.isLeagueLoaded()) {
+      this.playerComparisonService.isSuperFlex = this.leagueService.selectedLeague?.isSuperflex;
     }
     if (this.playerService.playerValues.length === 0) { this.playerService.loadPlayerValuesForToday(); }
 

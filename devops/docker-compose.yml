@@ -24,7 +24,7 @@ services:
     links:
       - db
   db:
-    image: postgres
+    image: postgres:14.5
     ports:
       - "5432:5432"
     container_name: postgres
@@ -34,12 +34,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env.db
-    volumes:
-      - ./sql/01_create_tables.sql:/docker-entrypoint-initdb.d/01_create_tables.sql
-      - ./sql/02_fill_player_ids.sql:/docker-entrypoint-initdb.d/02_fill_player_ids.sql
-      - ./sql/03_fill_player_info.sql:/docker-entrypoint-initdb.d/03_fill_player_info.sql
-      - ./sql/04_fill_player_values.sql:/docker-entrypoint-initdb.d/04_fill_player_values.sql
-      - ./db_v0.1.2/pgsql:/var/lib/postgresql/data
   scraper:
     image: index.docker.io/jmtimper/dynasty-daddy-cron:latest
     env_file: .env.cron

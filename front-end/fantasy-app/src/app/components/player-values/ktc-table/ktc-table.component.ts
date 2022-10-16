@@ -1,16 +1,16 @@
 import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {KTCPlayer} from '../../../model/KTCPlayer';
+import {FantasyPlayer} from '../../../model/FantasyPlayer';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {PlayerService} from '../../../services/player.service';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {Router} from '@angular/router';
 import {ConfigService} from '../../../services/init/config.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
 import {BaseComponent} from '../../base-component.abstract';
-import {SleeperLeagueData} from '../../../model/SleeperUser';
+import {LeagueData} from '../../../model/LeagueUser';
 import {BehaviorSubject} from 'rxjs';
 
 @Component({
@@ -22,11 +22,11 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
 
   /** all players */
   @Input()
-  players: KTCPlayer[];
+  players: FantasyPlayer[];
 
-  /** sleeper selected league */
+  /** selected league */
   @Input()
-  selectedLeague: SleeperLeagueData;
+  selectedLeague: LeagueData;
 
   /** mat paginator */
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -35,7 +35,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   /** filtered list of players for searching */
-  filteredPlayers: KTCPlayer[];
+  filteredPlayers: FantasyPlayer[];
 
   /** position group filters, [qb, rb, wr, te, picks] */
   filterPosGroup: boolean[] = [true, true, true, true, true];
@@ -47,7 +47,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   isSuperFlex: boolean;
 
   /** mat table datasource */
-  dataSource: MatTableDataSource<KTCPlayer> = new MatTableDataSource<KTCPlayer>();
+  dataSource: MatTableDataSource<FantasyPlayer> = new MatTableDataSource<FantasyPlayer>();
 
   /** show rookies in table */
   showRookies: boolean = false;
@@ -63,7 +63,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
 
   pageIndex: number = 0;
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public playerService: PlayerService,
               private playerComparisonService: PlayerComparisonService,
               public leagueSwitchService: LeagueSwitchService,
@@ -97,7 +97,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
    * refreshes the table
    */
   refreshTableDetails(): void {
-    if (this.sleeperService.selectedLeague != null) {
+    if (this.leagueService.selectedLeague != null) {
       this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner', 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
     } else {
       this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
@@ -106,17 +106,15 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
       this.selectedLeague?.isSuperflex : true;
     // create prototype of list and remove players with no value (no data points in over a year)
     this.filteredPlayers = this.playerService.cleanOldPlayerData(this.players);
-    this.dataSource = new MatTableDataSource(this.filteredPlayers);
+    this.dataSource = new MatTableDataSource(this.playerService.sortListOfPlayers(this.filteredPlayers, this.isSuperFlex));
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'halfppr':
           return this.playerService.playerStats[item.sleeper_id]?.pts_half_ppr;
         case 'change':
           return this.isSuperFlex ? item.sf_change : item.standard_change;
-        case 'sf_trade_value':
-          return item.sf_trade_value;
         case 'trade_value':
-          return item.trade_value;
+          return this.isSuperFlex ? item.sf_trade_value : item.trade_value;
         case 'avg_adp':
           if (item.avg_adp === 0) {
             return 'desc' === this.sort.direction ? Number.MIN_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
@@ -175,18 +173,15 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   }
 
   updateSuperFlex(): void {
-    this.dataSource.sort.sort({
-      id: this.isSuperFlex ? 'sf_trade_value' : 'trade_value',
-      start: 'desc',
-      disableClear: false
-    });
+    this.dataSource.data = this.playerService.sortListOfPlayers(this.players, this.isSuperFlex);
+    this.updatePlayerFilters();
   }
 
   /**
    * route ot player comparison page
    * @param element player to add to comparison
    */
-  openPlayerComparison(element: KTCPlayer): void {
+  openPlayerComparison(element: FantasyPlayer): void {
     this.playerComparisonService.addPlayerToCharts(element);
     this.router.navigate(['players/comparison'],
       {

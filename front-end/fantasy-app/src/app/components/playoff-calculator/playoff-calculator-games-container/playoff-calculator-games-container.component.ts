@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatchUpProbability} from '../../model/playoffCalculator';
-import {SleeperService} from '../../../services/sleeper.service';
+import {LeagueService} from '../../../services/league.service';
 import {PlayoffCalculatorService} from '../../services/playoff-calculator.service';
 import {NflService} from '../../../services/utilities/nfl.service';
 
@@ -25,7 +25,7 @@ export class PlayoffCalculatorGamesContainerComponent implements OnInit {
   /** record string */
   recordString: string = '';
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               public playoffCalculatorService: PlayoffCalculatorService,
               public nflService: NflService) {
   }

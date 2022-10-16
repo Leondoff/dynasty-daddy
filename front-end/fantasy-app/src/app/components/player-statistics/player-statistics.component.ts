@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
-import {KTCPlayer} from '../../model/KTCPlayer';
+import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {ConfigService} from '../../services/init/config.service';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {MatOptionSelectionChange} from '@angular/material/core';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {ActivatedRoute} from '@angular/router';
@@ -22,7 +22,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
   showAdvancedSettings: boolean = false;
 
   /** filtered list of players for searching */
-  filteredPlayers: KTCPlayer[];
+  filteredPlayers: FantasyPlayer[];
 
   /** if true change color of your team points */
   highlightYourTeam: boolean = true;
@@ -42,7 +42,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
   searchVal: string;
 
   /** combo input property for chart */
-  selectedMetrics: { value: string, displayName: string }[] = [!this.sleeperService.selectedLeague?.isSuperflex ?
+  selectedMetrics: { value: string, displayName: string }[] = [!this.leagueService.selectedLeague?.isSuperflex ?
     {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex)'}
     : {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex)'}, {value: 'pts_half_ppr', displayName: 'Fantasy Points (Half PPR)'}];
 
@@ -119,7 +119,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
               public configService: ConfigService,
               public leagueSwitchService: LeagueSwitchService,
               private route: ActivatedRoute,
-              public sleeperService: SleeperService) {
+              public leagueService: LeagueService) {
     super();
   }
 
@@ -128,7 +128,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
     this.selectedPosition = 'qb';
     this.selectedXMetric = this.selectedMetrics[0];
     this.selectedYMetric = this.selectedMetrics[1];
-    this.highlightYourTeam = !!this.sleeperService.sleeperUser;
+    this.highlightYourTeam = !!this.leagueService.leagueUser;
     this.selectableMetrics = this.getSelectableMetrics(this.selectedPosition);
     if (this.playerService) {
       this.updatePlayerFilters();
@@ -160,7 +160,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
         return (player.full_name.toLowerCase().indexOf(this.searchVal.toLowerCase()) >= 0
           || player.age?.toString().indexOf(this.searchVal) >= 0
           || ((player.owner?.ownerName.toLowerCase().indexOf(this.searchVal.toLowerCase()) >= 0)
-            && this.sleeperService.selectedLeague));
+            && this.leagueService.selectedLeague));
       });
     }
   }
@@ -170,7 +170,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
    * @param event from select
    */
   updatePositionTable(event: any): void {
-    this.selectedMetrics = [this.sleeperService.selectedLeague?.isSuperflex === false ? {value: 'trade_value', displayName: 'Trade Value (Standard)'}
+    this.selectedMetrics = [this.leagueService.selectedLeague?.isSuperflex === false ? {value: 'trade_value', displayName: 'Trade Value (Standard)'}
       : {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex)'}, {value: 'pts_half_ppr', displayName: 'Fantasy Points (Half PPR)'}];
     this.selectedXMetric = this.selectedMetrics[0];
     this.selectedYMetric = this.selectedMetrics[1];

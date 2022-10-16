@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {SleeperService} from '../../services/sleeper.service';
+import {LeagueService} from '../../services/league.service';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
 import {MockDraftService} from '../services/mock-draft.service';
@@ -17,7 +17,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
   /** rerender table when refreshed */
   resetTrigger: boolean = true;
 
-  constructor(public sleeperService: SleeperService,
+  constructor(public leagueService: LeagueService,
               private playersService: PlayerService,
               public leagueSwitchService: LeagueSwitchService,
               private route: ActivatedRoute,
@@ -26,7 +26,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.sleeperService.selectedLeague && this.playersService.playerValues.length !== 0) {
+    if (this.leagueService.selectedLeague && this.playersService.playerValues.length !== 0) {
       this.initServices();
     } else {
       this.playersService.loadPlayerValuesForToday();
@@ -49,14 +49,14 @@ export class DraftComponent extends BaseComponent implements OnInit {
   private initServices(): void {
     this.mockDraftService.generateDraft(
       this.playersService.playerValues,
-      this.sleeperService.selectedLeague.isSuperflex,
-      this.sleeperService.upcomingDrafts[0]?.playerType
+      this.leagueService.selectedLeague.isSuperflex,
+      this.leagueService.upcomingDrafts[0]?.playerType
     );
-    this.mockDraftService.mapDraftObjects(this.sleeperService.sleeperTeamDetails);
+    this.mockDraftService.mapDraftObjects(this.leagueService.leagueTeamDetails);
     if (this.mockDraftService.teamPicks.length > 0) {
       this.mockDraftService.selectedDraft = 'upcoming';
     } else {
-      this.mockDraftService.selectedDraft = this.sleeperService.completedDrafts[0] || null;
+      this.mockDraftService.selectedDraft = this.leagueService.completedDrafts[0] || null;
     }
   }
 
