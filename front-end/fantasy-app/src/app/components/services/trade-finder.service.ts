@@ -35,7 +35,7 @@ export class TradeFinderService {
       const newTrade = new TradePackage(players, [])
         .setTeam1(userId)
         .setExcludePlayerList(this.buildExcludePlayerList(posFilterList))
-        .setAutofill();
+        .enableAutofill();
       const processedTrade = this.tradeService.determineTrade(newTrade, isSuperFlex);
       tradePackages.push(processedTrade);
     }

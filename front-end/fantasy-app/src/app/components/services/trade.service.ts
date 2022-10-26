@@ -27,8 +27,8 @@ export class TradeService {
     let processedTrade = this.determineValueAdjustment(undeterminedTradePackage, isSuperFlex);
     // used for multi-value edge case
     const initialValueToEvenTrade = processedTrade.valueToEvenTrade;
+    // trade finder processing for finding fair trade
     if (processedTrade.autoFillTrade) {
-      // TODO maybe let it autoselect players in the future... idk
       while (processedTrade.valueToEvenTrade > processedTrade.acceptanceBufferAmount && processedTrade.getWhichSideIsFavored() === 1) {
         // get players to even trade
         const playersToEven = this.findBestPlayerForValue(
@@ -52,8 +52,8 @@ export class TradeService {
           processedTrade.addTeam2Assets(playerToAdd),
           isSuperFlex
         );
-        // handles edge case where team selects multiple players and the value needed to even is on the selector
-        if (processedTrade.autoFillTrade && processedTrade.getWhichSideIsFavored() === 2) {
+        // handles edge case where team selects multiple players and the value needed to even is on the user not the other team
+        if (processedTrade.getWhichSideIsFavored() === 2) {
           // clear out trade and update the value to even trade
           processedTrade.clearTradeSide(2).setValueToEvenTrade(initialValueToEvenTrade - processedTrade.valueToEvenTrade);
         }
@@ -69,32 +69,24 @@ export class TradeService {
    */
   determineValueAdjustment(tradePackage: TradePackage, isSuperFlex: boolean): TradePackage {
     // trade value of team sides
-    const team1TotalValue = this.playerService.getTotalValueOfPlayersFromList(tradePackage.team1Assets, isSuperFlex);
-    const team2TotalValue = this.playerService.getTotalValueOfPlayersFromList(tradePackage.team2Assets, isSuperFlex);
+    tradePackage.setIsSuperFlex(isSuperFlex).calculateAssetValues();
     // total value of trade
-    const totalTradeValue = team1TotalValue + team2TotalValue;
+    const totalTradeValue = tradePackage.team1AssetsValue + tradePackage.team2AssetsValue;
     // determine STUD pick
     const studPlayerResponse = this.determineValuePlayer(tradePackage.team1Assets, tradePackage.team2Assets, isSuperFlex);
     const studPlayer = studPlayerResponse?.studPlayer;
     const studPlayerValue = isSuperFlex ? studPlayer?.sf_trade_value : studPlayer?.trade_value;
     // TODO change when adding multi team support
-    if (tradePackage.team2Assets.includes(studPlayer)) {
-      tradePackage.valueAdjustmentSide = 2;
-    } else {
-      tradePackage.valueAdjustmentSide = 1;
-    }
+    tradePackage.setValueAdjustmentSide(tradePackage.team2Assets.includes(studPlayer) ? 2 : 1);
     // calculate value adjustment
     const valAdj = Math.round(studPlayerValue / totalTradeValue *
-      (tradePackage.valueAdjustmentSide === 1 ? team2TotalValue : team1TotalValue));
+      (tradePackage.valueAdjustmentSide === 1 ? tradePackage.team2AssetsValue : tradePackage.team1AssetsValue));
     // set all values from calculations in trade package object
-    tradePackage.valueAdjustment = Math.round(valAdj * (studPlayerResponse?.adjustmentMultiplier || 1) || 0);
-    tradePackage.team1AssetsValue = team1TotalValue;
-    tradePackage.team2AssetsValue = team2TotalValue;
-    tradePackage.isSuperFlex = isSuperFlex;
-    tradePackage.valueToEvenTrade = tradePackage.valueAdjustmentSide === 1 ?
-      Math.abs((team1TotalValue + tradePackage.valueAdjustment) - team2TotalValue) || 0 :
-      Math.abs((team2TotalValue + tradePackage.valueAdjustment) - team1TotalValue) || 0;
-    tradePackage.acceptanceBufferAmount = (totalTradeValue + tradePackage.valueAdjustment) * (tradePackage.acceptanceVariance / 100);
+    tradePackage
+      .setValueAdjustment(Math.round(valAdj * (studPlayerResponse?.adjustmentMultiplier || 1) || 0))
+      .calculateValueToEvenTrade()
+      .setAcceptanceBuffer((totalTradeValue + tradePackage.valueAdjustment) * (tradePackage.acceptanceVariance / 100))
+      .setIsSuperFlex(isSuperFlex);
     return tradePackage;
   }
 

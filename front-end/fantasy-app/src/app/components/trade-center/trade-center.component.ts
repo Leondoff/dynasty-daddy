@@ -16,6 +16,8 @@ import {PlayerComparisonService} from '../services/player-comparison.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {DisplayService} from '../../services/utilities/display.service';
+import {LeagueTeam} from '../../model/LeagueTeam';
+import {DraftCapital} from "../../model/LeagueUser";
 
 @Component({
   selector: 'app-trade-center',
@@ -80,6 +82,10 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
 
   /** which side of the trade is favored */
   public favoredSide: number = 0;
+
+  public team1MockRankings: TeamPowerRanking;
+
+  public team2MockRankings: TeamPowerRanking;
 
   @ViewChild('singleSelect', {static: true}) singleSelect: MatSelect;
 
@@ -258,6 +264,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       this.tradeTool.tradePackage
     );
     this.favoredSide = this.tradeTool.tradePackage.getWhichSideIsFavored();
+    this.generateMockPowerRankings(trade);
     this.refreshDisplay();
   }
 
@@ -338,6 +345,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     this.team2PlayerList = [];
     this.team2Rankings = null;
     this.team1Rankings = null;
+    this.team2MockRankings = null;
+    this.team1MockRankings = null;
     this.tradeTool.tradePackage = null;
     this.filterTeamPlayers(this.playerFilterCtrl, this.tradeTool.tradePackage?.team1UserId, this.filteredTeam1Players);
     this.filterTeamPlayers(this.player2FilterCtrl, this.tradeTool.tradePackage?.team2UserId, this.filteredTeam2Players);
@@ -421,5 +430,149 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     }
     this.filterTeamPlayers(this.playerFilterCtrl, this.tradeTool.tradePackage?.team1UserId, this.filteredTeam1Players);
     this.filterTeamPlayers(this.player2FilterCtrl, this.tradeTool.tradePackage?.team2UserId, this.filteredTeam2Players);
+  }
+
+  /**
+   *  //////////////////////////////////////
+   *  //  Power Rankings Comparison Logic //
+   *  //////////////////////////////////////
+   *  TODO This feature has functions that should be added to fantasy player object but wouldn't
+   *  TODO recognize the function. Look into it once you have time.
+   */
+
+
+  /**
+   * generates mock power rankings for comparison tool
+   * @param trade TradePackage
+   */
+  generateMockPowerRankings(trade: TradePackage): void {
+    this.team2MockRankings = null;
+    this.team1MockRankings = null;
+    if (trade.team1UserId && trade.team2UserId) {
+      const newLeague: LeagueTeam[] = (JSON.parse(JSON.stringify(this.leagueService.leagueTeamDetails)));
+      newLeague.forEach(team => {
+        if (team.owner.userId === trade.team1UserId) {
+          team.roster.players = team.roster.players
+            .filter(sleeperId => !trade.team1Assets
+              .map(it => it.sleeper_id).includes(sleeperId))
+            .concat(trade.team2Assets.filter(it => it.position !== 'PI').map(it => it.sleeper_id));
+          this.handleMockDraftCapitalChanges(team,
+            trade.team1Assets.filter(asset => asset.position === 'PI'),
+            trade.team2Assets.filter(asset => asset.position === 'PI'));
+        }
+        if (team.owner.userId === trade.team2UserId) {
+          team.roster.players = team.roster.players
+            .filter(sleeperId => !trade.team2Assets
+              .map(it => it.sleeper_id).includes(sleeperId))
+            .concat(trade.team1Assets.filter(it => it.position !== 'PI').map(it => it.sleeper_id));
+          this.handleMockDraftCapitalChanges(team,
+            trade.team2Assets.filter(asset => asset.position === 'PI'),
+            trade.team1Assets.filter(asset => asset.position === 'PI'));
+        }
+      });
+      this.powerRankingsService.generatePowerRankings(newLeague, this.playerService.playerValues, true).subscribe(powerRankings =>
+        powerRankings.forEach(team => {
+          if (team.team.owner.userId === trade.team1UserId) {
+            this.team1MockRankings = team;
+          }
+          if (team.team.owner.userId === trade.team2UserId) {
+            this.team2MockRankings = team;
+          }
+        })
+      );
+    }
+  }
+
+  // TODO sort some of this code on the fantasy player object
+  /**
+   * wrapper function that handles draft capital for generating mock power rankings
+   * @param team
+   * @param picksToRemove
+   * @param picksToAdd
+   */
+  handleMockDraftCapitalChanges(team: LeagueTeam, picksToRemove: FantasyPlayer[], picksToAdd: FantasyPlayer[]): void {
+    picksToRemove.forEach(pick => {
+      if (pick.first_name === team.draftCapital[0]?.year) {
+        team.draftCapital = this.removePickFromDraftCapital(team.draftCapital, pick);
+      } else {
+        team.futureDraftCapital = this.removePickFromDraftCapital(team.futureDraftCapital, pick);
+      }
+    });
+    team.futureDraftCapital = team.futureDraftCapital.concat(...picksToAdd.map(asset => this.convertFantasyPlayerToDraftCapital(asset)));
+  }
+
+  /**
+   * Processes removing a pick from a teams assets before generating new mock power rankings
+   * TODO maybe abstract out determining the draft pick to spot
+   * @param draftCapital list of draft capital to remove from
+   * @param pick pick to remove from list
+   */
+  removePickFromDraftCapital(draftCapital: DraftCapital[], pick: FantasyPlayer): DraftCapital[] {
+    let i = 0;
+    while (i < draftCapital.length) {
+      const draftCap = draftCapital[i];
+      if (pick.last_name.includes(draftCap.round.toString()) && pick.first_name === draftCap.year) {
+        if (draftCap.pick < this.leagueService.selectedLeague.totalRosters / 3 && pick.last_name.includes('Early')) {
+          draftCapital.splice(i, 1);
+          i = draftCapital.length;
+        } else if (draftCap.pick < this.leagueService.selectedLeague.totalRosters / 3 * 2 && pick.last_name.includes('Mid')) {
+          draftCapital.splice(i, 1);
+          i = draftCapital.length;
+        } else {
+          draftCapital.splice(i, 1);
+          i = draftCapital.length;
+        }
+      }
+      i++;
+    }
+    return draftCapital;
+  }
+
+  // TODO move to fantasy player object
+  /**
+   * Converts fantasy player object to draft capital
+   * @param pick pick to convert
+   */
+  convertFantasyPlayerToDraftCapital(pick: FantasyPlayer): DraftCapital {
+    if (pick.position !== 'PI') {
+      return null;
+    }
+    return new DraftCapital(
+      false,
+      Number(pick.last_name.charAt(pick.last_name.length - 3)),
+      this.getPickNumber(pick),
+      pick.first_name
+    );
+  }
+
+  /**
+   * Compares the mock rankings and actual rankings and returns difference
+   * @param tradeSide which side of the trade
+   * @param metricInd which metric index to use
+   */
+  public getPowerRankingsDifference(tradeSide: number, metricInd: number): number {
+    // 6 == tier index to denote change in team tier
+    if (metricInd === 6) {
+      return tradeSide === 1 ? this.team1Rankings?.tier - this.team1MockRankings?.tier :
+        this.team2Rankings?.tier - this.team2MockRankings?.tier;
+    }
+    // 5 == draft capital since it is stored in a separate part of the object
+    if (metricInd === 5) {
+      return tradeSide === 1 ? this.team1Rankings?.picks.rank - this.team1MockRankings?.picks.rank :
+        this.team2Rankings?.picks.rank - this.team2MockRankings?.picks.rank;
+    }
+    return tradeSide === 1 ? this.team1Rankings?.roster[metricInd].rank - this.team1MockRankings?.roster[metricInd].rank :
+      this.team2Rankings?.roster[metricInd].rank - this.team2MockRankings?.roster[metricInd].rank;
+  }
+
+  /**
+   * returns pick number for fantasy player pick since we don't store each pick separately
+   * @param pick
+   */
+  getPickNumber(pick: FantasyPlayer): number {
+    if (pick.position !== 'PI') { return -1; }
+    if (pick.last_name.includes('Mid')) { return 6; }
+    else if (pick.last_name.includes('Early')) { return 2; }
+    else { return 8; }
   }
 }
