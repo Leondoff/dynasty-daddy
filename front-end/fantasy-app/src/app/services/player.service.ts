@@ -410,17 +410,6 @@ export class PlayerService {
   }
 
   /**
-   * accepts a list of players and returns the total trade value of list
-   */
-  getTotalValueOfPlayersFromList(players: FantasyPlayer[], isSuperFlex: boolean = true): number {
-    let totalValue = 0;
-    players?.map(player => {
-      totalValue += isSuperFlex ? player.sf_trade_value : player.trade_value;
-    });
-    return totalValue;
-  }
-
-  /**
    * return true if player1 is more valuable than player2
    * @param player1 player
    * @param player2 player

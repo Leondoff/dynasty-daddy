@@ -1,4 +1,5 @@
 import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {DraftCapital} from "../../model/LeagueUser";
 
 export class TradePackage {
   team1UserId: string = null;
@@ -39,8 +40,13 @@ export class TradePackage {
     return this;
   }
 
-  setAutofill(): TradePackage {
+  enableAutofill(): TradePackage {
     this.autoFillTrade = true;
+    return this;
+  }
+
+  setIsSuperFlex(isSuperFlex: boolean): TradePackage {
+    this.isSuperFlex = isSuperFlex;
     return this;
   }
 
@@ -51,6 +57,38 @@ export class TradePackage {
 
   setValueToEvenTrade(valueToEvenTrade: number): TradePackage {
     this.valueToEvenTrade = valueToEvenTrade;
+    return this;
+  }
+
+  calculateValueToEvenTrade = () =>
+     this.setValueToEvenTrade(this.valueAdjustmentSide === 1 ?
+      Math.abs((this.team1AssetsValue + this.valueAdjustment) - this.team2AssetsValue) || 0 :
+      Math.abs((this.team2AssetsValue + this.valueAdjustment) - this.team1AssetsValue) || 0)
+
+  setTradeAssets(team1TradeAssets: FantasyPlayer[], team2TradeAssets: FantasyPlayer[]): TradePackage {
+    this.team1Assets = team1TradeAssets;
+    this.team2Assets = team2TradeAssets;
+    return this.calculateAssetValues();
+  }
+
+  calculateAssetValues(): TradePackage {
+    this.team1AssetsValue = this.getTotalValueOfPlayersFromList(this.team1Assets, this.isSuperFlex);
+    this.team2AssetsValue = this.getTotalValueOfPlayersFromList(this.team2Assets, this.isSuperFlex);
+    return this;
+  }
+
+  setAcceptanceBuffer(acceptanceBuffer: number): TradePackage {
+    this.acceptanceBufferAmount = acceptanceBuffer;
+    return this;
+  }
+
+  setValueAdjustment(valueAdjustment: number): TradePackage {
+    this.valueAdjustment = valueAdjustment;
+    return this;
+  }
+
+  setValueAdjustmentSide(valueAdjustmentSide: number): TradePackage {
+    this.valueAdjustmentSide = valueAdjustmentSide;
     return this;
   }
 
@@ -90,6 +128,17 @@ export class TradePackage {
     const team1 = this.getTradeValueBySide(1);
     const team2 = this.getTradeValueBySide(2);
     return team1 > team2 ? 1 : 2;
+  }
+
+  /**
+   * accepts a list of players and returns the total trade value of list
+   */
+  private getTotalValueOfPlayersFromList(players: FantasyPlayer[], isSuperFlex: boolean = true): number {
+    let totalValue = 0;
+    players?.map(player => {
+      totalValue += isSuperFlex ? player.sf_trade_value : player.trade_value;
+    });
+    return totalValue;
   }
 }
 

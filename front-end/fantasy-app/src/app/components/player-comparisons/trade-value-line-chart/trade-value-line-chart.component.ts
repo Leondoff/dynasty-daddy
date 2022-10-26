@@ -8,7 +8,6 @@ import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/
 import {ConfigService} from '../../../services/init/config.service';
 import {tap} from 'rxjs/operators';
 
-
 @Component({
   selector: 'app-trade-value-line-chart',
   templateUrl: './trade-value-line-chart.component.html',
@@ -26,6 +25,19 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
   public lineChartOptions: (ChartOptions & { annotation?: any }) = {
     responsive: true,
     maintainAspectRatio: false,
+    spanGaps: true,
+    // animation: {
+    //   duration: 0 // general animation time
+    // },
+    // hover: {
+    //   animationDuration: 0 // duration of animations when hovering an item
+    // },
+    // responsiveAnimationDuration: 0, // animation duration after a resize
+    // elements: {
+    //   line: {
+    //     tension: 0 // disables bezier curves
+    //   }
+    // },
     tooltips: {
       intersect: false,
       mode: 'index',
@@ -33,6 +45,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
     },
     scales: {
       xAxes: [{
+        type: 'time',
         display: true,
         gridLines: {
           display: true
@@ -56,18 +69,22 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
       }]
     },
     legend: {
+      position: 'top',
       labels: {
         fontColor: '#d3d3d3'
       }
     },
     plugins: {
+      decimation: {
+        enabled: true,
+        algorithm: 'lttb',
+        samples: 50,
+        threshold: 100
+      },
       colorschemes: {
         scheme: ClassicColorBlind10,
         override: true
-      },
-      legend: {
-        position: 'top'
-      },
+      }
     }
   };
   public lineChartLegend = true;

@@ -74,10 +74,10 @@ export class FantasyPlatformData {
 }
 
 export class DraftCapital {
-  constructor(b: boolean, round: number, number: number, year: string) {
+  constructor(b: boolean, round: number, pick: number, year: string) {
     this.isFirstOwner = b;
     this.round = round;
-    this.pick = number;
+    this.pick = pick;
     this.year = year;
   }
 

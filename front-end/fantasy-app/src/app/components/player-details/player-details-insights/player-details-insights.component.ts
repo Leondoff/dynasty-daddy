@@ -56,6 +56,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
     scales: {
       xAxes: [{
         display: true,
+        type: 'time',
         gridLines: {
           display: true
         },
