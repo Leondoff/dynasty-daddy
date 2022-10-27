@@ -1,5 +1,6 @@
 /* tslint:disable */
 import {LeagueOwnerData} from "./LeagueTeam";
+import {DraftCapital} from "./LeagueUser";
 
 export class FantasyPlayer {
   id: number;

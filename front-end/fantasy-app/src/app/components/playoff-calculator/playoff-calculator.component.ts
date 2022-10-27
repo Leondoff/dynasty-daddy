@@ -90,7 +90,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
         this.matchupService.initMatchUpCharts(this.leagueService.selectedLeague, this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season));
       }
       this.playoffMachineWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
-      this.powerRankingsService.calculateEloAdjustedADPValue();
+      this.powerRankingsService.powerRankings = this.powerRankingsService.calculateEloAdjustedADPValue();
       this.refreshGames();
       this.generateSelectableWeeks();
       this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
@@ -164,7 +164,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   updateProbability(value: number): void {
     this.selectedWeek = value;
     if (this.playoffCalculatorService.forecastModel === 1) {
-      this.powerRankingsService.calculateEloAdjustedADPValue(this.selectedWeek - 1);
+      this.powerRankingsService.powerRankings = this.powerRankingsService.calculateEloAdjustedADPValue(this.powerRankingsService.powerRankings, this.selectedWeek - 1);
       this.refreshGames();
     }
     this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
