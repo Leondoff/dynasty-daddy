@@ -26,8 +26,6 @@ export class HomeComponent extends BaseComponent implements OnInit {
 
   loginMethod: string = 'sleeper_username';
 
-  DEMO_ID: string = '553670046391185408';
-
   constructor(private sleeperApiService: SleeperApiService,
               public leagueService: LeagueService,
               private powerRankingService: PowerRankingsService,
@@ -96,7 +94,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
    */
   loginWithDemo(): void {
     this.leagueService.leagueUser = null;
-    this.loginWithLeagueId(this.DEMO_ID);
+    this.loginWithLeagueId(this.configService.getConfigOptionByKey(ConfigKeyDictionary.DEMO_LEAGUE_ID)?.configValue);
   }
 
   /**

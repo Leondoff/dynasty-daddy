@@ -17,7 +17,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {DisplayService} from '../../services/utilities/display.service';
 import {LeagueTeam} from '../../model/LeagueTeam';
-import {DraftCapital} from "../../model/LeagueUser";
+import {DraftCapital} from '../../model/LeagueUser';
 
 @Component({
   selector: 'app-trade-center',
@@ -83,8 +83,10 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   /** which side of the trade is favored */
   public favoredSide: number = 0;
 
+  /** mock power rankings for trade */
   public team1MockRankings: TeamPowerRanking;
 
+  /** mock power rankings for trade */
   public team2MockRankings: TeamPowerRanking;
 
   @ViewChild('singleSelect', {static: true}) singleSelect: MatSelect;

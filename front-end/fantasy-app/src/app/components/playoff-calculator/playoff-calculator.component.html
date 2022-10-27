@@ -36,6 +36,9 @@
             <mat-option *ngFor="let option of selectableMetrics" [value]="option" [disabled]="option?.isDisabled">{{option?.display}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <div style="padding-left: 20px; align-self: center; cursor: pointer" class="add-icon-button" *ngIf="playoffCalculatorService.forecastModel === 1" matTooltip="View Historical Elo Adjusted ADP Model" matTooltipPosition="below">
+          <mat-icon (click)="openEloHistoricalModal()"><span class="material-symbols-outlined">auto_graph</span></mat-icon>
+        </div>
       </div>
       <div class="mid-bold-text margin-top-25" *ngIf="upcomingMatchUps.length > 0">
         <div *ngIf="!showPlayoffMachine" class="center-text margin-bot-20">

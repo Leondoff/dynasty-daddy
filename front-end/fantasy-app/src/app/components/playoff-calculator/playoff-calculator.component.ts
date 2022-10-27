@@ -10,6 +10,9 @@ import {FormControl} from '@angular/forms';
 import {BaseComponent} from '../base-component.abstract';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {ActivatedRoute} from '@angular/router';
+import {AddPlayerComparisonModalComponent} from "../modals/add-player-comparison-modal/add-player-comparison-modal.component";
+import {EloTeamComparisonModalComponent} from "../modals/elo-team-comparison-modal/elo-team-comparison-modal.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-playoff-calculator',
@@ -67,6 +70,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     public matchupService: MatchupService,
     public configService: ConfigService,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
     public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -164,7 +168,8 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   updateProbability(value: number): void {
     this.selectedWeek = value;
     if (this.playoffCalculatorService.forecastModel === 1) {
-      this.powerRankingsService.powerRankings = this.powerRankingsService.calculateEloAdjustedADPValue(this.powerRankingsService.powerRankings, this.selectedWeek - 1);
+      this.powerRankingsService.powerRankings =
+        this.powerRankingsService.calculateEloAdjustedADPValue(this.powerRankingsService.powerRankings, this.selectedWeek - 1);
       this.refreshGames();
     }
     this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
@@ -175,6 +180,15 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     this.refreshGames();
     this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
     this.playoffCalculatorService.updateSeasonOdds(this.selectedWeek);
+  }
+
+  openEloHistoricalModal(): void {
+    this.dialog.open(EloTeamComparisonModalComponent
+      , {
+      minHeight: '400px',
+      minWidth: '1200px',
+    }
+    );
   }
 
   /**

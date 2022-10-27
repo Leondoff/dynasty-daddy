@@ -87,6 +87,8 @@ export class PlayerComparisonService {
   /**
    * handles adding data to list
    * @param player
+   * @param defaultPlayer
+   * @param isGroup2
    * @private
    * TODO clean up redundant code
    */
