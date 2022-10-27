@@ -326,8 +326,24 @@ export class PowerRankingsService {
     // map roster ids to indexes and reset elo
     teams.forEach((team, ind) => {
       rosterIdMap[team.team.roster.rosterId] = ind;
-      team.eloAdpValueStarter = team.adpValueStarter;
+      team.eloAdpValueStarter = team.eloADPValueStarterHistory.length >= endWeek ?
+        team.eloADPValueStarterHistory[endWeek - 1] : team.adpValueStarter;
+      team.eloAdpValueChange = team.eloADPValueStarterHistory.length >= endWeek ?
+        team.eloADPValueStarterHistory[endWeek - 1] - (team.eloADPValueStarterHistory[endWeek - 2] || team.adpValueStarter) : 0;
     });
+    // if already calculated then use cache
+    return teams[0].eloADPValueStarterHistory.length >= endWeek ? teams :
+      this.initializeEloADPValueStarterHistory(teams, endWeek, rosterIdMap);
+  }
+
+  /**
+   * Generates elo history map in object if it does not already exist
+   * @param teams teams to generate map for
+   * @param endWeek week to stop at
+   * @param rosterIdMap map of match up to team
+   * @private
+   */
+  private initializeEloADPValueStarterHistory(teams: TeamPowerRanking[], endWeek: number, rosterIdMap: {}): TeamPowerRanking[] {
     for (let i = 0; i < endWeek - (this.leagueService.selectedLeague.startWeek - 1); i++) {
       // process this weeks match ups and set new elo
       this.matchupService.leagueMatchUpUI[i]?.forEach(matchUp => {
@@ -346,6 +362,8 @@ export class PowerRankingsService {
         // set new elo values
         teams[rosterIdMap[matchUp.team1RosterId]].eloAdpValueStarter = Math.round(newRatings[0]);
         teams[rosterIdMap[matchUp.team2RosterId]].eloAdpValueStarter = Math.round(newRatings[1]);
+        teams[rosterIdMap[matchUp.team1RosterId]].eloADPValueStarterHistory.push(Math.round(newRatings[0]));
+        teams[rosterIdMap[matchUp.team2RosterId]].eloADPValueStarterHistory.push(Math.round(newRatings[1]));
       });
     }
     return teams;

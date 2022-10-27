@@ -83,6 +83,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {NgxGoogleAnalyticsModule, NgxGoogleAnalyticsRouterModule} from 'ngx-google-analytics';
 import {environment} from '../environments';
 import { AdsenseModule } from 'ng2-adsense';
+import { EloTeamComparisonModalComponent } from './components/modals/elo-team-comparison-modal/elo-team-comparison-modal.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -138,6 +139,7 @@ let UniversalDeviceDetectorService;
     TradeFinderTableComponent,
     TradeFinderCardComponent,
     TeamTiersChartComponent,
+    EloTeamComparisonModalComponent,
   ],
   imports: [
     BrowserModule,
