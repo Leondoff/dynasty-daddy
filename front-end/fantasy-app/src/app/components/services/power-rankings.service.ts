@@ -76,76 +76,76 @@ export class PowerRankingsService {
   generatePowerRankings(teams: LeagueTeam[], players: FantasyPlayer[], isMockRankings: boolean = false): Observable<TeamPowerRanking[]> {
     const newPowerRankings: TeamPowerRanking[] = [];
     try {
-        teams?.map((team) => {
-          const roster = [];
-          let sfTradeValueTotal = 0;
-          let tradeValueTotal = 0;
-          // TODO refactor this section both comparisons are redundant
-          for (const sleeperId of team.roster?.players) {
-            for (const player of players) {
-              if (sleeperId === player.sleeper_id) {
-                roster.push(player);
-                sfTradeValueTotal += player.sf_trade_value;
-                tradeValueTotal += player.trade_value;
-                break;
-              }
+      teams?.map((team) => {
+        const roster = [];
+        let sfTradeValueTotal = 0;
+        let tradeValueTotal = 0;
+        // TODO refactor this section both comparisons are redundant
+        for (const sleeperId of team.roster?.players) {
+          for (const player of players) {
+            if (sleeperId === player.sleeper_id) {
+              roster.push(player);
+              sfTradeValueTotal += player.sf_trade_value;
+              tradeValueTotal += player.trade_value;
+              break;
             }
           }
-          const positionRoster: PositionPowerRanking[] = [];
-          for (const group of this.positionGroups) {
-            let sfTradeValue = 0;
-            let tradeValue = 0;
-            let groupList: FantasyPlayer[] = [];
-            groupList = roster.filter(player => {
-              if (player.position === group) {
-                sfTradeValue += player.sf_trade_value;
-                tradeValue += player.trade_value;
-                return player;
-              }
-            });
-            positionRoster.push(new PositionPowerRanking(group, sfTradeValue, tradeValue, groupList));
-          }
-          const pickValues = players.filter(player => {
-            return player.position === 'PI';
+        }
+        const positionRoster: PositionPowerRanking[] = [];
+        for (const group of this.positionGroups) {
+          let sfTradeValue = 0;
+          let tradeValue = 0;
+          let groupList: FantasyPlayer[] = [];
+          groupList = roster.filter(player => {
+            if (player.position === group) {
+              sfTradeValue += player.sf_trade_value;
+              tradeValue += player.trade_value;
+              return player;
+            }
           });
-          const picks: FantasyPlayer[] = [];
-          let sfPickTradeValue = 0;
-          let pickTradeValue = 0;
-          // combine upcoming and future draft capital for rankings
-          const allPicks = team.draftCapital.concat(team.futureDraftCapital);
-          allPicks.map(pick => {
-              for (const pickValue of pickValues) {
-                if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {
-                  if (pick.pick < 5 && pickValue.last_name.includes('Early')) {
-                    sfPickTradeValue += pickValue.sf_trade_value;
-                    pickTradeValue += pickValue.trade_value;
-                    sfTradeValueTotal += pickValue.sf_trade_value;
-                    tradeValueTotal += pickValue.trade_value;
-                    picks.push(pickValue);
-                    break;
-                  } else if (pick.pick > 8 && pickValue.last_name.includes('Late')) {
-                    sfPickTradeValue += pickValue.sf_trade_value;
-                    pickTradeValue += pickValue.trade_value;
-                    sfTradeValueTotal += pickValue.sf_trade_value;
-                    tradeValueTotal += pickValue.trade_value;
-                    picks.push(pickValue);
-                    break;
-                  } else if (pick.pick > 4 && pick.pick < 9 && pickValue.last_name.includes('Mid')) {
-                    sfPickTradeValue += pickValue.sf_trade_value;
-                    pickTradeValue += pickValue.trade_value;
-                    sfTradeValueTotal += pickValue.sf_trade_value;
-                    tradeValueTotal += pickValue.trade_value;
-                    picks.push(pickValue);
-                    break;
-                  }
+          positionRoster.push(new PositionPowerRanking(group, sfTradeValue, tradeValue, groupList));
+        }
+        const pickValues = players.filter(player => {
+          return player.position === 'PI';
+        });
+        const picks: FantasyPlayer[] = [];
+        let sfPickTradeValue = 0;
+        let pickTradeValue = 0;
+        // combine upcoming and future draft capital for rankings
+        const allPicks = team.draftCapital.concat(team.futureDraftCapital);
+        allPicks.map(pick => {
+            for (const pickValue of pickValues) {
+              if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {
+                if (pick.pick < 5 && pickValue.last_name.includes('Early')) {
+                  sfPickTradeValue += pickValue.sf_trade_value;
+                  pickTradeValue += pickValue.trade_value;
+                  sfTradeValueTotal += pickValue.sf_trade_value;
+                  tradeValueTotal += pickValue.trade_value;
+                  picks.push(pickValue);
+                  break;
+                } else if (pick.pick > 8 && pickValue.last_name.includes('Late')) {
+                  sfPickTradeValue += pickValue.sf_trade_value;
+                  pickTradeValue += pickValue.trade_value;
+                  sfTradeValueTotal += pickValue.sf_trade_value;
+                  tradeValueTotal += pickValue.trade_value;
+                  picks.push(pickValue);
+                  break;
+                } else if (pick.pick > 4 && pick.pick < 9 && pickValue.last_name.includes('Mid')) {
+                  sfPickTradeValue += pickValue.sf_trade_value;
+                  pickTradeValue += pickValue.trade_value;
+                  sfTradeValueTotal += pickValue.sf_trade_value;
+                  tradeValueTotal += pickValue.trade_value;
+                  picks.push(pickValue);
+                  break;
                 }
               }
             }
-          );
-          const rankedPicks = new PositionPowerRanking('PI', sfPickTradeValue, pickTradeValue, picks);
-          newPowerRankings.push(new TeamPowerRanking(team, positionRoster, sfTradeValueTotal, tradeValueTotal, rankedPicks));
-        });
-        this.rankTeams(newPowerRankings, this.leagueService.selectedLeague.isSuperflex);
+          }
+        );
+        const rankedPicks = new PositionPowerRanking('PI', sfPickTradeValue, pickTradeValue, picks);
+        newPowerRankings.push(new TeamPowerRanking(team, positionRoster, sfTradeValueTotal, tradeValueTotal, rankedPicks));
+      });
+      this.rankTeams(newPowerRankings, this.leagueService.selectedLeague.isSuperflex);
     } catch (e: any) {
       console.error('Error Mapping League Data: ', e);
     }
@@ -322,14 +322,17 @@ export class PowerRankingsService {
       return teams;
     }
     // TODO find a better way to verify the match ups are mapped
-    const rosterIdMap = {};
     // map roster ids to indexes and reset elo
+    const rosterIdMap = {};
+    // start week modifier for leagues that didn't start week 1
+    const startWeekMod = this.leagueService.selectedLeague.startWeek - 1;
     teams.forEach((team, ind) => {
       rosterIdMap[team.team.roster.rosterId] = ind;
       team.eloAdpValueStarter = team.eloADPValueStarterHistory.length >= endWeek ?
-        team.eloADPValueStarterHistory[endWeek] : team.adpValueStarter;
+        team.eloADPValueStarterHistory[endWeek - startWeekMod] : team.adpValueStarter;
       team.eloAdpValueChange = team.eloADPValueStarterHistory.length >= endWeek ?
-        team.eloADPValueStarterHistory[endWeek] - (team.eloADPValueStarterHistory[endWeek - 1] || team.adpValueStarter) : 0;
+        team.eloADPValueStarterHistory[endWeek - startWeekMod] - (team.eloADPValueStarterHistory[endWeek - startWeekMod - 1]
+          || team.adpValueStarter) : 0;
     });
     // if already calculated then use cache
     return teams[0].eloADPValueStarterHistory.length >= endWeek ? teams :
