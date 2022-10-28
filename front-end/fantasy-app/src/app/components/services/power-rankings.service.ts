@@ -344,6 +344,9 @@ export class PowerRankingsService {
    * @private
    */
   private initializeEloADPValueStarterHistory(teams: TeamPowerRanking[], endWeek: number, rosterIdMap: {}): TeamPowerRanking[] {
+    teams.forEach(team => {
+      team.eloADPValueStarterHistory.push(team.eloAdpValueStarter);
+    });
     for (let i = 0; i < endWeek - (this.leagueService.selectedLeague.startWeek - 1); i++) {
       // process this weeks match ups and set new elo
       this.matchupService.leagueMatchUpUI[i]?.forEach(matchUp => {
