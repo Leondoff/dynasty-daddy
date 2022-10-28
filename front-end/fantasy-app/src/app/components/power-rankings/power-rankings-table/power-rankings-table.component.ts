@@ -180,7 +180,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
         filteredPlayers.push(player.full_name);
       }
     });
-    return filteredPlayers.toString();
+    return filteredPlayers.join(', ');
   }
 
   /**

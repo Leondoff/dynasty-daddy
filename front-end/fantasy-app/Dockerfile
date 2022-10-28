@@ -1,5 +1,5 @@
 # Base image
-FROM node:lts-alpine
+FROM node:16-alpine3.16
 WORKDIR /usr/src/app
 COPY front-end/fantasy-app/package*.json ./
 RUN ls -l
