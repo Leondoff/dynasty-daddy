@@ -2,11 +2,11 @@ import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@a
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
-import {LeagueService} from "../../../services/league.service";
-import {PowerRankingsService} from "../../services/power-rankings.service";
-import {PlayerService} from "../../../services/player.service";
-import {MatDialog} from "@angular/material/dialog";
+import {Classic20} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {LeagueService} from '../../../services/league.service';
+import {PowerRankingsService} from '../../services/power-rankings.service';
+import {PlayerService} from '../../../services/player.service';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-elo-team-comparison-modal',
@@ -63,7 +63,7 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
 
     plugins: {
       colorschemes: {
-        scheme: ClassicColorBlind10,
+        scheme: Classic20,
         override: true
       }
     }
