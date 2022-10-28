@@ -21,6 +21,7 @@ export class TeamPowerRanking {
   adpValueStarter: number = 0;
   eloAdpValueStarter: number = 0;
   eloAdpValueChange: number = 0;
+  eloADPValueStarterHistory: number[] = [];
   tier: number;
 }
 

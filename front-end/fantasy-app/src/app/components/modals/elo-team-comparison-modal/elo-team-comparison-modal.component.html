@@ -1,0 +1,21 @@
+<div class="center-text margin-bot-20 mid-bold-text">
+  Historical Elo Adjusted ADP Rankings
+  <button mat-icon-button color="accent" class="button-right" (click)="closeDialog()"><mat-icon>close</mat-icon></button>
+</div>
+<div>
+  <div class="margin-top-25" style="display: block" *ngIf="lineChartData.length > 0">
+    <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType"
+            [plugins]="lineChartPlugins">
+    </canvas>
+  </div>
+  <div *ngIf="lineChartData.length == 0">
+    <div style="min-height: 300px" class="center-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  </div>
+</div>
