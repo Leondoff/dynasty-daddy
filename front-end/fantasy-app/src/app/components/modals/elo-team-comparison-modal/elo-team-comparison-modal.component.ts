@@ -7,6 +7,8 @@ import {LeagueService} from '../../../services/league.service';
 import {PowerRankingsService} from '../../services/power-rankings.service';
 import {PlayerService} from '../../../services/player.service';
 import {MatDialog} from '@angular/material/dialog';
+import Chart from 'chart.js';
+import * as ChartAnnotation from 'chartjs-plugin-annotation';
 
 @Component({
   selector: 'app-elo-team-comparison-modal',
@@ -38,6 +40,7 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
     },
     scales: {
       xAxes: [{
+        id: 'x-axis-0',
         display: true,
         gridLines: {
           display: true
@@ -49,6 +52,7 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
         }
       }],
       yAxes: [{
+        id: 'y-axis-0',
         display: true,
         gridLines: {
           display: true
@@ -60,7 +64,28 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
         }
       }],
     },
-
+    annotation: {
+      annotations: [
+        {
+          drawTime: 'afterDatasetsDraw',
+          id: 'hline',
+          type: 'line',
+          mode: 'vertical',
+          scaleID: 'x-axis-0',
+          borderColor: 'orange',
+          borderWidth: 2,
+          label: {
+            position: 'bottom',
+            content: 'Playoffs',
+            fontColor: 'orange',
+            enabled: true,
+            font: {
+              weight: 'bold'
+            }
+          }
+        }
+      ],
+    },
     plugins: {
       colorschemes: {
         scheme: Classic20,
@@ -70,7 +95,7 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
   };
   public lineChartLegend = true;
   public lineChartType = 'line';
-  public lineChartPlugins = [];
+  public lineChartPlugins = [ChartAnnotation];
 
   constructor(private leagueService: LeagueService,
               private playerService: PlayerService,
@@ -80,12 +105,13 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // do nothing
+    Chart.pluginService.register(ChartAnnotation);
   }
 
   ngAfterViewInit(): void {
     this.generateDataSets();
     this.cdr.detectChanges();
+    this.chart.update();
   }
 
   /**
@@ -94,7 +120,9 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
   generateDataSets(): void {
     this.lineChartData = [];
     this.lineChartLabels = [];
-    for (let i = this.leagueService.selectedLeague.startWeek; i < this.leagueService.selectedLeague.playoffStartWeek; i++) {
+    // set playoff start annotation
+    this.lineChartOptions.annotation.annotations[0].value = 'Week ' + this.leagueService.selectedLeague.playoffStartWeek;
+    for (let i = this.leagueService.selectedLeague.startWeek; i < (this.leagueService.selectedLeague.season > '2020' ? 19 : 18); i++) {
       this.lineChartLabels.push('Week ' + i);
     }
     this.powerRankingsService.powerRankings.sort((a, b) => b.eloAdpValueStarter - a.eloAdpValueStarter).forEach(team => {
