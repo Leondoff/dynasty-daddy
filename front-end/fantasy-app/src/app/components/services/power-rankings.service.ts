@@ -45,8 +45,12 @@ export class PowerRankingsService {
    * @private
    */
   private static getBetterPlayer(player1: FantasyPlayer, player2: FantasyPlayer): FantasyPlayer {
+    // flex te's aren't as valuable
+    const teModifier = 3;
     if (player1 && player2) {
-      if (player1.avg_adp < player2.avg_adp) {
+      const player1ADP = player1.position === 'TE' ? player1.avg_adp * teModifier : player1.avg_adp;
+      const player2ADP = player2.position === 'TE' ? player2.avg_adp * teModifier : player2.avg_adp;
+      if (player1ADP < player2ADP) {
         return player1.avg_adp === 0 ? player2 : player1;
       } else {
         return player2.avg_adp === 0 ? player1 : player2;
