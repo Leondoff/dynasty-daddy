@@ -177,6 +177,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   }
 
   changeForecastModel(): void {
+    this.updateProbability(this.selectedWeek);
     this.refreshGames();
     this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
     this.playoffCalculatorService.updateSeasonOdds(this.selectedWeek);
