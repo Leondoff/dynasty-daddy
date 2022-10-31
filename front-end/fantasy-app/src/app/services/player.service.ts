@@ -66,7 +66,7 @@ export class PlayerService {
       this.unfilteredPlayerValues = currentPlayers;
       this.playerValues = currentPlayers.filter(player => {
         if (player.position === 'PI') {
-          return Number(player.first_name) >= new Date().getFullYear();
+          return Number(player.first_name) >= new Date().getFullYear() && player.sf_trade_value > 0;
         } else {
           return player;
         }
