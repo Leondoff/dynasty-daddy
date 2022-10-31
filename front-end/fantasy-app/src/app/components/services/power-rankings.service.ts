@@ -220,7 +220,7 @@ export class PowerRankingsService {
     this.calculateADPValue(teams);
     // calculate elo adjusted ADP starter rank if matchups loaded properly
     if (this.matchupService.leagueMatchUpUI.length !== 0 && !isMockRankings) {
-      this.calculateEloAdjustedADPValue(teams);
+      teams = this.calculateEloAdjustedADPValue(teams);
     }
     // Rank starting lineups
     teams = PowerRankingsService.sortOnStarterValue(teams);
@@ -332,14 +332,14 @@ export class PowerRankingsService {
     const startWeekMod = this.leagueService.selectedLeague.startWeek - 1;
     teams.forEach((team, ind) => {
       rosterIdMap[team.team.roster.rosterId] = ind;
-      team.eloAdpValueStarter = team.eloADPValueStarterHistory.length >= endWeek ?
+      team.eloAdpValueStarter = team.eloADPValueStarterHistory.length > 0 ?
         team.eloADPValueStarterHistory[endWeek - startWeekMod] : team.adpValueStarter;
-      team.eloAdpValueChange = team.eloADPValueStarterHistory.length >= endWeek ?
-        team.eloADPValueStarterHistory[endWeek - startWeekMod] - (team.eloADPValueStarterHistory[endWeek - startWeekMod - 1]
-          || team.adpValueStarter) : 0;
+      team.eloAdpValueChange = team.eloADPValueStarterHistory.length > 0 ?
+        (team.eloADPValueStarterHistory[endWeek - startWeekMod]) -
+        (team.eloADPValueStarterHistory[endWeek - startWeekMod - 1] || team.adpValueStarter) : 0;
     });
     // if already calculated then use cache
-    return teams[0].eloADPValueStarterHistory.length >= endWeek ? teams :
+    return teams[0].eloADPValueStarterHistory.length > 0 ? teams :
       this.initializeEloADPValueStarterHistory(teams, endWeek, rosterIdMap);
   }
 
@@ -374,6 +374,13 @@ export class PowerRankingsService {
         teams[rosterIdMap[matchUp.team2RosterId]].eloAdpValueStarter = Math.round(newRatings[1]);
         teams[rosterIdMap[matchUp.team1RosterId]].eloADPValueStarterHistory.push(Math.round(newRatings[0]));
         teams[rosterIdMap[matchUp.team2RosterId]].eloADPValueStarterHistory.push(Math.round(newRatings[1]));
+      });
+      // handles bye weeks in playoffs
+      teams.forEach(team => {
+        if (team.eloADPValueStarterHistory.length === i + 1) {
+          team.eloAdpValueChange = 0;
+          team.eloADPValueStarterHistory.push(team.eloAdpValueStarter);
+        }
       });
     }
     return teams;
