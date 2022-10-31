@@ -108,8 +108,9 @@ export class TransactionsService {
       (draftPick.round,
         (Number(this.nflService.stateOfNFL.season) + 2).toString()
       );
+      const placementSuffix = draftPick.round === 1 ? 'st' : draftPick.round === 2 ? 'nd' : 'th';
       return {
-        playerName: draftPick.season + ' ' + draftPick.round + 'th',
+        playerName: draftPick.season + ' ' + draftPick.round + placementSuffix,
         value: this.leagueService.selectedLeague.isSuperflex ?
           notFoundPick?.sf_trade_value || 0 : notFoundPick.trade_value || 0,
         rosterId
