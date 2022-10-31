@@ -104,8 +104,15 @@ export class TransactionsService {
           pick.sf_trade_value : pick.trade_value, rosterId
       };
     } else {
+      const notFoundPick = this.playerService.getEstimatePickValueBy
+      (draftPick.round,
+        (Number(this.nflService.stateOfNFL.season) + 2).toString()
+      );
       return {
-        playerName: draftPick.season + ' ' + draftPick.round + 'th', value: 0, rosterId
+        playerName: draftPick.season + ' ' + draftPick.round + 'th',
+        value: this.leagueService.selectedLeague.isSuperflex ?
+          notFoundPick?.sf_trade_value || 0 : notFoundPick.trade_value || 0,
+        rosterId
       };
     }
 
