@@ -43,7 +43,7 @@
 <div class="center-text margin-top-50" *ngIf="leagueService.leagueStatus === 'NONE'">
   <div class="warning__alert">Cannot generate Power Rankings. Please select a league.</div>
   <br>
-  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home" gaEvent="nav_home_page" gaCategory="page_nav">Choose League</button>
   <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
@@ -56,7 +56,7 @@
 <div class="center-text margin-top-50" *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length === 0">
   <div class="warning__alert">Error creating power rankings. Please select a different league.</div>
   <br>
-  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home" gaEvent="nav_home_page" gaCategory="page_nav">Choose League</button>
   <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">

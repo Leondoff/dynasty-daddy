@@ -26,6 +26,7 @@
         [(ngModel)]="acceptanceVariance"
         (change)="processTrade()"></mat-slider>
     </span>
+    <span class="container_spacer"></span>
   </div>
 
 
@@ -60,7 +61,7 @@
       <table class="trade-table">
         <tr *ngFor="let player of team1PlayerList; let i = index">
           <td class="trade-name-col">
-              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">
+              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
               {{player.full_name}}
             </span>
             <span *ngIf="player.position == 'PI'">
@@ -82,6 +83,22 @@
           <td></td>
           <td (click)="evenOutTrade()" class="trade-info-col small-text__light link--text__no__underline" style="text-decoration-line: underline; font-style: italic">Even Out Trade</td>
         <tr>
+        <tr *ngIf="!showDrops && tradeTool.tradePackage !== null && (tradeTool.tradePackage?.team1Assets.length !== 0 && tradeTool.tradePackage?.team2Assets?.length !== 0) && tradeTool.tradePackage?.valueToEvenTrade <= tradeTool.tradePackage?.acceptanceBufferAmount && team2PlayerDropList.length > 0">
+          <td></td>
+          <td (click)="toggleRecommendedDrops()" class="trade-info-col small-text__light link--text__no__underline" style="text-decoration-line: underline; font-style: italic">Recommend Drops</td>
+        <tr>
+        <tr *ngIf="team2PlayerDropList.length > 0 && showDrops" class="margin-top-25 small-text__light warning__alert" >Recommended Drops</tr>
+        <tr *ngFor="let player of team2PlayerDropList; let i = index">
+          <td></td>
+          <td class="trade-info-col" *ngIf="showDrops">
+            <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+              {{player.full_name}}
+            </span>
+          </td>
+          <td class="small-text__light warning__alert trade-value-col-drop" *ngIf="showDrops">
+            -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
+          </td>
+        </tr>
       </table>
       <div *ngIf="configService.isMobile" class="margin-top-25 center-text large-bold-header-text">Total: {{tradeTool.tradePackage?.getTradeValueBySide(1)}}</div>
     </div>
@@ -115,7 +132,7 @@
       <table class="trade-table">
         <tr *ngFor="let player of team2PlayerList; let i = index">
           <td class="trade-name-col">
-              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">
+              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
               {{player.full_name}}
             </span>
             <span *ngIf="player.position == 'PI'">
@@ -139,6 +156,22 @@
           <td></td>
           <td (click)="evenOutTrade()" class="trade-info-col small-text__light link--text__no__underline" style="text-decoration-line: underline; font-style: italic">Even Out Trade</td>
         <tr>
+        <tr *ngIf="!showDrops && tradeTool.tradePackage !== null && (tradeTool.tradePackage?.team1Assets.length !== 0 && tradeTool.tradePackage?.team2Assets?.length !== 0) && tradeTool.tradePackage?.valueToEvenTrade <= tradeTool.tradePackage?.acceptanceBufferAmount && team1PlayerDropList.length > 0">
+          <td></td>
+          <td (click)="toggleRecommendedDrops()" class="trade-info-col small-text__light link--text__no__underline" style="text-decoration-line: underline; font-style: italic">Recommend Drops</td>
+        <tr>
+        <tr *ngIf="team1PlayerDropList.length > 0 && showDrops" class="margin-top-25 small-text__light warning__alert" >Recommended Drops</tr>
+        <tr *ngFor="let player of team1PlayerDropList; let i = index">
+          <td></td>
+          <td class="trade-info-col" *ngIf="showDrops">
+            <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+              {{player.full_name}}
+            </span>
+          </td>
+          <td class="small-text__light warning__alert trade-value-col-drop" *ngIf="showDrops">
+            -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
+          </td>
+        </tr>
       </table>
       <div *ngIf="configService.isMobile" class="margin-top-25 center-text large-bold-header-text">Total: {{tradeTool.tradePackage?.getTradeValueBySide(2)}}</div>
     </div>
@@ -176,7 +209,7 @@
         <table class="trade-table-item" *ngFor="let player of recommendedPlayers">
           <tr>
             <td *ngIf="player.position == 'PI'" style="width: 70%">{{player.full_name}}</td>
-            <td *ngIf="player.position != 'PI'" style="width: 70%" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">{{player.full_name}}</td>
+            <td *ngIf="player.position != 'PI'" style="width: 70%" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">{{player.full_name}}</td>
             <td style="width: 30%">{{player.sf_trade_value}}</td>
             <td style="width: 5px" (click)="favoredSide == 2 ? addPlayerToTeam1(player) : addPlayerToTeam2(player)">
               <mat-icon class="trade-rm-icon">add_circle</mat-icon>
@@ -290,7 +323,7 @@
       <mat-card class="center-text" style="min-height: 245px">
         <div class="mid-bold-text center-text">Log into your League</div>
         <div class="margin-bot-10 center-text" style="margin-top: 80px">
-          <button mat-raised-button color="warn" routerLink="./home">Select League</button>
+          <button mat-raised-button color="warn" routerLink="./home" gaEvent="nav_home_page" gaCategory="page_nav">Select League</button>
         </div>
       </mat-card>
     </div>

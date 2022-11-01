@@ -51,7 +51,7 @@ export class SleeperApiService {
   getSleeperRostersByLeagueId(leagueId: string): Observable<LeagueRosterData[]> {
     return this.http.get<LeagueRosterData[]>(this.sleeperApiConfigService.getSleeperLeagueEndpoint + leagueId + '/rosters').pipe(map((rosters: any[]) => {
       const rosterList: LeagueRosterData[] = [];
-      rosters.map(roster => rosterList.push(new LeagueRosterData(roster.roster_id, roster.owner_id, roster.players, new TeamMetrics(roster.settings))));
+      rosters.map(roster => rosterList.push(new LeagueRosterData(roster.roster_id, roster.owner_id, roster.players, roster.reserve, roster.taxi, new TeamMetrics(roster.settings))));
       return rosterList;
     }));
   }

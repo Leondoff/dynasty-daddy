@@ -50,17 +50,26 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   /** Subject that emits when the component has been destroyed. */
   protected _onDestroy = new Subject<void>();
 
-  /** list of players from trade */
+  /** list of players from team 1 */
   public team1PlayerList: FantasyPlayer[] = [];
 
-  /** list of player for team 2 */
+  /** list of players for team 2 */
   public team2PlayerList: FantasyPlayer[] = [];
+
+  /** list of players to drop from trade */
+  public team1PlayerDropList: FantasyPlayer[] = [];
+
+  /** list of players to drop from trade */
+  public team2PlayerDropList: FantasyPlayer[] = [];
 
   /** is super flex toggle for trade package */
   public isSuperFlex: boolean;
 
   /** hide/show the advance trade calculator settings */
   public toggleAdvancedSettings: boolean = false;
+
+  /** hide/show the recommended players to drop */
+  public showDrops: boolean = false;
 
   /** acceptance variant number */
   public acceptanceVariance: number;
@@ -267,7 +276,31 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     );
     this.favoredSide = this.tradeTool.tradePackage.getWhichSideIsFavored();
     this.generateMockPowerRankings(trade);
+    this.determineDropPlayerList();
     this.refreshDisplay();
+  }
+
+  /**
+   * Determines and sets drop players list for a processed trade.
+   * @private
+   */
+  private determineDropPlayerList(): void {
+    this.team1PlayerDropList = [];
+    this.team2PlayerDropList = [];
+    if (this.team1MockRankings && this.leagueService.selectedLeague
+      && this.team1MockRankings?.team?.roster.players.length > this.leagueService.selectedLeague.rosterSize) {
+      this.team1PlayerDropList = this.team1MockRankings.getRecommendedPlayersToDrop(
+        this.isSuperFlex,
+        this.team1MockRankings.team.roster.players.length - this.leagueService.selectedLeague.rosterSize
+      );
+    }
+    if (this.team2MockRankings && this.leagueService.selectedLeague
+      && this.team2MockRankings?.team?.roster.players.length > this.leagueService.selectedLeague.rosterSize) {
+      this.team2PlayerDropList = this.team2MockRankings.getRecommendedPlayersToDrop(
+        this.isSuperFlex,
+        this.team2MockRankings.team.roster.players.length - this.leagueService.selectedLeague.rosterSize
+      );
+    }
   }
 
   /**
@@ -345,6 +378,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   clearTradeTable(): void {
     this.team1PlayerList = [];
     this.team2PlayerList = [];
+    this.team1PlayerDropList = [];
+    this.team2PlayerDropList = [];
+    this.showDrops = false;
     this.team2Rankings = null;
     this.team1Rankings = null;
     this.team2MockRankings = null;
@@ -378,6 +414,13 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       this.tradeTool.tradePackage.getWhichSideIsFavored() === 1 ? this.addPlayerToTeam2(playerToAdd) : this.addPlayerToTeam1(playerToAdd);
       index++;
     }
+  }
+
+  /**
+   * Toggles showing recommended drops or not
+   */
+  toggleRecommendedDrops(): void {
+    this.showDrops = !this.showDrops;
   }
 
   /**
@@ -572,9 +615,15 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * @param pick
    */
   getPickNumber(pick: FantasyPlayer): number {
-    if (pick.position !== 'PI') { return -1; }
-    if (pick.last_name.includes('Mid')) { return 6; }
-    else if (pick.last_name.includes('Early')) { return 2; }
-    else { return 8; }
+    if (pick.position !== 'PI') {
+      return -1;
+    }
+    if (pick.last_name.includes('Mid')) {
+      return 6;
+    } else if (pick.last_name.includes('Early')) {
+      return 2;
+    } else {
+      return 8;
+    }
   }
 }

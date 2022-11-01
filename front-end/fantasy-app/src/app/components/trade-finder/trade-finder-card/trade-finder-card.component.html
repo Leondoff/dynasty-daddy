@@ -1,7 +1,7 @@
 <mat-card style="min-height: 200px">
   <div class="post-container">
     <div class="post-title">
-      Potential Trade from <span class="teamName" [ngClass]="{'link--text__no__underline': owner}" [routerLink]="owner ? ['../../team', owner.ownerName] : []" [queryParams]="leagueSwitchService.buildQueryParams()">{{owner?.teamName || 'Anyone'}}</span>
+      Potential Trade from <span class="teamName" [ngClass]="{'link--text__no__underline': owner}" [routerLink]="owner ? ['../../team', owner.ownerName] : []" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">{{owner?.teamName || 'Anyone'}}</span>
       <span style="float: right; cursor: pointer">
         <mat-icon matTooltip="Open in Trade Calculator" matTooltipPosition="above" (click)="openTradeCalculator()">calculate</mat-icon>
       </span>

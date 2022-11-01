@@ -13,7 +13,7 @@
 
     <ng-container matColumnDef="teamName">
       <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
-      <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">
+      <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
         <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team.team.owner?.avatar"
              onerror="style.display = 'none'" class="table-image" *ngIf="!configService.isMobile">
         {{team.team.owner?.teamName}}

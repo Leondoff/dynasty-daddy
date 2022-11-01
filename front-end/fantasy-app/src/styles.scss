@@ -310,6 +310,11 @@ html, body, app-root, .app-frame {
   cursor: pointer;
 }
 
+.link--text__no__underline__warnings:hover {
+  color: lightblue;
+  cursor: pointer;
+}
+
 .modal-players-list__item {
   padding: 8px;
   border: 1px solid dimgray;
