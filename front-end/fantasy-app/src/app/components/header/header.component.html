@@ -55,7 +55,7 @@
     </mat-menu>
     <span>Dynasty Daddy</span>
     <span class="spacer"></span>
-    <button mat-icon-button class="header-icon" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()">
+    <button mat-icon-button class="header-icon" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"  gaEvent="nav_home_page" gaCategory="page_nav">
       <mat-icon>group_add</mat-icon>
     </button>
   </mat-toolbar>

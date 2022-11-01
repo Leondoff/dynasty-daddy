@@ -33,6 +33,11 @@
   color: lightblue;
 }
 
+.trade-value-col-drop {
+  text-align: right;
+  width: 10%;
+}
+
 .trade-rm-icon:hover {
   transform: scale(0.9);
 }

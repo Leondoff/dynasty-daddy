@@ -2,14 +2,6 @@ import {FantasyPlayer} from '../../model/FantasyPlayer';
 import {LeagueTeam} from '../../model/LeagueTeam';
 
 export class TeamPowerRanking {
-  constructor(team: LeagueTeam, players: PositionPowerRanking[], sfTradeValue: number, tradeValue: number, picks: PositionPowerRanking) {
-    this.team = team;
-    this.roster = players;
-    this.sfTradeValueOverall = sfTradeValue;
-    this.tradeValueOverall = tradeValue;
-    this.picks = picks;
-  }
-
   team: LeagueTeam;
   roster: PositionPowerRanking[];
   picks: PositionPowerRanking;
@@ -23,6 +15,29 @@ export class TeamPowerRanking {
   eloAdpValueChange: number = 0;
   eloADPValueStarterHistory: number[] = [];
   tier: number;
+
+  constructor(team: LeagueTeam, players: PositionPowerRanking[], sfTradeValue: number, tradeValue: number, picks: PositionPowerRanking) {
+    this.team = team;
+    this.roster = players;
+    this.sfTradeValueOverall = sfTradeValue;
+    this.tradeValueOverall = tradeValue;
+    this.picks = picks;
+  }
+
+  /**
+   * For the team, return the lowest valued players from the team
+   * @param isSuperFlex is superflex league
+   * @param playersToReturn players to return
+   */
+  public getRecommendedPlayersToDrop(isSuperFlex: boolean, playersToReturn: number): FantasyPlayer[] {
+    const allPlayers = [];
+    this.roster.forEach(player => {
+      allPlayers.push(...player.players.filter(
+        p => !this.team?.roster.taxi.includes(p.sleeper_id) && !this.team?.roster.reserve.includes(p.sleeper_id)
+      ));
+    });
+    return allPlayers.sort((a, b) => b.sf_trade_value - a.sf_trade_value).slice(-1 * playersToReturn)
+  }
 }
 
 export class PositionPowerRanking {

@@ -33,6 +33,7 @@ export class LeagueData {
     this.leagueId = league_id;
     this.totalRosters = total_rosters;
     this.rosterPositions = roster_positions;
+    this.rosterSize = roster_positions.length + (settings.reserve_slots || 0) + (settings.taxi_slots || 0);
     this.prevLeagueId = previous_league_id;
     this.status = status;
     this.divisions = settings.divisions;
@@ -53,6 +54,7 @@ export class LeagueData {
   leagueId: string;
   totalRosters: number;
   rosterPositions: string[];
+  rosterSize: number = 0;
   prevLeagueId: string;
   divisionNames: string[] = [];
   divisions: number;
