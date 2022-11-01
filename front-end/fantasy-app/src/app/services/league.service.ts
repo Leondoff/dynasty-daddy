@@ -321,6 +321,8 @@ export class LeagueService {
         rosterId,
         'unable_to_find',
         [],
+        [],
+        [],
         new TeamMetrics(null)
       )
     );

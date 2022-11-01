@@ -11,7 +11,7 @@
 
         <ng-container matColumnDef="teamName">
           <mat-header-cell *matHeaderCellDef>Team Name</mat-header-cell>
-          <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">
+          <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
             {{team.owner?.teamName}} </mat-cell>
         </ng-container>
 
@@ -167,7 +167,7 @@
 <div class="center-text margin-top-50" *ngIf="leagueService.leagueStatus === 'NONE'">
   <div class="warning__alert">Cannot generate league analytics cause no league was selected. Please select a league.</div>
   <br>
-  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home" gaEvent="nav_home_page" gaCategory="page_nav">Choose League</button>
   <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
@@ -180,7 +180,7 @@
 <div class="center-text margin-top-50" *ngIf="(leagueService.selectedLeague?.status === 'pre_draft' || leagueService.selectedLeague?.status === 'drafting') && leagueService.isLeagueLoaded()">
   <div class="warning__alert">Cannot generate league analytics because season hasn't started yet. Please select a different league or year.</div>
   <br>
-  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home" gaEvent="nav_home_page" gaCategory="page_nav">Choose League</button>
   <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
     <mat-label>Select a league</mat-label>
     <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">

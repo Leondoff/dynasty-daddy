@@ -6,10 +6,10 @@
 
 <div class="table-container" *ngIf="pageLoaded">
   <div class="margin-top-10">
-    <span class="link--text__no__underline mid-bold-text" style="padding-right: 3px" [routerLink]="['../../rankings']" [queryParams]="leagueSwitchService.buildQueryParams()">Power Rankings</span>
+    <span class="link--text__no__underline mid-bold-text" style="padding-right: 3px" [routerLink]="['../../rankings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav">Power Rankings</span>
     <mat-icon class="arrow-icon__nav">chevron_right</mat-icon>
     <span class="mid-bold-text">{{selectedTeam?.owner?.ownerName}}</span>
-    <div class="link--text__no__underline mid-bold-text button-right" [routerLink]="['../../standings']" [queryParams]="leagueSwitchService.buildQueryParams()" *ngIf="!configService.isMobile">
+    <div class="link--text__no__underline mid-bold-text button-right" [routerLink]="['../../standings']" [queryParams]="leagueSwitchService.buildQueryParams()" *ngIf="!configService.isMobile" gaEvent="nav_standings" gaCategory="page_nav">
       View in Standings
       <mat-icon class="arrow-icon__nav">chevron_right</mat-icon>
     </div>
@@ -118,7 +118,7 @@
               <div class="mid-bold-text">{{player.sf_trade_value}}</div>
             </mat-card-content>
             <mat-card-actions class="center-text">
-              <button mat-button [routerLink]="['../../../players/details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">Player Details</button>
+              <button mat-button [routerLink]="['../../../players/details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">Player Details</button>
               <button mat-button (click)="openPlayerComparison(player)">View Comparison</button>
             </mat-card-actions>
           </mat-card>
@@ -180,5 +180,5 @@
 <div class="center-text margin-top-50" *ngIf="!leagueService.isLeagueLoaded() && pageLoaded">
   <div class="warning__alert">Cannot fetch team information. Please select a league.</div>
   <br>
-  <button mat-raised-button color="warn" routerLink="./home">Choose League</button>
+  <button mat-raised-button color="warn" routerLink="./home" gaEvent="nav_home_page" gaCategory="page_nav">Choose League</button>
 </div>

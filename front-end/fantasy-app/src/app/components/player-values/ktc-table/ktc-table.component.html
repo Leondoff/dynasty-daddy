@@ -97,13 +97,13 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
           <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="openPlayerComparison(element)">
+            <button mat-menu-item (click)="openPlayerComparison(element)" gaEvent="nav_player_comparisons" gaCategory="page_nav">
               <span>Add to Player Comparison</span>
             </button>
-            <button *ngIf="element.position !== 'PI'" mat-menu-item [routerLink]="['../details', element.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()">
+            <button *ngIf="element.position !== 'PI'" mat-menu-item [routerLink]="['../details', element.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
               <span>View Player Page</span>
             </button>
-            <button mat-menu-item *ngIf="selectedLeague && element.position !== 'PI' && element.owner" [routerLink]="['../../league/team', element.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()">
+            <button mat-menu-item *ngIf="selectedLeague && element.position !== 'PI' && element.owner" [routerLink]="['../../league/team', element.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
               <span>View Team Page</span>
             </button>
           </mat-menu>
@@ -122,7 +122,8 @@
       <mat-row class="ktc-table-element-row" *matRowDef="let row; columns: displayedColumns;"
                [routerLink]="row.position !== 'PI' ? ['../details', row.name_id] : []"
                [queryParams]="leagueSwitchService.buildQueryParams()"
-               [ngClass]="{'accent__color__background': leagueService.leagueUser && leagueService.leagueUser?.userData?.user_id === row.owner?.userId && selectedLeague}"></mat-row>
+               [ngClass]="{'accent__color__background': leagueService.leagueUser && leagueService.leagueUser?.userData?.user_id === row.owner?.userId && selectedLeague}"
+               gaEvent="nav_player_page" gaCategory="page_nav"></mat-row>
     </mat-table>
     <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
   </div>
