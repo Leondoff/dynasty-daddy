@@ -16,7 +16,7 @@
       <div class="margin-top-25" *ngIf="playoffCalculatorService.matchUpsWithProb.length != 0">
         <app-playoff-calculator-season-table [forecastWeek]="selectedWeek" [selectedMetrics]="selectedMetrics.value"></app-playoff-calculator-season-table>
       </div>
-      <div class="table-dropdown-center margin-top-25">
+      <div class="mat-form-field-center margin-top-25">
         <mat-form-field appearance="standard" color="accent" style="padding-right: 10px">
           <mat-label>Forecast from</mat-label>
           <mat-select [value]="selectedWeek" (selectionChange)="updateProbability($event.value)">

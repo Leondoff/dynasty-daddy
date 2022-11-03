@@ -10,6 +10,7 @@ import {PlayerService} from '../../../services/player.service';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {DisplayService} from '../../../services/utilities/display.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
+import {LeagueType} from "../../../model/LeagueUser";
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -46,7 +47,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   dataSource: MatTableDataSource<TeamPowerRanking> = new MatTableDataSource<TeamPowerRanking>();
 
   // columns to display in table
-  columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank', 'draftRank'];
+  columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
 
   // list of expanded details for teams.
   expandedElement: any[] = [];
@@ -73,11 +74,26 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.alertThreshold = this.powerRankings.length / 3;
+    this.handleLeagueTypeChanges();
     this.createNewTableDataSource(this.powerRankings);
   }
 
   ngOnChanges(): void {
     this.dataSource.data = this.powerRankings;
+    this.handleLeagueTypeChanges();
+  }
+
+  /**
+   * gets columns for power rankings table based on league type
+   * @private
+   */
+  private handleLeagueTypeChanges(): void {
+    if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+      this.columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank', 'draftRank']
+    } else {
+      this.toggleADPValues = true;
+      this.columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+    }
   }
 
   /**

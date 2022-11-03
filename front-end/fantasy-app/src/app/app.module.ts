@@ -84,6 +84,7 @@ import {NgxGoogleAnalyticsModule, NgxGoogleAnalyticsRouterModule} from 'ngx-goog
 import {environment} from '../environments';
 import { AdsenseModule } from 'ng2-adsense';
 import { EloTeamComparisonModalComponent } from './components/modals/elo-team-comparison-modal/elo-team-comparison-modal.component';
+import { EditLeagueSettingsModalComponent } from './components/modals/edit-league-settings-modal/edit-league-settings-modal.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -140,6 +141,7 @@ let UniversalDeviceDetectorService;
     TradeFinderCardComponent,
     TeamTiersChartComponent,
     EloTeamComparisonModalComponent,
+    EditLeagueSettingsModalComponent,
   ],
   imports: [
     BrowserModule,

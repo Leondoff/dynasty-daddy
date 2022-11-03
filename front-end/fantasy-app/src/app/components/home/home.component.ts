@@ -8,6 +8,8 @@ import {ConfigKeyDictionary, ConfigService} from '../../services/init/config.ser
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {ActivatedRoute} from '@angular/router';
 import {LogRocketService} from '../services/logrocket.service';
+import {EditLeagueSettingsModalComponent} from '../modals/edit-league-settings-modal/edit-league-settings-modal.component';
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-home',
@@ -33,6 +35,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
               public configService: ConfigService,
               private route: ActivatedRoute,
               private logRocketService: LogRocketService,
+              private dialog: MatDialog,
               public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -141,4 +144,13 @@ export class HomeComponent extends BaseComponent implements OnInit {
    */
   getHomeModalBGColor = () =>
     this.configService.getConfigOptionByKey(ConfigKeyDictionary.HOME_DIALOG_BG_COLOR)?.configValue
+
+  openSettingsDialog(): void {
+    this.dialog.open(EditLeagueSettingsModalComponent
+        , {
+          minHeight: '350px',
+          minWidth: '500px',
+        }
+    );
+  }
 }

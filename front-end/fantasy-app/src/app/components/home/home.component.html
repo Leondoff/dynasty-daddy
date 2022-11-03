@@ -51,13 +51,18 @@
             class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>!
           </div>
           <br>
-          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-            <mat-label>Select a league</mat-label>
-            <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)" [disabled]="leagueService.leagueStatus === 'LOADING'">
-              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                          [value]="league">{{league.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class="mat-form-field-center">
+            <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+              <mat-label>Select a league</mat-label>
+              <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)" [disabled]="leagueService.leagueStatus === 'LOADING'">
+                <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
+                            [value]="league">{{league.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <span *ngIf="leagueService.selectedLeague" class="edit-button">
+              <button mat-icon-button (click)="openSettingsDialog()"><mat-icon matTooltip="Edit League Settings" matTooltipPosition="above">edit_outline</mat-icon></button>
+            </span>
+          </div>
         </div>
       </div>
       <div *ngIf="loginMethod === 'sleeper_league_id'">
