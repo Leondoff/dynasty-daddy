@@ -131,14 +131,14 @@
                 </div>
                 <hr class="dark">
                 <div *ngFor="let player of positionGroup.players">
-                  <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isStarter(element, player)">grade</mat-icon></span>
-                  <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isInjured(player)">healing</mat-icon></span>
+                  <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isStarter(element, player)" matTooltip="Starter" matTooltipPosition="above">grade</mat-icon></span>
+                  <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isInjured(player)" matTooltip="{{player.injury_status}}" matTooltipPosition="above">healing</mat-icon></span>
                   <span innerHTML="{{ player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}}</span>
                   <span *ngIf="!toggleADPValues" [ngClass]="{'success__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) > 6000, 'urgent__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) < 2000}"> {{isSuperFlex ? player.sf_trade_value : player.trade_value}}</span>
                   <span *ngIf="toggleADPValues" [ngClass]="{'success__alert': player.avg_adp < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (leagueService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '--'}}</span>
                 </div>
               </div>
-              <div class="grid-16">
+              <div class="grid-16" *ngIf="leagueService.selectedLeague.type == 2">
                 <div>
               <span><span class="small-text__light">Upcoming Picks: </span><span
                 class="mid-bold-text">{{isSuperFlex ? element.picks.sfTradeValue : element.picks.tradeValue}}</span></span>

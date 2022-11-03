@@ -16,7 +16,7 @@
       Starter Value
     </div>
     <div class="center-text" style="max-width: 800px; margin: 0 auto">
-      Starter Value is calculated by selecting the best possible roster based on trade value. It does factor in significant status like IR, SUS, COV, or OUT. A starter is denoted by the star next to the players name in the roster table.
+      Starter Value is calculated by selecting the best possible roster based on trade value. It does factor in significant status like IR, SUS, or COV. A starter is denoted by the star next to the players name in the roster table.
     </div>
   </div>
 
@@ -25,13 +25,29 @@
       Team Tiers
     </div>
     <div class="center-text" style="max-width: 800px; margin: 0 auto">
-      Super Team (If there is only one team classified as a contender)<br>
-      Contender<br>
-      Frisky<br>
-      Fraud<br>
-      Rebuilding<br>
-      Trust the Process (If there is only one team classified as a rebuilding team)<br><br>
-      The Tiers are determined by Starter Value and all teams are bucketed together. The Super Team and Trust the Process are conditional tiers if they are separated far enough from the league they will appear.
+      <table class="margin-bot-10">
+        <tr>
+          <td class="tier-table-col">
+            Super Team<span><mat-icon class="info-icon" matTooltip="Conditional Tier that appears if there is only one team is classified as a contender" matTooltipPosition="above">info_outline</mat-icon></span>
+          </td>
+          <td class="tier-table-col">
+            Contender
+          </td>
+          <td class="tier-table-col">
+            Frisky
+          </td>
+          <td class="tier-table-col">
+            Fraud
+          </td>
+          <td class="tier-table-col">
+            Rebuilding
+          </td>
+          <td class="tier-table-col" style="width: 14%">
+            Trust the Process<span><mat-icon class="info-icon" matTooltip="Conditional Tier that appears if there is only one team is classified as a rebuilding team" matTooltipPosition="above">info_outline</mat-icon></span>
+          </td>
+        </tr>
+      </table>
+      The Tiers are determined by bucket sorting on starter value. The tier rankings go from left to right.
     </div>
   </div>
 </div>

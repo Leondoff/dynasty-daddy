@@ -7,3 +7,8 @@
 .discord-widget {
   padding: 4px;
 }
+
+.edit-button {
+  align-self: center;
+  padding-left: 2px;
+}

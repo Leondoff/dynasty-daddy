@@ -7,6 +7,7 @@ import {ConfigService} from '../../../services/init/config.service';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {TeamPowerRanking} from '../../model/powerRankings';
+import {LeagueType} from "../../../model/LeagueUser";
 
 @Component({
   selector: 'app-power-rankings-chart',
@@ -119,11 +120,13 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
         this.data[index] = {data: temp, label: pos, hoverBackgroundColor: []};
       }
     });
-    const tempPicks = [];
-    for (const team of this.powerRankingService.powerRankings) {
-      const index = this.dataLabels.indexOf(team.team.owner?.ownerName);
-      tempPicks[index] = this.leagueService.selectedLeague.isSuperflex ? team.picks.sfTradeValue : team.picks.tradeValue;
-      this.data[4] = {data: tempPicks, label: 'Draft Capital', hoverBackgroundColor: []};
+    if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+      const tempPicks = [];
+      for (const team of this.powerRankingService.powerRankings) {
+        const index = this.dataLabels.indexOf(team.team.owner?.ownerName);
+        tempPicks[index] = this.leagueService.selectedLeague.isSuperflex ? team.picks.sfTradeValue : team.picks.tradeValue;
+        this.data[4] = {data: tempPicks, label: 'Draft Capital', hoverBackgroundColor: []};
+      }
     }
   }
 }

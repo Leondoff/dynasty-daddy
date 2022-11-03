@@ -88,17 +88,19 @@
           <td (click)="toggleRecommendedDrops()" class="trade-info-col small-text__light link--text__no__underline" style="text-decoration-line: underline; font-style: italic">Recommend Drops</td>
         <tr>
         <tr *ngIf="team2PlayerDropList.length > 0 && showDrops" class="margin-top-25 small-text__light warning__alert" >Recommended Drops</tr>
-        <tr *ngFor="let player of team2PlayerDropList; let i = index">
-          <td></td>
-          <td class="trade-info-col" *ngIf="showDrops">
-            <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
-              {{player.full_name}}
-            </span>
-          </td>
-          <td class="small-text__light warning__alert trade-value-col-drop" *ngIf="showDrops">
-            -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
-          </td>
-        </tr>
+        <ng-container *ngIf="showDrops">
+          <tr *ngFor="let player of team2PlayerDropList; let i = index">
+            <td></td>
+            <td class="trade-info-col">
+              <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+                {{player.full_name}}
+              </span>
+            </td>
+            <td class="small-text__light warning__alert trade-value-col-drop">
+              -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
+            </td>
+          </tr>
+        </ng-container>
       </table>
       <div *ngIf="configService.isMobile" class="margin-top-25 center-text large-bold-header-text">Total: {{tradeTool.tradePackage?.getTradeValueBySide(1)}}</div>
     </div>
@@ -161,17 +163,19 @@
           <td (click)="toggleRecommendedDrops()" class="trade-info-col small-text__light link--text__no__underline" style="text-decoration-line: underline; font-style: italic">Recommend Drops</td>
         <tr>
         <tr *ngIf="team1PlayerDropList.length > 0 && showDrops" class="margin-top-25 small-text__light warning__alert" >Recommended Drops</tr>
-        <tr *ngFor="let player of team1PlayerDropList; let i = index">
-          <td></td>
-          <td class="trade-info-col" *ngIf="showDrops">
-            <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
-              {{player.full_name}}
-            </span>
-          </td>
-          <td class="small-text__light warning__alert trade-value-col-drop" *ngIf="showDrops">
-            -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
-          </td>
-        </tr>
+        <ng-container *ngIf="showDrops">
+          <tr *ngFor="let player of team1PlayerDropList; let i = index">
+            <td></td>
+            <td class="trade-info-col">
+              <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+                {{player.full_name}}
+              </span>
+            </td>
+            <td class="small-text__light warning__alert trade-value-col-drop">
+              -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
+            </td>
+          </tr>
+        </ng-container>
       </table>
       <div *ngIf="configService.isMobile" class="margin-top-25 center-text large-bold-header-text">Total: {{tradeTool.tradePackage?.getTradeValueBySide(2)}}</div>
     </div>

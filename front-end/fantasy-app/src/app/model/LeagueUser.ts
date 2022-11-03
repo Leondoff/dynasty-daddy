@@ -45,6 +45,7 @@ export class LeagueData {
     this.playoffStartWeek = settings.playoff_week_start;
     this.draftRounds = settings.draft_rounds;
     this.season = season;
+    this.type = settings.type;
     this.playoffRoundType = settings.playoff_round_type;
     this.medianWins = settings.league_average_match === 1;
   }
@@ -68,7 +69,16 @@ export class LeagueData {
   season: string;
   playoffRoundType: number;
   medianWins: boolean;
+  type: LeagueType = LeagueType.DYNASTY;
 }
+
+export enum LeagueType {
+  REDRAFT = 0,
+  UNKNOWN = 1,
+  DYNASTY = 2
+}
+
+
 
 export class FantasyPlatformData {
   userData: LeagueUserData;
