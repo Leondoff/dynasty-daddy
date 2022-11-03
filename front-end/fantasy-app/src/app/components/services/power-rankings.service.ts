@@ -9,6 +9,7 @@ import {max, min} from 'simple-statistics';
 import {MatchupService} from './matchup.service';
 import {NflService} from '../../services/utilities/nfl.service';
 import {EloService} from '../../services/utilities/elo.service';
+import {LeagueType} from "../../model/LeagueUser";
 
 @Injectable({
   providedIn: 'root'
@@ -115,37 +116,39 @@ export class PowerRankingsService {
         const picks: FantasyPlayer[] = [];
         let sfPickTradeValue = 0;
         let pickTradeValue = 0;
-        // combine upcoming and future draft capital for rankings
-        const allPicks = team.draftCapital.concat(team.futureDraftCapital);
-        allPicks.map(pick => {
-            for (const pickValue of pickValues) {
-              if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {
-                if (pick.pick < 5 && pickValue.last_name.includes('Early')) {
-                  sfPickTradeValue += pickValue.sf_trade_value;
-                  pickTradeValue += pickValue.trade_value;
-                  sfTradeValueTotal += pickValue.sf_trade_value;
-                  tradeValueTotal += pickValue.trade_value;
-                  picks.push(pickValue);
-                  break;
-                } else if (pick.pick > 8 && pickValue.last_name.includes('Late')) {
-                  sfPickTradeValue += pickValue.sf_trade_value;
-                  pickTradeValue += pickValue.trade_value;
-                  sfTradeValueTotal += pickValue.sf_trade_value;
-                  tradeValueTotal += pickValue.trade_value;
-                  picks.push(pickValue);
-                  break;
-                } else if (pick.pick > 4 && pick.pick < 9 && pickValue.last_name.includes('Mid')) {
-                  sfPickTradeValue += pickValue.sf_trade_value;
-                  pickTradeValue += pickValue.trade_value;
-                  sfTradeValueTotal += pickValue.sf_trade_value;
-                  tradeValueTotal += pickValue.trade_value;
-                  picks.push(pickValue);
-                  break;
+        if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+          // combine upcoming and future draft capital for rankings
+          const allPicks = team.draftCapital.concat(team.futureDraftCapital);
+          allPicks.map(pick => {
+              for (const pickValue of pickValues) {
+                if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {
+                  if (pick.pick < 5 && pickValue.last_name.includes('Early')) {
+                    sfPickTradeValue += pickValue.sf_trade_value;
+                    pickTradeValue += pickValue.trade_value;
+                    sfTradeValueTotal += pickValue.sf_trade_value;
+                    tradeValueTotal += pickValue.trade_value;
+                    picks.push(pickValue);
+                    break;
+                  } else if (pick.pick > 8 && pickValue.last_name.includes('Late')) {
+                    sfPickTradeValue += pickValue.sf_trade_value;
+                    pickTradeValue += pickValue.trade_value;
+                    sfTradeValueTotal += pickValue.sf_trade_value;
+                    tradeValueTotal += pickValue.trade_value;
+                    picks.push(pickValue);
+                    break;
+                  } else if (pick.pick > 4 && pick.pick < 9 && pickValue.last_name.includes('Mid')) {
+                    sfPickTradeValue += pickValue.sf_trade_value;
+                    pickTradeValue += pickValue.trade_value;
+                    sfTradeValueTotal += pickValue.sf_trade_value;
+                    tradeValueTotal += pickValue.trade_value;
+                    picks.push(pickValue);
+                    break;
+                  }
                 }
               }
             }
-          }
-        );
+          );
+        }
         const rankedPicks = new PositionPowerRanking('PI', sfPickTradeValue, pickTradeValue, picks);
         newPowerRankings.push(new TeamPowerRanking(team, positionRoster, sfTradeValueTotal, tradeValueTotal, rankedPicks));
       });

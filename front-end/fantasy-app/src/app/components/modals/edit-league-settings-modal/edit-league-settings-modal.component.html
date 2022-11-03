@@ -1,0 +1,39 @@
+<div class="center-text margin-bot-20 mid-bold-text">
+  Did we get it wrong? Manually override league settings.
+  <button mat-icon-button color="accent" class="button-right" (click)="closeDialog()"><mat-icon>close</mat-icon></button>
+</div>
+<div class="margin-top-25 mat-form-field-center">
+  <mat-form-field appearance="standard" color="accent" style="width: 40%; padding-right: 5%">
+    <mat-label>Select league type</mat-label>
+    <mat-select [(ngModel)]="selectedLeagueType" (selectionChange)="selectedLeagueType = $event.value">
+      <mat-option *ngFor="let league of leagueTypes; let i = index"
+                  [value]="i">{{league}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <span style="width: 40%; padding-left: 5%; align-self: center">
+    <mat-slide-toggle [(ngModel)]="isMedian">Enable Median
+    </mat-slide-toggle>
+  </span>
+</div>
+<div class="margin-top-15 mat-form-field-center">
+  <mat-form-field appearance="standard" color="accent" style="width: 40%; padding-right: 5%">
+    <mat-label>Set Roster Size</mat-label>
+    <input type="number" [ngModel]="setRosterSize" (ngModelChange)="setRosterSize = $event" matInput>
+  </mat-form-field>
+
+  <span style="width: 40%; padding-left: 5%; align-self: center">
+    <mat-slide-toggle [(ngModel)]="isSuperFlex">SuperFlex
+    </mat-slide-toggle>
+  </span>
+</div>
+<div *ngIf="leagueService.leagueStatus !== 'LOADING'">
+<div class="margin-top-25 mat-form-field-center">
+  <button mat-raised-button color="primary" (click)="reloadLeague()">Reload League</button>
+</div>
+<div class="margin-top-15 warning__alert center-text">
+  <mat-icon class="generic-icon">warning</mat-icon> This will override the league settings until refresh
+</div>
+</div>
+<div *ngIf="leagueService.leagueStatus === 'LOADING'" class="center-spinner margin-top-25">
+  <mat-spinner [diameter]="50"></mat-spinner>
+</div>
