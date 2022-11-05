@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {BaseComponent} from '../base-component.abstract';
 import {SleeperApiService} from '../../services/api/sleeper/sleeper-api.service';
 import {LeagueService} from '../../services/league.service';
@@ -9,14 +9,14 @@ import {LeagueSwitchService} from '../services/league-switch.service';
 import {ActivatedRoute} from '@angular/router';
 import {LogRocketService} from '../services/logrocket.service';
 import {EditLeagueSettingsModalComponent} from '../modals/edit-league-settings-modal/edit-league-settings-modal.component';
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent extends BaseComponent implements OnInit {
+export class HomeComponent extends BaseComponent implements OnInit, AfterViewInit {
 
   usernameInput: string = '';
 
@@ -65,6 +65,10 @@ export class HomeComponent extends BaseComponent implements OnInit {
       })
     )
     ;
+  }
+
+  ngAfterViewInit(): void {
+    (<any>window).twttr.widgets.load();
   }
 
   /**
