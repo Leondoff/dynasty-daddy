@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {FantasyPlayer, FantasyPlayerDataPoint} from '../../../model/FantasyPlayer';
+import {FantasyPlayer, FantasyPlayerDataPoint} from '../../../model/assets/FantasyPlayer';
 import {PlayerService} from '../../../services/player.service';
 import {LeagueService} from '../../../services/league.service';
 import {ChartDataSets, ChartOptions} from 'chart.js';

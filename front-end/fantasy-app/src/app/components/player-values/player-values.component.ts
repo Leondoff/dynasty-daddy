@@ -29,7 +29,7 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
     if (!this.playersLoaded) {
       this.playerService.loadPlayerValuesForToday();
     }
-    this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
+    this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
         this.playersLoaded = true;
       }),
       this.route.queryParams.subscribe(params => {

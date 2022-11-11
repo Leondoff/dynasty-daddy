@@ -17,7 +17,7 @@
       <button mat-menu-item [routerLink]="['./players/comparison']"  [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">Value Comparisons</button>
     </mat-menu>
     <span class="spacer"></span>
-    <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open in Sleeper" matTooltipPosition="below" aria-label="Clear" (click)="openLeague()">
+    <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League" matTooltipPosition="below" aria-label="Clear" (click)="openLeague()">
       <mat-icon >offline_share</mat-icon>
     </button>
     <div *ngIf="leagueService.leagueStatus == 'LOADING'" style="margin-right: 10px">
@@ -29,7 +29,7 @@
     <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Synced league data {{leagueSwitchService.getMinutesSinceLastRefresh()}} minute{{leagueSwitchService.getMinutesSinceLastRefresh() === 1 ? '' : 's'}} ago" matTooltipPosition="below" aria-label="Clear" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">
       <mat-icon>refresh</mat-icon>
     </button>
-    <button mat-button [routerLink]="['./login']" *ngIf="!leagueService.leagueUser"><mat-icon class="header-icon">group_add</mat-icon> Select Username</button>
+    <button mat-button [routerLink]="['./login']" *ngIf="!leagueService.leagueUser"><mat-icon class="header-icon">group_add</mat-icon> {{leagueService.selectedLeague?.leaguePlatform === 1 ? 'Change League' : 'Select Username'}}</button>
     <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
       <mat-label>Select a league</mat-label>
       <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">

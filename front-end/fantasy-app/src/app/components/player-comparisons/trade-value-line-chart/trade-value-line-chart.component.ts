@@ -98,7 +98,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
 
   ngOnInit(): void {
     this.updateTable();
-    this.addSubscriptions(this.playerComparisonService.$updatePlayer.subscribe((player) => {
+    this.addSubscriptions(this.playerComparisonService.updatePlayer$.subscribe((player) => {
       setTimeout(() => {
         if (this.chart && this.chart.chart) {
           for (const dataset of this.playerComparisonService.lineChartData) {

@@ -8,7 +8,7 @@ import {PlayerComparisonService} from '../services/player-comparison.service';
 import {LeagueService} from '../../services/league.service';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
 import {ConfigService} from '../../services/init/config.service';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {ActivatedRoute} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
 
@@ -42,7 +42,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
     if (this.playerService.playerValues.length === 0) { this.playerService.loadPlayerValuesForToday(); }
 
     this.filterActivePlayers();
-    this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
+    this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
       this.filterActivePlayers();
       if (this.playerComparisonService.lineChartData
         && this.playerComparisonService.selectedPlayers[0] === undefined) {

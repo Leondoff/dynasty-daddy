@@ -1,4 +1,4 @@
-import {LeagueTeamMatchUpData} from "../../model/LeagueTeam";
+import {LeagueTeamMatchUpDTO} from '../../model/league/LeagueTeamMatchUpDTO';
 
 export class ScheduleComp {
   constructor(rosterId: number, record: {}) {
@@ -27,7 +27,7 @@ export class WeeklyRecordComp {
 }
 
 export class MatchUpUI {
-  constructor(week: number, team1: LeagueTeamMatchUpData, team2: LeagueTeamMatchUpData) {
+  constructor(week: number, team1: LeagueTeamMatchUpDTO, team2: LeagueTeamMatchUpDTO) {
     this.week = week;
     this.matchUpId = team1.matchupId;
     this.team1RosterId = team1.rosterId;

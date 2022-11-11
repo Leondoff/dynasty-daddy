@@ -1,5 +1,4 @@
-import {FantasyPlayer} from '../../model/FantasyPlayer';
-import {DraftCapital} from "../../model/LeagueUser";
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 
 export class TradePackage {
   team1UserId: string = null;

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {FantasyPlayerApiConfigService} from './api/fantasy-player-api-config.service';
 import {SleeperApiConfigService} from './api/sleeper/sleeper-api-config.service';
 import {ConfigApiConfigService} from './api/config/config-api-config.service';
+import {MflApiConfigService} from './api/mfl/mfl-api-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class EndpointsService {
 
   constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
               private sleeperApiConfigService: SleeperApiConfigService,
+              private mflAPIConfigService: MflApiConfigService,
               private configApiConfigService: ConfigApiConfigService) {
   }
 
@@ -36,5 +38,8 @@ export class EndpointsService {
     this.sleeperApiConfigService.getSleeperProjectionsEndpoint = 'https://api.sleeper.app/v1/projections/nfl/regular/';
     this.sleeperApiConfigService.getSleeperNFLStateEndpoint = 'https://api.sleeper.app/v1/state/nfl';
     this.sleeperApiConfigService.getSleeperPlayersEndpoint = 'https://api.sleeper.app/v1/players/nfl';
+
+    // mfl endpoints
+    this.mflAPIConfigService.getMFLBaseURL = 'https://www46.myfantasyleague.com/';
   }
 }

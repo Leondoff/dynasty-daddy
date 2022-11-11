@@ -9,6 +9,8 @@
 }
 
 .edit-button {
-  align-self: center;
-  padding-left: 2px;
+  font-size: large;
+  vertical-align: top;
+  padding-left: 5px;
+  cursor: pointer;
 }

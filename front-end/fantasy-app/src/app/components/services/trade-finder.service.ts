@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {TradePackage} from '../model/tradePackage';
 import {TradeService} from './trade.service';
 
@@ -20,6 +20,7 @@ export class TradeFinderService {
    * @param players lists of players in trade finder
    * @param userId team 1 user id
    * @param isSuperFlex is superflex league
+   * @param posFilterList filter position groups
    * @param limit how many results to return. DEFAULT 10
    * @return list of trade packages
    */

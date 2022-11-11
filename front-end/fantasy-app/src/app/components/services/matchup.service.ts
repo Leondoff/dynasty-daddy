@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {LeagueData} from '../../model/LeagueUser';
 import {MatchUpUI, ScheduleComp, WeeklyRecordComp} from '../model/matchup';
-import {LeagueTeam} from '../../model/LeagueTeam';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
 import {ChartDataSets} from 'chart.js';
 import {forkJoin, Observable, of} from 'rxjs';
+import {LeagueDTO} from '../../model/league/LeagueDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +35,7 @@ export class MatchupService {
    * initializes matchup data
    * @param selectedLeague selected League data
    */
-  initMatchUpCharts(selectedLeague: LeagueData, completedWeek: number = null): Observable<any> {
+  initMatchUpCharts(selectedLeague: LeagueDTO, completedWeek: number = null): Observable<any> {
     return forkJoin([this.generateWeeklyRecords(selectedLeague, completedWeek || selectedLeague.playoffStartWeek),
       this.generateScheduleComparison(selectedLeague),
       this.calculateLeagueMatchUps(selectedLeague)]).pipe(() => {
@@ -49,7 +49,7 @@ export class MatchupService {
    * helper to generate all weekly records
    * @param selectedLeague league data
    */
-  generateWeeklyRecords(selectedLeague: LeagueData, completedWeek: number): Observable<any[]> {
+  generateWeeklyRecords(selectedLeague: LeagueDTO, completedWeek: number): Observable<any[]> {
     this.weeklyComparison = [];
     for (let rosterId = 1; rosterId < selectedLeague.totalRosters + 1; rosterId++) {
       this.weeklyComparison.push(this.calculateWeeklyRecordsForTeam(selectedLeague, rosterId, completedWeek));
@@ -61,7 +61,7 @@ export class MatchupService {
    * helper to generates schedule comparison
    * @param selectedLeague league data
    */
-  generateScheduleComparison(selectedLeague: LeagueData): Observable<any[]> {
+  generateScheduleComparison(selectedLeague: LeagueDTO): Observable<any[]> {
     this.scheduleComparison = [];
     for (let rosterId = 1; rosterId < selectedLeague.totalRosters + 1; rosterId++) {
       this.scheduleComparison.push(new ScheduleComp(rosterId, this.calculateScheduleForTeam(selectedLeague, rosterId)));
@@ -74,7 +74,7 @@ export class MatchupService {
    * @param selectedLeague league data
    * @param rosterId which roster is selected
    */
-  private calculateScheduleForTeam(selectedLeague: LeagueData, rosterId: number): {} {
+  private calculateScheduleForTeam(selectedLeague: LeagueDTO, rosterId: number): {} {
     const schedule = {};
     for (let selectedRosterId = 1; selectedRosterId < selectedLeague.totalRosters + 1; selectedRosterId++) {
       let wins = 0;
@@ -127,7 +127,7 @@ export class MatchupService {
    * creates league match ups objects for playoff calculator
    * @param selectedLeague league data
    */
-  private calculateLeagueMatchUps(selectedLeague: LeagueData): Observable<any[][]> {
+  private calculateLeagueMatchUps(selectedLeague: LeagueDTO): Observable<any[][]> {
     const allWeeksMatchUps = [];
     const weekNumbers = Number(selectedLeague.season) < 2021 ? 17 : 18;
     for (let week = selectedLeague.startWeek; week < weekNumbers; week++) {
@@ -158,7 +158,7 @@ export class MatchupService {
    * @param rosterId selected roster
    * @private
    */
-  private calculateWeeklyRecordsForTeam(selectedLeague: LeagueData, rosterId: number, completedWeek: number): WeeklyRecordComp {
+  private calculateWeeklyRecordsForTeam(selectedLeague: LeagueDTO, rosterId: number, completedWeek: number): WeeklyRecordComp {
     const weeklyRecords = {};
     let totalWins = 0;
     let totalLosses = 0;

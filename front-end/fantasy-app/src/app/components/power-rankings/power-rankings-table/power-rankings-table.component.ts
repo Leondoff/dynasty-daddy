@@ -3,14 +3,14 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {TeamPowerRanking, TeamRankingTier} from '../../model/powerRankings';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
-import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {LeagueService} from '../../../services/league.service';
 import {ConfigService} from '../../../services/init/config.service';
 import {PlayerService} from '../../../services/player.service';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {DisplayService} from '../../../services/utilities/display.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
-import {LeagueType} from "../../../model/LeagueUser";
+import {LeagueType} from "../../../model/league/LeagueDTO";
 
 // details animation
 export const detailExpand = trigger('detailExpand',

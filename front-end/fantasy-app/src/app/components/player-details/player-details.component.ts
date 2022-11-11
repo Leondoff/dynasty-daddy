@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
-import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/FantasyPlayer';
+import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/assets/FantasyPlayer';
 import {FantasyPlayerApiService} from '../../services/api/fantasy-player-api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LeagueService} from '../../services/league.service';
@@ -51,7 +51,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
     if (this.playerService.playerValues.length === 0) {
       this.playerService.loadPlayerValuesForToday();
     }
-    this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
+    this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
         this.playersLoaded = true;
         this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
       }),

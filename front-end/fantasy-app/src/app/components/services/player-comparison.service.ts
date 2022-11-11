@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/FantasyPlayer';
+import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/assets/FantasyPlayer';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {PlayerComparison} from '../model/playerComparison';
 import {ChartDataSets} from 'chart.js';
@@ -31,7 +31,7 @@ export class PlayerComparisonService {
   isAllTime = false;
 
   /** when a player is added/removed */
-  $updatePlayer: Subject<PlayerComparison> = new Subject<PlayerComparison>();
+  updatePlayer$: Subject<PlayerComparison> = new Subject<PlayerComparison>();
 
   /** is player mode or group mode */
   isGroupMode = false;
@@ -108,7 +108,7 @@ export class PlayerComparisonService {
         this.lineChartData.push({data, label: player[0].full_name});
       }
       this.selectedPlayers.push({name: defaultPlayer.full_name, id: defaultPlayer.name_id, data: player} as PlayerComparison);
-      this.$updatePlayer.next({name: defaultPlayer.full_name, id: defaultPlayer.name_id, data: player} as PlayerComparison);
+      this.updatePlayer$.next({name: defaultPlayer.full_name, id: defaultPlayer.name_id, data: player} as PlayerComparison);
     } else {
       this.lineChartData = [];
       if (isGroup2) {
@@ -155,7 +155,7 @@ export class PlayerComparisonService {
         label: `Group 2 (${this.group2SelectedPlayers.length} Players)`
       });
     }
-    this.$updatePlayer.next();
+    this.updatePlayer$.next();
   }
 
   /**
@@ -209,7 +209,7 @@ export class PlayerComparisonService {
       this.lineChartData = this.lineChartData.filter(p => {
         return p.label !== player.name;
       });
-      this.$updatePlayer.next();
+      this.updatePlayer$.next();
     }
   }
 

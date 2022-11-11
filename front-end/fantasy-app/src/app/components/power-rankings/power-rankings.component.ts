@@ -39,7 +39,11 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     // TODO ugly fix for race condition on adding upcoming draft picks to playoff calculator
     if (this.leagueService.upcomingDrafts.length !== 0) {
       this.powerRankingService.reset();
-      this.powerRankingService.mapPowerRankings(this.leagueService.leagueTeamDetails, this.playersService.playerValues);
+      this.powerRankingService.mapPowerRankings(
+        this.leagueService.leagueTeamDetails,
+        this.playersService.playerValues,
+        this.leagueService.selectedLeague.leaguePlatform
+      );
     }
   }
 }

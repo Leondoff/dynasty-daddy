@@ -1,14 +1,15 @@
 /* tslint:disable:object-literal-key-quotes */
 import {Injectable} from '@angular/core';
-import {FantasyPlayer} from '../model/FantasyPlayer';
+import {FantasyPlayer} from '../model/assets/FantasyPlayer';
 import {FantasyPlayerApiService} from './api/fantasy-player-api.service';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
-import {LeagueTeam} from '../model/LeagueTeam';
+import {LeagueTeam} from '../model/league/LeagueTeam';
 import {SleeperApiService} from './api/sleeper/sleeper-api.service';
 import {map} from 'rxjs/operators';
 import {NflService} from './utilities/nfl.service';
 import {mean, standardDeviation, variance} from 'simple-statistics';
 import {PlayerInsights} from '../components/model/playerInsights';
+import {LeaguePlatform} from '../model/league/FantasyPlatformDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +52,7 @@ export class PlayerService {
   };
 
   /** subject for loading player values */
-  $currentPlayerValuesLoaded: Subject<void> = new Subject<void>();
+  currentPlayerValuesLoaded$: Subject<void> = new Subject<void>();
 
   constructor(private fantasyPlayerApiService: FantasyPlayerApiService,
               private sleeperApiService: SleeperApiService,
@@ -71,8 +72,8 @@ export class PlayerService {
           return player;
         }
       });
-      this.$loadPlayerStatsForSeason().subscribe((playerStatsResponse) => {
-        this.$currentPlayerValuesLoaded.next();
+      this.loadPlayerStatsForSeason$().subscribe((playerStatsResponse) => {
+        this.currentPlayerValuesLoaded$.next();
       }, sleeperError => {
         console.error(`Could Not Load Player Points from sleeper - ${sleeperError}`);
       });
@@ -87,11 +88,11 @@ export class PlayerService {
    * load player stats and projection for season
    * @private
    */
-  private $loadPlayerStatsForSeason(): Observable<any> {
-    if (this.playerStatsYear !== '') {
-      return of(this.playerStats);
-    }
-    return this.nflService.$initStateOfNfl().pipe(map((season) => {
+  private loadPlayerStatsForSeason$(): Observable<any> {
+    return this.nflService.initStateOfNfl$().pipe(map((season) => {
+      if (this.playerStatsYear !== '') {
+        return of(this.playerStats);
+      }
       this.playerStatsYear = this.nflService.getYearForStats();
       const observe = [];
       observe.push(this.sleeperApiService.getSleeperStatsForYear(this.playerStatsYear).pipe(map((response: any) => {
@@ -142,15 +143,16 @@ export class PlayerService {
   /**
    * assign players to fantasy teams
    * @param team
+   * @param leaguePlatform
    */
-  generateRoster(team: LeagueTeam): FantasyPlayer[] {
+  generateRoster(team: LeagueTeam, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): FantasyPlayer[] {
     const roster = [];
     if (!team.roster.players) {
       return [];
     }
-    for (const sleeperId of team.roster?.players) {
+    for (const platformPlayerId of team.roster?.players) {
       for (const player of this.playerValues) {
-        if (sleeperId === player.sleeper_id) {
+        if (platformPlayerId === this.getPlayerPlatformId(player, leaguePlatform)) {
           player.owner = team.owner;
           roster.push(player);
           break;
@@ -161,12 +163,13 @@ export class PlayerService {
   }
 
   /**
-   * get player based on sleeper id
-   * @param id
+   * get player based on league player id
+   * @param id player id
+   * @param leaguePlatform league platform to find id from. Default: Sleeper
    */
-  getPlayerBySleeperId(id: string): FantasyPlayer {
+  getPlayerByPlayerPlatformId(id: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): FantasyPlayer {
     for (const player of this.playerValues) {
-      if (id === player.sleeper_id) {
+      if (id === (leaguePlatform === LeaguePlatform.SLEEPER ? player.sleeper_id : player.mfl_id)) {
         return player;
       }
     }
@@ -443,5 +446,14 @@ export class PlayerService {
         return playerB.trade_value - playerA.trade_value;
       }
     });
+  }
+
+  getPlayerPlatformId(player: FantasyPlayer, leaguePlatform: LeaguePlatform): string {
+    switch (leaguePlatform) {
+      case LeaguePlatform.MFL:
+        return player.mfl_id;
+      default:
+        return player.sleeper_id;
+    }
   }
 }

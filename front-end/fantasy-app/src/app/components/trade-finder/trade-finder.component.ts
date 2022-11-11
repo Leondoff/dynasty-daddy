@@ -4,7 +4,7 @@ import {LeagueSwitchService} from '../services/league-switch.service';
 import {PlayerService} from '../../services/player.service';
 import {TradeFinderService} from '../services/trade-finder.service';
 import {LeagueService} from '../../services/league.service';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {TradePackage} from '../model/tradePackage';
 import {ActivatedRoute} from '@angular/router';
@@ -55,7 +55,7 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     } else {
       this.setUpTradeFinder();
     }
-    this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
+    this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
         this.setUpTradeFinder();
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(() => {
