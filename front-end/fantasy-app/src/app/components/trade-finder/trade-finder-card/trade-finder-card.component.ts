@@ -5,8 +5,8 @@ import {PlayerService} from '../../../services/player.service';
 import {Router} from '@angular/router';
 import {TradeService} from '../../services/trade.service';
 import {LeagueService} from '../../../services/league.service';
-import {LeagueOwnerData} from '../../../model/LeagueTeam';
-import {LeagueSwitchService} from "../../services/league-switch.service";
+import {LeagueSwitchService} from '../../services/league-switch.service';
+import {LeagueOwnerDTO} from '../../../model/league/LeagueOwnerDTO';
 
 @Component({
   selector: 'app-trade-finder-card',
@@ -16,7 +16,7 @@ import {LeagueSwitchService} from "../../services/league-switch.service";
 export class TradeFinderCardComponent implements OnInit {
 
   @Input()
-  owner: LeagueOwnerData = null;
+  owner: LeagueOwnerDTO = null;
 
   @Input()
   tradePackage: TradePackage;

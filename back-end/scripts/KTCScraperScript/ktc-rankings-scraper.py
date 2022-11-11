@@ -3,6 +3,7 @@ import os
 import requests
 import psycopg2
 from sleeper_wrapper import Players
+import MFLPlayerService
 from FantasyProsADPScraper import scrapeADP
 from BeautifulSoupService import setUpSoup
 from PlayerService import cleanPlayerIdString
@@ -44,7 +45,7 @@ def getSleeperData():
 class Player:
     def __init__(self, id, name, first_name, last_name, team, position, sfPositionRank, positionRank, age, experience,
                  sf_value, value, sleeperId=None, college=None, injury_status=None, weight=None, height=None,
-                 jersey_number=-1, active=None):
+                 jersey_number=-1, active=None, mflId=None):
         self.id = id
         self.name = name
         self.first_name = first_name
@@ -64,11 +65,12 @@ class Player:
         self.height = height
         self.jersey_number = jersey_number
         self.active = active
+        self.mflId = mflId
 
     def toString(self):
         print(self.id, self.name, self.first_name, self.last_name, self.team, self.position, self.sfPositionRank,
               self.positionRank, self.age, self.experience, self.sf_value, self.value, self.sleeperId, self.college,
-              self.injury_status, self.weight, self.height, self.jersey_number, self.active)
+              self.injury_status, self.weight, self.height, self.jersey_number, self.active, self.mflId)
 
 
 #################################
@@ -99,6 +101,9 @@ players = []
 
 # create dict of sleeper ids and name ids
 sleeperIdMapper = getSleeperData()
+
+# create dict of mfl ids and name ids
+mflPlayerIdMap = MFLPlayerService.fetchMFLPlayerDict()
 
 # loop through ranking divs and create player classes
 for player in sf_rankings:
@@ -141,6 +146,7 @@ for player in sf_rankings:
                     sleeperId = value
                     print('Double Position: ' + nameId)
                     break
+    mflId = mflPlayerIdMap.get(playerId)
     playerExp, jerseyNum = 0, 0
     college, injuryStatus, active, weight, height = None, None, None, None, None
     if sleeperId is not None:
@@ -162,7 +168,7 @@ for player in sf_rankings:
                None if str(oneQBPostion.text.strip())[2:] == 'CK' else str(oneQBPostion.text.strip())[2:],
                None if playerAge is None else str(playerAge.text.strip())[:2], playerExp,
                sfTradeValue.text.strip(), tradeValue.text.strip(), sleeperId, college, injuryStatus, weight, height,
-               jerseyNum, active))
+               jerseyNum, active, mflId))
 
 # for player in players:
 #      player.toString()
@@ -185,7 +191,7 @@ try:
 
     # Connect to local test database
     # conn = psycopg2.connect(
-    #     database="player_rankings", user='postgres', password='postgres', host='localhost', port='5432'
+    #     database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
     # )
 
     # Setting auto commit false
@@ -233,6 +239,15 @@ try:
                     sleeper_id = %s,
                     updated_at = now(); '''
                 cursor.execute(playerIdsStatement, (player.id, player.sleeperId, player.id, player.sleeperId))
+            if player.mflId is not None:
+                # player id linking table insert
+                playerIdsStatement = '''INSERT INTO player_ids (name_id, mfl_id) VALUES (%s, %s)
+                    ON CONFLICT (name_id) DO UPDATE
+                    SET
+                    name_id = %s,
+                    mfl_id = %s,
+                    updated_at = now(); '''
+                cursor.execute(playerIdsStatement, (player.id, player.mflId, player.id, player.mflId))
 
             # player values insert daily values
             cursor.execute('''INSERT into player_values(name_id, sf_position_rank, position_rank, sf_trade_value, trade_value)

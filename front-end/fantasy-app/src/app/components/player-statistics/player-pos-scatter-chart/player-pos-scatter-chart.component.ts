@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {ChartDataSets, ChartOptions, ChartType} from 'chart.js';
-import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {PlayerService} from '../../../services/player.service';
 import {ColorService} from '../../services/color.service';
 import {BaseChartDirective} from 'ng2-charts';

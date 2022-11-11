@@ -7,7 +7,7 @@ import {ConfigService} from '../../../services/init/config.service';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {TeamPowerRanking} from '../../model/powerRankings';
-import {LeagueType} from "../../../model/LeagueUser";
+import {LeagueType} from "../../../model/league/LeagueDTO";
 
 @Component({
   selector: 'app-power-rankings-chart',

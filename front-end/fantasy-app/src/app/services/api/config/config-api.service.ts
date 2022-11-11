@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ConfigApiConfigService} from './config-api-config.service';
-import {ConfigOption} from '../../../model/ConfigOption';
+import {ConfigOption} from '../../../model/config/ConfigOption';
 import {map} from 'rxjs/operators';
 
 

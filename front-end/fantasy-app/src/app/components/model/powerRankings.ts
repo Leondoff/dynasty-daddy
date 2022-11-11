@@ -1,5 +1,5 @@
-import {FantasyPlayer} from '../../model/FantasyPlayer';
-import {LeagueTeam} from '../../model/LeagueTeam';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
 
 export class TeamPowerRanking {
   team: LeagueTeam;

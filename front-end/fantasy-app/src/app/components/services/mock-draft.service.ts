@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {TeamMockDraftPick} from '../model/mockDraft';
-import {LeagueTeam} from '../../model/LeagueTeam';
-import {CompletedDraft, DraftCapital} from '../../model/LeagueUser';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
 import {LeagueService} from '../../services/league.service';
+import {CompletedDraft} from '../../model/league/CompletedDraft';
+import {DraftCapital} from '../../model/assets/DraftCapital';
 
 @Injectable({
   providedIn: 'root'

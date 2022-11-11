@@ -10,6 +10,9 @@ import {ActivatedRoute} from '@angular/router';
 import {LogRocketService} from '../services/logrocket.service';
 import {EditLeagueSettingsModalComponent} from '../modals/edit-league-settings-modal/edit-league-settings-modal.component';
 import {MatDialog} from '@angular/material/dialog';
+import {MflService} from '../../services/api/mfl/mfl.service';
+import {MflApiService} from '../../services/api/mfl/mfl-api.service';
+import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 
 @Component({
   selector: 'app-home',
@@ -20,13 +23,19 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
 
   usernameInput: string = '';
 
-  leagueIdInput: string = '';
+  sleeperLeagueIdInput: string = '';
+
+  mflLeagueIdInput: string = '';
 
   selectedYear: string;
 
   supportedYears: string[] = [];
 
-  loginMethod: string = 'sleeper_username';
+  selectedTab: string = '1';
+
+  sleeperLoginMethod: string = 'sleeper_username';
+
+  mflLoginMethod: string = 'mfl_league_id';
 
   constructor(private sleeperApiService: SleeperApiService,
               public leagueService: LeagueService,
@@ -35,6 +44,8 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
               public configService: ConfigService,
               private route: ActivatedRoute,
               private logRocketService: LogRocketService,
+              private mflService: MflService,
+              private mflApiService: MflApiService,
               private dialog: MatDialog,
               public leagueSwitchService: LeagueSwitchService) {
     super();
@@ -47,8 +58,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     } else {
       this.selectedYear = this.leagueService.selectedYear;
     }
-    this.usernameInput = this.leagueService.leagueUser?.userData?.username || '';
-    this.leagueSwitchService.selectedLeague = this.leagueService.selectedLeague || null;
+    this.setUpForms();
     if (this.playersService.playerValues.length === 0) {
       this.playersService.loadPlayerValuesForToday();
     }
@@ -57,17 +67,36 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         this.leagueSwitchService.loadFromQueryParams(params);
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(_ => {
-        this.usernameInput =
-          this.leagueService.leagueUser?.userData?.username == null || this.leagueService.leagueUser?.userData?.username === 'undefined'
-            ? '' : this.leagueService.leagueUser?.userData?.username;
-        this.selectedYear = this.leagueService.selectedYear;
-        this.leagueSwitchService.selectedLeague = this.leagueService.selectedLeague;
+        this.selectedYear = this.leagueService.selectedLeague.season;
+        this.setUpForms();
       })
     )
     ;
   }
 
+  /**
+   * set up logic to initialize values for form from services
+   * @private
+   */
+  private setUpForms(): void {
+    this.leagueSwitchService.selectedLeague = this.leagueService.selectedLeague || null;
+    if (this.leagueService.selectedLeague){
+      this.usernameInput =
+        this.leagueService.leagueUser?.userData?.username == null || this.leagueService.leagueUser?.userData?.username === 'undefined'
+          ? '' : this.leagueService.leagueUser?.userData?.username;
+      this.selectedTab = this.leagueService.selectedLeague.leaguePlatform.toString();
+      switch (this.leagueService.selectedLeague.leaguePlatform) {
+        case LeaguePlatform.MFL:
+          this.mflLeagueIdInput = this.leagueService.selectedLeague.leagueId;
+          break;
+        default:
+          this.sleeperLeagueIdInput = this.leagueService.selectedLeague.leagueId;
+      }
+    }
+  }
+
   ngAfterViewInit(): void {
+    // twitter widget
     (<any>window).twttr.widgets.load();
   }
 
@@ -101,19 +130,19 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    */
   loginWithDemo(): void {
     this.leagueService.leagueUser = null;
-    this.loginWithLeagueId(this.configService.getConfigOptionByKey(ConfigKeyDictionary.DEMO_LEAGUE_ID)?.configValue);
+    this.loginWithSleeperLeagueId(this.configService.getConfigOptionByKey(ConfigKeyDictionary.DEMO_LEAGUE_ID)?.configValue);
   }
 
   /**
    * handles logging in with league id
    * @param demoId string of demo league id
    */
-  loginWithLeagueId(demoId?: string): void {
+  loginWithSleeperLeagueId(demoId?: string): void {
     this.usernameInput = '';
     this.leagueService.leagueUser = null;
-    this.sleeperApiService.getSleeperLeagueByLeagueId(demoId || this.leagueIdInput).subscribe(leagueData => {
-      if (this.leagueIdInput) {
-        this.logRocketService.identifySession(this.leagueIdInput);
+    this.sleeperApiService.getSleeperLeagueByLeagueId(demoId || this.sleeperLeagueIdInput).subscribe(leagueData => {
+      if (this.sleeperLeagueIdInput) {
+        this.logRocketService.identifySession(this.sleeperLeagueIdInput);
       }
       this.leagueSwitchService.loadLeague(leagueData);
     });
@@ -122,8 +151,15 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   /**
    * log in with a previous year league id
    */
-  loginWithPrevSeason = () =>
-    this.loginWithLeagueId(this.leagueService.selectedLeague.prevLeagueId)
+  loginWithPrevSeason(): void {
+    switch (this.leagueService.selectedLeague.leaguePlatform) {
+      case LeaguePlatform.MFL:
+        this.loginWithMFLLeagueId((Number(this.selectedYear) - 1).toString(), this.leagueService.selectedLeague.prevLeagueId);
+        break;
+      default:
+        this.loginWithSleeperLeagueId(this.leagueService.selectedLeague.prevLeagueId)
+    }
+  }
 
   /**
    * returns true if we should display home modal
@@ -151,10 +187,20 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
 
   openSettingsDialog(): void {
     this.dialog.open(EditLeagueSettingsModalComponent
-        , {
-          minHeight: '350px',
-          minWidth: '500px',
-        }
+      , {
+        minHeight: '350px',
+        minWidth: '500px',
+      }
     );
+  }
+
+  /**
+   * handles logging in with mfl league id
+   */
+  loginWithMFLLeagueId(year?: string, leagueId?: string): void {
+    this.leagueService.leagueUser = null;
+    this.mflApiService.getMFLLeague(year || this.selectedYear, leagueId || this.mflLeagueIdInput).subscribe(leagueData => {
+      this.leagueSwitchService.loadLeague(this.mflService.fromMFLLeague(leagueData.league, year || this.selectedYear));
+    });
   }
 }

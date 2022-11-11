@@ -1,19 +1,21 @@
 import {Injectable} from '@angular/core';
-import {CompletedDraft, DraftCapital, FantasyPlatformData, LeagueData, LeaguePlatform, LeagueUserData} from '../model/LeagueUser';
 import {SleeperApiService} from './api/sleeper/sleeper-api.service';
-import {
-  LeagueOwnerData,
-  LeaguePlayoffMatchUp,
-  LeagueRawDraftOrderData,
-  LeagueRawTradePicksData,
-  LeagueRosterData,
-  LeagueTeam,
-  LeagueTeamMatchUpData,
-  LeagueTeamTransactionData,
-  TeamMetrics
-} from '../model/LeagueTeam';
-import {forkJoin, Observable, of} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {LeagueWrapper} from '../model/league/LeagueWrapper';
+import {SleeperService} from './api/sleeper/sleeper.service';
+import {MflService} from './api/mfl/mfl.service';
+import {MflApiService} from './api/mfl/mfl-api.service';
+import {LeaguePlayoffMatchUpDTO} from '../model/league/LeaguePlayoffMatchUpDTO';
+import {LeagueTeam} from '../model/league/LeagueTeam';
+import {LeagueRosterDTO} from '../model/league/LeagueRosterDTO';
+import {LeagueRawDraftOrderDTO} from '../model/league/LeagueRawDraftOrderDTO';
+import {LeagueOwnerDTO} from '../model/league/LeagueOwnerDTO';
+import {TeamMetrics} from '../model/league/TeamMetrics';
+import {FantasyPlatformDTO, LeaguePlatform} from '../model/league/FantasyPlatformDTO';
+import {CompletedDraft} from '../model/league/CompletedDraft';
+import {DraftCapital} from '../model/assets/DraftCapital';
+import {LeagueDTO} from '../model/league/LeagueDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -21,10 +23,10 @@ import {map, mergeMap} from 'rxjs/operators';
 export class LeagueService {
 
   /** league user data */
-  leagueUser: FantasyPlatformData;
+  leagueUser: FantasyPlatformDTO = null;
 
   /** selected league data */
-  selectedLeague: LeagueData;
+  selectedLeague: LeagueDTO;
 
   /** selected year */
   selectedYear: string;
@@ -33,23 +35,23 @@ export class LeagueService {
   leagueStatus: string = 'LOADING';
 
   /** selected league team data */
-  leagueTeamDetails: LeagueTeam[];
+  leagueTeamDetails: LeagueTeam[] = [];
 
   /** upcoming draft data */
-  upcomingDrafts: LeagueRawDraftOrderData[] = [];
+  upcomingDrafts: LeagueRawDraftOrderDTO[] = [];
 
   /** completed draft data */
   completedDrafts: CompletedDraft[] = [];
 
   /** dict of sleeper player ids */
-  sleeperPlayers = {};
+  platformPlayersMap = {};
 
-  /** what league platform is loaded in the application */
-  leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER;
+  playoffMatchUps: LeaguePlayoffMatchUpDTO[] = [];
 
-  playoffMatchUps: LeaguePlayoffMatchUp[] = [];
-
-  constructor(private sleeperApiService: SleeperApiService) {
+  constructor(private sleeperApiService: SleeperApiService,
+              private sleeperService: SleeperService,
+              private mflApiService: MflApiService,
+              private mflService: MflService) {
   }
 
   /**
@@ -63,209 +65,56 @@ export class LeagueService {
    * loads team data, roster, and draft picks by league
    * @param selectedLeague selected league
    */
-  $loadNewLeague(selectedLeague: LeagueData): Observable<any> {
-    this.leagueStatus = 'LOADING';
+  loadNewLeague$(selectedLeague: LeagueDTO): Observable<any> {
     this.selectedLeague = selectedLeague;
-    if (this.selectedLeague.rosterPositions.filter(x => x === 'QB').length > 1) {
-      this.selectedLeague.isSuperflex = true;
+    this.leagueStatus = 'LOADING';
+    if (this.selectedLeague.leaguePlatform === LeaguePlatform.MFL) {
+      return this.mflService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
+        this.setServiceFromLeagueWrapper(league);
+        this.mflApiService.getMFLPlayers(selectedLeague.season, selectedLeague.leagueId).subscribe((players) => {
+          this.platformPlayersMap = players;
+          return of(league);
+        });
+      }));
+    } else {
+      return this.sleeperService.loadLeague$(new LeagueWrapper(this.selectedLeague)).pipe(map((league) => {
+        this.setServiceFromLeagueWrapper(league);
+        this.sleeperApiService.fetchAllSleeperPlayers().subscribe((players) => {
+          this.platformPlayersMap = players;
+          return of(league);
+        });
+      }));
     }
-    return this.sleeperApiService.getSleeperOwnersbyLeagueId(selectedLeague.leagueId).pipe(mergeMap((owners: LeagueOwnerData[]) => {
-        // fetch matchUps for league
-        const leagueMatchups = {};
-        const leagueTransactions = {};
-        const observe = [];
-        for (let weekNum = selectedLeague.startWeek; weekNum < 19; weekNum++) {
-          observe.push(this.sleeperApiService.getSleeperMatchUpsForWeekByLeagueId(selectedLeague.leagueId, weekNum)
-            .pipe(mergeMap((weekMatchups) => {
-              const matchupData: LeagueTeamMatchUpData[] = [];
-              for (const matchup of weekMatchups) {
-                matchupData.push(new LeagueTeamMatchUpData(matchup));
-              }
-              leagueMatchups[weekNum] = matchupData;
-              return of(weekMatchups);
-            })));
-          observe.push(this.sleeperApiService.getSleeperTransactionByLeagueIdForWeek(selectedLeague.leagueId, weekNum)
-            .pipe(mergeMap((weekTransactions) => {
-              const transactionsData: LeagueTeamTransactionData[] = [];
-              for (const transaction of weekTransactions) {
-                const picks = [];
-                for (const pick of transaction.draft_picks) {
-                  picks.push(new LeagueRawTradePicksData(pick.owner_id, pick.previous_owner_id, pick.roster_id, pick.round, pick.season));
-                }
-                transactionsData.push(new LeagueTeamTransactionData(transaction, picks));
-              }
-              leagueTransactions[weekNum] = transactionsData;
-              return of(weekTransactions);
-            })));
-        }
-        observe.push(this.sleeperApiService.fetchAllSleeperPlayers().pipe(map((players) => {
-            this.sleeperPlayers = players;
-            return of(this.sleeperPlayers);
-          }))
-        );
-        observe.push(this.sleeperApiService.getSleeperPlayoffsByLeagueId(this.selectedLeague.leagueId).pipe(map((playoffs) => {
-            this.playoffMatchUps = playoffs;
-            return of(this.playoffMatchUps);
-          }))
-        );
-        forkJoin(observe).subscribe(() => {
-            this.selectedLeague.leagueMatchUps = leagueMatchups;
-            this.selectedLeague.leagueTransactions = leagueTransactions;
-            return of();
-          }
-        );
-        // fetch rosters and drafts picks
-        return this.sleeperApiService.getSleeperRostersByLeagueId(selectedLeague.leagueId).pipe(mergeMap((rosters: LeagueRosterData[]) => {
-            console.log('Fetching Roster Ids...');
-            this.leagueTeamDetails = [];
-            rosters.map(roster => {
-              for (const owner of owners) {
-                if (roster.ownerId === owner?.userId) {
-                  this.leagueTeamDetails.push(new LeagueTeam(owner, roster));
-                  break;
-                }
-              }
-            });
-            return this.sleeperApiService.getSleeperDraftbyLeagueId(selectedLeague.leagueId).pipe(mergeMap((draftIds: string[]) => {
-              draftIds.map((draftId: string) => {
-                  console.log('processing draft:', draftId);
-                  return this.$assignPicks(draftId).subscribe();
-                }
-              );
-              return this.$generateFutureDraftCapital();
-            }));
-          })
-        );
-      })
-    );
+  }
+
+  /**
+   * helper function that will set all league values from loaded league wrapper
+   * @param league league wrapper
+   * @private
+   */
+  private setServiceFromLeagueWrapper(league: LeagueWrapper): void {
+    this.selectedLeague = league.selectedLeague;
+    this.leagueTeamDetails = league.leagueTeamDetails;
+    this.completedDrafts = league.completedDrafts;
+    this.upcomingDrafts = league.upcomingDrafts;
+    this.playoffMatchUps = league.playoffMatchUps;
   }
 
   /**
    * loads new user data from sleeper username
-   * @param userName user name
-   * @param year
+   * @param username user name
+   * @param year string selected season
    */
-  loadNewUser(userName: string, year: string): Observable<any> {
-    console.time('Fetch Sleeper User Data');
+  loadNewUser(username: string, year: string): Observable<any> {
     this.selectedYear = year;
     try {
-      this.sleeperApiService.getSleeperUserInformation(userName).subscribe((userData: LeagueUserData) => {
-        if (userData == null) {
-          this.leagueUser = null;
-          throw new Error('User data could not be found. Try again!');
-        }
-        this.sleeperApiService.getSleeperLeaguesByUserID(userData.user_id, year).subscribe((response: LeagueData[]) => {
-          this.leagueUser = {leagues: response, userData};
-          console.timeEnd('Fetch Sleeper User Data');
-          return of();
-        });
+      this.sleeperService.loadSleeperUser$(username, year).subscribe(leagueUser => {
+        this.leagueUser = leagueUser;
+        return of(leagueUser);
       });
-    } catch (e: any) {
-      console.error('Failed to get data for user ', e);
+    } catch (e) {
       return of();
     }
-  }
-
-  /**
-   * generate future draft capital for teams
-   * @private
-   */
-  private $generateFutureDraftCapital(): Observable<LeagueTeam[]> {
-    return this.sleeperApiService.getSleeperTradedPicksByLeagueId(this.selectedLeague.leagueId)
-      .pipe(mergeMap((tradedPicks: LeagueRawTradePicksData[]) => {
-        this.leagueTeamDetails.map((team: LeagueTeam) => {
-          let draftPicks: DraftCapital[] = [];
-          for (
-            let year = Number(this.selectedLeague.season) + 1;
-            year < Number(this.selectedLeague.season) + 4;
-            year++
-          ) {
-            for (let i = 0; i < this.selectedLeague.draftRounds; i++) {
-              draftPicks.push(new DraftCapital(true, i + 1, this.selectedLeague.totalRosters / 2, year.toString()));
-            }
-          }
-          // TODO repeated code here
-          tradedPicks.map((tradedPick: LeagueRawTradePicksData) => {
-            if (Number(tradedPick.season) > Number(this.selectedLeague.season)
-              && tradedPick.ownerId === team.roster.rosterId
-              && tradedPick.rosterId !== team.roster.rosterId
-            ) {
-              draftPicks.push(new DraftCapital(false, tradedPick.round,
-                this.selectedLeague.totalRosters / 2, tradedPick.season));
-            }
-          });
-          tradedPicks.map((tradedPick: LeagueRawTradePicksData) => {
-            if (Number(tradedPick.season) > Number(this.selectedLeague.season)
-              && tradedPick.ownerId !== team.roster.rosterId
-              && tradedPick.rosterId === team.roster.rosterId
-            ) {
-              draftPicks = this.removeDraftPick(draftPicks.slice(), tradedPick);
-            }
-          });
-          team.futureDraftCapital = draftPicks;
-        });
-        return of(this.leagueTeamDetails);
-      }));
-  }
-
-  // TODO clean up mock draft code... create separate object or use draft capital from team details
-  private $assignPicks(draftId: string): Observable<LeagueTeam[]> {
-    return this.sleeperApiService.getSleeperDraftDetailsByDraftId(draftId).pipe(mergeMap((draft: LeagueRawDraftOrderData) => {
-      if (draft.status === 'pre_draft' && draft.draftOrder) {
-        return this.sleeperApiService.getSleeperTradedPicksByDraftId(draft.draftId)
-          .pipe(mergeMap((tradedPicks: LeagueRawTradePicksData[]) => {
-            this.leagueTeamDetails.map((team: LeagueTeam) => {
-              const draftPicks: DraftCapital[] = [];
-              const slot = draft.draftOrder[team.owner?.userId];
-              for (let i = 0; i < draft.rounds; i++) {
-                let slotPick = slot;
-                if (draft.type === 'snake' && i + 1 % 2 === 0) {
-                  slotPick = this.selectedLeague.totalRosters - slot;
-                }
-                draftPicks.push(new DraftCapital(true, i + 1, Number(slot), draft.season));
-              }
-              const rosterId = draft.slotToRosterId[slot];
-              tradedPicks.reverse();
-              tradedPicks.map((tradedPick: LeagueRawTradePicksData) => {
-                if (tradedPick.rosterId === rosterId && tradedPick.ownerId !== rosterId) {
-                  const index = draftPicks.map((i) => i.round).indexOf(tradedPick.round);
-                  draftPicks.splice(index, 1);
-                } else if (tradedPick.ownerId === rosterId) {
-                  let pickSlot = Number(Object.keys(draft.slotToRosterId).find(key => draft.slotToRosterId[key] ===
-                    tradedPick.rosterId));
-                  if (draft.type === 'snake' && tradedPick.round % 2 === 0) {
-                    pickSlot = this.selectedLeague.totalRosters - pickSlot;
-                  }
-                  if (!this.doesPickAlreadyExist(tradedPick, draftPicks, pickSlot)) {
-                    draftPicks.push(new DraftCapital(false, tradedPick.round, pickSlot, tradedPick.season));
-                  }
-                }
-              });
-              team.draftCapital = draftPicks;
-            });
-            this.upcomingDrafts.push(draft);
-            return of(this.leagueTeamDetails);
-          }));
-      } else if (draft.status === 'complete' && draft.draftOrder) {
-        forkJoin([
-          this.sleeperApiService.getSleeperCompletedDraftsByDraftId(draft.draftId),
-          this.sleeperApiService.getSleeperTradedPicksByDraftId(draft.draftId)]
-        ).subscribe(([picks, tradedPicks]) => {
-            tradedPicks.reverse().map((tradedPick: LeagueRawTradePicksData) => {
-              picks.filter(pick => {
-                if (pick.round === tradedPick.round && tradedPick.previousOwnerId === pick.rosterId) {
-                  pick.rosterId = tradedPick.previousOwnerId;
-                }
-              });
-            });
-            if (this.completedDrafts.filter(d => d.draft.draftId === draft.draftId).length === 0) {
-              this.completedDrafts.push(new CompletedDraft(draft, picks));
-            }
-          }
-        );
-      }
-      return of(this.leagueTeamDetails);
-    }));
   }
 
   /**
@@ -277,24 +126,6 @@ export class LeagueService {
     this.completedDrafts = [];
     this.upcomingDrafts = [];
     this.playoffMatchUps = [];
-  }
-
-  /**
-   * does this pick already exist
-   * catches traded picks back to the original owner
-   * @param tradedPick traded pick data
-   * @param draftPicks player draft capital
-   * @param pickNumber pick number
-   * @private
-   * returns true if pick already exists
-   */
-  private doesPickAlreadyExist(tradedPick: LeagueRawTradePicksData, draftPicks: DraftCapital[], pickNumber: number): boolean {
-    for (const pick of draftPicks) {
-      if (pick.round === tradedPick.round && pick.pick === pickNumber) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -311,13 +142,13 @@ export class LeagueService {
     // TODO improve handling when player leaves league mid season without replacement
     // if not found we return a dummy object
     return new LeagueTeam(
-      new LeagueOwnerData(
+      new LeagueOwnerDTO(
         'unable_to_find',
         'Retired Owner',
         'Retired Team',
         ''
       ),
-      new LeagueRosterData(
+      new LeagueRosterDTO(
         rosterId,
         'unable_to_find',
         [],
@@ -331,7 +162,7 @@ export class LeagueService {
   /**
    * get team by user id
    * returns sleeper team data
-   * @param userId
+   * @param userId user id
    */
   getTeamByUserId(userId: string): LeagueTeam {
     for (const team of this.leagueTeamDetails) {
@@ -345,7 +176,7 @@ export class LeagueService {
   /**
    * Convert draft capital objects into a list of name ids.
    * This will be used to filter name ids from players.
-   * @param draftCapital
+   * @param draftCapital array of draft capital
    */
   getDraftCapitalToNameId(draftCapital: DraftCapital[]): string[] {
     const nameIds = [];
@@ -384,19 +215,4 @@ export class LeagueService {
     return nameIds;
   }
 
-  /**
-   * handles removing draft pick from draft capital
-   * @param draftPicks
-   * @param tradedPick
-   * @private
-   */
-  private removeDraftPick(draftPicks: DraftCapital[], tradedPick: LeagueRawTradePicksData): DraftCapital[] {
-    for (let i = 0; i < draftPicks.length; i++) {
-      if (draftPicks[i].round === tradedPick.round && draftPicks[i].year === tradedPick.season) {
-        draftPicks.splice(i, 1);
-        return draftPicks;
-      }
-    }
-    return draftPicks;
-  }
 }

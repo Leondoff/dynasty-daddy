@@ -1,13 +1,13 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
-import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {FantasyPlayerApiService} from '../../../services/api/fantasy-player-api.service';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {LeagueService} from '../../../services/league.service';
 import {QueryBuilderClassNames, QueryBuilderConfig} from 'angular2-query-builder';
-import {LeagueOwnerData} from '../../../model/LeagueTeam';
 import {ConfigService} from '../../../services/init/config.service';
+import {LeagueOwnerDTO} from '../../../model/league/LeagueOwnerDTO';
 
 @Component({
   selector: 'app-add-player-comparison-modal',
@@ -333,7 +333,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
    * @return list of objects
    * @private
    */
-  private generateSleeperOwnerList(): {value: LeagueOwnerData, name: string}[] {
+  private generateSleeperOwnerList(): {value: LeagueOwnerDTO, name: string}[] {
     const list = [];
     for (const owner of this.leagueService.leagueTeamDetails) {
       list.push({value: owner.owner, name: owner.owner.ownerName});

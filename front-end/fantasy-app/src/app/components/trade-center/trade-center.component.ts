@@ -6,7 +6,7 @@ import {BaseComponent} from '../base-component.abstract';
 import {FormControl} from '@angular/forms';
 import {ReplaySubject, Subject, timer} from 'rxjs';
 import {MatSelect} from '@angular/material/select';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {take, takeUntil} from 'rxjs/operators';
 import {ConfigService} from '../../services/init/config.service';
 import {LeagueService} from '../../services/league.service';
@@ -16,8 +16,8 @@ import {PlayerComparisonService} from '../services/player-comparison.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {DisplayService} from '../../services/utilities/display.service';
-import {LeagueTeam} from '../../model/LeagueTeam';
-import {DraftCapital} from '../../model/LeagueUser';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
+import {DraftCapital} from '../../model/assets/DraftCapital';
 
 @Component({
   selector: 'app-trade-center',
@@ -123,7 +123,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     } else {
       this.initializeTradeCalculator();
     }
-    this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
+    this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
         this.initializeTradeCalculator();
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(() => {
@@ -495,27 +495,33 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     this.team1MockRankings = null;
     if (trade.team1UserId && trade.team2UserId) {
       const newLeague: LeagueTeam[] = (JSON.parse(JSON.stringify(this.leagueService.leagueTeamDetails)));
+      const leaguePlatform = this.leagueService.selectedLeague.leaguePlatform;
       newLeague.forEach(team => {
         if (team.owner.userId === trade.team1UserId) {
           team.roster.players = team.roster.players
-            .filter(sleeperId => !trade.team1Assets
-              .map(it => it.sleeper_id).includes(sleeperId))
-            .concat(trade.team2Assets.filter(it => it.position !== 'PI').map(it => it.sleeper_id));
+            .filter(playerPlatformId => !trade.team1Assets
+              .map(it => leaguePlatform === 1 ? it.mfl_id : it.sleeper_id).includes(playerPlatformId))
+            .concat(trade.team2Assets.filter(it => it.position !== 'PI').map(it => leaguePlatform === 1 ? it.mfl_id : it.sleeper_id));
           this.handleMockDraftCapitalChanges(team,
             trade.team1Assets.filter(asset => asset.position === 'PI'),
             trade.team2Assets.filter(asset => asset.position === 'PI'));
         }
         if (team.owner.userId === trade.team2UserId) {
           team.roster.players = team.roster.players
-            .filter(sleeperId => !trade.team2Assets
-              .map(it => it.sleeper_id).includes(sleeperId))
-            .concat(trade.team1Assets.filter(it => it.position !== 'PI').map(it => it.sleeper_id));
+            .filter(playerPlatformId => !trade.team2Assets
+              .map(it => leaguePlatform === 1 ? it.mfl_id : it.sleeper_id).includes(playerPlatformId))
+            .concat(trade.team1Assets.filter(it => it.position !== 'PI').map(it => leaguePlatform === 1 ? it.mfl_id : it.sleeper_id));
           this.handleMockDraftCapitalChanges(team,
             trade.team2Assets.filter(asset => asset.position === 'PI'),
             trade.team1Assets.filter(asset => asset.position === 'PI'));
         }
       });
-      this.powerRankingsService.generatePowerRankings(newLeague, this.playerService.playerValues, true).subscribe(powerRankings =>
+      this.powerRankingsService.generatePowerRankings(
+        newLeague,
+        this.playerService.playerValues,
+        this.leagueService.selectedLeague.leaguePlatform,
+        true
+      ).subscribe(powerRankings =>
         powerRankings.forEach(team => {
           if (team.team.owner.userId === trade.team1UserId) {
             this.team1MockRankings = team;

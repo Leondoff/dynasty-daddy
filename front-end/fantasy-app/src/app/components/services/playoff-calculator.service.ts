@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-import {LeaguePlayoffMatchUp, LeagueTeam} from '../../model/LeagueTeam';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
 import {Division, MatchUpProbability, SimulatedTeamInfo} from '../model/playoffCalculator';
-import {LeagueData} from '../../model/LeagueUser';
 import {PowerRankingsService} from './power-rankings.service';
 import {MatchupService} from './matchup.service';
 import {MatchUpUI} from '../model/matchup';
@@ -9,6 +8,8 @@ import {LeagueService} from '../../services/league.service';
 import {NflService} from '../../services/utilities/nfl.service';
 import {cumulativeStdNormalProbability, mean, median, standardDeviation, zScore} from 'simple-statistics';
 import {Observable, of} from 'rxjs';
+import {LeaguePlayoffMatchUpDTO} from '../../model/league/LeaguePlayoffMatchUpDTO';
+import {LeagueDTO} from "../../model/league/LeagueDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -272,7 +273,7 @@ export class PlayoffCalculatorService {
    * @param league league data
    * @param teams fantasy teams
    */
-  generateDivisions(league: LeagueData, teams: LeagueTeam[]): Observable<any> {
+  generateDivisions(league: LeagueDTO, teams: LeagueTeam[]): Observable<any> {
     if (this.divisions?.length === 0) {
       if (league.divisions && league.divisions > 1) {
         for (let i = 0; i < league.divisions; i++) {
@@ -522,7 +523,7 @@ export class PlayoffCalculatorService {
    * @param matchup matchup to process
    * @private
    */
-  private processTeamsLeft(teamsLeft: number[], matchup: LeaguePlayoffMatchUp): number[] {
+  private processTeamsLeft(teamsLeft: number[], matchup: LeaguePlayoffMatchUpDTO): number[] {
     if (matchup.win === null && matchup.loss === null) {
       return teamsLeft;
     }

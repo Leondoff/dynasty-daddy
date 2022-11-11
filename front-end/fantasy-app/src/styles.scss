@@ -679,3 +679,7 @@ tr.table-detail-row {
   vertical-align: sub;
   margin-left: 5px;
 }
+
+.mat-tab-body-content {
+  overflow-y: hidden !important;
+}

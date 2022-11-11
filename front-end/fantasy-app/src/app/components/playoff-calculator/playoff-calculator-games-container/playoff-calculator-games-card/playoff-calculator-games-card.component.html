@@ -9,7 +9,7 @@
   <table style="width:100%">
     <tr>
       <td class="td-game--team" *ngIf="team1 && team1.owner">
-        <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team1.owner?.avatar"
+        <img #image [src]="team1?.owner?.getAvatarForLeague(leagueService.selectedLeague.leaguePlatform)"
         onerror="style.display = 'none'" class="games-image">
         <span class="link--text__no__underline" [routerLink]="['../team', team1.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
           {{displayService.truncate(team1.owner?.teamName, 20)}}
@@ -21,7 +21,7 @@
     </tr>
     <tr>
       <td class="td-game--team" *ngIf="team2 && team2.owner">
-        <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team2.owner?.avatar"
+        <img #image [src]="team2?.owner?.getAvatarForLeague(leagueService.selectedLeague.leaguePlatform)"
              onerror="style.display = 'none'" class="games-image">
         <span class="link--text__no__underline" [routerLink]="['../team', team2.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
           {{displayService.truncate(team2.owner?.teamName, 20)}}

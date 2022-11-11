@@ -8,7 +8,7 @@
   <table style="width:100%">
     <tr>
       <td class="td-game--team" *ngIf="team1 && team1.owner">
-        <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team1.owner?.avatar"
+        <img #image [src]="team1?.owner?.getAvatarForLeague(leagueService.selectedLeague.leaguePlatform)"
              onerror="style.display = 'none'" class="games-image">
         <span>
           {{displayService.truncate(team1.owner?.teamName, 30)}}
@@ -28,7 +28,7 @@
     </tr>
     <tr>
       <td class="td-game--team" *ngIf="team2 && team2.owner">
-        <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + team2.owner?.avatar"
+        <img #image [src]="team2?.owner?.getAvatarForLeague(leagueService.selectedLeague.leaguePlatform)"
              onerror="style.display = 'none'" class="games-image">
         <span>
           {{displayService.truncate(team2.owner?.teamName, 30)}}

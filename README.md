@@ -2,12 +2,15 @@
 
 *This project is currently in Beta and is deployed to https://dynasty-daddy.com.*
 
-Dynasty Daddy is a webapp that integrates with Sleeper's api and scrapes KeepTradeCut's player evaluations to create metrics on each owners fantasy league.
-
+Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes KeepTradeCut's player evaluations to create metrics on each owner's fantasy league.
 
 ## Goal
 
 The goal is to provide users with a frictionless way to see player value, team value, draft breakdowns, and more. When managing my teams I would constantly have to switch between multiple websites to figure out what moves I should make. I wanted to find a way to spend less time doing research and leverage the data in more ways than before. Thus Dynasty Daddy was born to help me beat my friends in fantasy easier!
+
+### Supported Platforms
+<img src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw" alt="Sleeper" title="Sleeper" width="50px">
+<img src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif" alt="MyFantasyLeague" title="MyFantasyLeague" width="50px"/>
 
 ## Architecture
 

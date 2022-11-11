@@ -4,7 +4,7 @@ import {Label} from 'ng2-charts';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {MatchupService} from '../../services/matchup.service';
-import {LeagueTeam} from '../../../model/LeagueTeam';
+import {LeagueTeam} from '../../../model/league/LeagueTeam';
 import {LeagueService} from '../../../services/league.service';
 import {NflService} from "../../../services/utilities/nfl.service";
 

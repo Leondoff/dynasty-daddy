@@ -1,11 +1,13 @@
-/* tslint:disable */
-import {LeagueOwnerData} from "./LeagueTeam";
-import {DraftCapital} from "./LeagueUser";
+/* tslint:disable:variable-name */
+import {LeagueOwnerDTO} from '../league/LeagueOwnerDTO';
 
 export class FantasyPlayer {
+
+  constructor() {}
   id: number;
   name_id: string;
   sleeper_id: string;
+  mfl_id: string;
   full_name: string;
   first_name: string;
   last_name: string;
@@ -18,7 +20,7 @@ export class FantasyPlayer {
   injury_status: string;
   sf_trade_value: number;
   trade_value: number;
-  owner: LeagueOwnerData = null;
+  owner: LeagueOwnerDTO = null;
   date: string;
   all_time_high_sf: number;
   all_time_low_sf: number;

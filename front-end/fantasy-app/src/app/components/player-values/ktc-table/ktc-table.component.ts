@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -10,8 +10,8 @@ import {Router} from '@angular/router';
 import {ConfigService} from '../../../services/init/config.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
 import {BaseComponent} from '../../base-component.abstract';
-import {LeagueData} from '../../../model/LeagueUser';
 import {BehaviorSubject} from 'rxjs';
+import {LeagueDTO} from "../../../model/league/LeagueDTO";
 
 @Component({
   selector: 'app-ktc-table',
@@ -26,7 +26,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
 
   /** selected league */
   @Input()
-  selectedLeague: LeagueData;
+  selectedLeague: LeagueDTO;
 
   /** mat paginator */
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
