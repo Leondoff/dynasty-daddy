@@ -10,6 +10,8 @@ COPY back-end/scripts/KTCScraperScript/ktc-rankings-scraper.py /app/ktc-rankings
 COPY back-end/scripts/KTCScraperScript/FantasyProsADPScraper.py /app/FantasyProsADPScraper.py
 COPY back-end/scripts/KTCScraperScript/PlayerService.py /app/PlayerService.py
 COPY back-end/scripts/KTCScraperScript/BeautifulSoupService.py /app/BeautifulSoupService.py
+COPY back-end/scripts/KTCScraperScript/MFLPlayerService.py /app/MFLPlayerService.py
+
 # execution rights to cron
 RUN chmod 0644 /etc/cron.d/ktc-crontab
 # Apply cron job
