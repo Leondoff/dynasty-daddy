@@ -97,9 +97,9 @@ export class PowerRankingsService {
         let sfTradeValueTotal = 0;
         let tradeValueTotal = 0;
         // TODO refactor this section both comparisons are redundant
-        for (const sleeperId of team.roster?.players) {
+        for (const playerPlatformId of team?.roster?.players) {
           for (const player of players) {
-            if (sleeperId === this.playerService.getPlayerPlatformId(player, leaguePlatform)) {
+            if (playerPlatformId === this.playerService.getPlayerPlatformId(player, leaguePlatform)) {
               roster.push(player);
               sfTradeValueTotal += player.sf_trade_value;
               tradeValueTotal += player.trade_value;

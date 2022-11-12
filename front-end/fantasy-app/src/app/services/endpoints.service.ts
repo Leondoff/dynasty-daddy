@@ -40,6 +40,6 @@ export class EndpointsService {
     this.sleeperApiConfigService.getSleeperPlayersEndpoint = 'https://api.sleeper.app/v1/players/nfl';
 
     // mfl endpoints
-    this.mflAPIConfigService.getMFLBaseURL = 'https://www46.myfantasyleague.com/';
+    this.mflAPIConfigService.getMFLBaseURL = 'https://cors-anywhere.herokuapp.com/https://www46.myfantasyleague.com/';
   }
 }

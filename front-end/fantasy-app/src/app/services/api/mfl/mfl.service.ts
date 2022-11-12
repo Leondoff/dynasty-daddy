@@ -56,7 +56,7 @@ export class MflService {
     let playoffMatchUps = [];
     let completedDraft = null;
     observableList.push(this.mflApiService.getMFLTransactions(year, leagueId).pipe(map((leagueTrans) => {
-      leagueTransactions[1] = this.marshallLeagueTransactions(leagueTrans.transactions.transaction);
+      leagueTransactions[1] = this.marshallLeagueTransactions(leagueTrans.transactions.transaction, leagueWrapper.selectedLeague.season);
       return of(leagueTransactions);
     })));
     observableList.push(this.mflApiService.getMFLSchedules(year, leagueId).pipe(map((leagueSchedule) => {
@@ -101,9 +101,9 @@ export class MflService {
           ddTeam.roster = new LeagueRosterDTO(
             this.formatRosterId(team.id),
             team.id,
-            roster.map(player => player.id),
-            roster.filter(player => player.status === 'INJURED_RESERVE').map(player => player.id),
-            roster.filter(player => player.status === 'TAXI_SQUAD').map(player => player.id),
+            roster?.map(player => player.id),
+            roster?.filter(player => player.status === 'INJURED_RESERVE').map(player => player.id),
+            roster?.filter(player => player.status === 'TAXI_SQUAD').map(player => player.id),
             null
           );
           ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId];
@@ -122,7 +122,7 @@ export class MflService {
    * @param year season
    */
   fromMFLLeague(leagueInfo: any, year: string = null): LeagueDTO {
-    const historyList = leagueInfo?.history?.league.sort((a, b) => b.year - a.year) || [];
+    const historyList = leagueInfo?.history?.league.length > 1 ? leagueInfo?.history?.league?.sort((a, b) => b.year - a.year) : [];
     const divisions: string[] = [...new Set<string>(leagueInfo.franchises.franchise.map(team => team.division))] || [];
     const rosterSize = Number(leagueInfo.rosterSize) + (Number(leagueInfo.injuredReserve) || 0) + (Number(leagueInfo.taxiSquad) || 0);
     const mflLeague = new LeagueDTO(
@@ -131,9 +131,9 @@ export class MflService {
       leagueInfo.id,
       Number(leagueInfo.franchises.count),
       this.generateRosterPositions(leagueInfo.starters, rosterSize),
-      historyList[1].url.substr(historyList[1].url.length - 5) || null,
-      historyList[0].year === new Date().getFullYear().toString() ? 'in_progress' : 'completed',
-      year || historyList[0].year || null,
+      leagueInfo.id || null,
+      historyList[0]?.year === new Date().getFullYear().toString() ? 'in_progress' : 'completed',
+      year || historyList[0]?.year || null,
       null,
       null,
       LeaguePlatform.MFL);
@@ -203,9 +203,9 @@ export class MflService {
    * @param playoffStartWeek playoff start week number
    */
   private marshallPlayoffs(playoffs: any, playoffStartWeek: number): LeaguePlayoffMatchUpDTO[] {
-    return playoffs.map(matchUp => {
+    return playoffs?.map(matchUp => {
       return new LeaguePlayoffMatchUpDTO(null).fromMFL(matchUp, playoffStartWeek);
-    });
+    }) || [];
   }
 
   /**
@@ -217,7 +217,7 @@ export class MflService {
    */
   private marshallDraftResults(draft: any, leagueId: string, playerType: string, teamCount: number): CompletedDraft {
     const draftId = Math.round(Math.random() * 100);
-    const picks = draft.draftPick.map(pick => {
+    const picks = draft?.draftPick?.map(pick => {
       return (new LeagueCompletedPickDTO(null).fromMFL(pick, teamCount));
     });
     return new CompletedDraft(
@@ -233,7 +233,7 @@ export class MflService {
    */
   private marshallFutureDraftCapital(picks: any): {} {
     const picksDict = {};
-    picks.forEach(team => {
+    picks?.forEach(team => {
       picksDict[team.id] = team.futureDraftPick.map(pick =>
         new DraftCapital(team.id === pick.originalPickFor, Number(pick.round), 6, pick.year));
     });
@@ -246,11 +246,11 @@ export class MflService {
    */
   private marshallLeagueMatchUps(leagueSchedule: any): {} {
     const matchUpsDict = {};
-    leagueSchedule.forEach(matchUps => {
+    leagueSchedule?.forEach(matchUps => {
       const week = Number(matchUps.week);
       const teamMatchUps = [];
       let matchUpId = 1;
-      matchUps.matchup?.forEach(matchUp => {
+      matchUps?.matchup?.forEach(matchUp => {
         teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[0], matchUpId));
         teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[1], matchUpId));
         matchUpId++;
@@ -276,9 +276,11 @@ export class MflService {
   /**
    * format json response to league transactions
    * @param leagueTrans json
+   * @param season
    */
-  private marshallLeagueTransactions(leagueTrans: any): LeagueTeamTransactionDTO[] {
-    return leagueTrans.filter(trans => trans.type !== 'TAXI' && trans.type !== 'IR').map(trans => {
+  private marshallLeagueTransactions(leagueTrans: any, season: string): LeagueTeamTransactionDTO[] {
+    if (!leagueTrans) { return []; }
+    return leagueTrans.filter(trans => trans.type !== 'TAXI' && trans.type !== 'IR' && !trans.type.includes('AUCTION')).map(trans => {
       let transaction = new LeagueTeamTransactionDTO(null, []);
       transaction.type = trans.type.toLowerCase();
       const rosterId = this.formatRosterId(trans.franchise);
@@ -286,15 +288,15 @@ export class MflService {
       const adds = {};
       if (transaction.type === 'trade') {
         const rosterId2 = this.formatRosterId(trans.franchise2);
-        transaction = this.processTransactionInTrade(transaction, trans.franchise2_gave_up.split(','), rosterId2, rosterId);
-        transaction = this.processTransactionInTrade(transaction, trans.franchise1_gave_up.split(','), rosterId, rosterId2);
+        transaction = this.processTransactionInTrade(transaction, trans.franchise2_gave_up.split(','), rosterId2, rosterId, season);
+        transaction = this.processTransactionInTrade(transaction, trans.franchise1_gave_up.split(','), rosterId, rosterId2, season);
         transaction.rosterIds = [rosterId, rosterId2];
       } else {
         const players = trans.transaction.split('|');
-        players[1].split(',').filter(playerId => playerId !== '' && !playerId.includes('.')).forEach(playerId => {
+        players[1].split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4).forEach(playerId => {
           drops[playerId] = rosterId;
         });
-        players[0].split(',').filter(playerId => playerId !== '' && !playerId.includes('.')).forEach(playerId => {
+        players[0].split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4).forEach(playerId => {
           adds[playerId] = rosterId;
         });
         transaction.rosterIds = [rosterId];
@@ -314,31 +316,29 @@ export class MflService {
    * @param assets json array
    * @param rosterIdGiveUp roster id
    * @param rosterIdGiveTo roster id
+   * @param season string
    * @private
    */
   private processTransactionInTrade(
     transaction: LeagueTeamTransactionDTO,
     assets: any[],
     rosterIdGiveUp: number,
-    rosterIdGiveTo: number
+    rosterIdGiveTo: number,
+    season: string
   ): LeagueTeamTransactionDTO {
-    const drops = {};
-    const adds = {};
     assets.filter(playerId => playerId !== '').forEach(playerId => {
-      if (playerId.substring(0, 3) === 'FP_') {
+      if (playerId.substring(0, 3) === 'FP_' || playerId.substring(0, 3) === 'DP_') {
         const pickArr = playerId.split('_');
         transaction.draftpicks.push(new LeagueRawTradePicksDTO(rosterIdGiveTo,
           rosterIdGiveUp,
           rosterIdGiveTo,
-          Number(pickArr[3]),
-          pickArr[2]));
+          pickArr[0] === 'FP' ? Number(pickArr[3]) : Number(pickArr[1]) + 1,
+          pickArr[0] === 'FP' ? pickArr[2] : season));
       } else {
-        drops[playerId] = rosterIdGiveUp;
-        adds[playerId] = rosterIdGiveTo;
+        transaction.drops[playerId] = rosterIdGiveUp;
+        transaction.adds[playerId] = rosterIdGiveTo;
       }
     });
-    transaction.adds = adds;
-    transaction.drops = drops;
     return transaction;
   }
 

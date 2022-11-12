@@ -7,8 +7,8 @@ export class LeagueTeamTransactionDTO {
     this.status = this.getTransactionStatusFromString(transaction?.status);
     this.settings = transaction?.settings;
     this.rosterIds = transaction?.roster_ids;
-    this.drops = transaction?.drops;
-    this.adds = transaction?.adds;
+    this.drops = transaction?.drops || {};
+    this.adds = transaction?.adds || {};
     this.draftpicks = picks;
     this.createdAt = transaction?.created;
   }
@@ -18,8 +18,8 @@ export class LeagueTeamTransactionDTO {
   status: TransactionStatus;
   settings: {};
   rosterIds: number[];
-  drops: {};
-  adds: {};
+  drops: {} = {};
+  adds: {} = {};
   draftpicks: LeagueRawTradePicksDTO[];
   createdAt: number;
 

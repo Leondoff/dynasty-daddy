@@ -91,8 +91,8 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     const teamIndex = this.leagueService.leagueTeamDetails.map(e => e.owner?.ownerName).indexOf(ownerName);
     this.selectedTeam = this.leagueService.leagueTeamDetails[teamIndex];
     // generate roster and sort
-    for (const sleeperId of this.selectedTeam.roster.players) {
-      const player = this.playerService.getPlayerByPlayerPlatformId(sleeperId, this.leagueService.selectedLeague.leaguePlatform);
+    for (const playerPlatformId of this.selectedTeam.roster.players) {
+      const player = this.playerService.getPlayerByPlayerPlatformId(playerPlatformId, this.leagueService.selectedLeague.leaguePlatform);
       if (player) {
         this.roster.push(player);
       }
