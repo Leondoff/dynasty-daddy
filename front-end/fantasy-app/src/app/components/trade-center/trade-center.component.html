@@ -44,7 +44,7 @@
             <mat-option class="teamSelect" (click)="selectionMadeTeam2()" *ngFor="let team of leagueService.leagueTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
           </mat-select>
         </mat-icon>
-        {{team2Rankings?.team.owner.ownerName || 'Team 1'}} gets...
+        {{team2Rankings?.team.owner.ownerName || 'Team 1' | truncate:22}} gets...
       </div>
       <div>
         <mat-form-field class="trade-dropdown" color="accent">
@@ -53,7 +53,7 @@
               <ngx-mat-select-search [formControl]="playerFilterCtrl" placeholderLabel="Search Player..." noEntriesFoundLabel="No players found"></ngx-mat-select-search>
             </mat-option>
             <mat-option *ngFor="let player of filteredTeam1Players | async" [value]="null" (click)="addPlayerToTeam1(player)">
-              {{player.full_name}} <span class="small-text__light">{{player.owner?.ownerName}}</span>
+              {{player.full_name}} <span class="small-text__light">{{player.owner?.ownerName | truncate:15}}</span>
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -117,7 +117,7 @@
             <mat-option class="teamSelect" (click)="selectionMadeTeam1()" *ngFor="let team of leagueService.leagueTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
           </mat-select>
         </mat-icon>
-        {{team1Rankings?.team.owner.ownerName || 'Team 2'}} gets...
+        {{team1Rankings?.team.owner.ownerName || 'Team 2' | truncate:22}} gets...
       </div>
       <div>
         <mat-form-field class="trade-dropdown" color="accent">
@@ -180,10 +180,10 @@
       <div *ngIf="configService.isMobile" class="margin-top-25 center-text large-bold-header-text">Total: {{tradeTool.tradePackage?.getTradeValueBySide(2)}}</div>
     </div>
     <div fxFlex="40%" fxFlex.xs="40%" fxFlex.sm="40%" *ngIf="!configService.isMobile">
-      <div class="margin-top-25 center-text large-bold-header-text">{{team2Rankings?.team.owner.ownerName || 'Team 2'}}: {{tradeTool.tradePackage?.getTradeValueBySide(1) | number}}</div>
+      <div class="margin-top-25 center-text large-bold-header-text">{{team2Rankings?.team.owner.ownerName || 'Team 2' | truncate: 20}}: {{tradeTool.tradePackage?.getTradeValueBySide(1) | number}}</div>
     </div>
     <div fxFlex="40%" fxFlex.xs="40%" fxFlex.sm="40%" *ngIf="!configService.isMobile">
-      <div class="margin-top-25 center-text large-bold-header-text">{{team1Rankings?.team.owner.ownerName || 'Team 1'}}: {{tradeTool.tradePackage?.getTradeValueBySide(2) | number}}</div>
+      <div class="margin-top-25 center-text large-bold-header-text">{{team1Rankings?.team.owner.ownerName || 'Team 1' | truncate: 20}}: {{tradeTool.tradePackage?.getTradeValueBySide(2) | number}}</div>
     </div>
     <div fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%" [ngStyle]="getTradeBackgroundColor()" class="margin-top-25 margin-bot-50">
       <div *ngIf="tradeTool.tradePackage === null || (tradeTool.tradePackage?.team1Assets.length === 0 && tradeTool.tradePackage?.team2Assets.length === 0)" class="mid-bold-text center-text margin-top-15 margin-bot-15" style="color: lightgray">Add Player to Trade</div>
@@ -208,7 +208,7 @@
     <div *ngIf="tradeTool.tradePackage && (tradeTool.tradePackage.team2Assets.length != 0 || tradeTool.tradePackage.team1Assets.length != 0) && tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount && recommendedPlayers.length != 0" class="trade_insights" fxFlex="37.5%" fxFlex.xs="80%" fxFlex.sm="80%">
       <mat-card>
         <mat-card-content>
-          <div class="center-text mid-bold-text margin-bot-10">Players to Even the Trade<span *ngIf="leagueService.selectedLeague && team1Rankings && team2Rankings">{{(favoredSide == 2 ? ' from ' + team1Rankings?.team.owner.ownerName : ' from ' + team2Rankings?.team.owner.ownerName)}}</span></div>
+          <div class="center-text mid-bold-text margin-bot-10">Players to Even the Trade<span *ngIf="leagueService.selectedLeague && team1Rankings && team2Rankings">{{(favoredSide == 2 ? ' from ' + team1Rankings?.team.owner.ownerName : ' from ' + team2Rankings?.team.owner.ownerName) | truncate: 26}}</span></div>
         </mat-card-content>
         <table class="trade-table-item" *ngFor="let player of recommendedPlayers">
           <tr>
@@ -227,9 +227,9 @@
         <div class="center-text mid-bold-text" style="margin-bottom: 5px">Team Position Ranks</div>
         <table style="border-collapse: separate; border-spacing: 0 10px;">
           <tr>
-            <td style="width: 50%">{{team2Rankings?.team.owner.ownerName || '--'}}</td>
+            <td style="width: 50%">{{team2Rankings?.team.owner.ownerName || '--' | truncate:20}}</td>
             <td style="width: 4%" class="center-text text__light">NAME</td>
-            <td style="width: 50%; text-align: right;">{{team1Rankings?.team.owner.ownerName || '--'}}</td>
+            <td style="width: 50%; text-align: right;">{{team1Rankings?.team.owner.ownerName || '--' | truncate:20}}</td>
           </tr>
           <tr>
             <td style="width: 48%" >

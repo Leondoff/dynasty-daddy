@@ -32,12 +32,12 @@
 
       <ng-container matColumnDef="team">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Team</th>
-        <td mat-cell *matCellDef="let element"> {{element.team.owner?.teamName}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.team.owner?.teamName | truncate:22}} </td>
       </ng-container>
 
       <ng-container matColumnDef="owner">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Owner</th>
-        <td mat-cell *matCellDef="let element"> {{element.team.owner?.ownerName}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.team.owner?.ownerName | truncate: 22}} </td>
       </ng-container>
 
       <ng-container matColumnDef="tier">
