@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
-import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {TeamMockDraftPick} from '../../model/mockDraft';
 import {MockDraftService} from '../../services/mock-draft.service';
 import {LeagueService} from '../../../services/league.service';

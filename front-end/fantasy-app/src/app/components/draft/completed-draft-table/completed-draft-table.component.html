@@ -27,11 +27,11 @@
     </mat-card>
     <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="draft-metric-box">
       <mat-card-subtitle>Best Draft</mat-card-subtitle>
-      <div>{{bestTeamDraft.team.owner.ownerName}} <span [ngClass]="{'urgent__alert': bestTeamDraft.valueAdded < 0, 'success__alert': bestTeamDraft.valueAdded > 0}">{{bestTeamDraft.valueAdded}}</span></div>
+      <div>{{bestTeamDraft?.team?.owner?.ownerName}} <span [ngClass]="{'urgent__alert': bestTeamDraft.valueAdded < 0, 'success__alert': bestTeamDraft.valueAdded > 0}">{{bestTeamDraft.valueAdded}}</span></div>
     </mat-card>
     <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="draft-metric-box">
       <mat-card-subtitle>Worst Draft</mat-card-subtitle>
-      <div>{{worstTeamDraft.team.owner.ownerName}} <span [ngClass]="{'urgent__alert': worstTeamDraft.valueAdded < 0, 'success__alert': worstTeamDraft.valueAdded > 0}">{{worstTeamDraft.valueAdded}}</span></div>
+      <div>{{worstTeamDraft?.team?.owner?.ownerName}} <span [ngClass]="{'urgent__alert': worstTeamDraft.valueAdded < 0, 'success__alert': worstTeamDraft.valueAdded > 0}">{{worstTeamDraft.valueAdded}}</span></div>
     </mat-card>
   </div>
   <div>
@@ -91,8 +91,8 @@
             <!-- Value Column -->
             <ng-container matColumnDef="selectedPlayer">
               <mat-header-cell *matHeaderCellDef>Selected Pick (current value)</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{configService.isMobile ? element.position + ' ' + element.lastName : element.position + ' ' + element.firstName + ' ' + element.lastName}}
-                - {{leagueService.selectedLeague.isSuperflex ? getPlayerBySleeperId(element.sleeperId)?.sf_trade_value || 'None' : getPlayerBySleeperId(element.sleeperId)?.trade_value || 'None'}}
+              <mat-cell *matCellDef="let element">{{configService.isMobile ? element.position || leagueService.platformPlayersMap[element.playerId].position + ' ' + (element.lastName || leagueService.platformPlayersMap[element.playerId].full_name) : element.position || leagueService.platformPlayersMap[element.playerId].position + ' ' + (element.firstName ? (element.firstName + ' ' + element.lastName) : leagueService.platformPlayersMap[element.playerId].full_name)}}
+                - {{leagueService.selectedLeague.isSuperflex ? getPlayerByPlayerPlatformId(element.playerId)?.sf_trade_value || 'None' : getPlayerByPlayerPlatformId(element.playerId)?.trade_value || 'None'}}
               </mat-cell>
             </ng-container>
 
@@ -104,10 +104,10 @@
                   <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item *ngIf="getPlayerBySleeperId(element.sleeperId)" (click)="openPlayerComparison(getPlayerBySleeperId(element.sleeperId))">
+                  <button mat-menu-item *ngIf="getPlayerByPlayerPlatformId(element.playerId)" (click)="openPlayerComparison(getPlayerByPlayerPlatformId(element.playerId))">
                     <span>Add to Player Comparison</span>
                   </button>
-                  <button *ngIf="element.position !== 'PI' && getPlayerBySleeperId(element.sleeperId)" mat-menu-item [routerLink]="['../../players/details/', getPlayerBySleeperId(element.sleeperId)?.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+                  <button *ngIf="element.position !== 'PI' && getPlayerByPlayerPlatformId(element.playerId)" mat-menu-item [routerLink]="['../../players/details/', getPlayerByPlayerPlatformId(element.playerId)?.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
                     <span>View Player Page</span>
                   </button>
                   <button mat-menu-item [routerLink]="['../team', getOwnerName(element.rosterId)]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">

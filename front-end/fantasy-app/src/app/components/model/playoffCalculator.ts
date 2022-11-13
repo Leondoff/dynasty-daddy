@@ -1,4 +1,4 @@
-import {LeagueTeam, LeagueTeamMatchUpData} from '../../model/LeagueTeam';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
 import {MatchUpUI} from './matchup';
 
 export class Division {

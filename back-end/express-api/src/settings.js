@@ -13,5 +13,5 @@ export const DB_PORT = process.env.DO_DB_PORT;
 // export const DB_USER = 'postgres';
 // export const DB_PWD = 'postgres';
 // export const DB_HOST = 'localhost';
-// export const DB_DB = 'player_rankings';
+// export const DB_DB = 'dynasty_daddy';
 // export const DB_PORT = 5432;

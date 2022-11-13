@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ChartOptions, ChartType} from 'chart.js';

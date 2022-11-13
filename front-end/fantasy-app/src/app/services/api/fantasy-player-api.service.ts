@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/FantasyPlayer';
+import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/assets/FantasyPlayer';
 import {HttpClient} from '@angular/common/http';
 import {FantasyPlayerApiConfigService} from './fantasy-player-api-config.service';
 import {Observable, of} from 'rxjs';

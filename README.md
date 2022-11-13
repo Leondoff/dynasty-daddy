@@ -2,12 +2,15 @@
 
 *This project is currently in Beta and is deployed to https://dynasty-daddy.com.*
 
-Dynasty Daddy is a webapp that integrates with Sleeper's api and scrapes KeepTradeCut's player evaluations to create metrics on each owners fantasy league.
-
+Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes KeepTradeCut's player evaluations to create metrics on each owner's fantasy league.
 
 ## Goal
 
 The goal is to provide users with a frictionless way to see player value, team value, draft breakdowns, and more. When managing my teams I would constantly have to switch between multiple websites to figure out what moves I should make. I wanted to find a way to spend less time doing research and leverage the data in more ways than before. Thus Dynasty Daddy was born to help me beat my friends in fantasy easier!
+
+### Supported Platforms
+<img src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw" alt="Sleeper" title="Sleeper" width="50px">
+<img src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif" alt="MyFantasyLeague" title="MyFantasyLeague" width="50px"/>
 
 ## Architecture
 
@@ -74,6 +77,7 @@ First, clone repo and open up in your preferred IDE.
 Jeremy Timperio - Creator, Full Stack Developer
 
 ### Support Me Here
+<a href="https://twitter.com/DynastyDaddyff"><img src="	https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"/></a>
 <a href="https://discord.gg/SJJuQBJqda"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Join Community Badge"/></a>
 <a href="https://www.youtube.com/channel/UC9SOfhKyR3MQj8xB778rhnA/featured"><img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Subscribe"/></a>
 <a href="https://www.buymeacoffee.com/jertimperio"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Support"/></a>

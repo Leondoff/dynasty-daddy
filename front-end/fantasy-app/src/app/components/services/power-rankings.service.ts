@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {LeagueTeam} from '../../model/LeagueTeam';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {PositionPowerRanking, TeamPowerRanking} from '../model/powerRankings';
 import {LeagueService} from '../../services/league.service';
 import {PlayerService} from '../../services/player.service';
@@ -9,7 +9,8 @@ import {max, min} from 'simple-statistics';
 import {MatchupService} from './matchup.service';
 import {NflService} from '../../services/utilities/nfl.service';
 import {EloService} from '../../services/utilities/elo.service';
-import {LeagueType} from "../../model/LeagueUser";
+import {LeagueType} from '../../model/league/LeagueDTO';
+import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -63,9 +64,13 @@ export class PowerRankingsService {
     }
   }
 
-  mapPowerRankings(teams: LeagueTeam[], players: FantasyPlayer[]): Observable<TeamPowerRanking[]> {
+  mapPowerRankings(
+    teams: LeagueTeam[],
+    players: FantasyPlayer[],
+    leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER
+  ): Observable<TeamPowerRanking[]> {
     if (this.powerRankings.length === 0) {
-      this.generatePowerRankings(teams, players).subscribe(processedTeams => {
+      this.generatePowerRankings(teams, players, leaguePlatform).subscribe(processedTeams => {
         this.powerRankings = processedTeams;
       });
     }
@@ -73,12 +78,18 @@ export class PowerRankingsService {
   }
 
   /**
-   * maps players to sleeper id's on rosters
+   * maps players to player platform id's on rosters
    * @param teams
    * @param players
+   * @param leaguePlatform
    * @param isMockRankings boolean
    */
-  generatePowerRankings(teams: LeagueTeam[], players: FantasyPlayer[], isMockRankings: boolean = false): Observable<TeamPowerRanking[]> {
+  generatePowerRankings(
+    teams: LeagueTeam[],
+    players: FantasyPlayer[],
+    leaguePlatform: LeaguePlatform,
+    isMockRankings: boolean = false
+  ): Observable<TeamPowerRanking[]> {
     const newPowerRankings: TeamPowerRanking[] = [];
     try {
       teams?.map((team) => {
@@ -86,9 +97,9 @@ export class PowerRankingsService {
         let sfTradeValueTotal = 0;
         let tradeValueTotal = 0;
         // TODO refactor this section both comparisons are redundant
-        for (const sleeperId of team.roster?.players) {
+        for (const playerPlatformId of team?.roster?.players) {
           for (const player of players) {
-            if (sleeperId === player.sleeper_id) {
+            if (playerPlatformId === this.playerService.getPlayerPlatformId(player, leaguePlatform)) {
               roster.push(player);
               sfTradeValueTotal += player.sf_trade_value;
               tradeValueTotal += player.trade_value;

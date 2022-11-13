@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {TradeFinderService} from '../../services/trade-finder.service';
 
 @Component({

@@ -24,6 +24,7 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.playersService.loadPlayerValuesForToday();
     this.mapPowerRankings();
     // TODO potentially improve how this functions
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.pipe(delay(1500)).subscribe(() => {
@@ -39,7 +40,11 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     // TODO ugly fix for race condition on adding upcoming draft picks to playoff calculator
     if (this.leagueService.upcomingDrafts.length !== 0) {
       this.powerRankingService.reset();
-      this.powerRankingService.mapPowerRankings(this.leagueService.leagueTeamDetails, this.playersService.playerValues);
+      this.powerRankingService.mapPowerRankings(
+        this.leagueService.leagueTeamDetails,
+        this.playersService.playerValues,
+        this.leagueService.selectedLeague.leaguePlatform
+      );
     }
   }
 }

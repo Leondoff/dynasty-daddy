@@ -3,7 +3,7 @@ import {LeagueService} from '../../services/league.service';
 import {BaseComponent} from '../base-component.abstract';
 import {ConfigService} from '../../services/init/config.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import {Router} from '@angular/router';
+import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +15,6 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   constructor(public leagueService: LeagueService,
               public configService: ConfigService,
-              private router: Router,
               public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -24,6 +23,16 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   }
 
   openLeague(): void {
-    window.open('https://sleeper.com/leagues/' + this.leagueService.selectedLeague.leagueId + '/team', '_blank');
+    switch (this.leagueService.selectedLeague.leaguePlatform) {
+      case LeaguePlatform.MFL:
+        window.open('https://www46.myfantasyleague.com/' + this.leagueService.selectedLeague.season + '/home/'
+          + this.leagueService.selectedLeague.leagueId + '#0', '_blank');
+        break;
+      case LeaguePlatform.SLEEPER:
+        window.open('https://sleeper.com/leagues/' + this.leagueService.selectedLeague.leagueId + '/team', '_blank');
+        break;
+      default:
+        console.error('Unsupported League Platform', this.leagueService.selectedLeague.leaguePlatform);
+    }
   }
 }

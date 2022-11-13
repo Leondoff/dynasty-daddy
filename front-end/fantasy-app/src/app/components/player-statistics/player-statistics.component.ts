@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {ConfigService} from '../../services/init/config.service';
 import {LeagueService} from '../../services/league.service';
 import {MatOptionSelectionChange} from '@angular/material/core';
@@ -134,7 +134,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
       this.updatePlayerFilters();
     }
     if (!this.playersLoaded) {this.playerService.loadPlayerValuesForToday();};
-    this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
+    this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
         this.playersLoaded = true;
         this.updatePlayerFilters();
       }),

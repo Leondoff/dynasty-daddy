@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {EndpointsService} from '../endpoints.service';
 import {DeviceDetectorService} from 'ngx-device-detector';
-import {ConfigOption} from '../../model/ConfigOption';
+import {ConfigOption} from '../../model/config/ConfigOption';
 import {ConfigApiService} from '../api/config/config-api.service';
 import {BaseComponent} from '../../components/base-component.abstract';
 

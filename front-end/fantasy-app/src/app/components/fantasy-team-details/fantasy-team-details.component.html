@@ -17,7 +17,7 @@
   <div class="flex-details-container margin-top-50">
     <div class="flex-item-details grid-15">
       <div class="profile--pic">
-        <img #image [src]="'https://sleepercdn.com/avatars/thumbs/' + selectedTeam?.owner?.avatar"
+        <img #image [src]="selectedTeam?.owner?.getAvatarForLeague(leagueService.selectedLeague.leaguePlatform)"
              (error)="image.hidden = true" [hidden]="image.hidden" class="responsive">
       </div>
     </div>

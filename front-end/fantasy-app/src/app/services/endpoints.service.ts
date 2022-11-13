@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {FantasyPlayerApiConfigService} from './api/fantasy-player-api-config.service';
 import {SleeperApiConfigService} from './api/sleeper/sleeper-api-config.service';
 import {ConfigApiConfigService} from './api/config/config-api-config.service';
+import {MflApiConfigService} from './api/mfl/mfl-api-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class EndpointsService {
 
   constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
               private sleeperApiConfigService: SleeperApiConfigService,
+              private mflAPIConfigService: MflApiConfigService,
               private configApiConfigService: ConfigApiConfigService) {
   }
 
@@ -36,5 +38,17 @@ export class EndpointsService {
     this.sleeperApiConfigService.getSleeperProjectionsEndpoint = 'https://api.sleeper.app/v1/projections/nfl/regular/';
     this.sleeperApiConfigService.getSleeperNFLStateEndpoint = 'https://api.sleeper.app/v1/state/nfl';
     this.sleeperApiConfigService.getSleeperPlayersEndpoint = 'https://api.sleeper.app/v1/players/nfl';
+
+    // mfl endpoints
+    this.mflAPIConfigService.getMFLLeagueEndpoint = this.baseUrl + '/v1/mfl/league';
+    this.mflAPIConfigService.getMFLPlayersEndpoint = this.baseUrl + '/v1/mfl/players';
+    this.mflAPIConfigService.getMFLScheduleEndpoint = this.baseUrl + '/v1/mfl/schedule';
+    this.mflAPIConfigService.getMFLTransactionsEndpoint = this.baseUrl + '/v1/mfl/transactions';
+    this.mflAPIConfigService.getMFLPlayoffBrackets = this.baseUrl + '/v1/mfl/playoffBrackets';
+    this.mflAPIConfigService.getMFLDraftResultsEndpoint = this.baseUrl + '/v1/mfl/draftResults';
+    this.mflAPIConfigService.getMFLLeagueStandingEndpoint = this.baseUrl + '/v1/mfl/leagueStandings';
+    this.mflAPIConfigService.getMFLRostersEndpoint = this.baseUrl + '/v1/mfl/rosters';
+    this.mflAPIConfigService.getMFLFutureDraftPicksEndpoint = this.baseUrl + '/v1/mfl/futureDraftPicks';
+
   }
 }

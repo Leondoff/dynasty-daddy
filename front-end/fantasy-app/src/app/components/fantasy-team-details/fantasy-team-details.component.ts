@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {LeagueService} from '../../services/league.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {LeagueTeam} from '../../model/LeagueTeam';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
 import {PowerRankingsService} from '../services/power-rankings.service';
 import {PlayerService} from '../../services/player.service';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {PlayerComparisonService} from '../services/player-comparison.service';
 import {TransactionsService} from '../services/transactions.service';
 import {TransactionUI} from '../model/transaction';
@@ -50,11 +50,13 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
               public leagueSwitchService: LeagueSwitchService,
               public transactionsService: TransactionsService,
               public displayService: DisplayService,
+              private playersService: PlayerService,
               public configService: ConfigService) {
     super();
   }
 
   ngOnInit(): void {
+    this.playersService.loadPlayerValuesForToday();
     this.addSubscriptions(
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
@@ -91,8 +93,8 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     const teamIndex = this.leagueService.leagueTeamDetails.map(e => e.owner?.ownerName).indexOf(ownerName);
     this.selectedTeam = this.leagueService.leagueTeamDetails[teamIndex];
     // generate roster and sort
-    for (const sleeperId of this.selectedTeam.roster.players) {
-      const player = this.playerService.getPlayerBySleeperId(sleeperId);
+    for (const playerPlatformId of this.selectedTeam.roster.players) {
+      const player = this.playerService.getPlayerByPlayerPlatformId(playerPlatformId, this.leagueService.selectedLeague.leaguePlatform);
       if (player) {
         this.roster.push(player);
       }

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatchUpProbability} from '../../../model/playoffCalculator';
-import {LeagueTeam} from '../../../../model/LeagueTeam';
+import {LeagueTeam} from '../../../../model/league/LeagueTeam';
 import {LeagueService} from '../../../../services/league.service';
 import {ColorService} from '../../../services/color.service';
 import {DisplayService} from '../../../../services/utilities/display.service';

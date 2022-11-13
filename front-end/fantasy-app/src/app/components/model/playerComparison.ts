@@ -1,4 +1,4 @@
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 
 export class PlayerComparison {
   name: string;

@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {FantasyPlayer} from '../../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
@@ -101,7 +101,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
 
   ngAfterViewInit(): void {
     this.generateDataSets();
-    this.addSubscriptions(this.playerService.$currentPlayerValuesLoaded.subscribe(() => {
+    this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
       this.generateDataSets();
       this.cdr.detectChanges();
     }));

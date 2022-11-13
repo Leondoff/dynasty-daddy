@@ -13,6 +13,7 @@ import {ActivatedRoute} from '@angular/router';
 import {AddPlayerComparisonModalComponent} from "../modals/add-player-comparison-modal/add-player-comparison-modal.component";
 import {EloTeamComparisonModalComponent} from "../modals/elo-team-comparison-modal/elo-team-comparison-modal.component";
 import {MatDialog} from "@angular/material/dialog";
+import {PlayerService} from "../../services/player.service";
 
 @Component({
   selector: 'app-playoff-calculator',
@@ -69,6 +70,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     public powerRankingsService: PowerRankingsService,
     public matchupService: MatchupService,
     public configService: ConfigService,
+    private playerService: PlayerService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
     public leagueSwitchService: LeagueSwitchService) {
@@ -76,6 +78,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   }
 
   ngOnInit(): void {
+    this.playerService.loadPlayerValuesForToday();
     this.initPlayoffCalc();
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
           this.initPlayoffCalc();

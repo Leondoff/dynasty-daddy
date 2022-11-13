@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
 import {TransactionPlayer, TransactionUI} from '../model/transaction';
-import {LeagueRawTradePicksData, LeagueTeam, LeagueTeamTransactionData} from '../../model/LeagueTeam';
+import {LeagueTeam} from '../../model/league/LeagueTeam';
 import {LeagueService} from '../../services/league.service';
 import {NflService} from '../../services/utilities/nfl.service';
 import {PlayerService} from '../../services/player.service';
+import {LeagueTeamTransactionDTO, TransactionStatus} from '../../model/league/LeagueTeamTransactionDTO';
+import {LeagueRawTradePicksDTO} from '../../model/league/LeagueRawTradePicksDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,7 @@ export class TransactionsService {
   }
 
   /**
-   * generate team transaction history from sleeper team object
+   * generate team transaction history from fantasy team object
    * @param selectedTeam
    */
   generateTeamTransactionHistory(selectedTeam: LeagueTeam): TransactionUI[] {
@@ -26,8 +28,8 @@ export class TransactionsService {
       for (let i = this.leagueService.selectedLeague.startWeek || 1;
            i <= Object.keys(this.leagueService.selectedLeague?.leagueTransactions).length;
            i++) {
-        for (const transaction of this.leagueService.selectedLeague?.leagueTransactions[i] as LeagueTeamTransactionData[]) {
-          if (transaction.rosterIds.includes(selectedTeam.roster.rosterId) && transaction.status === 'complete') {
+        for (const transaction of this.leagueService.selectedLeague?.leagueTransactions[i] as LeagueTeamTransactionDTO[]) {
+          if (transaction.rosterIds?.includes(selectedTeam.roster.rosterId) && transaction.status === TransactionStatus.COMPLETED) {
             teamActivity.push(this.formatTransactionUI(transaction, selectedTeam));
           }
         }
@@ -49,17 +51,17 @@ export class TransactionsService {
    * @param selectedTeam
    * @private
    */
-  private formatTransactionUI(transaction: LeagueTeamTransactionData, selectedTeam: LeagueTeam): TransactionUI {
+  private formatTransactionUI(transaction: LeagueTeamTransactionDTO, selectedTeam: LeagueTeam): TransactionUI {
     const adds = [];
-    for (const sleeperId in transaction.adds) {
-      if (transaction.adds[sleeperId] === selectedTeam.roster.rosterId) {
-        adds.push(this.getPlayerDetails(sleeperId, selectedTeam.roster.rosterId));
+    for (const playerPlatformId in transaction.adds) {
+      if (transaction.adds[playerPlatformId] === selectedTeam.roster.rosterId) {
+        adds.push(this.getPlayerDetails(playerPlatformId, selectedTeam.roster.rosterId));
       }
     }
     const drops = [];
-    for (const sleeperId in transaction.drops) {
-      if (transaction.drops[sleeperId] === selectedTeam.roster.rosterId) {
-        drops.push(this.getPlayerDetails(sleeperId, selectedTeam.roster.rosterId));
+    for (const playerPlatformId in transaction.drops) {
+      if (transaction.drops[playerPlatformId] === selectedTeam.roster.rosterId) {
+        drops.push(this.getPlayerDetails(playerPlatformId, selectedTeam.roster.rosterId));
       }
     }
     for (const draftPick of transaction.draftpicks) {
@@ -73,20 +75,20 @@ export class TransactionsService {
   }
 
   /**
-   * get player details from sleeper id
-   * @param sleeperId
+   * get player details from player platform id
+   * @param playerPlatformId
    * @param rosterId
    * @private
    */
-  private getPlayerDetails(sleeperId: string, rosterId: number): TransactionPlayer {
-    const player = this.playerService.getPlayerBySleeperId(sleeperId);
+  private getPlayerDetails(playerPlatformId: string, rosterId: number): TransactionPlayer {
+    const player = this.playerService.getPlayerByPlayerPlatformId(playerPlatformId, this.leagueService.selectedLeague.leaguePlatform);
     if (player) {
       return {
         playerName: player.full_name, value: this.leagueService.selectedLeague.isSuperflex ?
           player.sf_trade_value : player.trade_value, rosterId
       };
     } else {
-      return {playerName: this.leagueService.sleeperPlayers[sleeperId].full_name, value: 0, rosterId};
+      return {playerName: this.leagueService.platformPlayersMap[playerPlatformId]?.full_name, value: 0, rosterId};
     }
   }
 
@@ -96,7 +98,7 @@ export class TransactionsService {
    * @param rosterId team roster id
    * @private
    */
-  private processTransactionPicks(draftPick: LeagueRawTradePicksData, rosterId: number): TransactionPlayer {
+  private processTransactionPicks(draftPick: LeagueRawTradePicksDTO, rosterId: number): TransactionPlayer {
     const pick = this.playerService.getEstimatePickValueBy(draftPick.round, draftPick.season);
     if (pick) {
       return {
@@ -200,7 +202,7 @@ export class TransactionsService {
       for (let i = this.leagueService.selectedLeague.startWeek; i <= endWeek; i++) {
         if (this.leagueService.selectedLeague.leagueTransactions[i]) {
           this.leagueService.selectedLeague.leagueTransactions[i]?.map(transaction => {
-            transaction?.rosterIds.map(team => {
+            transaction?.rosterIds?.map(team => {
               transaction.type === 'trade' ? this.transactionAggregate[team].trades++ : this.transactionAggregate[team].actions++;
             });
           });

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {StudPlayerResponse, TradePackage} from '../model/tradePackage';
-import {FantasyPlayer} from '../../model/FantasyPlayer';
+import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {PlayerService} from '../../services/player.service';
 import {LeagueService} from '../../services/league.service';
 

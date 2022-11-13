@@ -1,6 +1,3 @@
-import {FantasyPlayer} from '../../model/FantasyPlayer';
-import {TeamPowerRanking} from './powerRankings';
-
 export class TeamMockDraftPick {
   constructor(num: number, display: string, ownerName: string, teamName: string) {
     this.pick = num;
