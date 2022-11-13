@@ -29,7 +29,7 @@ export class TransactionsService {
            i <= Object.keys(this.leagueService.selectedLeague?.leagueTransactions).length;
            i++) {
         for (const transaction of this.leagueService.selectedLeague?.leagueTransactions[i] as LeagueTeamTransactionDTO[]) {
-          if (transaction.rosterIds.includes(selectedTeam.roster.rosterId) && transaction.status === TransactionStatus.COMPLETED) {
+          if (transaction.rosterIds?.includes(selectedTeam.roster.rosterId) && transaction.status === TransactionStatus.COMPLETED) {
             teamActivity.push(this.formatTransactionUI(transaction, selectedTeam));
           }
         }
@@ -202,7 +202,7 @@ export class TransactionsService {
       for (let i = this.leagueService.selectedLeague.startWeek; i <= endWeek; i++) {
         if (this.leagueService.selectedLeague.leagueTransactions[i]) {
           this.leagueService.selectedLeague.leagueTransactions[i]?.map(transaction => {
-            transaction?.rosterIds.map(team => {
+            transaction?.rosterIds?.map(team => {
               transaction.type === 'trade' ? this.transactionAggregate[team].trades++ : this.transactionAggregate[team].actions++;
             });
           });

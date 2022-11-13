@@ -112,6 +112,7 @@ export class MflService {
         });
         leagueWrapper.leagueTeamDetails = teams;
         leagueWrapper.completedDrafts = [completedDraft];
+        console.log(leagueWrapper)
         return leagueWrapper;
       }));
   }
@@ -123,7 +124,7 @@ export class MflService {
    */
   fromMFLLeague(leagueInfo: any, year: string = null): LeagueDTO {
     const historyList = leagueInfo?.history?.league.length > 1 ? leagueInfo?.history?.league?.sort((a, b) => b.year - a.year) : [];
-    const divisions: string[] = [...new Set<string>(leagueInfo.franchises.franchise.map(team => team.division))] || [];
+    const divisions: string[] = [...new Set<string>(leagueInfo?.divisions?.division.map(team => team?.name))] || [];
     const rosterSize = Number(leagueInfo.rosterSize) + (Number(leagueInfo.injuredReserve) || 0) + (Number(leagueInfo.taxiSquad) || 0);
     const mflLeague = new LeagueDTO(
       leagueInfo.starters.position[0].limit !== '1',
@@ -161,18 +162,21 @@ export class MflService {
    * @param rosterSize size of roster
    */
   private generateRosterPositions(starters, rosterSize): string[] {
-    let count = starters.count;
+    let count = Number(starters.count) - (Number(starters.idp_starters) || Number(starters.iop_starters) || 0);
     const positionMap = [];
+    const validStartersList = ['QB', 'RB', 'WR', 'TE'];
     // generate min count
     starters.position.forEach(group => {
-      const minAmount = Number(group.limit.substring(0, 1));
-      for (let i = 0; i < minAmount; i++) {
-        positionMap.push(group.name);
-        count--;
-      }
-      if (group.name === 'QB' && group.limit.length > 1) {
-        positionMap.push('SUPER_FLEX');
-        count--;
+      if (validStartersList.includes(group.name)) {
+        const minAmount = Number(group.limit.substring(0, 1));
+        for (let i = 0; i < minAmount; i++) {
+          positionMap.push(group.name);
+          count--;
+        }
+        if (group.name === 'QB' && group.limit.length > 1) {
+          positionMap.push('SUPER_FLEX');
+          count--;
+        }
       }
     });
     for (let i = 0; i < count; i++) {
@@ -292,16 +296,20 @@ export class MflService {
         transaction = this.processTransactionInTrade(transaction, trans.franchise1_gave_up.split(','), rosterId, rosterId2, season);
         transaction.rosterIds = [rosterId, rosterId2];
       } else {
-        const players = trans.transaction.split('|');
-        players[1].split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4).forEach(playerId => {
-          drops[playerId] = rosterId;
-        });
-        players[0].split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4).forEach(playerId => {
-          adds[playerId] = rosterId;
-        });
-        transaction.rosterIds = [rosterId];
-        transaction.drops = drops;
-        transaction.adds = adds;
+        if (trans.transaction) {
+          const players = trans?.transaction?.split('|');
+          players[1]?.split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4)
+            .forEach(playerId => {
+            drops[playerId] = rosterId;
+          });
+          players[0]?.split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4)
+            .forEach(playerId => {
+            adds[playerId] = rosterId;
+          });
+          transaction.rosterIds = [rosterId];
+          transaction.drops = drops;
+          transaction.adds = adds;
+        }
       }
       transaction.transactionId = 'not provided';
       transaction.status = TransactionStatus.COMPLETED;

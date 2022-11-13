@@ -26,7 +26,7 @@
         <app-trade-finder-table [assets]="teamPlayers" [isSuperflex]="isSuperflex"></app-trade-finder-table>
       </div>
 
-      <div fxFlex="50%" fxFlex.xs="100%" fxFlex.sm="100%" class="item">
+      <div fxFlex="50%" fxFlex.xs="100%" fxFlex.sm="100%" class="item" *ngIf="leagueService.selectedLeague.type === 2">
         <div class="mid-bold-text center-text margin-top-10 margin-bot-10">Draft Capital</div>
         <app-trade-finder-table [assets]="teamPicks" [isSuperflex]="isSuperflex"></app-trade-finder-table>
       </div>
