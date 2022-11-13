@@ -141,7 +141,7 @@ export class MflService {
       LeaguePlatform.MFL);
     mflLeague.rosterSize = rosterSize;
     mflLeague.startWeek = Number(leagueInfo.startWeek);
-    mflLeague.type = leagueInfo.keeperType === 'dynasty' ? LeagueType.DYNASTY : LeagueType.UNKNOWN;
+    mflLeague.type = this.getMFLLeagueType(leagueInfo.keeperType);
     mflLeague.playoffStartWeek = Number(leagueInfo.lastRegularSeasonWeek) + 1;
     mflLeague.divisionNames = divisions;
     mflLeague.divisions = divisions.length;
@@ -154,6 +154,17 @@ export class MflService {
       draftPoolType: leagueInfo.draftPlayerPool
     };
     return mflLeague;
+  }
+
+  private getMFLLeagueType(leagueType): LeagueType {
+    switch (leagueType) {
+      case 'keeper':
+        return LeagueType.KEEPER;
+      case undefined:
+        return LeagueType.REDRAFT;
+      default:
+        return LeagueType.DYNASTY;
+    }
   }
 
   /**
@@ -208,9 +219,13 @@ export class MflService {
    * @param playoffStartWeek playoff start week number
    */
   private marshallPlayoffs(playoffs: any, playoffStartWeek: number): LeaguePlayoffMatchUpDTO[] {
-    return playoffs?.map(matchUp => {
-      return new LeaguePlayoffMatchUpDTO(null).fromMFL(matchUp, playoffStartWeek);
-    }) || [];
+    if (Array.isArray(playoffs)) {
+      return playoffs?.map(matchUp => {
+        return new LeaguePlayoffMatchUpDTO(null).fromMFL(matchUp, playoffStartWeek);
+      }) || [];
+    } else {
+      return playoffs ? [new LeaguePlayoffMatchUpDTO(null).fromMFL(playoffs, playoffStartWeek)] : [];
+    }
   }
 
   /**

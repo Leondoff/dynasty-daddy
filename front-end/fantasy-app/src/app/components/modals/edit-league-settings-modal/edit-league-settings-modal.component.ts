@@ -10,7 +10,7 @@ import {LeagueSwitchService} from '../../services/league-switch.service';
 })
 export class EditLeagueSettingsModalComponent implements OnInit {
 
-  leagueTypes: string[] = ['Redraft', 'Other', 'Dynasty'];
+  leagueTypes: string[] = ['Redraft', 'Keeper', 'Dynasty', 'Other'];
 
   selectedLeagueType: number = 2;
 
