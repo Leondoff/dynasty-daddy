@@ -62,6 +62,7 @@ export class LeagueDTO {
 
 export enum LeagueType {
   REDRAFT = 0,
-  UNKNOWN = 1,
-  DYNASTY = 2
+  KEEPER = 1,
+  DYNASTY = 2,
+  OTHER = 3
 }
