@@ -160,7 +160,6 @@ export class LeagueSwitchService extends BaseComponent {
     const leaguePlatform = params.platform;
     const league = params.league;
     if (league && !this.selectedLeague) {
-      this.playersService.loadPlayerValuesForToday();
       this.addSubscriptions(
         this.playersService.currentPlayerValuesLoaded$.subscribe(() => {
           if (user) {

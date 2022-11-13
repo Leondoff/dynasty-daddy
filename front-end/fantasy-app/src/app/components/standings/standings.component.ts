@@ -12,6 +12,7 @@ import {PowerRankingsService} from '../services/power-rankings.service';
 import {ActivatedRoute} from '@angular/router';
 import {NflService} from '../../services/utilities/nfl.service';
 import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
+import {PlayerService} from "../../services/player.service";
 
 @Component({
   selector: 'app-standings',
@@ -26,6 +27,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
               public configService: ConfigService,
               private route: ActivatedRoute,
               public powerRankingsService: PowerRankingsService,
+              private playerService: PlayerService,
               private nflService: NflService,
               public leagueSwitchService: LeagueSwitchService,
               public transactionService: TransactionsService) {
@@ -41,6 +43,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
   pointsForCols = ['week', 'points', 'team1PointsFor', 'score', 'team2Name'];
 
   ngOnInit(): void {
+    this.playerService.loadPlayerValuesForToday();
     this.setUpStandings();
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
           this.setUpStandings();

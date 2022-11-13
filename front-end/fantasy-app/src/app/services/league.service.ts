@@ -71,7 +71,6 @@ export class LeagueService {
     if (this.selectedLeague.leaguePlatform === LeaguePlatform.MFL) {
       return this.mflService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
         this.setServiceFromLeagueWrapper(league);
-        console.log(this.selectedLeague)
         this.mflApiService.getMFLPlayers(selectedLeague.season, selectedLeague.leagueId).subscribe((players) => {
           this.platformPlayersMap = players;
           return of(league);

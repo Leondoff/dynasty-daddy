@@ -50,11 +50,13 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
               public leagueSwitchService: LeagueSwitchService,
               public transactionsService: TransactionsService,
               public displayService: DisplayService,
+              private playersService: PlayerService,
               public configService: ConfigService) {
     super();
   }
 
   ngOnInit(): void {
+    this.playersService.loadPlayerValuesForToday();
     this.addSubscriptions(
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);

@@ -107,12 +107,13 @@ export class MflService {
             null
           );
           ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId];
+          // index in the division array so we want 0 to be default
+          ddTeam.roster.teamMetrics.division = team.division ? Number(team.division) + 1 : 0;
           ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId];
           teams.push(ddTeam);
         });
         leagueWrapper.leagueTeamDetails = teams;
         leagueWrapper.completedDrafts = [completedDraft];
-        console.log(leagueWrapper)
         return leagueWrapper;
       }));
   }
@@ -221,7 +222,7 @@ export class MflService {
    */
   private marshallDraftResults(draft: any, leagueId: string, playerType: string, teamCount: number): CompletedDraft {
     const draftId = Math.round(Math.random() * 100);
-    const picks = draft?.draftPick?.map(pick => {
+    const picks = draft?.draftPick?.filter(pick => pick.player !== '----').map(pick => {
       return (new LeagueCompletedPickDTO(null).fromMFL(pick, teamCount));
     });
     return new CompletedDraft(

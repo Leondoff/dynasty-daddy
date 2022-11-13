@@ -24,6 +24,7 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.playersService.loadPlayerValuesForToday();
     this.mapPowerRankings();
     // TODO potentially improve how this functions
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.pipe(delay(1500)).subscribe(() => {

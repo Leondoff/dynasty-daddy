@@ -63,6 +63,8 @@ export class PlayerService {
    * loads all player data upon entering site
    */
   loadPlayerValuesForToday(): void {
+    // TODO Improve how this works
+    if (this.playerValues.length > 0) return;
     this.fantasyPlayerApiService.getPlayerValuesForToday().subscribe((currentPlayers) => {
       this.unfilteredPlayerValues = currentPlayers;
       this.playerValues = currentPlayers.filter(player => {
