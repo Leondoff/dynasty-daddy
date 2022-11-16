@@ -38,6 +38,7 @@ export class EditLeagueSettingsModalComponent implements OnInit {
     this.leagueService.selectedLeague.type = this.selectedLeagueType;
     this.leagueService.selectedLeague.medianWins = this.isMedian;
     this.leagueSwitchService.loadLeague(this.leagueService.selectedLeague);
+    this.closeDialog();
   }
 
   /**

@@ -34,9 +34,9 @@ export class MflService {
    * @param leagueId string
    */
   loadLeagueFromId$(year: string, leagueId: string): Observable<LeagueDTO> {
-      return this.mflApiService.getMFLLeague(year, leagueId).pipe(map((leagueInfo) => {
-        return this.fromMFLLeague(leagueInfo.league, year);
-      }));
+    return this.mflApiService.getMFLLeague(year, leagueId).pipe(map((leagueInfo) => {
+      return this.fromMFLLeague(leagueInfo.league, year);
+    }));
   }
 
   /**
@@ -71,51 +71,58 @@ export class MflService {
       teamMetrics = this.marshallLeagueTeamMetrics(metrics);
       return of(leagueRosters);
     })));
-    observableList.push(this.mflApiService.getMFLFutureDraftPicks(year, leagueId).pipe(map(draftPicks => {
-      teamDraftCapital = this.marshallFutureDraftCapital(draftPicks.futureDraftPicks.franchise);
-      return of(leagueRosters);
-    })));
+    // only load future draft capital if dynasty league
+    if (leagueWrapper.selectedLeague.type === LeagueType.DYNASTY) {
+      observableList.push(this.mflApiService.getMFLFutureDraftPicks(year, leagueId).pipe(map(draftPicks => {
+        teamDraftCapital = this.marshallFutureDraftCapital(draftPicks.futureDraftPicks.franchise);
+        return of(leagueRosters);
+      })));
+    }
     observableList.push(this.mflApiService.getMFLPlayoffBrackets(year, leagueId).pipe(map(playoffs => {
       playoffMatchUps = this.marshallPlayoffs(playoffs.playoffBrackets.playoffBracket, leagueWrapper.selectedLeague.playoffStartWeek);
       return of(leagueRosters);
     })));
-    observableList.push(this.mflApiService.getMFLDraftResults(year, leagueId).pipe(map(draftResults => {
-      completedDraft = this.marshallDraftResults(
-        draftResults.draftResults.draftUnit,
-        leagueId,
-        leagueWrapper?.selectedLeague?.metadata?.draftPoolType,
-        leagueWrapper.selectedLeague?.totalRosters
-      );
-      return of(leagueRosters);
-    })));
+    // only load draft if it existed on platform
+    if (leagueWrapper.selectedLeague.metadata.loadRosters === 'live_draft' ||
+      leagueWrapper.selectedLeague.metadata.loadRosters === 'email_draft') {
+      observableList.push(this.mflApiService.getMFLDraftResults(year, leagueId).pipe(map(draftResults => {
+        completedDraft = this.marshallDraftResults(
+          draftResults.draftResults.draftUnit,
+          leagueId,
+          leagueWrapper?.selectedLeague?.metadata?.draftPoolType,
+          leagueWrapper.selectedLeague?.totalRosters
+        );
+        return of(leagueRosters);
+      })));
+    }
     return forkJoin(observableList).pipe(map(() => {
-        leagueWrapper.selectedLeague.leagueMatchUps = leagueMatchUps;
-        leagueWrapper.selectedLeague.leagueTransactions = leagueTransactions;
-        leagueWrapper.playoffMatchUps = playoffMatchUps;
-        leagueWrapper.leaguePlatform = LeaguePlatform.MFL;
-        const teams = [];
-        leagueWrapper.selectedLeague?.metadata?.rosters?.forEach(team => {
-          const ddTeam = new LeagueTeam(null, null);
-          ddTeam.owner = new LeagueOwnerDTO(team.id, team.name, team.name, team.icon || this.DEFAULT_TEAM_LOGO);
-          const roster = leagueRosters.find(it => it.id === team.id).player;
-          ddTeam.roster = new LeagueRosterDTO(
-            this.formatRosterId(team.id),
-            team.id,
-            roster?.map(player => player.id),
-            roster?.filter(player => player.status === 'INJURED_RESERVE').map(player => player.id),
-            roster?.filter(player => player.status === 'TAXI_SQUAD').map(player => player.id),
-            null
-          );
-          ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId];
-          // index in the division array so we want 0 to be default
-          ddTeam.roster.teamMetrics.division = team.division ? Number(team.division) + 1 : 0;
-          ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId];
-          teams.push(ddTeam);
-        });
-        leagueWrapper.leagueTeamDetails = teams;
-        leagueWrapper.completedDrafts = [completedDraft];
-        return leagueWrapper;
-      }));
+      leagueWrapper.selectedLeague.leagueMatchUps = leagueMatchUps;
+      leagueWrapper.selectedLeague.leagueTransactions = leagueTransactions;
+      leagueWrapper.playoffMatchUps = playoffMatchUps;
+      leagueWrapper.leaguePlatform = LeaguePlatform.MFL;
+      const teams = [];
+      leagueWrapper.selectedLeague?.metadata?.rosters?.forEach(team => {
+        const ddTeam = new LeagueTeam(null, null);
+        ddTeam.owner = new LeagueOwnerDTO(team.id, team.name, team.name, team.icon || this.DEFAULT_TEAM_LOGO);
+        const roster = leagueRosters.find(it => it.id === team.id).player;
+        ddTeam.roster = new LeagueRosterDTO(
+          this.formatRosterId(team.id),
+          team.id,
+          roster?.map(player => player.id),
+          roster?.filter(player => player.status === 'INJURED_RESERVE').map(player => player.id),
+          roster?.filter(player => player.status === 'TAXI_SQUAD').map(player => player.id),
+          null
+        );
+        ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId];
+        // index in the division array so we want 0 to be default
+        ddTeam.roster.teamMetrics.division = team.division ? Number(team.division) + 1 : 0;
+        ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId];
+        teams.push(ddTeam);
+      });
+      leagueWrapper.leagueTeamDetails = teams;
+      leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
+      return leagueWrapper;
+    }));
   }
 
   /**
@@ -141,7 +148,7 @@ export class MflService {
       LeaguePlatform.MFL);
     mflLeague.rosterSize = rosterSize;
     mflLeague.startWeek = Number(leagueInfo.startWeek);
-    mflLeague.type = this.getMFLLeagueType(leagueInfo.keeperType);
+    mflLeague.type = this.getMFLLeagueType(leagueInfo.keeperType, leagueInfo.maxKeepers);
     mflLeague.playoffStartWeek = Number(leagueInfo.lastRegularSeasonWeek) + 1;
     mflLeague.divisionNames = divisions;
     mflLeague.divisions = divisions.length;
@@ -151,17 +158,18 @@ export class MflService {
     mflLeague.playoffTeams = 6;
     mflLeague.metadata = {
       rosters: leagueInfo.franchises.franchise,
-      draftPoolType: leagueInfo.draftPlayerPool
+      draftPoolType: leagueInfo.draftPlayerPool,
+      loadRosters: leagueInfo.loadRosters || 'live_draft'
     };
     return mflLeague;
   }
 
-  private getMFLLeagueType(leagueType): LeagueType {
+  private getMFLLeagueType(leagueType, maxKeeper): LeagueType {
     switch (leagueType) {
       case 'keeper':
         return LeagueType.KEEPER;
       case undefined:
-        return LeagueType.REDRAFT;
+        return maxKeeper === undefined || Number(maxKeeper) === 0 ? LeagueType.REDRAFT : LeagueType.DYNASTY;
       default:
         return LeagueType.DYNASTY;
     }
@@ -169,7 +177,6 @@ export class MflService {
 
   /**
    * generate roster positions and return formatted string array
-   * TODO update to handle idp & idp_flex
    * @param starters starters json list
    * @param rosterSize size of roster
    */
@@ -254,8 +261,12 @@ export class MflService {
   private marshallFutureDraftCapital(picks: any): {} {
     const picksDict = {};
     picks?.forEach(team => {
-      picksDict[team.id] = team.futureDraftPick.map(pick =>
-        new DraftCapital(team.id === pick.originalPickFor, Number(pick.round), 6, pick.year));
+      if (Array.isArray(team.futureDraftPick)) {
+        picksDict[team.id] = team.futureDraftPick?.map(pick =>
+          new DraftCapital(team.id === pick.originalPickFor, Number(pick.round), 6, pick.year));
+      } else {
+        picksDict[team.id] = picks ? [new DraftCapital(team.id === picks.originalPickFor, Number(picks.round), 6, picks.year)] : [];
+      }
     });
     return picksDict;
   }
@@ -299,7 +310,9 @@ export class MflService {
    * @param season
    */
   private marshallLeagueTransactions(leagueTrans: any, season: string): LeagueTeamTransactionDTO[] {
-    if (!leagueTrans) { return []; }
+    if (!leagueTrans) {
+      return [];
+    }
     return leagueTrans.filter(trans => trans.type !== 'TAXI' && trans.type !== 'IR' && !trans.type.includes('AUCTION')).map(trans => {
       let transaction = new LeagueTeamTransactionDTO(null, []);
       transaction.type = trans.type.toLowerCase();
@@ -316,12 +329,12 @@ export class MflService {
           const players = trans?.transaction?.split('|');
           players[1]?.split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4)
             .forEach(playerId => {
-            drops[playerId] = rosterId;
-          });
+              drops[playerId] = rosterId;
+            });
           players[0]?.split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4)
             .forEach(playerId => {
-            adds[playerId] = rosterId;
-          });
+              adds[playerId] = rosterId;
+            });
           transaction.rosterIds = [rosterId];
           transaction.drops = drops;
           transaction.adds = adds;
