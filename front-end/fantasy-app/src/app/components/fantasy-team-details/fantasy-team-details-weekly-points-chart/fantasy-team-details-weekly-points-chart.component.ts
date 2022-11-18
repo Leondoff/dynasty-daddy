@@ -63,7 +63,6 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
         }
       }],
     },
-
     plugins: {
       colorschemes: {
         scheme: ClassicColorBlind10,

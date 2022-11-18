@@ -1,0 +1,13 @@
+<div>
+    <div>
+      <div style="display: block; height: 250px" ngif="radarDataSet.length > 0">
+        <canvas baseChart
+          [labels]="radarChartLabels"
+          [datasets]="radarDataSet"
+          [options]="radarChartOptions"
+          [legend]="false"
+          [chartType]="radarChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
