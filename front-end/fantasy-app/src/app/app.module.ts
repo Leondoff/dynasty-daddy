@@ -86,6 +86,7 @@ import { AdsenseModule } from 'ng2-adsense';
 import { EloTeamComparisonModalComponent } from './components/modals/elo-team-comparison-modal/elo-team-comparison-modal.component';
 import { EditLeagueSettingsModalComponent } from './components/modals/edit-league-settings-modal/edit-league-settings-modal.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
+import { FantasyTeamRankingsRadarChart } from './components/fantasy-team-details/fantasy-team-rankings-radar-chart/fantasy-team-rankings-radar-chart';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -143,6 +144,7 @@ let UniversalDeviceDetectorService;
     TeamTiersChartComponent,
     EloTeamComparisonModalComponent,
     EditLeagueSettingsModalComponent,
+    FantasyTeamRankingsRadarChart,
     TruncatePipe,
   ],
   imports: [

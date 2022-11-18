@@ -16,7 +16,7 @@ The goal is to provide users with a frictionless way to see player value, team v
 
 ## Architecture
 
-Dynasty Daddy's front end is an angular 11 web application with an node express api connected to a postgres database. This database is populated using a python cron job that scrapes KeepTradeCut's player rankings once a day (since KeepTradeCut currently doesn't have a public api). For Sleeper's data, we use sleeper's public apis found in their documentation.
+Dynasty Daddy's front end is an angular 11 web application with an node express api connected to a postgres database. This database is populated using a python cron job that scrapes KeepTradeCut's player rankings once a day (since KeepTradeCut currently doesn't have a public api). For Sleeper & MFL's data, we use their public apis found in their documentation.
 
 ## How to run locally
 
@@ -31,8 +31,6 @@ First, clone repo and open up in your preferred IDE.
 ### Database
 
 - Run scripts in `/back-end/database/scripts` directory to create database and insert data.
-
-    - data is found in the `data` directory
 
 ###  Front End
 

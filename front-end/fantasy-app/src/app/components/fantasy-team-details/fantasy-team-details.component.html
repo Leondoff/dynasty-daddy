@@ -79,24 +79,30 @@
       <div class="margin-top-10 center-text">Biggest movers in the past month for {{selectedTeam?.owner?.teamName}}'s roster.</div>
       <div class="content">
         <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25" *ngIf="roster.length > 0">
-          <mat-card fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="30%" class="item mat-elevation-z4">
-            <div class="mid-bold-text center-text"><mat-icon style="font-size: 16px">trending_up</mat-icon>Biggest Risers</div>
-            <table>
-              <tr *ngFor="let player of getBiggestMovers(true)">
-                <th style="text-align: left">{{player.full_name}}</th>
-                <th style="text-align: right">+{{leagueService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
-              </tr>
-            </table>
+          <mat-card fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="40%" class="item mat-elevation-z4">
+            <div class="mid-bold-text center-text margin-bot-25">Position Rankings</div>
+            <app-fantasy-team-rankings-radar-chart [powerRankings]="powerRankingsService.powerRankings" [selectedTeam]="selectedTeam"></app-fantasy-team-rankings-radar-chart>
           </mat-card>
-          <mat-card fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="30%" class="item mat-elevation-z4">
-            <div class="mid-bold-text center-text"><mat-icon style="font-size: 16px">trending_down</mat-icon>Biggest Fallers</div>
-            <table>
-              <tr *ngFor="let player of getBiggestMovers(false)">
-                <th style="text-align: left">{{player.full_name}}</th>
-                <th style="text-align: right">{{leagueService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
-              </tr>
-            </table>
-          </mat-card>
+          <span fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="40%" >
+            <mat-card class="item mat-elevation-z4">
+              <div class="mid-bold-text center-text"><mat-icon style="font-size: 16px">trending_up</mat-icon>Biggest Risers</div>
+              <table>
+                <tr *ngFor="let player of getBiggestMovers(true)">
+                  <th style="text-align: left">{{player.full_name}}</th>
+                  <th style="text-align: right">+{{leagueService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
+                </tr>
+              </table>
+            </mat-card>
+            <mat-card class="item mat-elevation-z4">
+              <div class="mid-bold-text center-text"><mat-icon style="font-size: 16px">trending_down</mat-icon>Biggest Fallers</div>
+              <table>
+                <tr *ngFor="let player of getBiggestMovers(false)">
+                  <th style="text-align: left">{{player.full_name}}</th>
+                  <th style="text-align: right">{{leagueService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
+                </tr>
+              </table>
+            </mat-card>  
+          </span>
         </div>
         <div class="mid-bold-text margin-top-25 center-text">Team Roster</div>
         <div class="margin-top-10 center-text">Below are the players sorted by most valuable to least valuable.</div>
