@@ -91,7 +91,7 @@
             <!-- Value Column -->
             <ng-container matColumnDef="selectedPlayer">
               <mat-header-cell *matHeaderCellDef>Selected Pick (current value)</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{configService.isMobile ? element.position || leagueService.platformPlayersMap[element.playerId].position + ' ' + (element.lastName || leagueService.platformPlayersMap[element.playerId].full_name) : element.position || leagueService.platformPlayersMap[element.playerId].position + ' ' + (element.firstName ? (element.firstName + ' ' + element.lastName) : leagueService.platformPlayersMap[element.playerId].full_name)}}
+              <mat-cell *matCellDef="let element">{{configService.isMobile ? (element.position || leagueService.platformPlayersMap[element.playerId].position) + ' ' + (element.lastName || leagueService.platformPlayersMap[element.playerId].full_name) : (element.position || leagueService.platformPlayersMap[element.playerId].position) + ' ' + (element.firstName ? (element.firstName + ' ' + element.lastName) : leagueService.platformPlayersMap[element.playerId].full_name)}}
                 - {{leagueService.selectedLeague.isSuperflex ? getPlayerByPlayerPlatformId(element.playerId)?.sf_trade_value || 'None' : getPlayerByPlayerPlatformId(element.playerId)?.trade_value || 'None'}}
               </mat-cell>
             </ng-container>
