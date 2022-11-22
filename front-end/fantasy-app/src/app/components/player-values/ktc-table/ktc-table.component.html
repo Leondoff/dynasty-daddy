@@ -15,7 +15,7 @@
                     (change)="updatePlayerFilters()">WR</mat-checkbox>
       <mat-checkbox [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}" color="primary" [(ngModel)]="filterPosGroup[3]"
                     (change)="updatePlayerFilters()">TE</mat-checkbox>
-      <mat-checkbox [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}" color="primary" [(ngModel)]="filterPosGroup[4]" [disabled]="showFreeAgents || showRookies"
+      <mat-checkbox [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}" color="primary" [(ngModel)]="filterPosGroup[4]" [disabled]="showFreeAgents || showRookies || (selectedLeague && selectedLeague.type !== 2)"
                     (change)="updatePlayerFilters()">Picks</mat-checkbox>
     </span>
     <span *ngIf="!configService.isMobile" class="container_spacer"></span>

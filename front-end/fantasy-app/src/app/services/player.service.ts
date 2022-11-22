@@ -450,6 +450,12 @@ export class PlayerService {
     });
   }
 
+  /**
+   * Returns an id for the player and fantasy platform passed in
+   * @param player player to find
+   * @param leaguePlatform fantasy platform id to find
+   * @returns 
+   */
   getPlayerPlatformId(player: FantasyPlayer, leaguePlatform: LeaguePlatform): string {
     switch (leaguePlatform) {
       case LeaguePlatform.MFL:

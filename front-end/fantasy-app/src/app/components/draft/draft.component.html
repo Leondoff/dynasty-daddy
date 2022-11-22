@@ -34,7 +34,7 @@
     <app-draft-table [mockDraftConfig]="mockDraftService.mockDraftConfig" [isReset]="resetTrigger"></app-draft-table>
   </div>
 
-  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft.length > 0 && mockDraftService.selectedDraft !== 'upcoming'" class="margin-top-25">
+  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming'" class="margin-top-25">
     <app-completed-draft-table [selectedDraft]="mockDraftService.selectedDraft"></app-completed-draft-table>
   </div>
 

@@ -44,7 +44,7 @@
       <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[1]">RB</mat-checkbox>
       <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[2]">WR</mat-checkbox>
       <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[3]">TE</mat-checkbox>
-      <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[4]">Picks</mat-checkbox>
+      <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[4]" [disabled]="leagueService.selectedLeague && leagueService.selectedLeague?.type !== 2">Picks</mat-checkbox>
     </div>
 
     <div class="margin-top-50" fxLayout="row wrap" fxLayoutAlign="center">

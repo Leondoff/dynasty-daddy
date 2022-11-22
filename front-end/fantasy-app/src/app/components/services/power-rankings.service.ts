@@ -11,6 +11,7 @@ import {NflService} from '../../services/utilities/nfl.service';
 import {EloService} from '../../services/utilities/elo.service';
 import {LeagueType} from '../../model/league/LeagueDTO';
 import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
+import { PowerRankingOrder } from '../power-rankings/power-rankings-chart/power-rankings-chart.component';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,9 @@ export class PowerRankingsService {
 
   /** supported position groups to power rank */
   positionGroups: string[] = ['QB', 'RB', 'WR', 'TE'];
+
+  /** power rankings table filter options */
+  powerRankingChartOption: PowerRankingOrder = PowerRankingOrder.OVERALL;
 
   /**
    * Sorts team power rankings array by starter value

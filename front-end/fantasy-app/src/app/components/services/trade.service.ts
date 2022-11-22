@@ -3,6 +3,7 @@ import {StudPlayerResponse, TradePackage} from '../model/tradePackage';
 import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {PlayerService} from '../../services/player.service';
 import {LeagueService} from '../../services/league.service';
+import { LeagueType } from 'src/app/model/league/LeagueDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -189,23 +190,28 @@ export class TradeService {
    * @private
    */
   filterPlayersList(userId: string = null): FantasyPlayer[] {
+    let playerList = this.playerService.playerValues
+    // for non dynasty filter out picks
+    if (this.leagueService.selectedLeague && this.leagueService.selectedLeague.type !== 2) {
+      playerList = this.playerService.playerValues.filter(player => player.position !== 'PI');
+    }
     if (userId) {
       // filter players by team
-      const playerList = this.playerService.playerValues.filter(it => it.owner?.userId === userId);
+      const teamPlayerList = playerList.filter(it => it.owner?.userId === userId);
       // get draft capital for team in filter
       const team = this.leagueService.getTeamByUserId(userId);
-      if (team) {
+      if (team && this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
         const picks = this.leagueService.getDraftCapitalToNameId([...team.futureDraftCapital, ...team.draftCapital]);
         picks.map(pick => {
           const pickPlayer = this.playerService.getPlayerByNameId(pick);
           if (pickPlayer) {
-            playerList.push(pickPlayer);
+            teamPlayerList.push(pickPlayer);
           }
         });
       }
-      return playerList.sort((a, b) => b.sf_trade_value - a.sf_trade_value);
+      return teamPlayerList.sort((a, b) => b.sf_trade_value - a.sf_trade_value);
     } else {
-      return this.playerService.playerValues;
+      return playerList;
     }
   }
 
