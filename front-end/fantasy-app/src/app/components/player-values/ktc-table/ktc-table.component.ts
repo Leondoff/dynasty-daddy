@@ -11,7 +11,7 @@ import {ConfigService} from '../../../services/init/config.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
 import {BaseComponent} from '../../base-component.abstract';
 import {BehaviorSubject} from 'rxjs';
-import {LeagueDTO} from "../../../model/league/LeagueDTO";
+import {LeagueDTO, LeagueType} from "../../../model/league/LeagueDTO";
 
 @Component({
   selector: 'app-ktc-table',
@@ -105,7 +105,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     this.isSuperFlex = this.selectedLeague?.isSuperflex !== undefined ?
       this.selectedLeague?.isSuperflex : true;
     // create prototype of list and remove players with no value (no data points in over a year)
-    this.filteredPlayers = this.playerService.cleanOldPlayerData(this.players);
+    this.filteredPlayers = this.handleFilteringPlayerTable();
     this.dataSource = new MatTableDataSource(this.playerService.sortListOfPlayers(this.filteredPlayers, this.isSuperFlex));
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
@@ -133,7 +133,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
    * update player filters, function is called when option is selected
    */
   updatePlayerFilters(): void {
-    this.filteredPlayers = this.playerService.cleanOldPlayerData(this.players);
+    this.filteredPlayers = this.handleFilteringPlayerTable();
     const filterOptions = ['QB', 'RB', 'WR', 'TE', 'PI'];
     if (this.showRookies) {
       this.filterPosGroup[4] = false;
@@ -170,6 +170,18 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     }
     this.paginator.pageIndex = this.pageIndex;
     this.dataSource.data = this.filteredPlayers;
+  }
+
+  /**
+   * Helper function that encapsulates cleaning old player data and filtering list on league type
+   */
+  private handleFilteringPlayerTable(): FantasyPlayer[] {
+    let players = this.playerService.cleanOldPlayerData(this.players);
+    if (this.leagueService?.selectedLeague?.type !== LeagueType.DYNASTY) {
+      players = players.filter(player => player.position !== 'PI');
+      this.filterPosGroup[4] = false;
+    }
+    return players;
   }
 
   updateSuperFlex(): void {

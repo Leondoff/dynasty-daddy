@@ -39,7 +39,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
 
   constructor(private sleeperApiService: SleeperApiService,
               public leagueService: LeagueService,
-              private powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
               public configService: ConfigService,
               private route: ActivatedRoute,
@@ -189,7 +188,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     this.dialog.open(EditLeagueSettingsModalComponent
       , {
         minHeight: '350px',
-        minWidth: '500px',
+        minWidth: this.configService.isMobile ? '300px' : '500px',
       }
     );
   }

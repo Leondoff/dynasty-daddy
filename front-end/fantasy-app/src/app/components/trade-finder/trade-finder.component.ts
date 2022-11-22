@@ -9,6 +9,7 @@ import {PowerRankingsService} from '../services/power-rankings.service';
 import {TradePackage} from '../model/tradePackage';
 import {ActivatedRoute} from '@angular/router';
 import {ConfigService} from '../../services/init/config.service';
+import { LeagueType } from 'src/app/model/league/LeagueDTO';
 
 @Component({
   selector: 'app-trade-finder',
@@ -76,6 +77,9 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     this.teamPlayers = this.filterPlayersByTeam();
     this.teamPicks = this.filterPicksByTeam();
     this.isSuperflex = this.leagueService.selectedLeague?.isSuperflex;
+    if (this.leagueService.selectedLeague) {
+      this.filterPosGroup[4] = this.leagueService.selectedLeague.type !== LeagueType.DYNASTY ? false : true;
+    }
   }
 
   /**

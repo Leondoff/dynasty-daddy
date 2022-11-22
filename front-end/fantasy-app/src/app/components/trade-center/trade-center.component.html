@@ -44,7 +44,7 @@
             <mat-option class="teamSelect" (click)="selectionMadeTeam2()" *ngFor="let team of leagueService.leagueTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
           </mat-select>
         </mat-icon>
-        {{team2Rankings?.team.owner.ownerName || 'Team 1' | truncate:22}} gets...
+        {{(team2Rankings?.team?.owner?.ownerName || 'Team 1') | truncate:22}} gets...
       </div>
       <div>
         <mat-form-field class="trade-dropdown" color="accent">
@@ -53,7 +53,7 @@
               <ngx-mat-select-search [formControl]="playerFilterCtrl" placeholderLabel="Search Player..." noEntriesFoundLabel="No players found"></ngx-mat-select-search>
             </mat-option>
             <mat-option *ngFor="let player of filteredTeam1Players | async" [value]="null" (click)="addPlayerToTeam1(player)">
-              {{player.full_name}} <span class="small-text__light">{{player.owner?.ownerName | truncate:15}}</span>
+              {{player.full_name}} <span class="small-text__light">{{player.owner?.ownerName || '' | truncate:15}}</span>
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -126,7 +126,7 @@
               <ngx-mat-select-search [formControl]="player2FilterCtrl" placeholderLabel="Search Player..." noEntriesFoundLabel="No players found"></ngx-mat-select-search>
             </mat-option>
             <mat-option *ngFor="let player of filteredTeam2Players | async" [value]="null" (click)="addPlayerToTeam2(player)">
-              {{player.full_name}} <span class="small-text__light">{{player.owner?.ownerName}}</span>
+              {{player.full_name}} <span class="small-text__light">{{player.owner?.ownerName || '' | truncate:15}}</span>
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -208,7 +208,7 @@
     <div *ngIf="tradeTool.tradePackage && (tradeTool.tradePackage.team2Assets.length != 0 || tradeTool.tradePackage.team1Assets.length != 0) && tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount && recommendedPlayers.length != 0" class="trade_insights" fxFlex="37.5%" fxFlex.xs="80%" fxFlex.sm="80%">
       <mat-card>
         <mat-card-content>
-          <div class="center-text mid-bold-text margin-bot-10">Players to Even the Trade<span *ngIf="leagueService.selectedLeague && team1Rankings && team2Rankings">{{(favoredSide == 2 ? ' from ' + team1Rankings?.team.owner.ownerName : ' from ' + team2Rankings?.team.owner.ownerName) | truncate: 26}}</span></div>
+          <div class="center-text mid-bold-text margin-bot-10">Players to Even the Trade<span *ngIf="leagueService.selectedLeague && team1Rankings && team2Rankings">{{(favoredSide == 2 ? ' from ' + team1Rankings?.team.owner.ownerName : ' from ' + team2Rankings?.team.owner.ownerName) || '' | truncate: 26}}</span></div>
         </mat-card-content>
         <table class="trade-table-item" *ngFor="let player of recommendedPlayers">
           <tr>

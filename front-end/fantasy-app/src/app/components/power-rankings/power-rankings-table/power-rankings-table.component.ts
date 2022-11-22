@@ -11,6 +11,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import {DisplayService} from '../../../services/utilities/display.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
 import {LeagueType} from "../../../model/league/LeagueDTO";
+import { PowerRankingsService } from '../../services/power-rankings.service';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -67,6 +68,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   constructor(public leagueService: LeagueService,
               public configService: ConfigService,
               public playerService: PlayerService,
+              public powerRankingsService: PowerRankingsService,
               public leagueSwitchService: LeagueSwitchService,
               public displayService: DisplayService,
               private clipboard: Clipboard) {
