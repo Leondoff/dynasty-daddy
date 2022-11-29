@@ -1,5 +1,4 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {FantasyPlayerApiService} from '../../services/api/fantasy-player-api.service';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
 import {MatDialog} from '@angular/material/dialog';
@@ -19,9 +18,8 @@ import {LeagueSwitchService} from '../services/league-switch.service';
 })
 export class PlayerComparisonsComponent extends BaseComponent implements AfterViewInit {
 
-  constructor(private fantasyPlayerApiService: FantasyPlayerApiService,
-              private playerService: PlayerService,
-              private leagueService: LeagueService,
+  constructor(private playerService: PlayerService,
+              public leagueService: LeagueService,
               private dialog: MatDialog,
               public playerComparisonService: PlayerComparisonService,
               private route: ActivatedRoute,

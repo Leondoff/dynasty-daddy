@@ -15,7 +15,7 @@ import {TeamMetrics} from '../model/league/TeamMetrics';
 import {FantasyPlatformDTO, LeaguePlatform} from '../model/league/FantasyPlatformDTO';
 import {CompletedDraft} from '../model/league/CompletedDraft';
 import {DraftCapital} from '../model/assets/DraftCapital';
-import {LeagueDTO} from '../model/league/LeagueDTO';
+import {LeagueDTO, LeagueScoringFormat} from '../model/league/LeagueDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -215,4 +215,25 @@ export class LeagueService {
     return nameIds;
   }
 
+  /**
+   * get league scoring format for league or return half ppr if no league is selected
+   */
+  getLeagueScoringFormat(): string {
+    return  this.selectedLeague?.getLeagueScoringFormat() || 'pts_half_ppr';
+  }
+
+  /**
+   * get the display for the scoring formats for display purposes
+   */
+  getScoringFormatDisplay(): string {
+    if (!this.selectedLeague) return 'Half PPR'
+    switch(this.selectedLeague?.scoringFormat) {
+      case LeagueScoringFormat.PPR:
+        return 'PPR';
+      case LeagueScoringFormat.STANDARD:
+        return 'Standard';
+      default:
+        return 'Half PPR';
+    }
+  }
 }

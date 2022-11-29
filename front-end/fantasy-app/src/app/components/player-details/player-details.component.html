@@ -48,7 +48,7 @@
         </div>
         <div class="standings-col vertical-break__right__dark">
           <div class="small-text__light text__light disabled__color">{{playerService.playerStatsYear}} Points</div>
-          <div class="mid-bold-text">{{playerService.playerStats[selectedPlayer.sleeper_id]?.pts_half_ppr || '--'}}</div>
+          <div class="mid-bold-text">{{playerService.getPlayerPointsByFormat(selectedPlayer.sleeper_id, (selectedLeague?.getLeagueScoringFormat() || 'pts_half_ppr')) || '--'}}</div>
         </div>
         <div class="standings-col">
           <div class="small-text__light text__light disabled__color">Last 5 Weeks Average</div>
@@ -73,7 +73,7 @@
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
     <mat-tab label="Current Outlook">
       <div class="mid-bold-text margin-top-10 center-text">Past 18 Week Summary</div>
-      <div class="margin-top-10 center-text">Below is the past 18 weeks of points and projections based on Sleeper's <span class="info__alert">0.5 PPR scoring</span>.
+      <div class="margin-top-10 center-text">Below is the past 18 weeks of points and projections based on Sleeper's <span class="info__alert">{{leagueService.getScoringFormatDisplay()}}</span> scoring.
       </div>
       <app-player-details-weekly-stats-line-chart  [selectedPlayerInsights]="selectedPlayerInsights" [selectedPlayer]="selectedPlayer"></app-player-details-weekly-stats-line-chart>
     </mat-tab>

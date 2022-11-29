@@ -145,6 +145,7 @@ export class MflService {
       year || historyList[0]?.year || null,
       null,
       null,
+      null,
       LeaguePlatform.MFL);
     mflLeague.rosterSize = rosterSize;
     mflLeague.startWeek = Number(leagueInfo.startWeek);

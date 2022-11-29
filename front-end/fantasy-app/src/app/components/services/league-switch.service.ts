@@ -5,7 +5,6 @@ import {PlayerService} from '../../services/player.service';
 import {MockDraftService} from './mock-draft.service';
 import {MatchupService} from './matchup.service';
 import {PlayoffCalculatorService} from './playoff-calculator.service';
-import {ConfigService} from '../../services/init/config.service';
 import {TransactionsService} from './transactions.service';
 import {BehaviorSubject, forkJoin, Observable, Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
@@ -46,7 +45,6 @@ export class LeagueSwitchService extends BaseComponent {
               private nflService: NflService,
               private playoffCalculatorService: PlayoffCalculatorService,
               private tradeFinderService: TradeFinderService,
-              private configService: ConfigService,
               private router: Router,
               private route: ActivatedRoute,
               private logRocketService: LogRocketService,

@@ -4,6 +4,7 @@ import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ChartOptions, ChartType} from 'chart.js';
 import {Label, PluginServiceGlobalRegistrationAndOptions, SingleDataSet} from 'ng2-charts';
+import { LeagueService } from 'src/app/services/league.service';
 
 @Component({
   selector: 'app-player-details-weekly-box-scores-table',
@@ -83,7 +84,7 @@ export class PlayerDetailsWeeklyBoxScoresTableComponent implements OnInit {
     }
   }];
 
-  constructor(public playerService: PlayerService) { }
+  constructor(public playerService: PlayerService, public leagueService: LeagueService) { }
 
   ngOnInit(): void {
     this.setDisplayColumns();
@@ -146,14 +147,23 @@ export class PlayerDetailsWeeklyBoxScoresTableComponent implements OnInit {
   }
 
   /**
+   * Get gamelog scoring for league format
+   * @param gamelog gamelog record
+   */
+  getGameLogPoints(gamelog: any): number {
+    return gamelog?.stats?.[this.leagueService.getLeagueScoringFormat()];
+  }
+
+  /**
    * generates datasets and labels for bar charts based on player position
    * @private
    */
   private setUpSeasonMetrics(): void {
     this.doughnutChartLabels.push(['Fantasy Points', 'Behind leader']);
-    this.doughnutChartData.push([this.playerService.playerStats[this.selectedPlayer.sleeper_id]?.pts_half_ppr || 0,
-        Math.round(this.playerService.leagueLeaders.pts_half_ppr.value
-        - (this.playerService.playerStats[this.selectedPlayer.sleeper_id]?.pts_half_ppr || 0))]);
+    const scoringFormat = this.leagueService.getLeagueScoringFormat();
+    this.doughnutChartData.push([this.playerService.playerStats[this.selectedPlayer.sleeper_id]?.[scoringFormat] || 0,
+        Math.round(this.playerService.leagueLeaders?.[scoringFormat].value
+        - (this.playerService.playerStats[this.selectedPlayer.sleeper_id]?.[scoringFormat] || 0))]);
     switch (this.selectedPlayer.position) {
       case 'RB': {
         this.doughnutChartLabels.push(['Rushing Attempts', 'Behind leader'], ['Rushing Yards', 'Behind leader'], ['Rushing TDs', 'Behind leader'], ['Receiving Yards', 'Behind leader']);

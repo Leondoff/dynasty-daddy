@@ -110,7 +110,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'halfppr':
-          return this.playerService.playerStats[item.sleeper_id]?.pts_half_ppr;
+          return this.playerService.getPlayerPointsByFormat(item.sleeper_id, this.leagueService.getLeagueScoringFormat());
         case 'change':
           return this.isSuperFlex ? item.sf_change : item.standard_change;
         case 'trade_value':

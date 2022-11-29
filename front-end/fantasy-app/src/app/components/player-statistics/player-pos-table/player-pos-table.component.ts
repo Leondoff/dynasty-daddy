@@ -77,10 +77,11 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
 
   refreshTable(): void {
     this.dataSource = new MatTableDataSource(this.players);
+    const scoringFormat = this.leagueService.getLeagueScoringFormat();
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'points':
-          return this.playerService.playerStats[item.sleeper_id]?.pts_half_ppr;
+          return this.playerService.playerStats[item.sleeper_id]?.[scoringFormat];
         case 'sf_trade_value':
           return item.sf_trade_value;
         case 'trade_value':
