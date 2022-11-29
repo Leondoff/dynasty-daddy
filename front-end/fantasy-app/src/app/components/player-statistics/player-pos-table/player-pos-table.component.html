@@ -14,7 +14,7 @@
 
         <ng-container matColumnDef="points">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Points</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pts_half_ppr || '---'}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{playerService.getPlayerPointsByFormat(element.sleeper_id, leagueService.getLeagueScoringFormat()) || '---'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="pass_att">

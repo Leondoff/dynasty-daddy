@@ -124,12 +124,13 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
     this.totalProj = 0;
     const stats = [];
     const projections = [];
+    const scoringFormat = this.leagueService.getLeagueScoringFormat();
     for (let i = 1; i < 19; i++) {
       const weekStats = this.playerService.pastSeasonWeeklyStats[i];
       const weekProj = this.playerService.pastSeasonWeeklyProjections[i];
       if (weekStats && weekProj) {
-        const stat = weekStats[this.selectedPlayer.sleeper_id]?.pts_half_ppr || 0;
-        const proj = weekProj[this.selectedPlayer.sleeper_id]?.pts_half_ppr || 0;
+        const stat = weekStats[this.selectedPlayer.sleeper_id]?.[scoringFormat] || 0;
+        const proj = weekProj[this.selectedPlayer.sleeper_id]?.[scoringFormat] || 0;
         this.totalPoints += stat;
         stats.push(stat);
         this.totalProj += proj;

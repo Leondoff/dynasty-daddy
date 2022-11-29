@@ -70,10 +70,11 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
    */
   getLast5WeekAverage(): number | string {
     let last5Weeks = 0;
+    const scoringFormat = this.leagueService.getLeagueScoringFormat();
     for (let i = 1; i < 6; i++) {
       const weekStats = this.playerService.pastSeasonWeeklyStats[i];
       if (weekStats) {
-        last5Weeks += weekStats[this.selectedPlayer.sleeper_id]?.pts_half_ppr || 0;
+        last5Weeks += weekStats[this.selectedPlayer.sleeper_id]?.[scoringFormat] || 0;
       }
     }
     return Math.round(last5Weeks / 5 * 100) / 100 || '---';

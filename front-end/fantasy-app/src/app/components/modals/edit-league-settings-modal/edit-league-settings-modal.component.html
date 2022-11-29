@@ -4,20 +4,20 @@
 </div>
 <div class="margin-top-25 mat-form-field-center">
   <mat-form-field appearance="standard" color="accent" style="width: 40%; padding-right: 5%">
-    <mat-label>Select league type</mat-label>
+    <mat-label>League Type</mat-label>
     <mat-select [(ngModel)]="selectedLeagueType" (selectionChange)="selectedLeagueType = $event.value">
       <mat-option *ngFor="let league of leagueTypes; let i = index"
                   [value]="i">{{league}}</mat-option>
     </mat-select>
   </mat-form-field>
   <span style="width: 40%; padding-left: 5%; align-self: center">
-    <mat-slide-toggle [(ngModel)]="isMedian">Enable Median
+    <mat-slide-toggle [(ngModel)]="isMedian">Median
     </mat-slide-toggle>
   </span>
 </div>
 <div class="margin-top-15 mat-form-field-center">
   <mat-form-field appearance="standard" color="accent" style="width: 40%; padding-right: 5%">
-    <mat-label>Set Roster Size</mat-label>
+    <mat-label>Roster Size</mat-label>
     <input type="number" [ngModel]="setRosterSize" (ngModelChange)="setRosterSize = $event" matInput>
   </mat-form-field>
 
@@ -26,6 +26,24 @@
     </mat-slide-toggle>
   </span>
 </div>
+<div class="margin-top-15 mat-form-field-center">
+  <mat-form-field appearance="standard" color="accent" style="width: 40%; padding-right: 5%">
+    <mat-label>Scoring format</mat-label>
+    <mat-select [(ngModel)]="selectedScoringFormat" (selectionChange)="selectedScoringFormat = $event.value">
+      <mat-option *ngFor="let format of scoringFormat; let i = index"
+                  [value]="i">{{format}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="standard" color="accent" style="width: 40%; padding-left: 5%">
+    <mat-label>Playoff Start Week</mat-label>
+    <mat-select [(ngModel)]="selectedPlayoffStartWeek" (selectionChange)="selectedPlayoffStartWeek = $event.value">
+      <mat-option *ngFor="let week of playoffWeeks; let i = index"
+                  [value]="i + 1">{{week}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
 <div *ngIf="leagueService.leagueStatus !== 'LOADING'">
 <div class="margin-top-25 mat-form-field-center">
   <button mat-raised-button color="primary" (click)="reloadLeague()">Reload League</button>

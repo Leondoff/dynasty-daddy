@@ -37,6 +37,8 @@ export class PlayerService {
   /** league leaders for stat categories */
   leagueLeaders = {
     pts_half_ppr: {value: 0, sleeperId: ''},
+    pts_ppr: {value: 0, sleeperId: ''},
+    pts_std: {value: 0, sleeperId: ''},
     rec: {value: 0, sleeperId: ''},
     pass_yd: {value: 0, sleeperId: ''},
     pass_td: {value: 0, sleeperId: ''},
@@ -463,5 +465,14 @@ export class PlayerService {
       default:
         return player.sleeper_id;
     }
+  }
+
+  /**
+   * get player points by format from map of player stats
+   * @param sleeperId player to find
+   * @param formatString scoring format string
+   */
+  getPlayerPointsByFormat(sleeperId: string, formatString: string): number {
+    return this.playerStats[sleeperId]?.[formatString];
   }
 }

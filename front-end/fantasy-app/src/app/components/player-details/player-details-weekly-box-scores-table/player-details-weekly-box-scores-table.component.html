@@ -17,7 +17,7 @@
   </div>
 </div>
 <div class="mid-bold-text margin-top-50 center-text">Past 18 Box Scores</div>
-<div class="margin-top-10 center-text">Below is the past 18 weeks of stats from Sleeper for the following player. The fantasy scoring is <span class="info__alert">0.5 PPR scoring</span>.</div>
+<div class="margin-top-10 center-text">Below is the past 18 weeks of stats from Sleeper for the following player. The fantasy scoring is <span class="info__alert">{{leagueService.getScoringFormatDisplay()}} scoring</span>.</div>
 <div class="margin-top-50 box-score-table-container" *ngIf="datasource?.data?.length !== 0">
   <mat-table [dataSource]="datasource" class="mat-elevation-z8">
 
@@ -28,7 +28,7 @@
 
     <ng-container matColumnDef="points">
       <mat-header-cell *matHeaderCellDef>Fantasy Points</mat-header-cell>
-      <mat-cell *matCellDef="let gamelog">{{gamelog?.stats?.pts_half_ppr || '---'}}</mat-cell>
+      <mat-cell *matCellDef="let gamelog">{{getGameLogPoints(gamelog) || '---'}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="off_snp">

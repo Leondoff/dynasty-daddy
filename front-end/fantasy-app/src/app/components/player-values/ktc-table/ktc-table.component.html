@@ -69,7 +69,7 @@
       <ng-container matColumnDef="halfppr">
         <mat-header-cell *matHeaderCellDef mat-sort-header>{{playerService.playerStatsYear}} Points</mat-header-cell>
         <mat-cell
-          *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pts_half_ppr || '---'}}</mat-cell>
+          *matCellDef="let element">{{playerService.getPlayerPointsByFormat(element.sleeper_id, leagueService.getLeagueScoringFormat()) || '---'}}</mat-cell>
       </ng-container>
 
       <!-- Avg ADP Column -->
