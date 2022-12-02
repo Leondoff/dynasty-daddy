@@ -12,6 +12,9 @@ import {ConfigService} from '../../services/init/config.service';
 import {BaseComponent} from '../base-component.abstract';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {DisplayService} from '../../services/utilities/display.service';
+import { MatchupService } from '../services/matchup.service';
+import { NflService } from 'src/app/services/utilities/nfl.service';
+import { standardDeviation, variance } from 'simple-statistics';
 
 @Component({
   selector: 'app-fantasy-team-details',
@@ -32,6 +35,9 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   /** roster of players */
   roster: FantasyPlayer[] = [];
 
+  /** Season insights map for displayed stats */
+  seasonInsights: {} = null;
+
   /** activity filter */
   activitySearchVal: string;
 
@@ -47,6 +53,8 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
               public playerService: PlayerService,
               private playerComparisonService: PlayerComparisonService,
               private router: Router,
+              private matchUpService: MatchupService,
+              private nflService: NflService,
               public leagueSwitchService: LeagueSwitchService,
               public transactionsService: TransactionsService,
               public displayService: DisplayService,
@@ -61,9 +69,9 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
       }),
-      this.leagueSwitchService.leagueChanged$.subscribe(() => {
+      this.matchUpService.matchUpsLoaded$.subscribe(() => {
         this.getSelectedTeam();
-      }),
+      })
     );
     if (this.leagueService.isLeagueLoaded() && this.leagueService.selectedLeague) {
       this.getSelectedTeam();
@@ -108,7 +116,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     });
 
     this.pageLoaded = true;
-
+    this.seasonInsights = this.setSeasonInsights();
     this.loadTransactionHistory();
   }
 
@@ -117,14 +125,6 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     this.teamActivity = this.transactionsService.generateTeamTransactionHistory(this.selectedTeam);
     this.activityShowMore = this.teamActivity.length <= 5;
     this.filterTeamActivity = this.teamActivity.slice(0, 5);
-  }
-
-  /**
-   * get average points for team
-   */
-  getAveragePoints(): number {
-    return Math.round(this.selectedTeam.roster.teamMetrics.fpts
-      / (this.leagueService.selectedLeague.playoffStartWeek - this.leagueService.selectedLeague.startWeek));
   }
 
   /**
@@ -165,4 +165,36 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     this.activitySearchVal = 'trade';
     this.updateActivityFilter();
   }
+
+  setSeasonInsights(): {} {
+    const newInsights = {};
+    const completedWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague?.season); 
+    newInsights['games_played'] = (completedWeek - this.leagueService.selectedLeague?.startWeek + 1) || '--';
+    newInsights['avg_points'] = this.getAveragePoints(newInsights['games_played']) || '--';
+    newInsights['points_for'] = this.selectedTeam?.roster.teamMetrics?.fpts || '--';
+    newInsights['points_against'] =  this.selectedTeam?.roster.teamMetrics?.fptsAgainst || '--';
+    newInsights['points_pot'] = this.selectedTeam?.roster.teamMetrics?.ppts || '--';
+    const teamRosterId = this.selectedTeam?.roster?.rosterId;
+    const pointsByWeek: number[] = [];
+    for (let i = 0; i < completedWeek; i++) {
+      const matchUp = this.matchUpService.leagueMatchUpUI[i]?.filter(match => match.team1RosterId === teamRosterId || match.team2RosterId === teamRosterId)[0];
+      if (!matchUp) {continue;}
+      if (matchUp.team1RosterId === teamRosterId) {
+        pointsByWeek.push(matchUp.team1Points);
+      } else {
+        pointsByWeek.push(matchUp.team2Points);
+      }
+    }
+    newInsights['high'] = pointsByWeek.length > 0 ? Math.max(...pointsByWeek) : '--';
+    newInsights['low'] = pointsByWeek.length > 0 ? Math.min(...pointsByWeek) : '--';
+    newInsights['variance'] = pointsByWeek.length > 0 ? Math.round(variance(pointsByWeek) * 100)/ 100 : '--';
+    newInsights['std'] = pointsByWeek.length > 0 ? Math.round(standardDeviation(pointsByWeek) * 100)/ 100 : '--';
+    return newInsights;
+  }
+
+    /**
+   * get average points for team
+   */
+  private getAveragePoints = (weeksPlayed: number) => 
+     Math.round(this.selectedTeam.roster.teamMetrics.fpts / weeksPlayed);
 }

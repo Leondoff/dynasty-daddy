@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {MatchUpUI, ScheduleComp, WeeklyRecordComp} from '../model/matchup';
 import {LeagueTeam} from '../../model/league/LeagueTeam';
 import {ChartDataSets} from 'chart.js';
-import {forkJoin, Observable, of} from 'rxjs';
+import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {LeagueDTO} from '../../model/league/LeagueDTO';
 
 @Injectable({
@@ -28,6 +28,9 @@ export class MatchupService {
   /** closest games */
   leagueClosestWins: MatchUpUI[] = [];
 
+  /** subject when the matchups are loaded */
+  matchUpsLoaded$: Subject<void> = new Subject<void>();
+
   /** most points for in week */
   leagueMostPointsFor: {rosterId: number, points: number, oppRosterId: number, oppPoints: number, details: MatchUpUI}[] = [];
 
@@ -39,6 +42,7 @@ export class MatchupService {
     return forkJoin([this.generateWeeklyRecords(selectedLeague, completedWeek || selectedLeague.playoffStartWeek),
       this.generateScheduleComparison(selectedLeague),
       this.calculateLeagueMatchUps(selectedLeague)]).pipe(() => {
+        this.matchUpsLoaded$.next();
         return of(true);
       }
     );
