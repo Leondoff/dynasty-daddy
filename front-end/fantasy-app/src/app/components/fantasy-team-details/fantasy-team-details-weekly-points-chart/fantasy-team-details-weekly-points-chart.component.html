@@ -1,5 +1,5 @@
-<div class="margin-top-50" style="display: block;">
-  <canvas baseChart width="600" height="400"
+<div style="display: block;" *ngIf="lineChartData && lineChartData.length > 0">
+  <canvas baseChart height="400"
           [datasets]="lineChartData"
           [labels]="lineChartLabels"
           [options]="lineChartOptions"
@@ -7,4 +7,9 @@
           [chartType]="lineChartType"
           [plugins]="lineChartPlugins">
   </canvas>
+</div>
+<div *ngIf="lineChartData.length == 0">
+  <div style="min-height: 300px" class="center-spinner">
+    <mat-spinner></mat-spinner>
+  </div>
 </div>

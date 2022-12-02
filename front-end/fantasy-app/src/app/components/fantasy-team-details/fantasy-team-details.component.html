@@ -44,15 +44,15 @@
         </div>
         <div class="standings-col vertical-break__right__dark">
           <div class="small-text__light text__light disabled__color">Average Points</div>
-          <div class="mid-bold-text">{{getAveragePoints()}}</div>
+          <div class="mid-bold-text" *ngIf="seasonInsights">{{seasonInsights['avg_points']}}</div>
         </div>
         <div class="standings-col vertical-break__right__dark">
           <div class="small-text__light text__light disabled__color">Points For</div>
-          <div class="mid-bold-text">{{selectedTeam?.roster.teamMetrics.fpts}}</div>
+          <div class="mid-bold-text" *ngIf="seasonInsights">{{seasonInsights['points_for']}}</div>
         </div>
         <div class="standings-col">
           <div class="small-text__light text__light disabled__color">Max Points For</div>
-          <div class="mid-bold-text">{{selectedTeam?.roster.teamMetrics.ppts}}</div>
+          <div class="mid-bold-text" *ngIf="seasonInsights">{{seasonInsights['points_pot']}}</div>
         </div>
       </div>
     </div>
@@ -67,12 +67,67 @@
   </div>
 
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
-    <mat-tab label="Weekly MatchUps">
-      <div class="mid-bold-text margin-top-10 center-text">Weekly Points Vs. Opponents</div>
-      <div class="margin-top-10 center-text">Below is the {{leagueService.selectedYear}} Season match ups vs opponents.
-      </div>
-      <app-fantasy-team-details-weekly-points-chart
-        [selectedTeam]="selectedTeam"></app-fantasy-team-details-weekly-points-chart>
+    <mat-tab label="Team Insights">
+        <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
+          <div fxFlex="60%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" style="display: block">
+            <mat-card>
+            <div class="mid-bold-text margin-top-10 center-text">Weekly Points Vs. Opponents</div>
+            <div class="margin-top-10 margin-bot-10 center-text">Below is the {{leagueService.selectedYear}} Season match ups vs opponents.</div>
+            <app-fantasy-team-details-weekly-points-chart
+            [selectedTeam]="selectedTeam"></app-fantasy-team-details-weekly-points-chart>
+            </mat-card>
+          </div>
+          <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="80%" class="item">
+            <mat-card style="min-height: 400px">
+              <div class="mid-bold-text center-text margin-bot-10">Season Metrics</div>
+              <div class="insight__row">
+                <div class="text__light">Games Played</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['games_played']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+              <div class="insight__row">
+                <div class="text__light">Points For</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['points_for']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+              <div class="insight__row">
+                <div class="text__light">Highest Score</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['high']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+              <div class="insight__row">
+                <div class="text__light">Lowest Score</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['low']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+              <div class="insight__row">
+                <div class="text__light">Average Points Per Week</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['avg_points']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+              <div class="insight__row">
+                <div class="text__light">Variance</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['variance']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+              <div class="insight__row">
+                <div class="text__light">Standard Deviation</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['std']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+              <div class="insight__row">
+                <div class="text__light">Potential Points For</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['points_pot']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+              <div class="insight__row">
+                <div class="text__light">Points Against</div>
+                <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['points_against']}}</div>
+                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+              </div>
+            </mat-card>
+          </div>
+        </div>
     </mat-tab>
     <mat-tab label="Roster Management">
       <div class="mid-bold-text margin-top-10 center-text">Roster Trends</div>

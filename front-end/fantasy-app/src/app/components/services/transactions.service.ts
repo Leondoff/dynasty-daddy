@@ -24,7 +24,7 @@ export class TransactionsService {
    */
   generateTeamTransactionHistory(selectedTeam: LeagueTeam): TransactionUI[] {
     const teamActivity = [];
-    if (JSON.stringify(this.leagueService.selectedLeague.leagueTransactions) !== '{}') {
+    if (this.leagueService.selectedLeague.leagueTransactions && JSON.stringify(this.leagueService.selectedLeague.leagueTransactions) !== '{}') {
       for (let i = this.leagueService.selectedLeague.startWeek || 1;
            i <= Object.keys(this.leagueService.selectedLeague?.leagueTransactions).length;
            i++) {
