@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {LeagueService} from '../../services/league.service';
 import {PlayerService} from '../../services/player.service';
 import {BaseComponent} from '../base-component.abstract';
-import {MockDraftService} from '../services/mock-draft.service';
+import {DraftService} from '../services/draft.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {delay} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
@@ -21,7 +21,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
               private playersService: PlayerService,
               public leagueSwitchService: LeagueSwitchService,
               private route: ActivatedRoute,
-              public mockDraftService: MockDraftService) {
+              public mockDraftService: DraftService) {
     super();
   }
 

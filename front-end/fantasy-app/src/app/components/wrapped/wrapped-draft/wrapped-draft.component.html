@@ -1,0 +1,81 @@
+<!-- draft intro -->
+<div *ngIf="wrappedService.frameNumber === baseFrame">
+  <div [@fadeGrowStagger]="1" class="context-low center-text text-style" *ngIf="showContent">
+    <div *ngFor="let i of draftIntro" class="center-text text-style">{{i}}</div>
+  </div>
+</div>
+
+<!-- best worst draft -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 1" class="image-section">
+
+  <div [@fadeGrowStagger]="bestWorstDraft.length + 1" *ngIf="showContent" class="context">
+    <div class="center-text text-style">Some people really made a statement this draft...</div>
+    <div *ngFor="let i of bestWorstDraft" class="extra-card-padding">
+      <app-wrapped-card [content]="i"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<!-- best overall picks -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 2">
+
+  <div [@fadeGrowStagger]="bestPicksInTheDraft.length + 1" *ngIf="showContent" class="context-high">
+    <div class="center-text text-style">Let's look at the top talent in this draft</div>
+    <div *ngFor="let i of bestPicksInTheDraft">
+      <app-wrapped-card [content]="i"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<!-- best steals of the draft -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 3">
+
+  <div [@fadeGrowStagger]="bestValuePicks.length + 1" *ngIf="showContent" class="context-high">
+    <div class="center-text text-style">These owners could remake Ocean's Eleven with these steals...</div>
+    <div *ngFor="let i of bestValuePicks">
+      <app-wrapped-card [content]="i"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<!-- worst picks of the draft -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 4">
+
+  <div [@fadeGrowStagger]="bestValuePicks.length + 1" *ngIf="showContent" class="context-high">
+    <div class="center-text text-style">A swing and a miss... the biggest draft night blunders</div>
+    <div *ngFor="let i of worstValuePicks">
+      <app-wrapped-card [content]="i"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<div class="context-next" *ngIf="showNext">
+  <div @fadeSlideInOut class="center-text next-text" (click)="nextFrame()">Next<mat-icon class="next-icon">arrow_forward</mat-icon></div>
+</div>
+
+<div class="context-exit" *ngIf="showNext">
+  <div @fadeSlideInOut class="center-text" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="exit-icon">close</mat-icon></div>
+</div>
+
+<div class="background">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>

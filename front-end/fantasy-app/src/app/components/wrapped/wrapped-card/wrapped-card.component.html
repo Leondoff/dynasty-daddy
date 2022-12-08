@@ -1,0 +1,25 @@
+<div class="wrapped-card-padding">
+    <table>
+        <colgroup>
+            <col [ngStyle]="!configService.isMobile ? {'width': '20vw'} : {'width': '5vw'}">
+            <col [ngStyle]="!configService.isMobile ? {'width': '10vw'} : {'width': '5vw'}">
+            <col style="width: 10vw">
+            <col style="width: 25vw">
+            <col [ngStyle]="!configService.isMobile ? {'width': '20vw'} : {'width': '5vw'}">
+        </colgroup>
+        <tr>
+            <td></td>
+            <td class="wrapped-rank" *ngIf="!iconRank">{{content.rank}}</td>
+            <td class="wrapped-rank-icon" *ngIf="iconRank"><mat-icon style="font-size: clamp(50px, 5vw, 200px);">{{content.rank}}</mat-icon></td>
+            <td class="wrapped-img"><img #image [src]="content.image"
+                onerror="style.display = 'none'" style="width: clamp(50px, 5vw, 200px);"></td>
+            <td>
+                <div class="wrapped-header">
+                    {{content.header}}
+                </div>
+                <div class="wrapped-details">{{content.details}}</div>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+</div>

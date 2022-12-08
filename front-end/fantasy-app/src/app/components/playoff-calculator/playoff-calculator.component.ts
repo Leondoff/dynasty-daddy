@@ -98,6 +98,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
       }
       this.playoffMachineWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
       this.powerRankingsService.powerRankings = this.powerRankingsService.calculateEloAdjustedADPValue();
+      this.selectedWeek = this.playoffMachineWeek + 1;
       this.refreshGames();
       this.generateSelectableWeeks();
       this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
@@ -127,8 +128,8 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
           + this.playoffCalculatorService.matchUpsWithProb.length + 1, value: 'Today'
       });
     }
-    this.selectedWeek = this.selectableWeeks.reverse()[0].week;
-  }
+    this.selectableWeeks.reverse()
+    }
 
   /**
    * refresh game probability

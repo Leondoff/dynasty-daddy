@@ -1,0 +1,24 @@
+<div *ngIf="leagueService.isLeagueLoaded() && leagueService.selectedLeague">
+    <app-wrapped-welcome *ngIf="wrappedService.frameNumber === 0" (click)="wrappedService.frameNumber = 1"></app-wrapped-welcome>
+    <app-wrapped-draft [baseFrame]="1" *ngIf="wrappedService.frameNumber > 0 && wrappedService.frameNumber < 6" class="wrapped-container"></app-wrapped-draft>
+    <app-wrapped-transactions [baseFrame]="6" *ngIf="wrappedService.frameNumber > 5 && wrappedService.frameNumber < 12" class="wrapped-container"></app-wrapped-transactions>
+    <app-wrapped-standings [baseFrame]="12" *ngIf="wrappedService.frameNumber > 11 && wrappedService.frameNumber < 19" class="wrapped-container"></app-wrapped-standings>
+    <app-wrapped-finish [baseFrame]="19" *ngIf="wrappedService.frameNumber > 18" class="wrapped-container"></app-wrapped-finish>
+</div>
+
+<div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div class="center-text margin-top-50" *ngIf="leagueService.leagueStatus === 'NONE' && !leagueService.selectedLeague">
+    <div class="warning__alert">Cannot create Dynasty Daddy Wrapped. Please select a league.</div>
+    <br>
+    <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home" gaEvent="nav_home_page" gaCategory="page_nav">Choose League</button>
+    <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+      <mat-label>Select a league</mat-label>
+      <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
+        <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
+                    [value]="league">{{league.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
