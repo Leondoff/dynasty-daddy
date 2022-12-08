@@ -2,7 +2,7 @@ import {SleeperApiService} from '../../services/api/sleeper/sleeper-api.service'
 import {LeagueService} from '../../services/league.service';
 import {PowerRankingsService} from './power-rankings.service';
 import {PlayerService} from '../../services/player.service';
-import {MockDraftService} from './mock-draft.service';
+import {DraftService} from './draft.service';
 import {MatchupService} from './matchup.service';
 import {PlayoffCalculatorService} from './playoff-calculator.service';
 import {TransactionsService} from './transactions.service';
@@ -40,7 +40,7 @@ export class LeagueSwitchService extends BaseComponent {
               private powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
               private tradeService: TradeService,
-              private mockDraftService: MockDraftService,
+              private mockDraftService: DraftService,
               private matchupService: MatchupService,
               private nflService: NflService,
               private playoffCalculatorService: PlayoffCalculatorService,

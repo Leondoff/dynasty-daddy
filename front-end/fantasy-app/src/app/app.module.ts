@@ -87,6 +87,16 @@ import { EloTeamComparisonModalComponent } from './components/modals/elo-team-co
 import { EditLeagueSettingsModalComponent } from './components/modals/edit-league-settings-modal/edit-league-settings-modal.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { FantasyTeamRankingsRadarChart } from './components/fantasy-team-details/fantasy-team-rankings-radar-chart/fantasy-team-rankings-radar-chart';
+import { WrappedComponent } from './components/wrapped/wrapped.component';
+import { StandardPageComponent } from './components/standard-page/standard-page.component';
+import { WrappedWelcomeComponent } from './components/wrapped/wrapped-welcome/wrapped-welcome.component';
+import { WrappedTransactionsComponent } from './components/wrapped/wrapped-transactions/wrapped-transactions.component';
+import { WrappedCardComponent } from './components/wrapped/wrapped-card/wrapped-card.component';
+import { WrappedCardTradeComponent } from './components/wrapped/wrapped-card-trade/wrapped-card-trade.component';
+import { WrappedDraftComponent } from './components/wrapped/wrapped-draft/wrapped-draft.component';
+import { WrappedStandingsComponent } from './components/wrapped/wrapped-standings/wrapped-standings.component';
+import { WrappedFinishComponent } from './components/wrapped/wrapped-finish/wrapped-finish.component';
+import { WrappedCardSummaryComponent } from './components/wrapped/wrapped-card-summary/wrapped-card-summary.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -144,6 +154,16 @@ let UniversalDeviceDetectorService;
     TeamTiersChartComponent,
     EloTeamComparisonModalComponent,
     EditLeagueSettingsModalComponent,
+    WrappedComponent,
+    WrappedWelcomeComponent,
+    WrappedTransactionsComponent,
+    WrappedStandingsComponent,
+    WrappedFinishComponent,
+    WrappedCardSummaryComponent,
+    WrappedDraftComponent,
+    WrappedCardComponent,
+    WrappedCardTradeComponent,
+    StandardPageComponent,
     FantasyTeamRankingsRadarChart,
     TruncatePipe,
   ],

@@ -16,6 +16,7 @@ import {NflService} from '../../../services/utilities/nfl.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
 import {LeagueCompletedPickDTO} from '../../../model/league/LeagueCompletedPickDTO';
 import {CompletedDraft} from '../../../model/league/CompletedDraft';
+import { DraftService } from '../../services/draft.service';
 
 @Component({
   selector: 'app-completed-draft-table',
@@ -95,6 +96,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   pickValues: FantasyPlayer[] = [];
 
   constructor(public leagueService: LeagueService,
+              public draftService: DraftService,
               public playerService: PlayerService,
               public configService: ConfigService,
               public playerComparisonService: PlayerComparisonService,
@@ -127,7 +129,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * @private
    */
   private refreshMetrics(): void {
-    this.roundPickValue = this.getAVGValuePerRound();
+    this.draftService.generateAVGValuePerRound(this.selectedDraft);
     this.keepersByTeam = this.getTopKeeperForEachTeam();
     this.bestOverallPickStr = this.getBestOverallPick();
     this.bestValuePickStr = this.getBestValuePick();
@@ -214,9 +216,9 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    */
   getBestValuePick(): string {
     let topPick = this.selectedDraft.picks[0];
-    let topValue = this.getPickValueRatio(topPick);
+    let topValue = this.draftService.getPickValueRatio(topPick);
     for (const pick of this.selectedDraft.picks.slice(1)) {
-      const tempValue = this.getPickValueRatio(pick);
+      const tempValue = this.draftService.getPickValueRatio(pick);
       if (tempValue > topValue) {
         topPick = pick;
         topValue = tempValue;
@@ -230,57 +232,10 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   }
 
   /**
-   * get value ratio in player and pick used to select the player
-   * @param pick
-   * @private
-   */
-  private getPickValueRatio(pick: LeagueCompletedPickDTO): number {
-    const pickValue = this.getPickValue(pick.round);
-    return this.isSuperFlex ? (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-      this.leagueService.selectedLeague.leaguePlatform)?.sf_trade_value || 0) / pickValue :
-      (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-        this.leagueService.selectedLeague.leaguePlatform)?.trade_value || 0) / pickValue;
-  }
-
-  /**
-   * get value difference in player and pick used to select the player
-   * @param pick
-   * @private
-   */
-  private getPickValueAdded(pick: LeagueCompletedPickDTO): number {
-    const pickValue = this.getPickValue(pick.round);
-    return this.isSuperFlex ? (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-      this.leagueService.selectedLeague.leaguePlatform)?.sf_trade_value || 0) - pickValue :
-      (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-        this.leagueService.selectedLeague.leaguePlatform)?.trade_value || 0) - pickValue;
-  }
-
-  /**
-   * get pick value for round. If rookie draft use keep trade cut, else use the round pick value array
-   * @param round
-   * @private
-   */
-  private getPickValue(round: number): number {
-    return this.roundPickValue[round - 1];
-  }
-
-  /**
    * sets worst and best teams draft value added
    */
   findBestAndWorstDraftsForTeams(): void {
-    const teams: { team: LeagueTeam, valueAdded: number }[] = [];
-    for (const team of this.leagueService.leagueTeamDetails) {
-      let valueAdded = 0;
-      for (const pick of this.selectedDraft.picks) {
-        if (pick.rosterId === team.roster.rosterId) {
-          valueAdded += this.getPickValueAdded(pick);
-        }
-      }
-      teams.push({team, valueAdded});
-    }
-    teams.sort((a, b) => {
-      return b.valueAdded - a.valueAdded;
-    });
+    const teams = this.draftService.getTeamsWithBestValueDrafts(this.selectedDraft);
     this.bestTeamDraft = teams[0];
     this.worstTeamDraft = teams[teams.length - 1];
   }
@@ -310,29 +265,6 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   }
 
   /**
-   * get average value of round pick
-   */
-  private getAVGValuePerRound(): number[] {
-    const roundValue = [];
-    for (let round = 0; round < this.selectedDraft.draft.rounds; round++) {
-      let totalValue = 0;
-      for (let pickNum = 0; pickNum < this.leagueService.selectedLeague.totalRosters; pickNum++) {
-        totalValue += this.leagueService.selectedLeague.isSuperflex ?
-          this.playerService.getPlayerByPlayerPlatformId(
-            this.selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
-            this.leagueService.selectedLeague.leaguePlatform
-          )?.sf_trade_value || 0 :
-          this.playerService.getPlayerByPlayerPlatformId(
-            this.selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
-            this.leagueService.selectedLeague.leaguePlatform
-          )?.trade_value || 0;
-      }
-      roundValue.push(Math.round(totalValue / this.leagueService.selectedLeague.totalRosters));
-    }
-    return roundValue;
-  }
-
-  /**
    * returns dictionary of top players to redraft in keeper league
    */
   getTopKeeperForEachTeam(): {} {
@@ -352,8 +284,8 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
               pickWithValues.push({
                 player: fantasyPlayer.full_name,
                 pick: `${pick.round}.${pick.pickNumber % this.leagueService.selectedLeague.totalRosters}`,
-                value: this.isSuperFlex ? fantasyPlayer.sf_trade_value - this.roundPickValue[pick.round - 1]
-                  : fantasyPlayer.trade_value - this.roundPickValue[pick.round - 1]
+                value: this.isSuperFlex ? fantasyPlayer.sf_trade_value - this.draftService.roundPickValue[pick.round - 1]
+                  : fantasyPlayer.trade_value - this.draftService.roundPickValue[pick.round - 1]
               });
             }
           }

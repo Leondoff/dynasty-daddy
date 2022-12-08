@@ -144,6 +144,9 @@
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.leaguePlatform === 1 ? 'MyFantasyLeague' : 'Sleeper'}}</span>!
         </div>
         <div *ngIf="leagueService.selectedLeague">You can navigate to other pages or <span class="link--text__no__underline" [routerLink]="['./league/rankings']"  gaEvent="nav_power_rankings" gaCategory="page_nav">click here to checkout out your league power rankings.</span></div>
+        <div *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'" class="margin-top-15">
+          <button mat-button [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-button" gaEvent="nav_wrapped" gaCategory="page_nav">Check out Wrapped <mat-icon class="header-icon">redeem</mat-icon></button>
+        </div>
         <div *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.prevLeagueId?.length >= 5">
           <div class="mid-bold-text margin-top-25 margin-bot-25">OR</div>
           <button mat-stroked-button
@@ -214,6 +217,12 @@
       <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/comparison']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">insights</mat-icon>Player Comparison Tool</div>
       <div class="center-text margin-top-25 margin-bot-50">
         Compare player values overtime to get more insight into how the player's value is trending. Add & query to make personalized views to meed the needs of you research. This tool can also display trade packages from the trade calculator!
+      </div>
+    </div>
+    <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
+      <div class="center-text mid-bold-text"><mat-icon class="home-icon" style="padding-right: 35px">redeem</mat-icon>Wrapped</div>
+      <div class="center-text margin-top-25 margin-bot-50">
+        Creates a Spotify Wrapped style recap for your fantasy league. Recapping the best fantasy trades, transactions, and teams in your league in a visually pleasing presentation that can easily be shared with league mates and others on social media.
       </div>
     </div>
   </div>
