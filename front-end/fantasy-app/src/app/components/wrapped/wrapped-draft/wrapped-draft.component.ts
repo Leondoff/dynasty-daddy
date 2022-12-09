@@ -58,7 +58,7 @@ import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
       this.bestWorstDraft.push({rank: 'Worst', details: 'The Buster - added the least value in the draft', header: worstTeam.team.owner.teamName, image: worstTeam.team.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
       // best picks in the draft
       const valueToUse = this.leagueService.selectedLeague.isSuperflex ? 'sf_trade_value' : 'trade_value'
-      const sortedPicks = this.leagueService.completedDrafts[0].picks.sort((a,b) => (this.playerService.getPlayerByPlayerPlatformId(b.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0) - (this.playerService.getPlayerByPlayerPlatformId(a.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0) );
+      const sortedPicks = this.leagueService.completedDrafts[0].picks.slice().sort((a,b) => (this.playerService.getPlayerByPlayerPlatformId(b.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0) - (this.playerService.getPlayerByPlayerPlatformId(a.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0) );
       for (let i = 0; i < 5; i++) {
         const pick = sortedPicks[i];
         const player = this.leagueService.platformPlayersMap[pick.playerId];

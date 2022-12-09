@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import { LeagueTeam } from 'src/app/model/league/LeagueTeam';
+import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueService } from 'src/app/services/league.service';
 import { NflService } from 'src/app/services/utilities/nfl.service';
 import { MatchUpProbability } from '../../model/playoffCalculator';
@@ -50,7 +51,15 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
     /** show page content */
     showContent = false;
 
-    constructor(private matchUpService: MatchupService,  public leagueSwitchService: LeagueSwitchService, private playoffCalculatorService: PlayoffCalculatorService, public wrappedService: WrappedService, private nflService: NflService, private leagueService: LeagueService) {}
+    constructor(
+      public configService: ConfigService,
+      private matchUpService: MatchupService,
+      public leagueSwitchService: LeagueSwitchService,
+      private playoffCalculatorService: PlayoffCalculatorService,
+      public wrappedService: WrappedService,
+      private nflService: NflService,
+      private leagueService: LeagueService
+    ) {}
     
     ngOnInit(): void {
       const completedWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
@@ -71,7 +80,7 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
       }
       // biggest upsets
       this.playoffCalculatorService.calculateGamesWithProbability(completedWeek+1);
-      const upsetMatchups = this.playoffCalculatorService.matchUpsWithProb.reduce((a, b) => a.concat(b), []).filter(m => m.matchUpDetails.team1Points !== 0 && m.matchUpDetails.team2Points !== 0).sort((a,b) => this.getWinnerProb(a) - this.getWinnerProb(b));
+      const upsetMatchups = this.playoffCalculatorService.matchUpsWithProb.slice().reduce((a, b) => a.concat(b), []).filter(m => m.matchUpDetails.team1Points !== 0 && m.matchUpDetails.team2Points !== 0).sort((a,b) => this.getWinnerProb(a) - this.getWinnerProb(b));
       for (let i = 0; i < 4; i++) {
         const matchUp = upsetMatchups[i];
         const didTeam1Win = matchUp.matchUpDetails.team1Points > matchUp.matchUpDetails.team2Points 
@@ -89,8 +98,12 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
       const teams = this.leagueService.leagueTeamDetails.slice().sort((a, b) => b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts);
       this.superlatives.push({rank: '', details: 'Best Offense in the league - Points For: ' + teams[0].roster.teamMetrics.fpts, header: teams[0].owner.teamName, image: teams[0].owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
       this.superlatives.push({rank: '', details: 'Worst Offense in the league - Points For: ' + teams[teams.length-1].roster.teamMetrics.fpts, header: teams[teams.length-1].owner.teamName, image: teams[teams.length-1].owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
-      const unluckyTeam = teams.sort((a,b) => b.roster.teamMetrics.fptsAgainst - a.roster.teamMetrics.fptsAgainst);
-      this.superlatives.push({rank: '', details: 'Worst defense in the league - Points Against: ' + unluckyTeam[0].roster.teamMetrics.fptsAgainst, header: unluckyTeam[0].owner.teamName, image: unluckyTeam[0].owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+      const worstTeam = teams.sort((a,b) => b.roster.teamMetrics.fptsAgainst - a.roster.teamMetrics.fptsAgainst);
+      this.superlatives.push({rank: '', details: 'Worst defense in the league - Points Against: ' + worstTeam[0].roster.teamMetrics.fptsAgainst, header: worstTeam[0].owner.teamName, image: worstTeam[0].owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+      this.matchUpService.getMostPointsForInWeek(this.leagueService.selectedLeague.startWeek, completedWeek);
+      const mostPointsMatchUp = this.matchUpService.leagueMostPointsFor[0];
+      const mostPointsForTeam = this.leagueService.getTeamByRosterId(mostPointsMatchUp.rosterId);
+      this.superlatives.push({rank: '', details: 'Any given sunday - Single Game High: ' + mostPointsMatchUp.points, header: mostPointsForTeam.owner.teamName, image: mostPointsForTeam.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
       // best record
       const recordTeam = teams.sort((a,b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins)
       for (let i = 0; i < 4; i++) {

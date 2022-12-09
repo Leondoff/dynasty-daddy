@@ -92,11 +92,8 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
      */
     nextFrame(): void {
       this.wrappedService.frameNumber++;
-      if (this.wrappedService.transactionsDict['trades'].length === 0 && this.wrappedService.frameNumber === 5) {
-        this.wrappedService.frameNumber++;
-      }
-      if (this.biggestFleeces.length === 0 && this.wrappedService.frameNumber === 11) {
-        this.wrappedService.frameNumber++;
+      if (this.wrappedService.transactionsDict['trades'].length === 0 && this.wrappedService.frameNumber === this.baseFrame + 4) {
+        this.wrappedService.frameNumber += 2;
       }
       this.showNext = false;
       this.showContent = false;

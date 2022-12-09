@@ -1,12 +1,11 @@
+@import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
 .welcome-text {
     color: white;
     font-weight: bold;
     font-size: clamp(24px, 3.5vw, 108px);
     z-index: 1;
 }
-
-
-@import url('https://fonts.googleapis.com/css?family=Exo:400,700');
 
 *{
     margin: 0px;
@@ -16,26 +15,6 @@
 body{
     font-family: 'Exo', sans-serif;
 }
-
-
-.context {
-    width: 100%;
-    position: absolute;
-    top:25vh;
-}
-
-.context-next {
-    width: 100%;
-    position: absolute;
-    top:90vh;
-}
-
-.context h1{
-    text-align: center;
-    color: #fff;
-    font-size: 50px;
-}
-
 
 .area{
     background: #07821a;  
@@ -140,8 +119,6 @@ body{
     animation-delay: 0s;
     animation-duration: 11s;
 }
-
-
 
 @keyframes animate {
 

@@ -18,7 +18,6 @@ import { ConfigService } from "src/app/services/init/config.service";
 
 }
 
-
 export class WrappedCardTradeContent{
     team1: string;
     team2: string;

@@ -23,7 +23,6 @@ import { WrappedCardContent } from "../wrapped-card/wrapped-card.component";
 
 }
 
-
 export class WrappedCardSummaryContent{
     first: LeagueTeam;
     second: LeagueTeam;

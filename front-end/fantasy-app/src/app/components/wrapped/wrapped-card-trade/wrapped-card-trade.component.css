@@ -1,13 +1,14 @@
 .wrapped-header {
-    font-size: clamp(16px, 2.2vw, 48px);
+    font-size: clamp(14px, 2.2vw, 48px);
     text-align: center;
+    font-weight: bold;
     vertical-align: text-top;
 }
 
 .wrapped-details {
     text-align: center;
     vertical-align: text-top;
-    font-size: clamp(12px, 1.2vw, 32px);
+    font-size: clamp(10px, 1.2vw, 32px);
 }
 
 .wrapped-trade-padding {

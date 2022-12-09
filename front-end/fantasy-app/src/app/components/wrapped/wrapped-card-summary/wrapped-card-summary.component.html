@@ -1,5 +1,5 @@
-<div style="padding-top: 5vh">
-    <div class="center-text text-style">
+<div>
+    <div class="center-text wrapped-header-style">
         {{content.leagueName}}
     </div>
     <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
@@ -28,7 +28,7 @@
             <div class="wrapped-row-padding-text">Trades Made</div>
             <div class="wrapped-details-accent" style="font-size: clamp(18px, 2.5vw, 72px);">{{content.totalTrades}}</div>
         </div>
-        <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block; text-align-last: end;" class="wrapped-details box-padding">
+        <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block; text-align-last: end;" class="wrapped-details box-padding" [ngStyle]="content.bestTrade ? {} : {'text-align-last': 'center'}">
             <div class="wrapped-row-padding-text">Final Standings</div>
             <div class="wrapped-details-small" *ngFor="let team of content.standings; let i = index;">{{i+1}}. {{team.owner.teamName}} ({{team.roster.teamMetrics.wins}}-{{team.roster.teamMetrics.losses}})</div>
         </div>

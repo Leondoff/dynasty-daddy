@@ -1,6 +1,6 @@
 .wrapped-rank {
     text-align: end;
-    font-size: clamp(24px, 6vw, 72px);
+    font-size: clamp(18px, 6vw, 72px);
     position: relative;
     z-index: 1;
 }
@@ -11,8 +11,9 @@
 }
 
 .wrapped-header {
-    font-size: clamp(16px, 2.2vw, 48px);
+    font-size: clamp(12px, 2.2vw, 48px);
     position: relative;
+    font-weight: bold;
     z-index: 1;
 }
 
@@ -23,7 +24,7 @@
 }
 
 .wrapped-details {
-    font-size: clamp(12px, 1.2vw, 32px);
+    font-size: clamp(10px, 1.2vw, 32px);
     position: relative;
     z-index: 1;
 }

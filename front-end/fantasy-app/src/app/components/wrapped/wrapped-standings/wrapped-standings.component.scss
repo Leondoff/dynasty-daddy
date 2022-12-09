@@ -1,47 +1,4 @@
-
-.context {
-  width: 100%;
-  position: absolute;
-  top:25vh;
-}
-
-.context-low {
-  width: 100%;
-  position: absolute;
-  top:40vh;
-}
-
-.context-high {
-  width: 100%;
-  position: absolute;
-  top:10vh;
-}
-
-.context-next {
-  width: 100%;
-  position: absolute;
-  top:90vh;
-}
-
-.context-exit {
-  width: 100%;
-  position: absolute;
-  top: 5vh;
-  left: 42vw;
-}
-
-.exit-icon {
-  font-size: clamp(24px, 2.5vw, 56px);
-  cursor: pointer;
-}
-
-.text-style {
-  color: white;
-  font-weight: bold;
-  position: relative;
-  z-index: 1;
-  font-size: clamp(24px, 3.5vw, 108px);
-}
+@import url('https://fonts.googleapis.com/css?family=Montserrat:700');
 
 .small-text-style {
   color: white;
@@ -54,9 +11,6 @@
 .extra-card-padding {
   padding-top: 2vh;
 }
-
-
-@import url('https://fonts.googleapis.com/css?family=Montserrat:700');
 
 .wrapped-standings {
   background-color: #0040C1;

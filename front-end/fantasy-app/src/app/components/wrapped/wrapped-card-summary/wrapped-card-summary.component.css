@@ -2,20 +2,20 @@
     color: #cdcdcd;
     text-align: start;
     vertical-align: top;
-    font-size: clamp(12px, 1.2vw, 32px);
+    font-size: clamp(10px, 1.2vw, 32px);
 }
 
 .wrapped-details-small {
     color: white;
     text-align: start;
     vertical-align: text-top;
-    font-size: clamp(12px, 0.8vw, 24px);
+    font-size: clamp(8px, 0.8vw, 24px);
 }
 
 .wrapped-details-accent {
     color: white;
     font-weight: bold;
-    font-size: clamp(18px, 1.8vw, 48px);
+    font-size: clamp(12px, 1.8vw, 48px);
 }
 
 .wrapped-details-img {
@@ -31,13 +31,6 @@
     padding-right: clamp(10px, 1vw, 75px);
 }
 
-.text-style {
-    color: white;
-    font-weight: bold;
-    z-index: 1;
-    font-size: clamp(24px, 3.5vw, 108px);
-  }
-
 .wrapped-row-padding-text {
-    padding-top: clamp(2px, 1.5vh, 10px);
+    padding-top: clamp(1px, 1.5vh, 10px);
 }

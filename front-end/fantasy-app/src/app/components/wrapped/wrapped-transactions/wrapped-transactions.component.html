@@ -1,15 +1,15 @@
 <!-- total transactions frame -->
 <div *ngIf="wrappedService.frameNumber === baseFrame">
-  <div [@fadeGrowStagger]="totalTransactions.length" class="context-low" *ngIf="showContent">
-    <div *ngFor="let i of totalTransactions" class="center-text text-style">{{i}}</div>
+  <div [@fadeGrowStagger]="totalTransactions.length" class="wrapped-context-low" *ngIf="showContent">
+    <div *ngFor="let i of totalTransactions" class="center-text wrapped-header-style">{{i}}</div>
   </div>
 </div>
 
 <!-- most/least transactions -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 1">
 
-  <div [@fadeGrowStagger]="transactionsWinners.length + 1" *ngIf="showContent" class="context">
-    <div class="center-text text-style">This season two teams stood out among the others...</div>
+  <div [@fadeGrowStagger]="transactionsWinners.length + 1" *ngIf="showContent" class="wrapped-context">
+    <div class="center-text wrapped-header-style">This season two teams stood out among the others...</div>
     <div *ngFor="let i of transactionsWinners" class="extra-card-padding">
       <app-wrapped-card [content]="i"></app-wrapped-card>
     </div>
@@ -18,8 +18,8 @@
 
 <!-- best waiver wire adds -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 2">
-  <div [@fadeGrowStagger]="transactionsPlayers.length + 1" class="context-high" *ngIf="showContent">
-    <div class="center-text text-style">Let's look at the best waiver signings this season</div>
+  <div [@fadeGrowStagger]="transactionsPlayers.length + 1" class="wrapped-context-high" *ngIf="showContent">
+    <div class="center-text wrapped-header-style">Let's look at the best waiver signings this season</div>
     <div *ngFor="let i of transactionsPlayers">
       <app-wrapped-card [content]="i"></app-wrapped-card>
     </div>
@@ -29,16 +29,16 @@
 <!-- trade total -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 3">
 
-  <div [@fadeGrowStagger]="tradesIntro.length" class="context-low" *ngIf="showContent">
-    <div *ngFor="let i of tradesIntro" class="center-text text-style">{{i}}</div>
+  <div [@fadeGrowStagger]="tradesIntro.length" class="wrapped-context-low" *ngIf="showContent">
+    <div *ngFor="let i of tradesIntro" class="center-text wrapped-header-style">{{i}}</div>
   </div>
 </div>
 
 <!-- biggest trades -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 4">
 
-  <div [@fadeGrowStagger]="biggestTrades.length + 1" class="context-high" *ngIf="showContent">
-    <div class="center-text text-style">Y'all didn't hold any punches when it came to big trades</div>
+  <div [@fadeGrowStagger]="biggestTrades.length + 1" class="wrapped-context-high" *ngIf="showContent">
+    <div class="center-text wrapped-header-style">Y'all didn't hold any punches when it came to big trades</div>
     <div *ngFor="let i of biggestTrades">
       <app-wrapped-card-trade [content]="i"></app-wrapped-card-trade>
     </div>
@@ -48,20 +48,20 @@
 <!-- biggest fleeces -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 5">
 
-  <div [@fadeGrowStagger]="biggestFleeces.length + 1" class="context-high" *ngIf="showContent">
-    <div class="center-text text-style">Fleece Alert! How did these trades get accepted?</div>
+  <div [@fadeGrowStagger]="biggestFleeces.length + 1" class="wrapped-context-high" *ngIf="showContent">
+    <div class="center-text wrapped-header-style">Fleece Alert! How did these trades get accepted?</div>
     <div *ngFor="let i of biggestFleeces">
       <app-wrapped-card-trade [content]="i"></app-wrapped-card-trade>
     </div>
   </div>
 </div>
 
-<div class="context-next" *ngIf="showNext">
-  <div @fadeSlideInOut class="center-text next-text" (click)="nextFrame()">Next<mat-icon class="next-icon">arrow_forward</mat-icon></div>
+<div class="wrapped-context-next" *ngIf="showNext">
+  <div @fadeSlideInOut class="center-text" (click)="nextFrame()"><mat-icon class="wrapped-top-icon">arrow_forward</mat-icon></div>
 </div>
 
-<div class="context-exit" *ngIf="showNext">
-  <div @fadeSlideInOut class="center-text" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="exit-icon">close</mat-icon></div>
+<div class="wrapped-context-exit" *ngIf="showNext">
+  <div @fadeSlideInOut class="center-text" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="wrapped-top-icon">close</mat-icon></div>
 </div>
 
 <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin slice" viewBox="24 105 156 95" >
