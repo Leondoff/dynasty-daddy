@@ -1,0 +1,23 @@
+.wrapped-header {
+    font-size: clamp(14px, 2.2vw, 48px);
+    text-align: center;
+    font-weight: bold;
+    vertical-align: text-top;
+}
+
+.wrapped-details {
+    text-align: center;
+    vertical-align: text-top;
+    font-size: clamp(10px, 1.2vw, 32px);
+}
+
+.wrapped-trade-padding {
+    padding-top: clamp(5px, 10vh, 25px);
+}
+
+.wrapped-trade-icon {
+    height: unset;
+    width: unset;
+    font-size: 8vw;
+    z-index: 1;
+}

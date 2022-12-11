@@ -638,11 +638,11 @@ export class PlayoffCalculatorService {
         this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeConfRd =
           (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeConfRd || 0) + 1;
       }
-      simulatedTeamRd = byeWeekTeams.concat(simulatedTeamRd);
+      simulatedTeamRd = byeWeekTeams.concat(simulatedTeamRd.reverse());
     }
     if (weekDiff <= 2) {
       simulatedTeamRd = this.simulateRoundOfPlayoffs(simulatedTeamRd);
-      // assign wins for conference
+      // assign making the championship
       for (const team of simulatedTeamRd) {
         this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeChampionship =
           (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeChampionship || 0) + 1;
@@ -650,7 +650,7 @@ export class PlayoffCalculatorService {
     }
     if (weekDiff <= 3) {
       simulatedTeamRd = this.simulateRoundOfPlayoffs(simulatedTeamRd);
-      // assign wins for conference
+      // assign wins for championship
       for (const team of simulatedTeamRd) {
         this.teamPlayoffOdds[team.team.roster.rosterId].timesWinChampionship =
           (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinChampionship || 0) + 1;

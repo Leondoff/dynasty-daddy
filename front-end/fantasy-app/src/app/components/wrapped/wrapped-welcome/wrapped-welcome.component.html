@@ -1,0 +1,23 @@
+
+<div [@fadeGrowStagger]="items.length + 1" class="wrapped-context" *ngIf="showContent">
+  <div *ngFor="let i of items" class="center-text welcome-text">{{i}}</div>
+</div>
+
+<div class="wrapped-context-next" *ngIf="showNext">
+  <div @fadeSlideInOut class="center-text"><mat-icon class="wrapped-top-icon">arrow_forward</mat-icon></div>
+</div>
+
+<div class="area" >
+  <ul class="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+  </ul>
+</div >

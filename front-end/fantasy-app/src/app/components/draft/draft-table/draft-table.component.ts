@@ -3,7 +3,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {TeamMockDraftPick} from '../../model/mockDraft';
-import {MockDraftService} from '../../services/mock-draft.service';
+import {DraftService} from '../../services/draft.service';
 import {LeagueService} from '../../../services/league.service';
 
 @Component({
@@ -40,7 +40,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
   /** mat datasource */
   dataSource: MatTableDataSource<TeamMockDraftPick> = new MatTableDataSource<TeamMockDraftPick>();
 
-  constructor(public mockDraftService: MockDraftService,
+  constructor(public mockDraftService: DraftService,
               public leagueService: LeagueService) {
   }
 

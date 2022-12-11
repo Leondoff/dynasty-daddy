@@ -1,0 +1,20 @@
+
+<div class="finish-background">
+  <div *ngIf="wrappedService.frameNumber === baseFrame">
+    <div [@fadeGrowStagger]="finalIntro.length" class="wrapped-context-low" *ngIf="showContent">
+      <div *ngFor="let i of finalIntro" class="center-text wrapped-header-style">{{i}}</div>
+    </div>
+    
+    <div class="wrapped-context-next" *ngIf="showNext">
+      <div @fadeSlideInOut class="center-text" (click)="nextFrame()"><mat-icon class="wrapped-top-icon">arrow_forward</mat-icon></div>
+    </div>
+  </div>
+
+  <div *ngIf="wrappedService.frameNumber === baseFrame + 1">
+    <app-wrapped-summary-trade class='wrapped-context-high' @fadeSlideInOut [content]="summaryCard"></app-wrapped-summary-trade>
+    
+    <div class="wrapped-context-next" *ngIf="showNext">
+      <div @fadeSlideInOut class="center-text" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="wrapped-top-icon">close</mat-icon></div>
+    </div>
+  </div>
+</div>

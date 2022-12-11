@@ -13,7 +13,8 @@ export const ConfigKeyDictionary = {
   HOME_DIALOG_HEADER: 'home_dialog_header',
   HOME_DIALOG_BODY: 'home_dialog_body',
   HOME_DIALOG_BG_COLOR: 'home_dialog_bg_color',
-  DEMO_LEAGUE_ID: 'demo_league_id'
+  DEMO_LEAGUE_ID: 'demo_league_id',
+  ENABLE_WRAPPED: 'enable_wrapped'
 } as const;
 
 @Injectable({

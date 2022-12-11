@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {Component, NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {HomeComponent} from './components/home/home.component';
 import {PowerRankingsComponent} from './components/power-rankings/power-rankings.component';
@@ -13,67 +13,79 @@ import {AboutComponent} from './components/about/about.component';
 import {PlayerStatisticsComponent} from './components/player-statistics/player-statistics.component';
 import {TradeCenterComponent} from './components/trade-center/trade-center.component';
 import {TradeFinderComponent} from './components/trade-finder/trade-finder.component';
+import { WrappedComponent } from './components/wrapped/wrapped.component';
+import { combinations } from 'simple-statistics';
+import { AppComponent } from './app.component';
+import { StandardPageComponent } from './components/standard-page/standard-page.component';
 
 const routes: Routes = [
   {
-    path: 'players/values',
-    component: PlayerValuesComponent
-  },
-  {
-    path: 'players/comparison',
-    component: PlayerComparisonsComponent
-  },
-  {
-    path: 'players/statistics',
-    component: PlayerStatisticsComponent
-  },
-  {
-    path: 'players/trade',
-    component: TradeCenterComponent
-  },
-  {
-    path: 'players/details/:playerNameId',
-    component: PlayerDetailsComponent
-  },
-  {
-    path: 'league/team/:ownerName',
-    component: FantasyTeamDetailsComponent
-  },
-  {
-    path: 'league/rankings',
-    component: PowerRankingsComponent
-  },
-  {
-    path: 'league/trade/finder',
-    component: TradeFinderComponent
-  },
-  {
-    path: 'league/probability',
-    component: PlayoffCalculatorComponent
-  },
-  {
-    path: 'league/standings',
-    component: StandingsComponent
-  },
-  {
-    path: 'league/draft',
-    component: DraftComponent
-  },
-  {
-    path: 'home',
-    redirectTo: ''
-  },
-  {
     path: '',
-    component: HomeComponent
+    children: [{
+      path: 'players/values',
+      component: PlayerValuesComponent
+    },
+    {
+      path: 'players/comparison',
+      component: PlayerComparisonsComponent
+    },
+    {
+      path: 'players/statistics',
+      component: PlayerStatisticsComponent
+    },
+    {
+      path: 'players/trade',
+      component: TradeCenterComponent
+    },
+    {
+      path: 'players/details/:playerNameId',
+      component: PlayerDetailsComponent
+    },
+    {
+      path: 'league/team/:ownerName',
+      component: FantasyTeamDetailsComponent
+    },
+    {
+      path: 'league/rankings',
+      component: PowerRankingsComponent
+    },
+    {
+      path: 'league/trade/finder',
+      component: TradeFinderComponent
+    },
+    {
+      path: 'league/probability',
+      component: PlayoffCalculatorComponent
+    },
+    {
+      path: 'league/standings',
+      component: StandingsComponent
+    },
+    {
+      path: 'league/draft',
+      component: DraftComponent
+    },
+    {
+      path: 'home',
+      redirectTo: ''
+    },
+    {
+      path: '',
+      component: HomeComponent
+    },
+    {
+      path: 'about',
+      component: AboutComponent
+    },
+    {
+      path: 'login',
+      redirectTo: ''
+    }],
+    component: StandardPageComponent
   },
   {
-    path: 'about',
-    component: AboutComponent
-  },
-  {
-    path: 'login',
-    redirectTo: ''
+    path: 'wrapped',
+    component: WrappedComponent
   },
   {
     path: '**',

@@ -683,3 +683,71 @@ tr.table-detail-row {
 .mat-tab-body-content {
   overflow-y: hidden !important;
 }
+
+// Wrapped styling
+.wrapped-button {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.wrapped-context-next {
+  width: 100%;
+  position: absolute;
+  top: 5vh;
+  left: 42vw;
+  z-index: 5;
+}
+
+.wrapped-context {
+  width: 100%;
+  position: absolute;
+  top:25vh;
+}
+
+.wrapped-context-low {
+  width: 100%;
+  position: absolute;
+  top:40vh;
+}
+
+.wrapped-context-high {
+  width: 100%;
+  position: absolute;
+  top:10vh;
+}
+
+.wrapped-context-exit {
+  width: 100%;
+  position: absolute;
+  top: 5vh;
+  left: -42vw;
+  z-index: 5;
+}
+
+.wrapped-top-icon {
+  font-size: clamp(24px, 2.5vw, 56px);
+  height: unset !important;
+  width: unset !important;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.wrapped-header-style {
+  color: white;
+  font-weight: bold;
+  z-index: 1;
+  font-size: clamp(18px, 3.5vw, 108px);
+}

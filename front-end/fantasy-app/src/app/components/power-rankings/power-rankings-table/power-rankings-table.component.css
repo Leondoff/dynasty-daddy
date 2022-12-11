@@ -31,6 +31,7 @@ tr.power-ranking-element-row:not(.power-ranking-expanded-row):active {
   padding: 8px 24px 24px;
   min-width: 300px;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .mat-column-overallRank,

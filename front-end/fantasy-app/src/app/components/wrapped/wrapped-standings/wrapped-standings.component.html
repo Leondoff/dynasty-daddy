@@ -1,0 +1,90 @@
+<!-- standings intro frame -->
+<div *ngIf="wrappedService.frameNumber === baseFrame">
+  <div [@fadeGrowStagger]="standingsIntro.length" class="wrapped-context-low" *ngIf="showContent">
+    <div *ngFor="let i of standingsIntro" class="center-text wrapped-header-style">{{i}}</div>
+  </div>
+</div>
+
+<!-- closest Wins -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 1">
+  <div [@fadeGrowStagger]="closestGames.length + 1" *ngIf="showContent" class="wrapped-context-high">
+    <div class="center-text wrapped-header-style">These games were nail biters down to the last stat correction</div>
+    <div *ngFor="let i of closestGames" class="extra-card-padding">
+      <app-wrapped-card [content]="i"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<!-- biggest upsets -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 2">
+  <div [@fadeGrowStagger]="upsetGames.length + 1" *ngIf="showContent" class="wrapped-context-high">
+    <div class="center-text wrapped-header-style">Everyone loves an underdog, these are the biggest upsets</div>
+    <div *ngFor="let i of upsetGames" class="extra-card-padding">
+      <app-wrapped-card [content]="i"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<!-- team intro frame -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 3">
+  <div [@fadeGrowStagger]="teamsIntro.length" class="wrapped-context-low" *ngIf="showContent">
+    <div *ngFor="let i of teamsIntro" class="center-text wrapped-header-style">{{i}}</div>
+  </div>
+</div>
+
+<!-- team superlatives -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 4">
+  <div [@fadeGrowStagger]="superlatives.length + 1" *ngIf="showContent" class="wrapped-context-high">
+    <div class="center-text wrapped-header-style">These teams really left there mark this season</div>
+    <div *ngFor="let i of superlatives" class="extra-card-padding">
+      <app-wrapped-card [content]="i" [iconRank]="true"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<!-- best records -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 5">
+  <div [@fadeGrowStagger]="topTeams.length + 1" *ngIf="showContent" class="wrapped-context-high">
+    <div class="center-text wrapped-header-style">Let's take a moment to give flowers to the top teams</div>
+    <div *ngFor="let i of topTeams" class="extra-card-padding">
+      <app-wrapped-card [content]="i"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<!--  winner -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 6">
+  <div [@fadeGrowStagger]="rivalQuotes.length + 4" *ngIf="showContent" class="wrapped-context-high">
+    <div  class="center-text wrapped-header-style">But only one can bring home the championship</div>
+    <div class="center-text extra-card-padding"> <img #image [src]="winner.owner.getAvatarForLeague(leagueService.selectedLeague.leaguePlatform)"
+      onerror="style.display = 'none'" style="width: clamp(200px, 5vw, 500px);"></div>
+    <div class="center-text wrapped-header-style extra-card-padding">Congrats {{winner.owner?.teamName}}!</div>
+    <div class="center-text wrapped-header-style extra-card-padding">You had an incredible season! Here are some quotes from rivals...</div>
+    <div *ngFor="let i of rivalQuotes; let ind = index;">
+      <div class="small-text-style center-text extra-card-padding">{{i}}</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapped-context-next" *ngIf="showNext">
+  <div @fadeSlideInOut class="center-text" (click)="nextFrame()"><mat-icon class="wrapped-top-icon">arrow_forward</mat-icon></div>
+</div>
+
+<div class="wrapped-context-exit" *ngIf="showNext">
+  <div @fadeSlideInOut class="center-text" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="wrapped-top-icon">close</mat-icon></div>
+</div>
+
+<div class="wrapped-standings">
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <div class="cube" *ngIf="!configService.isMobile"></div>
+</div>

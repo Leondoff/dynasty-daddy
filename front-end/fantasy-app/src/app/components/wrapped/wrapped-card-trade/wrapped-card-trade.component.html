@@ -1,0 +1,28 @@
+<div class="wrapped-trade-padding">
+    <table>
+        <colgroup>
+            <col [ngStyle]="!configService.isMobile ? {'width': '15vw'} : {'width': '5vw'}">
+            <col style="width: 25vw">
+            <col style="width: 5vw">
+            <col style="width: 25vw">
+            <col [ngStyle]="!configService.isMobile ? {'width': '15vw'} : {'width': '5vw'}">
+        </colgroup>
+        <tr>
+            <td></td>
+            <td style="vertical-align: text-top;">
+                <div class="wrapped-header">
+                    {{content.team1}}
+                </div>
+                <div *ngFor="let p of content.team1Adds" class="wrapped-details">{{p}}</div>
+            </td>            
+            <td class="center-text"><mat-icon class="wrapped-trade-icon">swap_horiz</mat-icon></td>
+            <td style="vertical-align: text-top;">
+                <div class="wrapped-header">
+                    {{content.team2}}
+                </div>
+                <div *ngFor="let p of content.team2Adds" class="wrapped-details">{{p}}</div>
+            </td>            
+            <td></td>
+        </tr>
+    </table>
+</div>
