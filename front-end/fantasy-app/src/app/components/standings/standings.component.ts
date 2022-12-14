@@ -21,6 +21,12 @@ import {PlayerService} from "../../services/player.service";
 })
 export class StandingsComponent extends BaseComponent implements OnInit {
 
+  /** no league selected error message */
+  noLeagueErrMsg = 'Unable to generate standings. Please select a league.';
+
+  /** league has not started error message */
+  leagueNotStartedErrMsg = 'Cannot generate standings because league hasn\'t started.'
+
   constructor(public leagueService: LeagueService,
               public playoffCalculatorService: PlayoffCalculatorService,
               public matchupService: MatchupService,

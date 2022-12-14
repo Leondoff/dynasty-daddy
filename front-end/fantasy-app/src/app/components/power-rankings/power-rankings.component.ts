@@ -14,6 +14,12 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class PowerRankingsComponent extends BaseComponent implements OnInit {
 
+  /** Error generating power rankings message */
+  creatingPRErrMsg = 'Error creating Power Rankings. Try again.'
+
+  /** No league selected error message */
+  noLeagueErrMsg = 'Unable to create rankings. Please select a league.'
+
   constructor(public leagueService: LeagueService,
               public powerRankingService: PowerRankingsService,
               private playersService: PlayerService,

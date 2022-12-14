@@ -16,6 +16,9 @@ import { WrappedService } from '../services/wrapped.service';
 
     enabled: boolean = false;
 
+    /** no league selected error message */
+    noLeagueErrMsg = 'Cannot load Dynasty Daddy Wrapped. Please select league.';
+
     constructor(public wrappedService: WrappedService, public leagueService: LeagueService, private playersService: PlayerService, private leagueSwitchService: LeagueSwitchService, private route: ActivatedRoute) {
         super();
     }

@@ -17,6 +17,12 @@ export class DraftComponent extends BaseComponent implements OnInit {
   /** rerender table when refreshed */
   resetTrigger: boolean = true;
 
+  /** no drafts found error message */
+  noDraftsErrMsg = 'Cannot find any drafts. Please select a league.';
+
+  /** error loading draft from league message */
+  errorLoadingMsg = 'Error generating draft. Please try reloading league.'
+
   constructor(public leagueService: LeagueService,
               private playersService: PlayerService,
               public leagueSwitchService: LeagueSwitchService,

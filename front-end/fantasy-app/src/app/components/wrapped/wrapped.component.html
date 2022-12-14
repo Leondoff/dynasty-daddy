@@ -10,15 +10,4 @@
     <mat-spinner></mat-spinner>
 </div>
 
-<div class="center-text margin-top-50" *ngIf="leagueService.leagueStatus === 'NONE' && !leagueService.selectedLeague">
-    <div class="warning__alert">Cannot create Dynasty Daddy Wrapped. Please select a league.</div>
-    <br>
-    <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" routerLink="./home" gaEvent="nav_home_page" gaCategory="page_nav">Choose League</button>
-    <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-      <mat-label>Select a league</mat-label>
-      <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)">
-        <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                    [value]="league">{{league.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+<app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="leagueService.leagueStatus === 'NONE' && !leagueService.selectedLeague"></app-login-error>

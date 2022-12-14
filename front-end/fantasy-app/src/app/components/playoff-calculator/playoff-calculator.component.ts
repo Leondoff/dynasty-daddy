@@ -62,6 +62,11 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   /** form control for metrics dropdown */
   selectedMetrics = new FormControl();
 
+  /** no league selected error message */
+  noLeagueErrMsg = 'Cannot generate playoff calculator because no league is selected.';
+
+  /** cannot generate calculator because league hasn't started error */
+  leagueNotStartedErrMsg = 'Cannot generate playoff calculator because league hasn\'t started.';
 
   constructor(
     public leagueService: LeagueService,

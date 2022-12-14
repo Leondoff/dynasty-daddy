@@ -85,7 +85,8 @@ export class LeagueSwitchService extends BaseComponent {
             this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
             this.leagueService.selectedLeague = this.selectedLeague;
             this.leagueService.leagueStatus = 'DONE';
-            this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id;
+            this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id 
+              || this.leagueService.leagueTeamDetails[0]?.owner?.userId;
             console.timeEnd('Fetch Sleeper League Data');
             this.leagueChanged$.next(this.selectedLeague);
             this.lastTimeRefreshed = new Date();
