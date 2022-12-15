@@ -52,19 +52,6 @@ export class MflApiService {
   }
 
   /**
-   * fetch playoff matches
-   * @param year season
-   * @param leagueId league id
-   */
-  getMFLPlayoffBrackets(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLPlayoffBrackets + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
-      (playoffs: any) => {
-        return playoffs;
-      }
-    ));
-  }
-
-  /**
    * fetch transactions for season
    * @param year season
    * @param leagueId league id

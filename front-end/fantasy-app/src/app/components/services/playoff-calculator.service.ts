@@ -549,7 +549,7 @@ export class PlayoffCalculatorService {
    * update playoff odds for week in the playoffs
    * @param startWeek
    */
-  private updatePlayoffOdds(startWeek): void {
+  private updatePlayoffOdds(startWeek: number): void {
     // teams that haven't lost yet
     const teamsLeft = [];
 
@@ -600,13 +600,13 @@ export class PlayoffCalculatorService {
         }
       }
       if (weekDiff === 1 && matchup.round === 2) {
-        if (!teamsLeft.includes(matchup.team1) && !teamsEliminated.includes(matchup.team1)) {
+        if (matchup.team1 && !teamsLeft.includes(matchup.team1) && !teamsEliminated.includes(matchup.team1)) {
           teamsLeft.push(matchup.team1);
           byeWeekTeams.push({team: this.leagueService.getTeamByRosterId(matchup.team1), projWins: 0});
           this.teamPlayoffOdds[matchup.team1].timesMakingPlayoffs = this.NUMBER_OF_SIMULATIONS;
           this.teamPlayoffOdds[matchup.team1].timesMakeConfRd = this.NUMBER_OF_SIMULATIONS;
         }
-        if (!teamsLeft.includes(matchup.team2) && !teamsEliminated.includes(matchup.team2)) {
+        if (matchup.team2 && !teamsLeft.includes(matchup.team2) && !teamsEliminated.includes(matchup.team2)) {
           teamsLeft.push(matchup.team2);
           byeWeekTeams.push({team: this.leagueService.getTeamByRosterId(matchup.team2), projWins: 0});
           this.teamPlayoffOdds[matchup.team2].timesMakingPlayoffs = this.NUMBER_OF_SIMULATIONS;

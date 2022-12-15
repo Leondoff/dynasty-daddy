@@ -78,10 +78,6 @@ export class MflService {
         return of(leagueRosters);
       })));
     }
-    observableList.push(this.mflApiService.getMFLPlayoffBrackets(year, leagueId).pipe(map(playoffs => {
-      playoffMatchUps = this.marshallPlayoffs(playoffs.playoffBrackets.playoffBracket, leagueWrapper.selectedLeague.playoffStartWeek);
-      return of(leagueRosters);
-    })));
     // only load draft if it existed on platform
     if (leagueWrapper.selectedLeague.metadata.loadRosters === 'live_draft' ||
       leagueWrapper.selectedLeague.metadata.loadRosters === 'email_draft') {
@@ -119,6 +115,7 @@ export class MflService {
         ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId];
         teams.push(ddTeam);
       });
+      leagueWrapper.playoffMatchUps = this.generatePlayoffsForLeague(leagueMatchUps, teams, leagueWrapper.selectedLeague.playoffStartWeek);
       leagueWrapper.leagueTeamDetails = teams;
       leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
       return leagueWrapper;
@@ -165,6 +162,69 @@ export class MflService {
     return mflLeague;
   }
 
+  /**
+   * handles generating formatted playoff records for league based on match ups
+   * @param teams
+   * @returns 
+   */
+  private generatePlayoffsForLeague(leagueMatchUps: {}, teams: LeagueTeam[], playoffStartWeek: number): LeaguePlayoffMatchUpDTO[] {
+    // process current match ups in playoffs
+    let startRound = 1;
+    const playoffMatchups : LeaguePlayoffMatchUpDTO[] = [];
+    let existingMatchUps = [];
+    let iter = playoffStartWeek;
+    while (leagueMatchUps[iter] && leagueMatchUps[iter].length) {
+      if (existingMatchUps.length > 0) {
+        playoffMatchups.push(...this.formatPlayoffMatchUps(existingMatchUps, startRound-1, true));
+        existingMatchUps = [];
+      }
+      existingMatchUps = leagueMatchUps[iter];
+      startRound++;
+      iter++;
+    }
+    if (existingMatchUps.length > 0) {
+      playoffMatchups.push(...this.formatPlayoffMatchUps(existingMatchUps, startRound-1, false));
+    }
+    // generate extra match ups for missing rounds
+    const playoffTeams = teams.slice().sort((a,b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins || b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts).slice(0, 6);
+    if (startRound <= 1) {
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[5].roster.rosterId, playoffTeams[2].roster.rosterId, 0, 1));
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[4].roster.rosterId, playoffTeams[3].roster.rosterId, 1, 1));      
+    }
+    if (startRound <= 2) {
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[0].roster.rosterId, null, 2, 2));
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[1].roster.rosterId, null, 3, 2));
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 4, 2));
+    }
+    if (startRound <= 3) {
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 5, 3));
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 6, 3));
+    }
+    return playoffMatchups;
+  }
+
+  /**
+   * Formats match ups into playoff match up objects
+   * @param matchUps match ups to format
+   * @param round round of playoffs
+   * @param isCompleted is match up completed or not
+   * @returns 
+   */
+  private formatPlayoffMatchUps(matchUps: LeagueTeamMatchUpDTO[], round: number, isCompleted: boolean): LeaguePlayoffMatchUpDTO[] {
+    const playoffRoundMatchUp : LeaguePlayoffMatchUpDTO[] = [];
+    for (let i = 1; i <= matchUps.length / 2; i++) {
+      const matchUp = matchUps.filter( a => a.matchupId === i);
+      playoffRoundMatchUp.push(new LeaguePlayoffMatchUpDTO(null).fromLeagueMatchUp(matchUp[0], matchUp[1], round, isCompleted));
+    }
+    return playoffRoundMatchUp;
+  }
+
+  /**
+   * Determines the type of league in MFL
+   * @param leagueType league type passed in
+   * @param maxKeeper max keeper count
+   * @returns 
+   */
   private getMFLLeagueType(leagueType, maxKeeper): LeagueType {
     switch (leagueType) {
       case 'keeper':
