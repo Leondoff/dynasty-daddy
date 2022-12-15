@@ -21,8 +21,6 @@ export class MflApiConfigService {
 
   private _getMFLTransactionsEndpoint = '';
 
-  private _getMFLPlayoffBrackets = '';
-
   get getMFLLeagueEndpoint(): string {
     return this._getMFLLeagueEndpoint;
   }
@@ -77,14 +75,6 @@ export class MflApiConfigService {
 
   set getMFLRostersEndpoint(value: string) {
     this._getMFLRostersEndpoint = value;
-  }
-
-  get getMFLPlayoffBrackets(): string {
-    return this._getMFLPlayoffBrackets;
-  }
-
-  set getMFLPlayoffBrackets(value: string) {
-    this._getMFLPlayoffBrackets = value;
   }
 
   get getMFLScheduleEndpoint(): string {

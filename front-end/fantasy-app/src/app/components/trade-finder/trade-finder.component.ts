@@ -38,6 +38,9 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
   /** Toggle the advanced filters  */
   showAdvancedSettings: boolean = false;
 
+  /** error message to display if league isn't selected */
+  errorHeaderMsg = 'Unable to find trades. Please Select League.'
+
   constructor(
     public leagueSwitchService: LeagueSwitchService,
     public playerService: PlayerService,

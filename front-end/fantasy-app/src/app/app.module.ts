@@ -97,6 +97,7 @@ import { WrappedDraftComponent } from './components/wrapped/wrapped-draft/wrappe
 import { WrappedStandingsComponent } from './components/wrapped/wrapped-standings/wrapped-standings.component';
 import { WrappedFinishComponent } from './components/wrapped/wrapped-finish/wrapped-finish.component';
 import { WrappedCardSummaryComponent } from './components/wrapped/wrapped-card-summary/wrapped-card-summary.component';
+import { LoginErrorComponenet } from './components/sub-components/login-error/login-error.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -165,6 +166,7 @@ let UniversalDeviceDetectorService;
     WrappedCardTradeComponent,
     StandardPageComponent,
     FantasyTeamRankingsRadarChart,
+    LoginErrorComponenet,
     TruncatePipe,
   ],
   imports: [

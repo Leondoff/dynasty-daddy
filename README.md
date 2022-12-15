@@ -47,13 +47,12 @@ First, clone repo and open up in your preferred IDE.
 
 ## Future Improvements
 
-- Support other platforms like MFL, Fleaflicker, etc.
+- Support other platforms like Yahoo, Fleaflicker, etc.
 - Machine learning on data to predict the best players to buy and sell.
 - Better draft predictor based on team needs
-- Player value calculation based on points and trade value
 - More team analytics
-- Team Elo ranking like Chess
-- Refactor backend to handle translations between platforms
+- Better responsive/mobile experience
+- More value calculations (Dynasty Process, Fantasy Calc)
 
 ## Packages
 
