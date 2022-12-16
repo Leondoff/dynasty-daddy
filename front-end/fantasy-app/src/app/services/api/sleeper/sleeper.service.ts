@@ -132,7 +132,6 @@ export class SleeperService {
             }
             league.leagueTeamDetails.push(new LeagueTeam(owner, roster));
           });
-          console.log(league.leagueTeamDetails, owners)
           return this.sleeperApiService.getSleeperDraftbyLeagueId(league.selectedLeague.leagueId)
             .pipe(mergeMap((draftIds: string[]) => {
               draftIds.map((draftId: string) => {
