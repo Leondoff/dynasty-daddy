@@ -1,17 +1,17 @@
-import {Component, OnInit} from '@angular/core';
-import {LeagueService} from '../../services/league.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {LeagueTeam} from '../../model/league/LeagueTeam';
-import {PowerRankingsService} from '../services/power-rankings.service';
-import {PlayerService} from '../../services/player.service';
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
-import {PlayerComparisonService} from '../services/player-comparison.service';
-import {TransactionsService} from '../services/transactions.service';
-import {TransactionUI} from '../model/transaction';
-import {ConfigService} from '../../services/init/config.service';
-import {BaseComponent} from '../base-component.abstract';
-import {LeagueSwitchService} from '../services/league-switch.service';
-import {DisplayService} from '../../services/utilities/display.service';
+import { Component, OnInit } from '@angular/core';
+import { LeagueService } from '../../services/league.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LeagueTeam } from '../../model/league/LeagueTeam';
+import { PowerRankingsService } from '../services/power-rankings.service';
+import { PlayerService } from '../../services/player.service';
+import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { PlayerComparisonService } from '../services/player-comparison.service';
+import { TransactionsService } from '../services/transactions.service';
+import { TransactionUI } from '../model/transaction';
+import { ConfigService } from '../../services/init/config.service';
+import { BaseComponent } from '../base-component.abstract';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { DisplayService } from '../../services/utilities/display.service';
 import { MatchupService } from '../services/matchup.service';
 import { NflService } from 'src/app/services/utilities/nfl.service';
 import { standardDeviation, variance } from 'simple-statistics';
@@ -48,18 +48,18 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   pageLoaded: boolean = false;
 
   constructor(public leagueService: LeagueService,
-              private route: ActivatedRoute,
-              public powerRankingsService: PowerRankingsService,
-              public playerService: PlayerService,
-              private playerComparisonService: PlayerComparisonService,
-              private router: Router,
-              private matchUpService: MatchupService,
-              private nflService: NflService,
-              public leagueSwitchService: LeagueSwitchService,
-              public transactionsService: TransactionsService,
-              public displayService: DisplayService,
-              private playersService: PlayerService,
-              public configService: ConfigService) {
+    private route: ActivatedRoute,
+    public powerRankingsService: PowerRankingsService,
+    public playerService: PlayerService,
+    private playerComparisonService: PlayerComparisonService,
+    private router: Router,
+    private matchUpService: MatchupService,
+    private nflService: NflService,
+    public leagueSwitchService: LeagueSwitchService,
+    public transactionsService: TransactionsService,
+    public displayService: DisplayService,
+    private playersService: PlayerService,
+    public configService: ConfigService) {
     super();
   }
 
@@ -96,6 +96,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   }
 
   getSelectedTeam(): void {
+    this.roster = [];
     const ownerName = this.route.snapshot.paramMap.get('ownerName');
     // get selected team from sleeper data
     const teamIndex = this.leagueService.leagueTeamDetails.map(e => e.owner?.ownerName).indexOf(ownerName);
@@ -168,17 +169,17 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
 
   setSeasonInsights(): {} {
     const newInsights = {};
-    const completedWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague?.season); 
+    const completedWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague?.season);
     newInsights['games_played'] = (completedWeek - this.leagueService.selectedLeague?.startWeek + 1) || '--';
     newInsights['avg_points'] = this.getAveragePoints(newInsights['games_played']) || '--';
     newInsights['points_for'] = this.selectedTeam?.roster.teamMetrics?.fpts || '--';
-    newInsights['points_against'] =  this.selectedTeam?.roster.teamMetrics?.fptsAgainst || '--';
+    newInsights['points_against'] = this.selectedTeam?.roster.teamMetrics?.fptsAgainst || '--';
     newInsights['points_pot'] = this.selectedTeam?.roster.teamMetrics?.ppts || '--';
     const teamRosterId = this.selectedTeam?.roster?.rosterId;
     const pointsByWeek: number[] = [];
     for (let i = 0; i < completedWeek; i++) {
       const matchUp = this.matchUpService.leagueMatchUpUI[i]?.filter(match => match.team1RosterId === teamRosterId || match.team2RosterId === teamRosterId)[0];
-      if (!matchUp) {continue;}
+      if (!matchUp) { continue; }
       if (matchUp.team1RosterId === teamRosterId) {
         pointsByWeek.push(matchUp.team1Points);
       } else {
@@ -187,14 +188,14 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     }
     newInsights['high'] = pointsByWeek.length > 0 ? Math.max(...pointsByWeek) : '--';
     newInsights['low'] = pointsByWeek.length > 0 ? Math.min(...pointsByWeek) : '--';
-    newInsights['variance'] = pointsByWeek.length > 0 ? Math.round(variance(pointsByWeek) * 100)/ 100 : '--';
-    newInsights['std'] = pointsByWeek.length > 0 ? Math.round(standardDeviation(pointsByWeek) * 100)/ 100 : '--';
+    newInsights['variance'] = pointsByWeek.length > 0 ? Math.round(variance(pointsByWeek) * 100) / 100 : '--';
+    newInsights['std'] = pointsByWeek.length > 0 ? Math.round(standardDeviation(pointsByWeek) * 100) / 100 : '--';
     return newInsights;
   }
 
-    /**
-   * get average points for team
-   */
-  private getAveragePoints = (weeksPlayed: number) => 
-     Math.round(this.selectedTeam.roster.teamMetrics.fpts / weeksPlayed);
+  /**
+ * get average points for team
+ */
+  private getAveragePoints = (weeksPlayed: number) =>
+    Math.round(this.selectedTeam.roster.teamMetrics.fpts / weeksPlayed);
 }
