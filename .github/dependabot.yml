@@ -5,11 +5,11 @@
 
 version: 2
 updates:
-  - package-ecosystem: "front-end"
+  - package-ecosystem: "npm"
     directory: "/front-end/fantasy-app"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "back-end"
+  - package-ecosystem: "npm"
     directory: "/back-end/express-api/"
     schedule:
       interval: "weekly"
