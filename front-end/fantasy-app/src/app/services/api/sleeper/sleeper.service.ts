@@ -1,23 +1,26 @@
-import {Injectable} from '@angular/core';
-import {forkJoin, Observable, of, Subject} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
-import {SleeperApiService} from './sleeper-api.service';
-import {LeagueWrapper} from '../../../model/league/LeagueWrapper';
-import {LeagueTeamMatchUpDTO} from '../../../model/league/LeagueTeamMatchUpDTO';
-import {LeagueRosterDTO} from '../../../model/league/LeagueRosterDTO';
-import {LeagueTeam} from '../../../model/league/LeagueTeam';
-import {LeagueOwnerDTO} from '../../../model/league/LeagueOwnerDTO';
-import {LeagueRawDraftOrderDTO} from '../../../model/league/LeagueRawDraftOrderDTO';
-import {LeagueRawTradePicksDTO} from '../../../model/league/LeagueRawTradePicksDTO';
-import {LeagueTeamTransactionDTO} from '../../../model/league/LeagueTeamTransactionDTO';
-import {FantasyPlatformDTO, LeaguePlatform} from '../../../model/league/FantasyPlatformDTO';
-import {CompletedDraft} from '../../../model/league/CompletedDraft';
-import {DraftCapital} from '../../../model/assets/DraftCapital';
+import { Injectable } from '@angular/core';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { SleeperApiService } from './sleeper-api.service';
+import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
+import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
+import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
+import { LeagueTeam } from '../../../model/league/LeagueTeam';
+import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
+import { LeagueRawDraftOrderDTO } from '../../../model/league/LeagueRawDraftOrderDTO';
+import { LeagueRawTradePicksDTO } from '../../../model/league/LeagueRawTradePicksDTO';
+import { LeagueTeamTransactionDTO } from '../../../model/league/LeagueTeamTransactionDTO';
+import { FantasyPlatformDTO, LeaguePlatform } from '../../../model/league/FantasyPlatformDTO';
+import { CompletedDraft } from '../../../model/league/CompletedDraft';
+import { DraftCapital } from '../../../model/assets/DraftCapital';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SleeperService {
+
+  /** default sleeper icon for orphan teams */
+  sleeperIcon: string = '15d7cf259bc30eab8f6120f45f652fb6';
 
   constructor(private sleeperApiService: SleeperApiService) {
   }
@@ -63,7 +66,7 @@ export class SleeperService {
         return of(null);
       }
       return this.sleeperApiService.getSleeperLeaguesByUserID(userData.user_id, year).pipe(mergeMap(response => {
-        const leagueUser = {leagues: response, userData, leaguePlatform: LeaguePlatform.SLEEPER};
+        const leagueUser = { leagues: response, userData, leaguePlatform: LeaguePlatform.SLEEPER };
         return of(leagueUser);
       }));
     }));
@@ -71,73 +74,77 @@ export class SleeperService {
 
   loadLeague$(league: LeagueWrapper): Observable<LeagueWrapper> {
     return this.sleeperApiService.getSleeperOwnersbyLeagueId(league.selectedLeague.leagueId).pipe(mergeMap((owners: LeagueOwnerDTO[]) => {
-        if (league.selectedLeague.rosterPositions.filter(x => x === 'QB').length > 1) {
-          league.selectedLeague.isSuperflex = true;
-        }
-        // fetch matchUps for league
-        const leagueMatchUps = {};
-        const leagueTransactions = {};
-        const observe = [];
-        for (let weekNum = league.selectedLeague.startWeek; weekNum < 19; weekNum++) {
-          observe.push(this.sleeperApiService.getSleeperMatchUpsForWeekByLeagueId(league.selectedLeague.leagueId, weekNum)
-            .pipe(mergeMap((weekMatchUps) => {
-              const matchUpData: LeagueTeamMatchUpDTO[] = [];
-              for (const matchup of weekMatchUps) {
-                matchUpData.push(new LeagueTeamMatchUpDTO(matchup));
+      if (league.selectedLeague.rosterPositions.filter(x => x === 'QB').length > 1) {
+        league.selectedLeague.isSuperflex = true;
+      }
+      // fetch matchUps for league
+      const leagueMatchUps = {};
+      const leagueTransactions = {};
+      const observe = [];
+      for (let weekNum = league.selectedLeague.startWeek; weekNum < 19; weekNum++) {
+        observe.push(this.sleeperApiService.getSleeperMatchUpsForWeekByLeagueId(league.selectedLeague.leagueId, weekNum)
+          .pipe(mergeMap((weekMatchUps) => {
+            const matchUpData: LeagueTeamMatchUpDTO[] = [];
+            for (const matchup of weekMatchUps) {
+              matchUpData.push(new LeagueTeamMatchUpDTO(matchup));
+            }
+            leagueMatchUps[weekNum] = matchUpData;
+            return of(weekMatchUps);
+          })));
+        observe.push(this.sleeperApiService.getSleeperTransactionByLeagueIdForWeek(league.selectedLeague.leagueId, weekNum)
+          .pipe(mergeMap((weekTransactions) => {
+            const transactionsData: LeagueTeamTransactionDTO[] = [];
+            for (const transaction of weekTransactions) {
+              const picks = [];
+              for (const pick of transaction.draft_picks) {
+                picks.push(new LeagueRawTradePicksDTO(pick.owner_id, pick.previous_owner_id, pick.roster_id, pick.round, pick.season));
               }
-              leagueMatchUps[weekNum] = matchUpData;
-              return of(weekMatchUps);
-            })));
-          observe.push(this.sleeperApiService.getSleeperTransactionByLeagueIdForWeek(league.selectedLeague.leagueId, weekNum)
-            .pipe(mergeMap((weekTransactions) => {
-              const transactionsData: LeagueTeamTransactionDTO[] = [];
-              for (const transaction of weekTransactions) {
-                const picks = [];
-                for (const pick of transaction.draft_picks) {
-                  picks.push(new LeagueRawTradePicksDTO(pick.owner_id, pick.previous_owner_id, pick.roster_id, pick.round, pick.season));
-                }
-                transactionsData.push(new LeagueTeamTransactionDTO(transaction, picks));
+              transactionsData.push(new LeagueTeamTransactionDTO(transaction, picks));
+            }
+            leagueTransactions[weekNum] = transactionsData;
+            return of(weekTransactions);
+          })));
+      }
+      observe.push(this.sleeperApiService.getSleeperPlayoffsByLeagueId(league.selectedLeague.leagueId).pipe(map((playoffs) => {
+        league.playoffMatchUps = playoffs;
+        return of(league.playoffMatchUps);
+      }))
+      );
+      forkJoin(observe).subscribe(() => {
+        league.selectedLeague.leagueMatchUps = leagueMatchUps;
+        league.selectedLeague.leagueTransactions = leagueTransactions;
+        return of(league);
+      }
+      );
+      // fetch rosters and drafts picks
+      return this.sleeperApiService.getSleeperRostersByLeagueId(league.selectedLeague.leagueId)
+        .pipe(mergeMap((rosters: LeagueRosterDTO[]) => {
+          console.log('Fetching Roster Ids...');
+          league.leagueTeamDetails = [];
+          rosters.map(roster => {
+            // find existing owner or create a new one
+            const owner = owners.find(o => o.userId === roster.ownerId)
+              || new LeagueOwnerDTO(roster.rosterId.toString(), 'Retired Owner ' + roster.rosterId, 'Ophan Team ' + roster.rosterId, this.sleeperIcon);
+            // if orphaned team add new owner and set new id
+            if (!roster.ownerId) {
+              owners.push(owner);
+              roster.ownerId = owner.userId;
+            }
+            league.leagueTeamDetails.push(new LeagueTeam(owner, roster));
+          });
+          console.log(league.leagueTeamDetails, owners)
+          return this.sleeperApiService.getSleeperDraftbyLeagueId(league.selectedLeague.leagueId)
+            .pipe(mergeMap((draftIds: string[]) => {
+              draftIds.map((draftId: string) => {
+                console.log('processing draft:', draftId);
+                return this.assignPicks$(draftId, league).subscribe();
               }
-              leagueTransactions[weekNum] = transactionsData;
-              return of(weekTransactions);
-            })));
-        }
-        observe.push(this.sleeperApiService.getSleeperPlayoffsByLeagueId(league.selectedLeague.leagueId).pipe(map((playoffs) => {
-            league.playoffMatchUps = playoffs;
-            return of(league.playoffMatchUps);
-          }))
+              );
+              return this.generateFutureDraftCapital$(league);
+            }));
+        })
         );
-        forkJoin(observe).subscribe(() => {
-            league.selectedLeague.leagueMatchUps = leagueMatchUps;
-            league.selectedLeague.leagueTransactions = leagueTransactions;
-            return of(league);
-          }
-        );
-        // fetch rosters and drafts picks
-        return this.sleeperApiService.getSleeperRostersByLeagueId(league.selectedLeague.leagueId)
-          .pipe(mergeMap((rosters: LeagueRosterDTO[]) => {
-              console.log('Fetching Roster Ids...');
-              league.leagueTeamDetails = [];
-              rosters.map(roster => {
-                for (const owner of owners) {
-                  if (roster.ownerId === owner?.userId) {
-                    league.leagueTeamDetails.push(new LeagueTeam(owner, roster));
-                    break;
-                  }
-                }
-              });
-              return this.sleeperApiService.getSleeperDraftbyLeagueId(league.selectedLeague.leagueId)
-                .pipe(mergeMap((draftIds: string[]) => {
-                  draftIds.map((draftId: string) => {
-                      console.log('processing draft:', draftId);
-                      return this.assignPicks$(draftId, league).subscribe();
-                    }
-                  );
-                  return this.generateFutureDraftCapital$(league);
-                }));
-            })
-          );
-      })
+    })
     );
   }
 
@@ -185,17 +192,17 @@ export class SleeperService {
           this.sleeperApiService.getSleeperCompletedDraftsByDraftId(draft.draftId),
           this.sleeperApiService.getSleeperTradedPicksByDraftId(draft.draftId)]
         ).subscribe(([picks, tradedPicks]) => {
-            tradedPicks.reverse().map((tradedPick: LeagueRawTradePicksDTO) => {
-              picks.filter(pick => {
-                if (pick.round === tradedPick.round && tradedPick.previousOwnerId === pick.rosterId) {
-                  pick.rosterId = tradedPick.previousOwnerId;
-                }
-              });
+          tradedPicks.reverse().map((tradedPick: LeagueRawTradePicksDTO) => {
+            picks.filter(pick => {
+              if (pick.round === tradedPick.round && tradedPick.previousOwnerId === pick.rosterId) {
+                pick.rosterId = tradedPick.previousOwnerId;
+              }
             });
-            if (league.completedDrafts.filter(d => d.draft.draftId === draft.draftId).length === 0) {
-              league.completedDrafts.push(new CompletedDraft(draft, picks));
-            }
+          });
+          if (league.completedDrafts.filter(d => d.draft.draftId === draft.draftId).length === 0) {
+            league.completedDrafts.push(new CompletedDraft(draft, picks));
           }
+        }
         );
       }
       return of(league);
