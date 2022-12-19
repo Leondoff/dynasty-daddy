@@ -17,6 +17,7 @@ import {LogRocketService} from './logrocket.service';
 import {MflService} from '../../services/api/mfl/mfl.service';
 import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 import {LeagueDTO} from '../../model/league/LeagueDTO';
+import { PlayerValueService } from './player-value.service';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,7 @@ export class LeagueSwitchService extends BaseComponent {
               private powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
               private tradeService: TradeService,
+              private playerValueService: PlayerValueService,
               private mockDraftService: DraftService,
               private matchupService: MatchupService,
               private nflService: NflService,
@@ -61,6 +63,7 @@ export class LeagueSwitchService extends BaseComponent {
     this.selectedLeague = value;
     this.leagueService.resetLeague();
     this.powerRankingService.reset();
+    this.playerValueService.reset(true);
     this.mockDraftService.resetLeague();
     this.playoffCalculatorService.reset();
     this.matchupService.reset();
@@ -84,6 +87,7 @@ export class LeagueSwitchService extends BaseComponent {
             ),
             this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
             this.leagueService.selectedLeague = this.selectedLeague;
+            this.playerValueService.isSuperFlex = this.selectedLeague.isSuperflex;
             this.leagueService.leagueStatus = 'DONE';
             this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id 
               || this.leagueService.leagueTeamDetails[0]?.owner?.userId;

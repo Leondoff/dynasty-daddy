@@ -1,11 +1,61 @@
 <div class="margin-top-10 large-bold-header-text center-text">Today's Player Values</div>
 <div class="center-text margin-top-10">
-  Player values are scraped from <a class="info__alert" href="https://keeptradecut.com/" target="_blank">KeepTradeCut.com</a> dynasty rankings calculated from over <span class="info__alert">2.5 million</span> data points.
-  <div>The scoring is <span class="info__alert">{{leagueService.getScoringFormatDisplay()}}</span>, the table below will update depending on whether your league is Superflex or not.</div>
+  Player values are scraped from <a class="info__alert" href="https://keeptradecut.com/"
+    target="_blank">KeepTradeCut.com</a> dynasty rankings calculated from over <span class="info__alert">2.5
+    million</span> data points.
+  <div>The scoring is <span class="info__alert">{{leagueService.getScoringFormatDisplay()}}</span>, the table below will
+    update depending on whether your league is Superflex or not.</div>
 </div>
 
 <div class="margin-top-25">
-  <app-ktc-table *ngIf="playersLoaded" [players]="playerService.playerValues" [selectedLeague]="leagueService.selectedLeague"></app-ktc-table>
+  <div class="ktc-table-container">
+    <div>
+      <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" color="accent">
+        <mat-label>Search Player</mat-label>
+        <input matInput type="text" (keyup)="playerValueService.applyFilters()" [(ngModel)]="playerValueService.searchVal">
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Advanced Filtering" matTooltipPosition="above" *ngIf="!configService.isMobile" (click)="openPlayerQuery()"><mat-icon fontSet="material-icons-outlined">filter_alt</mat-icon></button>
+      <button mat-icon-button matTooltip="Clear Advanced Filter" matTooltipPosition="above" *ngIf="playerValueService.isAdvancedFiltered === true" (click)="disableAdvancedFilter()"><mat-icon fontSet="material-icons-outlined">filter_alt_off</mat-icon></button>
+    </div>
+    <div [ngClass]="{'center-text': configService.isMobile}">
+      <span [ngClass]="{'button-left': !configService.isMobile}">
+        <mat-checkbox
+          [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+          color="primary" [(ngModel)]="playerValueService.filterPosGroup[0]" (change)="playerValueService.applyFilters()">QB</mat-checkbox>
+        <mat-checkbox
+          [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+          color="primary" [(ngModel)]="playerValueService.filterPosGroup[1]" (change)="playerValueService.applyFilters()">RB</mat-checkbox>
+        <mat-checkbox
+          [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+          color="primary" [(ngModel)]="playerValueService.filterPosGroup[2]" (change)="playerValueService.applyFilters()">WR</mat-checkbox>
+        <mat-checkbox
+          [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+          color="primary" [(ngModel)]="playerValueService.filterPosGroup[3]" (change)="playerValueService.applyFilters()">TE</mat-checkbox>
+        <mat-checkbox
+          [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+          color="primary" [(ngModel)]="playerValueService.filterPosGroup[4]"
+          [disabled]="playerValueService.showFreeAgents || playerValueService.showRookies || (leagueService.selectedLeague && leagueService.selectedLeague.type !== 2)"
+          (change)="playerValueService.applyFilters()">Picks</mat-checkbox>
+      </span>
+      <span *ngIf="!configService.isMobile" class="container_spacer"></span>
+      <span [ngClass]="{'button-right': !configService.isMobile, 'margin-top-10': configService.isMobile}">
+        <mat-slide-toggle *ngIf="leagueService.leagueStatus !== 'NONE'" color="primary" [(ngModel)]="playerValueService.showFreeAgents"
+          (change)="playerValueService.applyFilters()" class="player-value-checkbox-margin">
+          {{configService.isMobile ? 'FA' : 'Free Agents'}}
+        </mat-slide-toggle>
+        <mat-slide-toggle color="primary" [(ngModel)]="playerValueService.showRookies" (change)="playerValueService.applyFilters()"
+          class="player-value-checkbox-margin">
+          {{configService.isMobile ? 'Rookies' : 'Rookies Only'}}
+        </mat-slide-toggle>
+        <mat-slide-toggle color="primary" [(ngModel)]="playerValueService.isSuperFlex"
+          class="player-value-checkbox-margin">
+          {{configService.isMobile ? 'SF' : 'SuperFlex'}}
+        </mat-slide-toggle>
+      </span>
+    </div>
+    <app-ktc-table *ngIf="playersLoaded && playerValueService.filteredPlayers" [players]="playerValueService.filteredPlayers"
+      [selectedLeague]="leagueService.selectedLeague" [isSuperFlex]="playerValueService.isSuperFlex"></app-ktc-table>
+  </div>
   <div *ngIf="!playersLoaded">
     <div style="min-height: 300px" class="center-spinner">
       <mat-spinner></mat-spinner>

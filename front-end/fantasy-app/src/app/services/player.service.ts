@@ -403,15 +403,15 @@ export class PlayerService {
    * returns a list of player values excluding old draft picks and players
    * @param inputPlayers list of players and picks
    */
-  cleanOldPlayerData(inputPlayers: FantasyPlayer[]): FantasyPlayer[] {
+  cleanOldPlayerData(inputPlayers: FantasyPlayer[] = this.playerValues.slice()): FantasyPlayer[] {
     return inputPlayers.filter((player) => {
       if (player.position === 'PI') {
         return this.getCurrentPlayerValue(player, true) !== 0;
       } else {
-        // return player if they have had a data point in the past year
-        const yearInThePast = new Date().getTime() - 1000 * 60 * 60 * 24 * 365;
+        // return player if they have had a data point in the past 6 months
+        const cutOffThreshold = new Date().getTime() - 1000 * 60 * 60 * 24 * 180;
         return new Date(player.most_recent_data_point).setHours(0, 0, 0, 0)
-          >= new Date(yearInThePast).setHours(0, 0, 0, 0);
+          >= new Date(cutOffThreshold).setHours(0, 0, 0, 0);
       }
     });
   }

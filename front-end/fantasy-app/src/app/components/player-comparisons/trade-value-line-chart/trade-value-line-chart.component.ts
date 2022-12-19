@@ -25,7 +25,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
   public lineChartOptions: (ChartOptions & { annotation?: any }) = {
     responsive: true,
     maintainAspectRatio: false,
-    spanGaps: true,
+    spanGaps: false,
     // animation: {
     //   duration: 0 // general animation time
     // },
