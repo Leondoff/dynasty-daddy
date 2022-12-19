@@ -48,9 +48,7 @@ export class PlayerValueService {
 
     applyFilters(): void {
         const newPlayers = this.handleFilteringPlayerTable();
-        if (this.isAdvancedFiltered === true) {
-            this.filteredPlayers = this.queryService.processRulesetForPlayer(newPlayers, this.query);
-        }
+        this.filteredPlayers = this.isAdvancedFiltered === true ? this.queryService.processRulesetForPlayer(newPlayers, this.query) : newPlayers;
         this.updatePlayerFilters();
     }
 
@@ -58,7 +56,7 @@ export class PlayerValueService {
    * Helper function that encapsulates cleaning old player data and filtering list on league type
    */
     private handleFilteringPlayerTable(): FantasyPlayer[] {
-        let players = this.playerService.cleanOldPlayerData(this.playerService.playerValues.slice());
+        let players = this.playerService.cleanOldPlayerData();
         if (this.leagueService?.selectedLeague?.type !== LeagueType.DYNASTY) {
             players = players.filter(player => player.position !== 'PI');
             this.filterPosGroup[4] = false;
