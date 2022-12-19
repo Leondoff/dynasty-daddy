@@ -3,7 +3,6 @@ import {MatchUpProbability} from '../../../model/playoffCalculator';
 import {LeagueTeam} from '../../../../model/league/LeagueTeam';
 import {LeagueService} from '../../../../services/league.service';
 import {PlayoffCalculatorService} from '../../../services/playoff-calculator.service';
-import {DisplayService} from '../../../../services/utilities/display.service';
 
 @Component({
   selector: 'app-playoff-calculator-selectable-game-card',
@@ -23,8 +22,7 @@ export class PlayoffCalculatorSelectableGameCardComponent implements OnInit {
   team2: LeagueTeam;
 
   constructor(public leagueService: LeagueService,
-              private playoffCalculatorService: PlayoffCalculatorService,
-              public displayService: DisplayService) {
+              private playoffCalculatorService: PlayoffCalculatorService) {
   }
 
   ngOnInit(): void {

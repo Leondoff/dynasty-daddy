@@ -1,0 +1,16 @@
+<div class="center-text margin-bot-20" [ngClass]="{'large-bold-header-text': !configService.isMobile, 'mid-bold-text': configService.isMobile}"> Advanced Filtering
+  <span class="button-right">
+      <button mat-icon-button color="accent" class="button-right" (click)="close()"><mat-icon>close</mat-icon></button>
+    </span>
+</div>
+
+<div class="margin-top-10 margin-bot-20">
+  <div class="margin-top-10">
+    <app-player-query-builder [query]="playerValueService.query"></app-player-query-builder>
+  </div>
+  <div class="margin-top-25" [ngClass]="{'button-right': !configService.isMobile}">
+    <button mat-raised-button color="warn" (click)="applyFilter()">
+      Apply Filter
+    </button>
+  </div>
+</div>

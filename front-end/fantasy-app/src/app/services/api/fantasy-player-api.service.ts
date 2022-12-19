@@ -41,6 +41,7 @@ export class FantasyPlayerApiService {
       .pipe(tap((players: FantasyPlayer[]) => {
         this.playersList = players.map(player => {
           player.avg_adp = Number(player.avg_adp);
+          player.injury_status = player.injury_status || '';
           player.sf_change = Math.round(
             (player.sf_trade_value - player.last_month_value_sf) / (player.sf_trade_value === 0 ? 1 : player.sf_trade_value) * 100);
           player.standard_change = Math.round(

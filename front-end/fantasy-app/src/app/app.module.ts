@@ -98,6 +98,8 @@ import { WrappedStandingsComponent } from './components/wrapped/wrapped-standing
 import { WrappedFinishComponent } from './components/wrapped/wrapped-finish/wrapped-finish.component';
 import { WrappedCardSummaryComponent } from './components/wrapped/wrapped-card-summary/wrapped-card-summary.component';
 import { LoginErrorComponenet } from './components/sub-components/login-error/login-error.component';
+import { PlayerQueryBuilderComponent } from './components/sub-components/player-query-builder/player-query-builder.component';
+import { FilterPlayerValuesModalComponent } from './components/modals/filter-player-values-modal/filter-player-values-modal.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -155,6 +157,7 @@ let UniversalDeviceDetectorService;
     TeamTiersChartComponent,
     EloTeamComparisonModalComponent,
     EditLeagueSettingsModalComponent,
+    FilterPlayerValuesModalComponent,
     WrappedComponent,
     WrappedWelcomeComponent,
     WrappedTransactionsComponent,
@@ -167,6 +170,7 @@ let UniversalDeviceDetectorService;
     StandardPageComponent,
     FantasyTeamRankingsRadarChart,
     LoginErrorComponenet,
+    PlayerQueryBuilderComponent,
     TruncatePipe,
   ],
   imports: [

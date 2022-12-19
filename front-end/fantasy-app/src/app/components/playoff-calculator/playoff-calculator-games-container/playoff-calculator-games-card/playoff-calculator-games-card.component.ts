@@ -3,9 +3,7 @@ import {MatchUpProbability} from '../../../model/playoffCalculator';
 import {LeagueTeam} from '../../../../model/league/LeagueTeam';
 import {LeagueService} from '../../../../services/league.service';
 import {ColorService} from '../../../services/color.service';
-import {DisplayService} from '../../../../services/utilities/display.service';
 import {LeagueSwitchService} from '../../../services/league-switch.service';
-import {NflService} from '../../../../services/utilities/nfl.service';
 
 @Component({
   selector: 'app-playoff-calculator-games-card',
@@ -36,9 +34,7 @@ export class PlayoffCalculatorGamesCardComponent implements OnInit {
   probGradient: string[];
 
   constructor(private leagueService: LeagueService,
-              private nflService: NflService,
               private colorService: ColorService,
-              public displayService: DisplayService,
               public leagueSwitchService: LeagueSwitchService) {
   }
 
