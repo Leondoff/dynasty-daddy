@@ -11,7 +11,7 @@
         <img #image [src]="team1?.owner?.getAvatarForLeague(leagueService.selectedLeague.leaguePlatform)"
              onerror="style.display = 'none'" class="games-image">
         <span>
-          {{displayService.truncate(team1.owner?.teamName, 30)}}
+          {{team1.owner?.teamName | truncate:30}}
         </span>
       </td>
       <td class="td-game--metrics game-score__color" *ngIf="leagueService.selectedLeague.medianWins" (click)="updateMedianResultOption(game.matchUpDetails.selectedTeam1MedianWin, 1)" [ngClass]="{'game-score__color': game.matchUpDetails.selectedTeam1MedianWin === 0, 'game-win__color': game.matchUpDetails.selectedTeam1MedianWin === 1, 'game-loss__color': game.matchUpDetails.selectedTeam1MedianWin === -1}">
@@ -31,7 +31,7 @@
         <img #image [src]="team2?.owner?.getAvatarForLeague(leagueService.selectedLeague.leaguePlatform)"
              onerror="style.display = 'none'" class="games-image">
         <span>
-          {{displayService.truncate(team2.owner?.teamName, 30)}}
+          {{team2.owner?.teamName | truncate:30}}
         </span>
       </td>
       <td class="td-game--metrics game-score__color" *ngIf="leagueService.selectedLeague.medianWins" (click)="updateMedianResultOption(game.matchUpDetails.selectedTeam2MedianWin, 2)" [ngClass]="{'game-score__color': game.matchUpDetails.selectedTeam2MedianWin === 0, 'game-win__color': game.matchUpDetails.selectedTeam2MedianWin === 1, 'game-loss__color': game.matchUpDetails.selectedTeam2MedianWin === -1}">
