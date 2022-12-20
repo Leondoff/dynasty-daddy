@@ -56,7 +56,6 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
 
   ngOnInit(): void {
     this.refreshTableDetails();
-    this.dataSource.sort = this.sort;
   }
 
   ngOnChanges(): void {
@@ -92,6 +91,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     };
     this.dataSource.paginator = this.paginator;
     this.dataSource.paginator.pageIndex = this.playerValueService.pageIndex;
+    this.dataSource.sort = this.sort;
   }
 
   /**
