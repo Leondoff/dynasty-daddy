@@ -53,6 +53,7 @@ export class FilterPlayerValuesModalComponent implements OnInit {
    */
   applyFilter(): void {
     this.playerValueService.isAdvancedFiltered = true;
+    this.playerValueService.pageIndex = 0;
     this.playerValueService.applyFilters();
     this.close();
   }
