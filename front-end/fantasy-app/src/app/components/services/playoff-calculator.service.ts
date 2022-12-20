@@ -1,15 +1,15 @@
-import {Injectable} from '@angular/core';
-import {LeagueTeam} from '../../model/league/LeagueTeam';
-import {Division, MatchUpProbability, SimulatedTeamInfo} from '../model/playoffCalculator';
-import {PowerRankingsService} from './power-rankings.service';
-import {MatchupService} from './matchup.service';
-import {MatchUpUI} from '../model/matchup';
-import {LeagueService} from '../../services/league.service';
-import {NflService} from '../../services/utilities/nfl.service';
-import {cumulativeStdNormalProbability, mean, median, standardDeviation, zScore} from 'simple-statistics';
-import {Observable, of} from 'rxjs';
-import {LeaguePlayoffMatchUpDTO} from '../../model/league/LeaguePlayoffMatchUpDTO';
-import {LeagueDTO} from "../../model/league/LeagueDTO";
+import { Injectable } from '@angular/core';
+import { LeagueTeam } from '../../model/league/LeagueTeam';
+import { Division, MatchUpProbability, SimulatedTeamInfo } from '../model/playoffCalculator';
+import { PowerRankingsService } from './power-rankings.service';
+import { MatchupService } from './matchup.service';
+import { MatchUpUI } from '../model/matchup';
+import { LeagueService } from '../../services/league.service';
+import { NflService } from '../../services/utilities/nfl.service';
+import { cumulativeStdNormalProbability, mean, median, standardDeviation, zScore } from 'simple-statistics';
+import { Observable, of } from 'rxjs';
+import { LeaguePlayoffMatchUpDTO } from '../../model/league/LeaguePlayoffMatchUpDTO';
+import { LeagueDTO } from "../../model/league/LeagueDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -125,7 +125,7 @@ export class PlayoffCalculatorService {
       let selectedMedianWins = 0;
       let selectedMedianLosses = 0;
       for (let week = startWeek - this.leagueService.selectedLeague.startWeek;
-           week < this.leagueService.selectedLeague.playoffStartWeek - this.leagueService.selectedLeague.startWeek; week++) {
+        week < this.leagueService.selectedLeague.playoffStartWeek - this.leagueService.selectedLeague.startWeek; week++) {
         projectedWeeks++;
         this.matchUpsWithProb[week]?.map(matchUp => {
           if (matchUp.matchUpDetails.team1RosterId === rosterId) {
@@ -223,7 +223,7 @@ export class PlayoffCalculatorService {
         }
       });
     }
-    return {totalWins: wins + medianWins, wins, medianWins};
+    return { totalWins: wins + medianWins, wins, medianWins };
   }
 
   /**
@@ -255,7 +255,7 @@ export class PlayoffCalculatorService {
         }
       });
     }
-    return {totalLosses: losses + medianLosses, losses, medianLosses};
+    return { totalLosses: losses + medianLosses, losses, medianLosses };
   }
 
   /**
@@ -570,7 +570,7 @@ export class PlayoffCalculatorService {
       if (matchup.round === weekDiff && (!teamsEliminated.includes(matchup.team1) || !teamsEliminated.includes(matchup.team2))) {
         gamesThisRd++;
       }
-      if (matchup.round <= weekDiff) {
+      if (this.teamPlayoffOdds[matchup.team1] && this.teamPlayoffOdds[matchup.team2] && matchup.round <= weekDiff) {
         if (matchup.round === 1) {
           teamsLeft.push(matchup.win);
           teamsEliminated.push(matchup.loss);
@@ -602,13 +602,13 @@ export class PlayoffCalculatorService {
       if (weekDiff === 1 && matchup.round === 2) {
         if (matchup.team1 && !teamsLeft.includes(matchup.team1) && !teamsEliminated.includes(matchup.team1)) {
           teamsLeft.push(matchup.team1);
-          byeWeekTeams.push({team: this.leagueService.getTeamByRosterId(matchup.team1), projWins: 0});
+          byeWeekTeams.push({ team: this.leagueService.getTeamByRosterId(matchup.team1), projWins: 0 });
           this.teamPlayoffOdds[matchup.team1].timesMakingPlayoffs = this.NUMBER_OF_SIMULATIONS;
           this.teamPlayoffOdds[matchup.team1].timesMakeConfRd = this.NUMBER_OF_SIMULATIONS;
         }
         if (matchup.team2 && !teamsLeft.includes(matchup.team2) && !teamsEliminated.includes(matchup.team2)) {
           teamsLeft.push(matchup.team2);
-          byeWeekTeams.push({team: this.leagueService.getTeamByRosterId(matchup.team2), projWins: 0});
+          byeWeekTeams.push({ team: this.leagueService.getTeamByRosterId(matchup.team2), projWins: 0 });
           this.teamPlayoffOdds[matchup.team2].timesMakingPlayoffs = this.NUMBER_OF_SIMULATIONS;
           this.teamPlayoffOdds[matchup.team2].timesMakeConfRd = this.NUMBER_OF_SIMULATIONS;
         }
@@ -620,7 +620,7 @@ export class PlayoffCalculatorService {
     let gameCount = 0;
     this.leagueService.playoffMatchUps.map((matchUp) => {
       if (matchUp.round === weekDiff && (!teamsEliminated.includes(matchUp.team1) || !teamsEliminated.includes(matchUp.team2))) {
-        simulatedTeamRd[gameCount] = {team: this.leagueService.getTeamByRosterId(matchUp.team1), projWins: 0};
+        simulatedTeamRd[gameCount] = { team: this.leagueService.getTeamByRosterId(matchUp.team1), projWins: 0 };
         simulatedTeamRd[simulatedTeamRd.length - 1 - gameCount] = {
           team: this.leagueService.getTeamByRosterId(matchUp.team2),
           projWins: 0
@@ -631,12 +631,15 @@ export class PlayoffCalculatorService {
         }
       }
     });
+    // TODO simplify work
     if (weekDiff <= 1) {
       simulatedTeamRd = this.simulateRoundOfPlayoffs(simulatedTeamRd);
       // assign wins for conference
       for (const team of simulatedTeamRd) {
-        this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeConfRd =
-          (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeConfRd || 0) + 1;
+        if (this.teamPlayoffOdds[team.team.roster.rosterId]) {
+          this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeConfRd =
+            (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeConfRd || 0) + 1;
+        }
       }
       simulatedTeamRd = byeWeekTeams.concat(simulatedTeamRd.reverse());
     }
@@ -644,16 +647,20 @@ export class PlayoffCalculatorService {
       simulatedTeamRd = this.simulateRoundOfPlayoffs(simulatedTeamRd);
       // assign making the championship
       for (const team of simulatedTeamRd) {
-        this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeChampionship =
-          (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeChampionship || 0) + 1;
+        if (this.teamPlayoffOdds[team.team.roster.rosterId]) {
+          this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeChampionship =
+            (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeChampionship || 0) + 1;
+        }
       }
     }
     if (weekDiff <= 3) {
       simulatedTeamRd = this.simulateRoundOfPlayoffs(simulatedTeamRd);
       // assign wins for championship
       for (const team of simulatedTeamRd) {
-        this.teamPlayoffOdds[team.team.roster.rosterId].timesWinChampionship =
-          (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinChampionship || 0) + 1;
+        if (this.teamPlayoffOdds[team.team.roster.rosterId]) {
+          this.teamPlayoffOdds[team.team.roster.rosterId].timesWinChampionship =
+            (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinChampionship || 0) + 1;
+        }
       }
     }
   }
@@ -873,7 +880,7 @@ export class PlayoffCalculatorService {
       return a - b;
     });
     const totalPoints = [teamPoints[this.leagueService.selectedLeague.totalRosters / 2 - 1],
-      teamPoints[this.leagueService.selectedLeague.totalRosters / 2]];
+    teamPoints[this.leagueService.selectedLeague.totalRosters / 2]];
     return median(totalPoints);
   }
 
@@ -918,8 +925,8 @@ export class PlayoffCalculatorService {
     }
     const endWeek = this.leagueService.selectedLeague.season === this.nflService.stateOfNFL.season
       && this.nflService.stateOfNFL.seasonType !== 'post' ?
-        this.nflService.stateOfNFL.completedWeek - this.leagueService.selectedLeague.startWeek
-        : (Number(this.leagueService.selectedLeague.season) < 2021 ? 17 : 18);
+      this.nflService.stateOfNFL.completedWeek - this.leagueService.selectedLeague.startWeek
+      : (Number(this.leagueService.selectedLeague.season) < 2021 ? 17 : 18);
     for (let i = 0; i <= endWeek; i++) {
       this.matchUpService.leagueMedians.push(this.getMedianPointsForWeek(this.matchUpsWithProb[i]));
     }
