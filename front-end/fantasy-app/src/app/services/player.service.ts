@@ -264,7 +264,8 @@ export class PlayerService {
         return i;
       }
     }
-    return -1;
+    // if not in list return last
+    return playerList.length;
   }
 
   /**
