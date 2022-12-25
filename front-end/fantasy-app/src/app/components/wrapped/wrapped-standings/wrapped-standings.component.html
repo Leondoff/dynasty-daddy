@@ -35,7 +35,7 @@
 <!-- team superlatives -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 4">
   <div [@fadeGrowStagger]="superlatives.length + 1" *ngIf="showContent" class="wrapped-context-high">
-    <div class="center-text wrapped-header-style">These teams really left there mark this season</div>
+    <div class="center-text wrapped-header-style">These teams really left their mark this season</div>
     <div *ngFor="let i of superlatives" class="extra-card-padding">
       <app-wrapped-card [content]="i" [iconRank]="true"></app-wrapped-card>
     </div>
