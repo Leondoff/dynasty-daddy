@@ -20,10 +20,6 @@
   margin-bottom: 9px;
 }
 
-.teamName {
-  font-weight: bold;
-}
-
 .blank_row
 {
   height: 20px !important; /* overwrites any other rules */
