@@ -143,7 +143,7 @@
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.name}}</span> was loaded successfully from
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.leaguePlatform === 1 ? 'MyFantasyLeague' : 'Sleeper'}}</span>!
         </div>
-        <div *ngIf="leagueService.selectedLeague">You can navigate to other pages or <span class="link--text__no__underline" [routerLink]="['./league/rankings']"  gaEvent="nav_power_rankings" gaCategory="page_nav">click here to checkout out your league power rankings.</span></div>
+        <div *ngIf="leagueService.selectedLeague">You can navigate to other pages or <span class="link--text__dot__underline" [routerLink]="['./league/rankings']"  gaEvent="nav_power_rankings" gaCategory="page_nav">click here to checkout out your league power rankings.</span></div>
         <div *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'" class="margin-top-15">
           <button mat-button [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-button" gaEvent="nav_wrapped" gaCategory="page_nav">Check out Wrapped <mat-icon class="header-icon">redeem</mat-icon></button>
         </div>

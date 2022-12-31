@@ -327,6 +327,15 @@ html, body, app-root, .app-frame {
   cursor: pointer;
 }
 
+.link--text__dot__underline {
+  border-bottom: 2px dotted;
+}
+
+.link--text__dot__underline:hover {
+  color: #fdca40;
+  cursor: pointer;
+}
+
 .modal-players-list__item {
   padding: 8px;
   border: 1px solid dimgray;

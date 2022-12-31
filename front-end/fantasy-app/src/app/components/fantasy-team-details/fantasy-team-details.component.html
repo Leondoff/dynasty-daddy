@@ -132,6 +132,28 @@
     <mat-tab label="Roster Management">
       <div class="mid-bold-text margin-top-10 center-text">Roster Trends</div>
       <div class="margin-top-10 center-text">Biggest movers in the past month for {{selectedTeam?.owner?.teamName}}'s roster.</div>
+      <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25" *ngIf="roster.length > 0 && teamAggregates">
+        <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
+          <div class="small-text__light text__light disabled__color">Overall Value</div>
+          <div class="mid-bold-text margin-top-10">{{teamAggregates['OV_value']}} ({{teamAggregates['OV_change'] > 0 ? '+' : ''}}{{teamAggregates['OV_change']}}%)</div>
+        </mat-card>
+        <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
+          <div class="small-text__light text__light disabled__color">QB Value</div>
+          <div class="mid-bold-text margin-top-10">{{teamAggregates['QB_value']}} ({{teamAggregates['QB_change'] > 0 ? '+' : ''}}{{teamAggregates['QB_change']}}%)</div>
+        </mat-card>
+        <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
+          <div class="small-text__light text__light disabled__color">RB Value</div>
+          <div class="mid-bold-text margin-top-10">{{teamAggregates['RB_value']}} ({{teamAggregates['RB_change'] > 0 ? '+' : ''}}{{teamAggregates['RB_change']}}%)</div>
+        </mat-card>
+        <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
+          <div class="small-text__light text__light disabled__color">WR Value</div>
+          <div class="mid-bold-text margin-top-10">{{teamAggregates['WR_value']}} ({{teamAggregates['WR_change'] > 0 ? '+' : ''}}{{teamAggregates['WR_change']}}%)</div>
+        </mat-card>
+        <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
+          <div class="small-text__light text__light disabled__color">TE Value</div>
+          <div class="mid-bold-text margin-top-10">{{teamAggregates['TE_value']}} ({{teamAggregates['TE_change'] > 0 ? '+' : ''}}{{teamAggregates['TE_change']}}%)</div>
+        </mat-card>
+      </div>
       <div class="content">
         <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25" *ngIf="roster.length > 0">
           <mat-card fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="40%" class="item mat-elevation-z4">

@@ -26,8 +26,8 @@
       </div>
       <div *ngIf="leagueService.selectedLeague">
         <div *ngIf="leagueService.isLeagueLoaded() && selectedPlayer.owner">
-          <span class="small-text__light disabled__color">Plays on</span>
-          <span style="padding-left: 10px" class="link--text__no__underline" [routerLink]="['../../../league/team', selectedPlayer.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">{{selectedPlayer.owner?.teamName || 'None'}}</span>
+          <span style="padding-right: 10px" class="small-text__light disabled__color">Plays on</span>
+          <span class="link--text__dot__underline" [routerLink]="['../../../league/team', selectedPlayer.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">{{selectedPlayer.owner?.teamName || 'None'}}</span>
         </div>
         <div *ngIf="leagueService.isLeagueLoaded() && !selectedPlayer.owner">
           <span class="small-text__light disabled__color">Free Agent</span>
