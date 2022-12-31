@@ -38,6 +38,9 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   /** Season insights map for displayed stats */
   seasonInsights: {} = null;
 
+  /** team position group aggregate map */
+  teamAggregates: {} = null;
+
   /** activity filter */
   activitySearchVal: string;
 
@@ -118,7 +121,25 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
 
     this.pageLoaded = true;
     this.seasonInsights = this.setSeasonInsights();
+    this.teamAggregates = this.getTeamPositionAggregates();
     this.loadTransactionHistory();
+  }
+
+  /**
+   * Get position aggregations for team
+   * @returns map of team position aggregates
+   */
+  getTeamPositionAggregates(): {} {
+    const positions = ['OV', 'QB', 'RB', 'WR', 'TE'];
+    const aggMap = {};
+    for (const pos of positions) {
+      const playerGroup = pos === 'OV' ? this.roster.slice() : this.roster.slice().filter(it => it.position === pos)
+      aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value), 0);
+      const lastMonth = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value), 0)
+      aggMap[pos + '_change'] = Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100);
+    }
+    console.log(aggMap)
+    return aggMap;
   }
 
   loadTransactionHistory(): void {
