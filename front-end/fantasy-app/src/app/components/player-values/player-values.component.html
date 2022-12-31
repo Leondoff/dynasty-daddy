@@ -13,6 +13,9 @@
       <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" color="accent">
         <mat-label>Search Player</mat-label>
         <input matInput type="text" (keyup)="playerValueService.applyFilters()" [(ngModel)]="playerValueService.searchVal">
+        <button mat-button *ngIf="playerValueService.searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearTextSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
       </mat-form-field>
       <button mat-icon-button matTooltip="Advanced Filtering" matTooltipPosition="above" *ngIf="!configService.isMobile" (click)="openPlayerQuery()"><mat-icon>filter_alt</mat-icon></button>
       <button mat-icon-button matTooltip="Clear Advanced Filter" matTooltipPosition="above" *ngIf="playerValueService.isAdvancedFiltered === true" (click)="disableAdvancedFilter()"><mat-icon>filter_alt_off</mat-icon></button>
