@@ -95,6 +95,9 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
       if (this.wrappedService.transactionsDict['trades'].length === 0 && this.wrappedService.frameNumber === this.baseFrame + 4) {
         this.wrappedService.frameNumber += 2;
       }
+      if (this.biggestFleeces.length === 0 && this.wrappedService.frameNumber === this.baseFrame + 5) {
+        this.wrappedService.frameNumber += 1;
+      }
       this.showNext = false;
       this.showContent = false;
       setInterval(()=> {

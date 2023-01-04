@@ -101,15 +101,17 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
         console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
         this.matchupService.initMatchUpCharts(this.leagueService.selectedLeague, this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season));
       }
+      const completedNFLWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
       // get determined match up week in fantasy (playoffs take longer to determine winner)
       let determinedPlayoffWeek = 18;
-      this.leagueService.playoffMatchUps.forEach(matchUp => {
-        if (!matchUp.loss && !matchUp.win) {
-          determinedPlayoffWeek = this.leagueService.selectedLeague.playoffStartWeek + matchUp.round - 1;
-        }
-      });
+      if (completedNFLWeek >= this.leagueService.selectedLeague.playoffStartWeek) {
+        this.leagueService.playoffMatchUps.forEach(matchUp => {
+          if (!matchUp.loss && !matchUp.win) {
+            determinedPlayoffWeek = this.leagueService.selectedLeague.playoffStartWeek + matchUp.round - 1;
+          }
+        });
+      }
       // get completed week of nfl season (not factoring in if match ups are determined)
-      const completedNFLWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
       const maxSelectableWeek = completedNFLWeek >= determinedPlayoffWeek ? determinedPlayoffWeek - 1 : completedNFLWeek;
       this.playoffMachineWeek = this.leagueService.selectedLeague.status === 'complete' ? maxSelectableWeek+1 : maxSelectableWeek;
       this.powerRankingsService.powerRankings = this.powerRankingsService.calculateEloAdjustedADPValue();
