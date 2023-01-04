@@ -1,19 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {LeagueService} from '../../services/league.service';
-import {PlayoffCalculatorService} from '../services/playoff-calculator.service';
-import {NflService} from '../../services/utilities/nfl.service';
-import {MatchUpProbability} from '../model/playoffCalculator';
-import {MatchupService} from '../services/matchup.service';
-import {PowerRankingsService} from '../services/power-rankings.service';
-import {ConfigService} from '../../services/init/config.service';
-import {FormControl} from '@angular/forms';
-import {BaseComponent} from '../base-component.abstract';
-import {LeagueSwitchService} from '../services/league-switch.service';
-import {ActivatedRoute} from '@angular/router';
-import {AddPlayerComparisonModalComponent} from "../modals/add-player-comparison-modal/add-player-comparison-modal.component";
-import {EloTeamComparisonModalComponent} from "../modals/elo-team-comparison-modal/elo-team-comparison-modal.component";
-import {MatDialog} from "@angular/material/dialog";
-import {PlayerService} from "../../services/player.service";
+import { Component, OnInit } from '@angular/core';
+import { LeagueService } from '../../services/league.service';
+import { PlayoffCalculatorService } from '../services/playoff-calculator.service';
+import { NflService } from '../../services/utilities/nfl.service';
+import { MatchUpProbability } from '../model/playoffCalculator';
+import { MatchupService } from '../services/matchup.service';
+import { PowerRankingsService } from '../services/power-rankings.service';
+import { ConfigService } from '../../services/init/config.service';
+import { FormControl } from '@angular/forms';
+import { BaseComponent } from '../base-component.abstract';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { ActivatedRoute } from '@angular/router';
+import { AddPlayerComparisonModalComponent } from "../modals/add-player-comparison-modal/add-player-comparison-modal.component";
+import { EloTeamComparisonModalComponent } from "../modals/elo-team-comparison-modal/elo-team-comparison-modal.component";
+import { MatDialog } from "@angular/material/dialog";
+import { PlayerService } from "../../services/player.service";
 
 @Component({
   selector: 'app-playoff-calculator',
@@ -48,16 +48,16 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
 
   /** selectable metrics */
   selectableMetrics: { display: string, value: string, isDisabled: boolean }[] = [
-    {display: 'Projected record', value: 'record', isDisabled: false},
-    {display: 'Make playoffs', value: 'makePlayoffs', isDisabled: true},
-    {display: 'Win division', value: 'winDivision', isDisabled: false},
-    {display: 'Bye week', value: 'getBye', isDisabled: false},
-    {display: 'Best Record', value: 'bestRecord', isDisabled: false},
-    {display: 'Worst Record', value: 'worstRecord', isDisabled: false},
-    {display: 'Run the table (from selected week)', value: 'winOut', isDisabled: false},
-    {display: 'Make semi finals', value: 'makeConfChamp', isDisabled: false},
-    {display: 'Make championship', value: 'makeChampionship', isDisabled: false},
-    {display: 'Win championship', value: 'winChampionship', isDisabled: false}];
+    { display: 'Projected record', value: 'record', isDisabled: false },
+    { display: 'Make playoffs', value: 'makePlayoffs', isDisabled: true },
+    { display: 'Win division', value: 'winDivision', isDisabled: false },
+    { display: 'Bye week', value: 'getBye', isDisabled: false },
+    { display: 'Best Record', value: 'bestRecord', isDisabled: false },
+    { display: 'Worst Record', value: 'worstRecord', isDisabled: false },
+    { display: 'Run the table (from selected week)', value: 'winOut', isDisabled: false },
+    { display: 'Make semi finals', value: 'makeConfChamp', isDisabled: false },
+    { display: 'Make championship', value: 'makeChampionship', isDisabled: false },
+    { display: 'Win championship', value: 'winChampionship', isDisabled: false }];
 
   /** form control for metrics dropdown */
   selectedMetrics = new FormControl();
@@ -86,11 +86,11 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     this.playerService.loadPlayerValuesForToday();
     this.initPlayoffCalc();
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
-          this.initPlayoffCalc();
-        }
-      ), this.route.queryParams.subscribe(params => {
-        this.leagueSwitchService.loadFromQueryParams(params);
-      })
+      this.initPlayoffCalc();
+    }
+    ), this.route.queryParams.subscribe(params => {
+      this.leagueSwitchService.loadFromQueryParams(params);
+    })
     );
   }
 
@@ -129,7 +129,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
    */
   private generateSelectableWeeks(maxSelectableWeek: number): void {
     this.selectableWeeks = [];
-    this.selectableWeeks.push({week: this.leagueService.selectedLeague.startWeek, value: 'Preseason'});
+    this.selectableWeeks.push({ week: this.leagueService.selectedLeague.startWeek, value: 'Preseason' });
     for (let i = this.leagueService.selectedLeague.startWeek; i <= maxSelectableWeek; i++) {
       const disclaimer = this.leagueService.selectedLeague.playoffStartWeek === i + 1 ? ' (End of regular season)' : '';
       this.selectableWeeks.push({
@@ -207,9 +207,9 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
   openEloHistoricalModal(): void {
     this.dialog.open(EloTeamComparisonModalComponent
       , {
-      minHeight: '400px',
-      minWidth: '1200px',
-    }
+        minHeight: '400px',
+        minWidth: '1200px',
+      }
     );
   }
 
@@ -247,7 +247,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
 
     const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Season_Projections_${this.leagueService.selectedLeague.season}_${this.selectedWeek}.csv`;
 
-    const blob = new Blob([seasonOddsCSV], {type: 'text/csv;charset=utf-8;'});
+    const blob = new Blob([seasonOddsCSV], { type: 'text/csv;charset=utf-8;' });
     if (navigator.msSaveBlob) { // IE 10+
       navigator.msSaveBlob(blob, filename);
     } else {

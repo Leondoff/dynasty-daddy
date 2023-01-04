@@ -289,21 +289,6 @@ export class MflService {
   }
 
   /**
-   * format json response to playoff objects
-   * @param playoffs json response
-   * @param playoffStartWeek playoff start week number
-   */
-  private marshallPlayoffs(playoffs: any, playoffStartWeek: number): LeaguePlayoffMatchUpDTO[] {
-    if (Array.isArray(playoffs)) {
-      return playoffs?.map(matchUp => {
-        return new LeaguePlayoffMatchUpDTO(null).fromMFL(matchUp, playoffStartWeek);
-      }) || [];
-    } else {
-      return playoffs ? [new LeaguePlayoffMatchUpDTO(null).fromMFL(playoffs, playoffStartWeek)] : [];
-    }
-  }
-
-  /**
    * format json response to draft results object
    * @param draft json response
    * @param leagueId league id
@@ -349,11 +334,16 @@ export class MflService {
       const week = Number(matchUps.week);
       const teamMatchUps = [];
       let matchUpId = 1;
-      matchUps?.matchup?.forEach(matchUp => {
-        teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[0], matchUpId));
-        teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[1], matchUpId));
-        matchUpId++;
-      });
+      if (Array.isArray(matchUps?.matchup)) {
+        matchUps?.matchup?.forEach(matchUp => {
+          teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[0], matchUpId));
+          teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[1], matchUpId));
+          matchUpId++;
+        });
+      } else {
+        teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[0], matchUpId));
+        teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[1], matchUpId));
+      }
       matchUpsDict[week] = teamMatchUps;
     });
     return matchUpsDict;

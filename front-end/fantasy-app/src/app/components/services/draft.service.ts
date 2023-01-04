@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
-import {TeamMockDraftPick} from '../model/mockDraft';
-import {LeagueTeam} from '../../model/league/LeagueTeam';
-import {LeagueService} from '../../services/league.service';
-import {CompletedDraft} from '../../model/league/CompletedDraft';
-import {DraftCapital} from '../../model/assets/DraftCapital';
+import { Injectable } from '@angular/core';
+import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { TeamMockDraftPick } from '../model/mockDraft';
+import { LeagueTeam } from '../../model/league/LeagueTeam';
+import { LeagueService } from '../../services/league.service';
+import { CompletedDraft } from '../../model/league/CompletedDraft';
+import { DraftCapital } from '../../model/assets/DraftCapital';
 import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
 import { PlayerService } from 'src/app/services/player.service';
 
@@ -60,7 +60,7 @@ export class DraftService {
     // sort players by value
     // TODO refactor
     this.selectablePlayers.sort((playerA, playerB) => {
-      if (this.leagueService.selectedLeague.isSuperflex){
+      if (this.leagueService.selectedLeague.isSuperflex) {
         return playerB.sf_trade_value - playerA.sf_trade_value;
       } else {
         return playerB.trade_value - playerA.trade_value;
@@ -73,7 +73,7 @@ export class DraftService {
    * map draft objects to teams
    * @param teams fantasy teams
    */
-  mapDraftObjects(teams: LeagueTeam[]): void  {
+  mapDraftObjects(teams: LeagueTeam[]): void {
     if (this.teamPicks.length === 0) {
       teams.map(team => {
         for (const pick of team.draftCapital) {
@@ -143,7 +143,7 @@ export class DraftService {
    * @param pick
    * @private
    */
-   getPickValueRatio(pick: LeagueCompletedPickDTO): number {
+  getPickValueRatio(pick: LeagueCompletedPickDTO): number {
     const pickValue = this.getPickValue(pick.round);
     return this.leagueService.selectedLeague.isSuperflex ? (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
       this.leagueService.selectedLeague.leaguePlatform)?.sf_trade_value || 0) / pickValue :
@@ -173,29 +173,34 @@ export class DraftService {
     return this.roundPickValue[round - 1];
   }
 
-    /**
+  /**
    * get average value of round pick
    */
-    generateAVGValuePerRound(selectedDraft: CompletedDraft) {
-      const roundValue = [];
-      for (let round = 0; round < selectedDraft.draft.rounds; round++) {
-        let totalValue = 0;
-        for (let pickNum = 0; pickNum < this.leagueService.selectedLeague.totalRosters; pickNum++) {
-          totalValue += this.leagueService.selectedLeague.isSuperflex ?
-            this.playerService.getPlayerByPlayerPlatformId(
-              selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
-              this.leagueService.selectedLeague.leaguePlatform
-            )?.sf_trade_value || 0 :
-            this.playerService.getPlayerByPlayerPlatformId(
-              selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
-              this.leagueService.selectedLeague.leaguePlatform
-            )?.trade_value || 0;
-        }
-        roundValue.push(Math.round(totalValue / this.leagueService.selectedLeague.totalRosters));
+  generateAVGValuePerRound(selectedDraft: CompletedDraft) {
+    const roundValue = [];
+    for (let round = 0; round < selectedDraft.draft.rounds; round++) {
+      let totalValue = 0;
+      for (let pickNum = 0; pickNum < this.leagueService.selectedLeague.totalRosters; pickNum++) {
+        totalValue += this.leagueService.selectedLeague.isSuperflex ?
+          this.playerService.getPlayerByPlayerPlatformId(
+            selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
+            this.leagueService.selectedLeague.leaguePlatform
+          )?.sf_trade_value || 0 :
+          this.playerService.getPlayerByPlayerPlatformId(
+            selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
+            this.leagueService.selectedLeague.leaguePlatform
+          )?.trade_value || 0;
       }
-      this.roundPickValue = roundValue;
+      roundValue.push(Math.round(totalValue / this.leagueService.selectedLeague.totalRosters));
     }
+    this.roundPickValue = roundValue;
+  }
 
+  /**
+   * get teams with best value from draft
+   * @param selectedDraft completed draft data
+   * @returns 
+   */
   getTeamsWithBestValueDrafts(selectedDraft: CompletedDraft): any[] {
     if (this.roundPickValue.length === 0) {
       this.generateAVGValuePerRound(selectedDraft);
@@ -208,13 +213,18 @@ export class DraftService {
           valueAdded += this.getPickValueAdded(pick);
         }
       }
-      teams.push({team, valueAdded});
+      teams.push({ team, valueAdded });
     }
     return teams.sort((a, b) => {
       return b.valueAdded - a.valueAdded;
     });
   }
 
+  /**
+   * get players with best value picks from draft
+   * @param selectedDraft completed draft
+   * @returns 
+   */
   sortPlayersByBestValuePick(selectedDraft: CompletedDraft): any[] {
     if (this.roundPickValue.length === 0) {
       this.generateAVGValuePerRound(selectedDraft);
@@ -222,7 +232,7 @@ export class DraftService {
 
     const players: { pick: LeagueCompletedPickDTO, valueAdded: number }[] = [];
     for (const pick of selectedDraft.picks) {
-        players.push({ pick, valueAdded: this.getPickValueAdded(pick)});
+      players.push({ pick, valueAdded: this.getPickValueAdded(pick) });
     }
     return players.sort((a, b) => {
       return b.valueAdded - a.valueAdded;
