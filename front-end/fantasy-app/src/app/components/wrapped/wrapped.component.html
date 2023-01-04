@@ -1,4 +1,4 @@
-<div *ngIf="leagueService.isLeagueLoaded() && leagueService.selectedLeague">
+<div *ngIf="leagueService.isLeagueLoaded() && leagueService.selectedLeague && leagueService.selectedLeague?.status !== 'pre_draft' && leagueService.selectedLeague?.status !== 'drafting'">
     <app-wrapped-welcome *ngIf="wrappedService.frameNumber === 0" (click)="wrappedService.frameNumber = 1"></app-wrapped-welcome>
     <app-wrapped-draft [baseFrame]="1" *ngIf="wrappedService.frameNumber > 0 && wrappedService.frameNumber < 6" class="wrapped-container"></app-wrapped-draft>
     <app-wrapped-transactions [baseFrame]="6" *ngIf="wrappedService.frameNumber > 5 && wrappedService.frameNumber < 12" class="wrapped-container"></app-wrapped-transactions>
@@ -11,3 +11,4 @@
 </div>
 
 <app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="leagueService.leagueStatus === 'NONE' && !leagueService.selectedLeague"></app-login-error>
+<app-login-error [errorHeader]="leagueNotStartedErrMsg" *ngIf="leagueService.selectedLeague?.status === 'pre_draft' || leagueService.selectedLeague?.status === 'drafting'"></app-login-error>

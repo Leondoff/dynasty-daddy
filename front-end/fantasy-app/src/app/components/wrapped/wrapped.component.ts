@@ -19,6 +19,9 @@ import { WrappedService } from '../services/wrapped.service';
     /** no league selected error message */
     noLeagueErrMsg = 'Cannot load Dynasty Daddy Wrapped. Please select league.';
 
+    /** a league that hasn't been started error message */
+    leagueNotStartedErrMsg = 'League has not started yet so could not generate Wrapped. Please load previous league to view Wrapped.';
+
     constructor(public wrappedService: WrappedService, public leagueService: LeagueService, private playersService: PlayerService, private leagueSwitchService: LeagueSwitchService, private route: ActivatedRoute) {
         super();
     }
