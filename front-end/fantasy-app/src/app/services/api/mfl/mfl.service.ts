@@ -17,6 +17,7 @@ import {LeagueDTO, LeagueType} from '../../../model/league/LeagueDTO';
 import {LeaguePlatform} from '../../../model/league/FantasyPlatformDTO';
 import {CompletedDraft} from '../../../model/league/CompletedDraft';
 import {DraftCapital} from '../../../model/assets/DraftCapital';
+import { NflService } from '../../utilities/nfl.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class MflService {
 
   private DEFAULT_TEAM_LOGO = 'http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif';
 
-  constructor(private mflApiService: MflApiService) {
+  constructor(private mflApiService: MflApiService, private nflService: NflService) {
   }
 
   /**
@@ -115,7 +116,7 @@ export class MflService {
         ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId];
         teams.push(ddTeam);
       });
-      leagueWrapper.playoffMatchUps = this.generatePlayoffsForLeague(leagueMatchUps, teams, leagueWrapper.selectedLeague.playoffStartWeek);
+      leagueWrapper.playoffMatchUps = this.generatePlayoffsForLeague(leagueMatchUps, teams, leagueWrapper.selectedLeague.playoffStartWeek,  leagueWrapper.selectedLeague.season);
       leagueWrapper.leagueTeamDetails = teams;
       leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
       return leagueWrapper;
@@ -164,10 +165,13 @@ export class MflService {
 
   /**
    * handles generating formatted playoff records for league based on match ups
+   * @param leagueMatchUps
    * @param teams
+   * @param playoffStartWeek
+   * @param season
    * @returns 
    */
-  private generatePlayoffsForLeague(leagueMatchUps: {}, teams: LeagueTeam[], playoffStartWeek: number): LeaguePlayoffMatchUpDTO[] {
+  private generatePlayoffsForLeague(leagueMatchUps: {}, teams: LeagueTeam[], playoffStartWeek: number, season: string): LeaguePlayoffMatchUpDTO[] {
     // process current match ups in playoffs
     let startRound = 1;
     const playoffMatchups : LeaguePlayoffMatchUpDTO[] = [];
@@ -182,8 +186,11 @@ export class MflService {
       startRound++;
       iter++;
     }
+    // TODO test this with active playoffs
     if (existingMatchUps.length > 0) {
-      playoffMatchups.push(...this.formatPlayoffMatchUps(existingMatchUps, startRound-1, false));
+      // -2 because start round starts at 1 and is in a while loop
+      // for the left over round, format playoffs... use completed week to determine if round is completed or not
+      playoffMatchups.push(...this.formatPlayoffMatchUps(existingMatchUps, startRound-1, this.nflService.getCompletedWeekForSeason(season) >= playoffStartWeek + startRound - 2 ? true : false));
     }
     // generate extra match ups for missing rounds
     const playoffTeams = teams.slice().sort((a,b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins || b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts).slice(0, 6);

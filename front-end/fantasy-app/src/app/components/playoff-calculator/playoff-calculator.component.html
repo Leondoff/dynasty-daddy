@@ -9,8 +9,8 @@
       <div class="margin-top-10 center-text">For the regular season and playoffs, updated after each week.</div>
       <div class="margin-top-15 center-text">
         <mat-radio-group [(ngModel)]="playoffCalculatorService.forecastModel" (change)="changeForecastModel()">
-          <mat-radio-button color="primary" [value]="0" style="margin-left: 15px;">Show our traditional starters by ADP forecast</mat-radio-button>
-          <mat-radio-button color="primary" [value]="1" style="margin-left: 15px;">Show our elo adjusted starters by ADP forecast <span class="warning__alert small-text__light">Beta</span></mat-radio-button>
+          <mat-radio-button color="primary" [value]="0" style="margin-left: 15px;">{{configService.isMobile ? 'Traditional ADP Forecast' : 'Show our traditional starters by ADP forecast'}}</mat-radio-button>
+          <mat-radio-button color="primary" [value]="1" style="margin-left: 15px;">{{configService.isMobile ? 'Elo Adjusted ADP Forecast ' : 'Show our elo adjusted starters by ADP forecast '}}<span class="warning__alert small-text__light">Beta</span></mat-radio-button>
         </mat-radio-group>
       </div>
       <div class="margin-top-25" *ngIf="playoffCalculatorService.matchUpsWithProb.length != 0">
@@ -36,7 +36,7 @@
             <mat-option *ngFor="let option of selectableMetrics" [value]="option" [disabled]="option?.isDisabled">{{option?.display}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <div style="padding-left: 20px; align-self: center; cursor: pointer" class="add-icon-button" *ngIf="playoffCalculatorService.forecastModel === 1" matTooltip="View Historical Elo Adjusted ADP Model" matTooltipPosition="below">
+        <div style="padding-left: 20px; align-self: center; cursor: pointer" class="add-icon-button" *ngIf="playoffCalculatorService.forecastModel === 1 && !configService.isMobile" matTooltip="View Historical Elo Adjusted ADP Model" matTooltipPosition="below">
           <mat-icon (click)="openEloHistoricalModal()"><span class="material-symbols-outlined">auto_graph</span></mat-icon>
         </div>
       </div>

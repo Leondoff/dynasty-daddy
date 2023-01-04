@@ -101,26 +101,34 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
         console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
         this.matchupService.initMatchUpCharts(this.leagueService.selectedLeague, this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season));
       }
-      this.playoffMachineWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
+      // get determined match up week in fantasy (playoffs take longer to determine winner)
+      let determinedPlayoffWeek = 18;
+      this.leagueService.playoffMatchUps.forEach(matchUp => {
+        if (!matchUp.loss && !matchUp.win) {
+          determinedPlayoffWeek = this.leagueService.selectedLeague.playoffStartWeek + matchUp.round - 1;
+        }
+      });
+      // get completed week of nfl season (not factoring in if match ups are determined)
+      const completedNFLWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
+      const maxSelectableWeek = completedNFLWeek >= determinedPlayoffWeek ? determinedPlayoffWeek - 1 : completedNFLWeek;
+      this.playoffMachineWeek = this.leagueService.selectedLeague.status === 'complete' ? maxSelectableWeek+1 : maxSelectableWeek;
       this.powerRankingsService.powerRankings = this.powerRankingsService.calculateEloAdjustedADPValue();
       this.selectedWeek = this.playoffMachineWeek + 1;
       this.refreshGames();
-      this.generateSelectableWeeks();
+      this.generateSelectableWeeks(maxSelectableWeek);
       this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
     }
   }
 
   /**
    * generate valid weeks to select probability
+   * @param maxSelectableWeek number of week that has been completed in the playoffs
    * @private
    */
-  private generateSelectableWeeks(): void {
+  private generateSelectableWeeks(maxSelectableWeek: number): void {
     this.selectableWeeks = [];
     this.selectableWeeks.push({week: this.leagueService.selectedLeague.startWeek, value: 'Preseason'});
-    const selectableWeekMax = this.leagueService.selectedLeague.season === this.nflService.stateOfNFL.season
-    && this.nflService.stateOfNFL.seasonType !== 'post' ?
-      this.nflService.stateOfNFL.completedWeek : this.playoffCalculatorService.matchUpsWithProb.length;
-    for (let i = this.leagueService.selectedLeague.startWeek; i <= selectableWeekMax; i++) {
+    for (let i = this.leagueService.selectedLeague.startWeek; i <= maxSelectableWeek; i++) {
       const disclaimer = this.leagueService.selectedLeague.playoffStartWeek === i + 1 ? ' (End of regular season)' : '';
       this.selectableWeeks.push({
         week: i + 1, value: 'Before Week '
@@ -134,7 +142,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
       });
     }
     this.selectableWeeks.reverse()
-    }
+  }
 
   /**
    * refresh game probability

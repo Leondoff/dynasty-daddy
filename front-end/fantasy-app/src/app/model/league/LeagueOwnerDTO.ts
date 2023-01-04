@@ -13,13 +13,4 @@ export class LeagueOwnerDTO {
   teamName: string;
   userId: string;
   avatar: string;
-
-  getAvatarForLeague(platform: LeaguePlatform): string {
-    switch (platform) {
-      case LeaguePlatform.MFL:
-        return this.avatar;
-      default:
-        return 'https://sleepercdn.com/avatars/thumbs/' + this.avatar;
-    }
-  }
 }

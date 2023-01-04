@@ -51,14 +51,14 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
       this.totalTransactions.push('Some were better than others...');
       // Most/least transactions
       const mostTransactionsTeam = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['max_id']);
-      this.transactionsWinners.push({rank: 'Most', details: 'Most Transactions (' + this.wrappedService.transactionsDict['max'] + ') - Waiver Warrior', header: mostTransactionsTeam.owner.teamName, image: mostTransactionsTeam.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)})
+      this.transactionsWinners.push({rank: 'Most', details: 'Most Transactions (' + this.wrappedService.transactionsDict['max'] + ') - Waiver Warrior', header: mostTransactionsTeam.owner.teamName, image: mostTransactionsTeam.owner.avatar})
       const leastTransactionsTeam = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['min_id']);
-      this.transactionsWinners.push({rank: 'Least', details: 'Least Transactions (' + this.wrappedService.transactionsDict['min'] + ') - Don\'t be shy', header: leastTransactionsTeam.owner.teamName, image: leastTransactionsTeam.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)})
+      this.transactionsWinners.push({rank: 'Least', details: 'Least Transactions (' + this.wrappedService.transactionsDict['min'] + ') - Don\'t be shy', header: leastTransactionsTeam.owner.teamName, image: leastTransactionsTeam.owner.avatar})
       // Transactions Players
       for (let i = 0; i < (this.wrappedService.transactionsDict['waivers'].length > 5 ? 5 : this.wrappedService.transactionsDict['waivers'].length); i++) {
         const waiver = this.wrappedService.transactionsDict['waivers'][i];
         const waiverTeam = this.leagueService.getTeamByRosterId(waiver.adds[0].rosterId);
-        this.transactionsPlayers.push({rank: '#' + (i + 1), details: 'Added by ' + waiverTeam.owner.teamName, header: waiver.adds[0].playerName, image: waiverTeam.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});  
+        this.transactionsPlayers.push({rank: '#' + (i + 1), details: 'Added by ' + waiverTeam.owner.teamName, header: waiver.adds[0].playerName, image: waiverTeam.owner.avatar});  
       }
       // Trades intro
       this.tradesIntro.push('Out of the ' + this.wrappedService.transactionsDict['total'] + ' transactions');
