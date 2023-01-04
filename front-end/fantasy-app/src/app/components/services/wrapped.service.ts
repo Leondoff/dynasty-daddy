@@ -26,8 +26,8 @@ import { TransactionsService } from "./transactions.service";
       let totalTrans = [];
       for (let i = 1; i <= this.leagueService.selectedLeague.totalRosters; i++) {
         let trans = 0;
-        trans += this.transactionsService.transactionAggregate[i].actions;
-        trans += this.transactionsService.transactionAggregate[i].trades;
+        trans += this.transactionsService.transactionAggregate[i]?.actions || 0;
+        trans += this.transactionsService.transactionAggregate[i]?.trades || 0;
         totalTrans.push(trans);
       }
       this.transactionsDict['total'] = totalTrans.reduce((partialSum, a) => partialSum + a, 0);;
