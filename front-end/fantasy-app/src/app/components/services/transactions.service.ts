@@ -114,7 +114,7 @@ export class TransactionsService {
       return {
         playerName: draftPick.season + ' ' + draftPick.round + placementSuffix,
         value: this.leagueService.selectedLeague.isSuperflex ?
-          notFoundPick?.sf_trade_value || 0 : notFoundPick.trade_value || 0,
+          notFoundPick?.sf_trade_value || 0 : notFoundPick?.trade_value || 0,
         rosterId
       };
     }

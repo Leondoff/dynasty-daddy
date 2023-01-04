@@ -76,7 +76,7 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
         const loserId = matchUp.team1Points > matchUp.team2Points ? matchUp.team2RosterId : matchUp.team1RosterId;
         const winnerTeam = this.leagueService.getTeamByRosterId(winnerId);
         const loserTeam = this.leagueService.getTeamByRosterId(loserId);
-        this.closestGames.push({rank: (Math.round(Math.abs(matchUp.team1Points - matchUp.team2Points) * 100)/100).toString(), details: 'Defeats ' + loserTeam.owner.teamName + ' in Week ' + matchUp.week + ' (' + (matchUp.team1Points > matchUp.team2Points ? matchUp.team1Points + ' - ' + matchUp.team2Points : matchUp.team2Points + ' - ' + matchUp.team1Points ) + ')', header: winnerTeam.owner.teamName, image: winnerTeam.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+        this.closestGames.push({rank: (Math.round(Math.abs(matchUp.team1Points - matchUp.team2Points) * 100)/100).toString(), details: 'Defeats ' + loserTeam.owner.teamName + ' in Week ' + matchUp.week + ' (' + (matchUp.team1Points > matchUp.team2Points ? matchUp.team1Points + ' - ' + matchUp.team2Points : matchUp.team2Points + ' - ' + matchUp.team1Points ) + ')', header: winnerTeam.owner.teamName, image: winnerTeam.owner.avatar});
       }
       // biggest upsets
       this.playoffCalculatorService.calculateGamesWithProbability(completedWeek+1);
@@ -88,7 +88,7 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
         const loserId = didTeam1Win ? matchUp.matchUpDetails.team2RosterId : matchUp.matchUpDetails.team1RosterId;
         const winnerTeam = this.leagueService.getTeamByRosterId(winnerId);
         const loserTeam = this.leagueService.getTeamByRosterId(loserId);
-        this.upsetGames.push({rank: (didTeam1Win ? matchUp.team1Prob : matchUp.team2Prob) + '%', details: 'Had a ' + (didTeam1Win ? matchUp.team1Prob : matchUp.team2Prob) + '% chance to defeat ' + loserTeam.owner.teamName + ' in Week ' + matchUp.matchUpDetails.week + ' (' +  (didTeam1Win ? matchUp.matchUpDetails.team1Points + ' - ' + matchUp.matchUpDetails.team2Points : matchUp.matchUpDetails.team2Points + ' - ' + matchUp.matchUpDetails.team1Points ) + ')', header: winnerTeam.owner.teamName, image: winnerTeam.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+        this.upsetGames.push({rank: (didTeam1Win ? matchUp.team1Prob : matchUp.team2Prob) + '%', details: 'Had a ' + (didTeam1Win ? matchUp.team1Prob : matchUp.team2Prob) + '% chance to defeat ' + loserTeam.owner.teamName + ' in Week ' + matchUp.matchUpDetails.week + ' (' +  (didTeam1Win ? matchUp.matchUpDetails.team1Points + ' - ' + matchUp.matchUpDetails.team2Points : matchUp.matchUpDetails.team2Points + ' - ' + matchUp.matchUpDetails.team1Points ) + ')', header: winnerTeam.owner.teamName, image: winnerTeam.owner.avatar});
       }
       // teams intro
       this.teamsIntro.push('The league is only as good as the teams in it');
@@ -96,18 +96,18 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
       this.teamsIntro.push('Let\'s hand out some superlatives...');
       // superlatives from the season
       const teams = this.leagueService.leagueTeamDetails.slice().sort((a, b) => b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts);
-      this.superlatives.push({rank: '', details: 'Best Offense in the league - Points For: ' + teams[0].roster.teamMetrics.fpts, header: teams[0].owner.teamName, image: teams[0].owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
-      this.superlatives.push({rank: '', details: 'Worst Offense in the league - Points For: ' + teams[teams.length-1].roster.teamMetrics.fpts, header: teams[teams.length-1].owner.teamName, image: teams[teams.length-1].owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+      this.superlatives.push({rank: '', details: 'Best Offense in the league - Points For: ' + teams[0].roster.teamMetrics.fpts, header: teams[0].owner.teamName, image: teams[0].owner.avatar});
+      this.superlatives.push({rank: '', details: 'Worst Offense in the league - Points For: ' + teams[teams.length-1].roster.teamMetrics.fpts, header: teams[teams.length-1].owner.teamName, image: teams[teams.length-1].owner.avatar});
       const worstTeam = teams.sort((a,b) => b.roster.teamMetrics.fptsAgainst - a.roster.teamMetrics.fptsAgainst);
-      this.superlatives.push({rank: '', details: 'Worst defense in the league - Points Against: ' + worstTeam[0].roster.teamMetrics.fptsAgainst, header: worstTeam[0].owner.teamName, image: worstTeam[0].owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+      this.superlatives.push({rank: '', details: 'Worst defense in the league - Points Against: ' + worstTeam[0].roster.teamMetrics.fptsAgainst, header: worstTeam[0].owner.teamName, image: worstTeam[0].owner.avatar});
       this.matchUpService.getMostPointsForInWeek(this.leagueService.selectedLeague.startWeek, completedWeek);
       const mostPointsMatchUp = this.matchUpService.leagueMostPointsFor[0];
       const mostPointsForTeam = this.leagueService.getTeamByRosterId(mostPointsMatchUp.rosterId);
-      this.superlatives.push({rank: '', details: 'Any given sunday - Single Game High: ' + mostPointsMatchUp.points, header: mostPointsForTeam.owner.teamName, image: mostPointsForTeam.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+      this.superlatives.push({rank: '', details: 'Any given sunday - Single Game High: ' + mostPointsMatchUp.points, header: mostPointsForTeam.owner.teamName, image: mostPointsForTeam.owner.avatar});
       // best record
       const recordTeam = teams.sort((a,b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins)
       for (let i = 0; i < 4; i++) {
-        this.topTeams.push({rank: '#' + (i + 1), details: 'Record: ' + recordTeam[i].roster.teamMetrics.wins + '-' + recordTeam[i].roster.teamMetrics.losses +' | Avg PPG: ' + Math.round(recordTeam[i].roster.teamMetrics.fpts/completedWeek), header: recordTeam[i].owner.teamName, image: recordTeam[i].owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+        this.topTeams.push({rank: '#' + (i + 1), details: 'Record: ' + recordTeam[i].roster.teamMetrics.wins + '-' + recordTeam[i].roster.teamMetrics.losses +' | Avg PPG: ' + Math.round(recordTeam[i].roster.teamMetrics.fpts/completedWeek), header: recordTeam[i].owner.teamName, image: recordTeam[i].owner.avatar});
       }
       // winner
       const seasonResults = teams.sort((a,b) => this.playoffCalculatorService.teamPlayoffOdds[b.roster.rosterId].timesWinChampionship - this.playoffCalculatorService.teamPlayoffOdds[a.roster.rosterId].timesWinChampionship);

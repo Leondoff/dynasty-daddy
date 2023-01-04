@@ -67,4 +67,9 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
     this.playerValueService.applyFilters();
   }
 
+  clearTextSearch(): void{
+    this.playerValueService.searchVal = '';
+    this.playerValueService.applyFilters();
+  }
+
 }

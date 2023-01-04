@@ -21,6 +21,9 @@ export class SleeperService {
 
   /** default sleeper icon for orphan teams */
   sleeperIcon: string = '15d7cf259bc30eab8f6120f45f652fb6';
+  
+  /** sleeper url for their avatars */
+  sleeperAvatarBaseURL: string = 'https://sleepercdn.com/avatars/thumbs/';
 
   constructor(private sleeperApiService: SleeperApiService) {
   }
@@ -130,6 +133,8 @@ export class SleeperService {
               owners.push(owner);
               roster.ownerId = owner.userId;
             }
+            // set full avatar string for future reference
+            owner.avatar = this.sleeperAvatarBaseURL + (owner.avatar || this.sleeperIcon);
             league.leagueTeamDetails.push(new LeagueTeam(owner, roster));
           });
           return this.sleeperApiService.getSleeperDraftbyLeagueId(league.selectedLeague.leagueId)

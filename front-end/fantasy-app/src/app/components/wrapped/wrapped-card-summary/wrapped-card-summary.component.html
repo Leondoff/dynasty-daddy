@@ -4,7 +4,7 @@
     </div>
     <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
         <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block; text-align-last: end;">
-            <img #image [src]="content.first.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)"
+            <img #image [src]="content.first.owner.avatar"
             onerror="style.display = 'none'" class="wrapped-details-img">
         </div>
         <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block" class="wrapped-details box-padding">

@@ -54,8 +54,8 @@ import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
       const draftRankings = this.draftService.getTeamsWithBestValueDrafts(this.leagueService.completedDrafts[0]);
       const bestTeam = draftRankings[0];
       const worstTeam = draftRankings[this.leagueService.selectedLeague.totalRosters - 1];
-      this.bestWorstDraft.push({rank: 'Best', details: 'Draft Suvant - added the most value in the draft', header: bestTeam.team.owner.teamName, image: bestTeam.team.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
-      this.bestWorstDraft.push({rank: 'Worst', details: 'The Buster - added the least value in the draft', header: worstTeam.team.owner.teamName, image: worstTeam.team.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+      this.bestWorstDraft.push({rank: 'Best', details: 'Draft Suvant - added the most value in the draft', header: bestTeam.team.owner.teamName, image: bestTeam.team.owner.avatar});
+      this.bestWorstDraft.push({rank: 'Worst', details: 'The Buster - added the least value in the draft', header: worstTeam.team.owner.teamName, image: worstTeam.team.owner.avatar});
       // best picks in the draft
       const valueToUse = this.leagueService.selectedLeague.isSuperflex ? 'sf_trade_value' : 'trade_value'
       const sortedPicks = this.leagueService.completedDrafts[0].picks.slice().sort((a,b) => (this.playerService.getPlayerByPlayerPlatformId(b.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0) - (this.playerService.getPlayerByPlayerPlatformId(a.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0) );
@@ -63,7 +63,7 @@ import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
         const pick = sortedPicks[i];
         const player = this.leagueService.platformPlayersMap[pick.playerId];
         const team = this.leagueService.getTeamByRosterId(sortedPicks[i].rosterId);
-        this.bestPicksInTheDraft.push({rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber +' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+        this.bestPicksInTheDraft.push({rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber +' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar});
       }
       // best value picks
       const valuePicks = this.draftService.sortPlayersByBestValuePick(this.leagueService.completedDrafts[0]).filter(p => !this.leagueService.platformPlayersMap[p.playerId]);
@@ -71,14 +71,14 @@ import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
         const pick = valuePicks[i].pick;
         const player = this.leagueService.platformPlayersMap[pick.playerId];
         const team = this.leagueService.getTeamByRosterId(valuePicks[i].pick.rosterId);
-        this.bestValuePicks.push({rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber +' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+        this.bestValuePicks.push({rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber +' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar});
       }
       // worst value picks
       for (let i = 0; i < 5; i++) {
         const pick = valuePicks[valuePicks.length - i - 1].pick;
         const player = this.leagueService.platformPlayersMap[pick.playerId];
         const team = this.leagueService.getTeamByRosterId(valuePicks[valuePicks.length - i - 1].pick.rosterId);
-        this.worstValuePicks.push({rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber +' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.getAvatarForLeague(this.leagueService.selectedLeague.leaguePlatform)});
+        this.worstValuePicks.push({rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber +' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar});
       }
       setInterval(()=> {
         this.showContent = true;
