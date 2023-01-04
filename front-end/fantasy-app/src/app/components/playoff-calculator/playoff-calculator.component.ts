@@ -103,7 +103,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
       }
       const completedNFLWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
       // get determined match up week in fantasy (playoffs take longer to determine winner)
-      let determinedPlayoffWeek = 18;
+      let determinedPlayoffWeek = Number(this.leagueService.selectedLeague.season) >= 2021 ? 18 : 17;
       if (completedNFLWeek >= this.leagueService.selectedLeague.playoffStartWeek) {
         this.leagueService.playoffMatchUps.forEach(matchUp => {
           if (!matchUp.loss && !matchUp.win) {
@@ -113,7 +113,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
       }
       // get completed week of nfl season (not factoring in if match ups are determined)
       const maxSelectableWeek = completedNFLWeek >= determinedPlayoffWeek ? determinedPlayoffWeek - 1 : completedNFLWeek;
-      this.playoffMachineWeek = this.leagueService.selectedLeague.status === 'complete' ? maxSelectableWeek+1 : maxSelectableWeek;
+      this.playoffMachineWeek = this.leagueService.selectedLeague.status === 'complete' ? maxSelectableWeek + 1 : maxSelectableWeek;
       this.powerRankingsService.powerRankings = this.powerRankingsService.calculateEloAdjustedADPValue();
       this.selectedWeek = this.playoffMachineWeek + 1;
       this.refreshGames();
@@ -186,9 +186,11 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
    */
   updateProbability(value: number): void {
     this.selectedWeek = value;
+    // check to ensure we aren't calculating a week that doesn't exist
+    const maxCompletedWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season);
     if (this.playoffCalculatorService.forecastModel === 1) {
       this.powerRankingsService.powerRankings =
-        this.powerRankingsService.calculateEloAdjustedADPValue(this.powerRankingsService.powerRankings, this.selectedWeek - 1);
+        this.powerRankingsService.calculateEloAdjustedADPValue(this.powerRankingsService.powerRankings, this.selectedWeek > maxCompletedWeek ? maxCompletedWeek : this.selectedWeek - 1);
       this.refreshGames();
     }
     this.selectedMetrics.setValue(this.setDefaultSelectedMetrics());
