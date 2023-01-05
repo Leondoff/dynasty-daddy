@@ -302,7 +302,7 @@ export class MflService {
     });
     return new CompletedDraft(
       new LeagueRawDraftOrderDTO(draftId.toString(), leagueId, 'completed', null,
-        null, null, null, null).fromMFL(draft, playerType, picks.length / teamCount),
+        null, null, null, null).fromMFL(draft, playerType, (picks?.length || teamCount * 4) / teamCount),
       picks
     );
   }

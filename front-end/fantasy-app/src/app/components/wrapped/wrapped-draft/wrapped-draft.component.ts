@@ -56,7 +56,7 @@ export class WrappedDraftComponent implements OnInit {
       const draftRankings = this.draftService.getTeamsWithBestValueDrafts(this.leagueService.completedDrafts[0]);
       const bestTeam = draftRankings[0];
       const worstTeam = draftRankings[this.leagueService.selectedLeague.totalRosters - 1];
-      this.bestWorstDraft.push({ rank: 'Best', details: 'Draft Suvant - added the most value in the draft', header: bestTeam.team.owner.teamName, image: bestTeam.team.owner.avatar });
+      this.bestWorstDraft.push({ rank: 'Best', details: 'Draft Savant - added the most value in the draft', header: bestTeam.team.owner.teamName, image: bestTeam.team.owner.avatar });
       this.bestWorstDraft.push({ rank: 'Worst', details: 'The Buster - added the least value in the draft', header: worstTeam.team.owner.teamName, image: worstTeam.team.owner.avatar });
       // best picks in the draft
       const valueToUse = this.leagueService.selectedLeague.isSuperflex ? 'sf_trade_value' : 'trade_value';
