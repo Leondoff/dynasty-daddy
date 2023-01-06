@@ -11,6 +11,9 @@ import { ConfigService } from "src/app/services/init/config.service";
     @Input()
     content: WrappedCardTradeContent
 
+    @Input()
+    showTradeWinner: boolean = false;
+
     constructor(public configService: ConfigService) {}
     
     ngOnInit(): void {

@@ -21,3 +21,10 @@
     font-size: 8vw;
     z-index: 1;
 }
+
+.wrapped-trade-icon-small {
+    height: unset;
+    width: unset;
+    font-size: clamp(15px, 3vw, 40px);
+    z-index: 1;
+}
