@@ -67,7 +67,7 @@ export class WrappedStandingsComponent implements OnInit {
     this.matchUpService.initMatchUpCharts(this.leagueService.selectedLeague, completedWeek);
     // intro standings text
     this.standingsIntro.push('This season was full of drama!');
-    this.standingsIntro.push('There was ' + this.matchUpService.leagueMatchUpUI.reduce((a, m) => a + m.length, 0) + ' fantasy games played this season.');
+    this.standingsIntro.push('There were ' + this.matchUpService.leagueMatchUpUI.reduce((a, m) => a + m.length, 0) + ' fantasy games played this season.');
     this.standingsIntro.push('Let\'s relive some of those memorable moments.');
     // closest match ups
     this.matchUpService.getClosestWins(this.leagueService.selectedLeague.startWeek, completedWeek);

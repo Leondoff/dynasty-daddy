@@ -11,6 +11,7 @@
             <td></td>
             <td style="vertical-align: text-top;">
                 <div class="wrapped-header">
+                    <mat-icon class="wrapped-trade-icon-small" *ngIf="showTradeWinner">trending_up</mat-icon>
                     {{content.team1}}
                 </div>
                 <div *ngFor="let p of content.team1Adds" class="wrapped-details">{{p}}</div>
@@ -18,6 +19,7 @@
             <td class="center-text"><mat-icon class="wrapped-trade-icon">swap_horiz</mat-icon></td>
             <td style="vertical-align: text-top;">
                 <div class="wrapped-header">
+                    <mat-icon class="wrapped-trade-icon-small" *ngIf="showTradeWinner">trending_down</mat-icon>
                     {{content.team2}}
                 </div>
                 <div *ngFor="let p of content.team2Adds" class="wrapped-details">{{p}}</div>

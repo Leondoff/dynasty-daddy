@@ -44,7 +44,7 @@
       <mat-icon>menu</mat-icon>
     </button>
     <mat-menu #leagueMenu="matMenu">
-      <button mat-menu-item [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_wrapped" gaCategory="page_nav" class="wrapped-button" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'"><mat-icon class="header-icon">star</mat-icon>Wrapped</button>
+      <button mat-menu-item [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_wrapped" gaCategory="page_nav" class="wrapped-button" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'"><mat-icon class="header-icon">redeem</mat-icon>Wrapped</button>
       <button mat-menu-item [routerLink]="['./league/rankings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav"><mat-icon class="header-icon">stacked_bar_chart</mat-icon>Power Rankings</button>
       <button mat-menu-item [routerLink]="['./league/standings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav"><mat-icon class="header-icon">leaderboard</mat-icon>Standings</button>
       <button mat-menu-item [routerLink]="['./league/probability']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav"><mat-icon class="header-icon">calculate</mat-icon>Playoff Calculator</button>

@@ -51,7 +51,7 @@
   <div [@fadeGrowStagger]="biggestFleeces.length + 1" class="wrapped-context-high" *ngIf="showContent">
     <div class="center-text wrapped-header-style">Fleece Alert! How did these trades get accepted?</div>
     <div *ngFor="let i of biggestFleeces">
-      <app-wrapped-card-trade [content]="i"></app-wrapped-card-trade>
+      <app-wrapped-card-trade [content]="i" [showTradeWinner]="true"></app-wrapped-card-trade>
     </div>
   </div>
 </div>
