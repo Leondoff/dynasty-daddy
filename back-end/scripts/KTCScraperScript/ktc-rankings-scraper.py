@@ -1,13 +1,10 @@
-from bs4 import BeautifulSoup
-import os
-import requests
 import psycopg2
 from sleeper_wrapper import Players
-import MFLPlayerService
+from MFLPlayerService import fetchMFLPlayerDict
 from FantasyProsADPScraper import scrapeADP
 from BeautifulSoupService import setUpSoup
 from PlayerService import cleanPlayerIdString
-
+from FantasyCalcService import fetchSuperFlexPlayerDict, fetchStandardPlayerDict
 
 # API calls to sleeper
 players = Players()
@@ -45,7 +42,7 @@ def getSleeperData():
 class Player:
     def __init__(self, id, name, first_name, last_name, team, position, sfPositionRank, positionRank, age, experience,
                  sf_value, value, sleeperId=None, college=None, injury_status=None, weight=None, height=None,
-                 jersey_number=-1, active=None, mflId=None):
+                 jersey_number=-1, active=None, mflId=None, fc_sf_value=None, fc_value=None):
         self.id = id
         self.name = name
         self.first_name = first_name
@@ -66,11 +63,13 @@ class Player:
         self.jersey_number = jersey_number
         self.active = active
         self.mflId = mflId
+        self.fc_sf_value = fc_sf_value
+        self.fc_value = fc_value
 
     def toString(self):
         print(self.id, self.name, self.first_name, self.last_name, self.team, self.position, self.sfPositionRank,
               self.positionRank, self.age, self.experience, self.sf_value, self.value, self.sleeperId, self.college,
-              self.injury_status, self.weight, self.height, self.jersey_number, self.active, self.mflId)
+              self.injury_status, self.weight, self.height, self.jersey_number, self.active, self.mflId, self.fc_sf_value, self.fc_value)
 
 
 #################################
@@ -103,7 +102,11 @@ players = []
 sleeperIdMapper = getSleeperData()
 
 # create dict of mfl ids and name ids
-mflPlayerIdMap = MFLPlayerService.fetchMFLPlayerDict()
+mflPlayerIdMap = fetchMFLPlayerDict()
+
+# fetch fantasy calc dictionary for standard & superflex
+fantasyCalcSFDict = fetchSuperFlexPlayerDict()
+fantasyCalcSTDDict = fetchStandardPlayerDict()
 
 # loop through ranking divs and create player classes
 for player in sf_rankings:
@@ -147,6 +150,8 @@ for player in sf_rankings:
                     print('Double Position: ' + nameId)
                     break
     mflId = mflPlayerIdMap.get(playerId)
+    fcSfValue = fantasyCalcSFDict.get(playerId)['value'] if fantasyCalcSFDict.get(playerId) != None else 0
+    fcStdValue = fantasyCalcSTDDict.get(playerId)['value'] if fantasyCalcSTDDict.get(playerId) != None else 0
     playerExp, jerseyNum = 0, 0
     college, injuryStatus, active, weight, height = None, None, None, None, None
     if sleeperId is not None:
@@ -168,7 +173,7 @@ for player in sf_rankings:
                None if str(oneQBPostion.text.strip())[2:] == 'CK' else str(oneQBPostion.text.strip())[2:],
                None if playerAge is None else str(playerAge.text.strip())[:2], playerExp,
                sfTradeValue.text.strip(), tradeValue.text.strip(), sleeperId, college, injuryStatus, weight, height,
-               jerseyNum, active, mflId))
+               jerseyNum, active, mflId, fcSfValue, fcStdValue))
 
 # for player in players:
 #      player.toString()
@@ -250,9 +255,9 @@ try:
                 cursor.execute(playerIdsStatement, (player.id, player.mflId, player.id, player.mflId))
 
             # player values insert daily values
-            cursor.execute('''INSERT into player_values(name_id, sf_position_rank, position_rank, sf_trade_value, trade_value)
-            VALUES (%s, %s, %s, %s, %s)''', (
-                player.id, player.sfPositionRank, player.positionRank, player.sf_value, player.value))
+            cursor.execute('''INSERT into player_values(name_id, sf_position_rank, position_rank, sf_trade_value, trade_value, fc_sf_trade_value, fc_trade_value)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)''', (
+                player.id, player.sfPositionRank, player.positionRank, player.sf_value, player.value, player.fc_sf_value, player.fc_value))
 
         # player adp rankings updated
         for adp in playerADPs:
@@ -269,6 +274,9 @@ try:
             cursor.execute(playerADPStatement, (adp.nameId, adp.fantasyProADP, adp.bb10ADP, adp.rtsportsADP, adp.underdogADP, adp.draftersADP, adp.avgADP, adp.nameId, adp.fantasyProADP, adp.bb10ADP, adp.rtsportsADP, adp.underdogADP, adp.draftersADP, adp.avgADP))
 
         # update mat view for players
+        cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')
+        
+        # update mat view for fantasy calc values
         cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')
 
         # Commit your changes in the database
