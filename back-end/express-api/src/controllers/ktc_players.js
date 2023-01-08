@@ -4,7 +4,22 @@ const playersModel = new Model('players_info');
 
 export const getCurrentPlayerValues = async (req, res) => {
   try {
-    const data = await playersModel.selectQuery('Select * from mat_vw_players order by sf_trade_value desc');
+    const data = await playersModel.selectQuery(
+      'SELECT mp.name_id, mp.sleeper_id, mp.mfl_id, mp.full_name, mp.first_name, mp.last_name, mp.team, mp."position", mp.age, mp.experience, mp.injury_status, mp.trade_value, mp.sf_trade_value, mp.sf_position_rank, mp.position_rank, mp."date", mp.all_time_high_sf, mp.all_time_low_sf, mp.all_time_high, mp.all_time_low, mp.three_month_high_sf, mp.three_month_high, mp.three_month_low_sf, mp.three_month_low, mp.last_month_value, mp.last_month_value_sf, mp.most_recent_data_point, mp.avg_adp, mp.fantasypro_adp, mp.bb10_adp, mp.rtsports_adp, mp.underdog_adp, mp.drafters_adp,\n'
+        + 'mvfpv.fc_trade_value,\n'
+        + 'mvfpv.fc_sf_trade_value,\n'
+        + 'mvfpv.fc_all_time_high_sf,\n'
+        + 'mvfpv.fc_all_time_low_sf,\n'
+        + 'mvfpv.fc_all_time_high,\n'
+        + 'mvfpv.fc_all_time_low,\n'
+        + 'mvfpv.fc_three_month_high_sf,\n'
+        + 'mvfpv.fc_three_month_low_sf,\n'
+        + 'mvfpv.fc_three_month_high,\n'
+        + 'mvfpv.fc_three_month_low,\n'
+        + 'mvfpv.fc_last_month_value_sf,\n'
+        + 'mvfpv.fc_last_month_value\n'
+        + 'FROM mat_vw_players mp inner join mat_vw_fc_player_values mvfpv on mvfpv.name_id = mp.name_id\n'
+        +' order by sf_trade_value desc');
     res.status(200).json(data.rows);
   } catch (err) {
     res.status(405).json(err.stack);
@@ -18,7 +33,9 @@ export const getPrevPlayerValues = async (req, res) => {
       'select  player_info.name_id    as name_id,\n'
       + '                                               player_info.full_name  as full_name,\n'
       + '                                               pv.trade_value         as trade_value,\n'
-      + '                                               pv.sf_trade_value    as sf_trade_value,\n'
+      + '                                               pv.sf_trade_value      as sf_trade_value,\n'
+      + '                                               pv.fc_sf_trade_value   as fc_sf_trade_value,\n'
+      + '                                               pv.fc_trade_value      as fc_trade_value,\n'
       + '                                               pv.sf_position_rank    as sf_position_rank,\n'
       + '                                               pv.position_rank       as position_rank,\n'
       + '                                               pv.created_at          as date\n'
@@ -58,7 +75,9 @@ export const getHistoricalPlayerValueById = async (req, res) => {
     const data = await playersModel.selectQuery('select  player_info.name_id    as name_id,\n'
       + '                                               player_info.full_name  as full_name,\n'
       + '                                               pv.trade_value         as trade_value,\n'
-      + '                                               pv.sf_trade_value    as sf_trade_value,\n'
+      + '                                               pv.sf_trade_value      as sf_trade_value,\n'
+      + '                                               pv.fc_sf_trade_value   as fc_sf_trade_value,\n'
+      + '                                               pv.fc_trade_value      as fc_trade_value,\n'
       + '                                               pv.sf_position_rank    as sf_position_rank,\n'
       + '                                               pv.position_rank       as position_rank,\n'
       + '                                               pv.created_at          as date\n'
