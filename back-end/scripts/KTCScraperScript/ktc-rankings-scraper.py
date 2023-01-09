@@ -278,7 +278,7 @@ try:
         cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')
         
         # update mat view for fantasy calc values
-        cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')
+        cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_fc_player_values;''')
 
         # Commit your changes in the database
         conn.commit()
