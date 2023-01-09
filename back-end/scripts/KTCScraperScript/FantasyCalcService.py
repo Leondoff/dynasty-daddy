@@ -34,12 +34,12 @@ def formatFantasyCalcDict(response):
             for pickType in ['early', 'mid', 'late']:
                  pickNameIds.append(player['player']['name'][0 : 4] + pickType + pickRound + 'pi')
             for pick in pickNameIds:
-                fantasyCalcDict[pick] = {'value': player['value'], 'rank': player['positionRank']}
+                fantasyCalcDict[pick] = {'value': player['value'], 'rank': player['positionRank'], 'id': player['player']['id']}
         else:
             playerNameId = PlayerService.cleanPlayerIdString(player['player']['name'] + player['player']['position'])
             if playerNameId in playerExceptionsMap:
                 playerNameId = playerExceptionsMap[playerNameId]
-            fantasyCalcDict[playerNameId] = {'value': player['value'], 'rank': player['positionRank']}
+            fantasyCalcDict[playerNameId] = {'value': player['value'], 'rank': player['positionRank'], 'id': player['player']['id']}
     return fantasyCalcDict
 
 # fetch std players from fantast calc

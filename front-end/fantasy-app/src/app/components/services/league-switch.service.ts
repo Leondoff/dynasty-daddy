@@ -13,7 +13,6 @@ import {NflService} from '../../services/utilities/nfl.service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {TradeService} from './trade.service';
 import {TradeFinderService} from './trade-finder.service';
-import {LogRocketService} from './logrocket.service';
 import {MflService} from '../../services/api/mfl/mfl.service';
 import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 import {LeagueDTO} from '../../model/league/LeagueDTO';
@@ -49,7 +48,6 @@ export class LeagueSwitchService extends BaseComponent {
               private tradeFinderService: TradeFinderService,
               private router: Router,
               private route: ActivatedRoute,
-              private logRocketService: LogRocketService,
               private transactionService: TransactionsService) {
     super();
   }
@@ -116,7 +114,6 @@ export class LeagueSwitchService extends BaseComponent {
   loadUser(user: string, year: string = new Date().getFullYear().toString()): void {
     this.leagueService.loadNewUser(user, year);
     this.leagueService.selectedYear = year;
-    this.logRocketService.identifySession(user);
     this.leagueService.resetLeague();
   }
 

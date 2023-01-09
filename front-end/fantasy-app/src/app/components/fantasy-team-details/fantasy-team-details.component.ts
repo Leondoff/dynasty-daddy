@@ -138,7 +138,6 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
       const lastMonth = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value), 0)
       aggMap[pos + '_change'] = Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100);
     }
-    console.log(aggMap)
     return aggMap;
   }
 

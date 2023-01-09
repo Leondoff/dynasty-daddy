@@ -82,7 +82,6 @@ import {TeamTiersChartComponent} from './components/standings/team-tiers-chart/t
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {NgxGoogleAnalyticsModule, NgxGoogleAnalyticsRouterModule} from 'ngx-google-analytics';
 import {environment} from '../environments';
-import { AdsenseModule } from 'ng2-adsense';
 import { EloTeamComparisonModalComponent } from './components/modals/elo-team-comparison-modal/elo-team-comparison-modal.component';
 import { EditLeagueSettingsModalComponent } from './components/modals/edit-league-settings-modal/edit-league-settings-modal.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
@@ -210,11 +209,7 @@ let UniversalDeviceDetectorService;
     MatProgressSpinnerModule,
     MatProgressBarModule,
     NgxGoogleAnalyticsModule.forRoot(environment.gaMeasurementId),
-    NgxGoogleAnalyticsRouterModule,
-    AdsenseModule.forRoot({
-      adClient: environment.adSenseClientId,
-      adSlot: environment.adSlot,
-    })
+    NgxGoogleAnalyticsRouterModule
   ],
   providers: [EndpointsService,
     ConfigService,

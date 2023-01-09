@@ -334,16 +334,18 @@ export class MflService {
       const week = Number(matchUps.week);
       const teamMatchUps = [];
       let matchUpId = 1;
-      if (Array.isArray(matchUps?.matchup)) {
-        matchUps?.matchup?.forEach(matchUp => {
-          teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[0], matchUpId));
-          teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[1], matchUpId));
-          matchUpId++;
-        });
-      } else {
-        teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[0], matchUpId));
-        teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[1], matchUpId));
-      }
+      if (matchUps.matchup) {
+        if (Array.isArray(matchUps?.matchup)) {
+          matchUps?.matchup?.forEach(matchUp => {
+            teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[0], matchUpId));
+            teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[1], matchUpId));
+            matchUpId++;
+          });
+        } else {
+          teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[0], matchUpId));
+          teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[1], matchUpId));
+        }
+    }
       matchUpsDict[week] = teamMatchUps;
     });
     return matchUpsDict;
