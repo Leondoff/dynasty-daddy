@@ -2,12 +2,10 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {BaseComponent} from '../base-component.abstract';
 import {SleeperApiService} from '../../services/api/sleeper/sleeper-api.service';
 import {LeagueService} from '../../services/league.service';
-import {PowerRankingsService} from '../services/power-rankings.service';
 import {PlayerService} from '../../services/player.service';
 import {ConfigKeyDictionary, ConfigService} from '../../services/init/config.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {ActivatedRoute} from '@angular/router';
-import {LogRocketService} from '../services/logrocket.service';
 import {EditLeagueSettingsModalComponent} from '../modals/edit-league-settings-modal/edit-league-settings-modal.component';
 import {MatDialog} from '@angular/material/dialog';
 import {MflService} from '../../services/api/mfl/mfl.service';
@@ -42,7 +40,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
               private playersService: PlayerService,
               public configService: ConfigService,
               private route: ActivatedRoute,
-              private logRocketService: LogRocketService,
               private mflService: MflService,
               private mflApiService: MflApiService,
               private dialog: MatDialog,
@@ -106,7 +103,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     this.leagueService.loadNewUser(this.usernameInput, this.selectedYear);
     this.leagueService.selectedYear = this.selectedYear;
     this.leagueService.resetLeague();
-    this.logRocketService.identifySession(this.usernameInput);
   }
 
   /**
@@ -140,9 +136,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     this.usernameInput = '';
     this.leagueService.leagueUser = null;
     this.sleeperApiService.getSleeperLeagueByLeagueId(demoId || this.sleeperLeagueIdInput).subscribe(leagueData => {
-      if (this.sleeperLeagueIdInput) {
-        this.logRocketService.identifySession(this.sleeperLeagueIdInput);
-      }
       this.leagueSwitchService.loadLeague(leagueData);
     });
   }
