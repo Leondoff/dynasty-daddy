@@ -1,4 +1,5 @@
 import psycopg2
+import os
 from sleeper_wrapper import Players
 from MFLPlayerService import fetchMFLPlayerDict
 from FantasyProsADPScraper import scrapeADP
