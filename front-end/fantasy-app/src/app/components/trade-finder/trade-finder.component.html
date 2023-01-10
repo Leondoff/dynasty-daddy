@@ -34,17 +34,17 @@
 
     <div class="margin-top-50 center-text">
       <button mat-raised-button color="primary" class="mid-bold-text" [disabled]="tradeFinderService.selectedPlayers.length == 0" (click)="generateTradeOffers()">Ask for Trade Proposals</button>
-      <button mat-icon-button *ngIf="!configService.isMobile" (click)="showAdvancedSettings = !showAdvancedSettings">
+      <button mat-icon-button (click)="showAdvancedSettings = !showAdvancedSettings">
         <mat-icon>settings</mat-icon>
       </button>
     </div>
 
     <div class="center-text margin-top-10" *ngIf="showAdvancedSettings">
-      <mat-checkbox color="primary" class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[0]">QB</mat-checkbox>
-      <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[1]">RB</mat-checkbox>
-      <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[2]">WR</mat-checkbox>
-      <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[3]">TE</mat-checkbox>
-      <mat-checkbox color="primary"  class="player-value-checkbox-margin" [(ngModel)]="filterPosGroup[4]" [disabled]="leagueService.selectedLeague && leagueService.selectedLeague?.type !== 2">Picks</mat-checkbox>
+      <mat-checkbox color="primary" [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}" [(ngModel)]="filterPosGroup[0]">QB</mat-checkbox>
+      <mat-checkbox color="primary" [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}" [(ngModel)]="filterPosGroup[1]">RB</mat-checkbox>
+      <mat-checkbox color="primary" [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}" [(ngModel)]="filterPosGroup[2]">WR</mat-checkbox>
+      <mat-checkbox color="primary" [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}" [(ngModel)]="filterPosGroup[3]">TE</mat-checkbox>
+      <mat-checkbox color="primary" [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}" [(ngModel)]="filterPosGroup[4]" [disabled]="leagueService.selectedLeague && leagueService.selectedLeague?.type !== 2">Picks</mat-checkbox>
     </div>
 
     <div class="margin-top-50" fxLayout="row wrap" fxLayoutAlign="center">

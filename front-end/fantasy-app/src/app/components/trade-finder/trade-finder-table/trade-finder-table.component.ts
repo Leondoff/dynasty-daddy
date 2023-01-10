@@ -1,8 +1,11 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {TradeFinderService} from '../../services/trade-finder.service';
+import { MatSort } from '@angular/material/sort';
+import { element } from 'protractor';
+import { ConfigService } from 'src/app/services/init/config.service';
 
 @Component({
   selector: 'app-trade-finder-table',
@@ -17,22 +20,43 @@ export class TradeFinderTableComponent implements OnInit, OnChanges {
   @Input()
   isSuperflex: boolean;
 
+  // mat sort element
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+
   // columns to display in table
-  columnsToDisplay = ['select', 'playerName', 'value'];
+  columnsToDisplay = ['select', 'playerName', 'position', 'value'];
 
   // datasource for mat table
   dataSource: MatTableDataSource<FantasyPlayer> = new MatTableDataSource<FantasyPlayer>();
 
   constructor(public playerService: PlayerService,
+              public configService: ConfigService,
               private tradeFinderService: TradeFinderService) {
   }
 
   ngOnInit(): void {
-    this.dataSource.data = this.assets;
+    this.setUpTable();
   }
 
   ngOnChanges(): void {
+    this.setUpTable();
+  }
+
+  /**
+   * handles any logic for setting up table
+   */
+  setUpTable(): void {
     this.dataSource.data = this.assets;
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      if (property === 'playerName') {
+        return item.full_name;
+      } else if (property === 'value') {
+        return this.isSuperflex ? item.sf_trade_value : item.trade_value;
+      } else {
+        return item[property];
+      }
+    };
+    this.dataSource.sort = this.sort;
   }
 
   /**
