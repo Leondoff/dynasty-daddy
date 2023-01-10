@@ -3,6 +3,7 @@
 }
 
 .mat-column-value,
+.mat-column-position,
 .mat-column-select {
   max-width: 82px;
 }
@@ -13,5 +14,10 @@
 
 .mat-column-value {
   text-align: right;
+  justify-content: flex-end;
+}
+
+.mat-column-position {
+  text-align: left;
   justify-content: flex-end;
 }
