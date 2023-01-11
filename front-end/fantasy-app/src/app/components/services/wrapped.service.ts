@@ -44,7 +44,7 @@ export class WrappedService {
         if (tran.type === 'trade') {
           trades.push(tran);
         }
-        if ((tran.type === 'waiver' || tran.type === 'free_agent') && tran.adds[0] && tran.adds[0].playerName !== undefined) {
+        if ((tran.type === 'waiver' || tran.type === 'free_agent' || tran.type === 'bbid_waiver') && tran.adds[0] && tran.adds[0].playerName !== undefined) {
           waivers.push(tran);
         }
       });
