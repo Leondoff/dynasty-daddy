@@ -1,11 +1,10 @@
 import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
-import {PowerRankingsService} from '../../services/power-rankings.service';
 import {LeagueService} from '../../../services/league.service';
 import {ConfigService} from '../../../services/init/config.service';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {RdYlBu11} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.brewer';
 import {TeamPowerRanking} from '../../model/powerRankings';
 import {LeagueType} from "../../../model/league/LeagueDTO";
 
@@ -72,7 +71,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
     },
     plugins: {
       colorschemes: {
-        scheme: ClassicColorBlind10,
+        scheme: RdYlBu11,
         override: true
       }
     }

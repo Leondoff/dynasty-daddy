@@ -4,7 +4,7 @@ import {ChartOptions} from 'chart.js';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {BaseComponent} from '../../base-component.abstract';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import {RdYlBu11} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.brewer';
 import {ConfigService} from '../../../services/init/config.service';
 import {tap} from 'rxjs/operators';
 
@@ -82,7 +82,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
         threshold: 100
       },
       colorschemes: {
-        scheme: ClassicColorBlind10,
+        scheme: RdYlBu11,
         override: true
       }
     }

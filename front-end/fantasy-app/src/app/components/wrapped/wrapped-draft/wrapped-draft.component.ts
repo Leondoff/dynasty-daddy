@@ -43,6 +43,8 @@ export class WrappedDraftComponent implements OnInit {
   ngOnInit(): void {
     // intro draft text
     this.draftIntro.push('The ' + this.leagueService.selectedLeague.season + ' season started with a draft.');
+    // sort drafts so that the draft with the most picks is selected
+    this.leagueService.completedDrafts.sort((b,a) => a.picks.length - b.picks.length)[0];
     if (this.leagueService.completedDrafts[0] && this.leagueService.completedDrafts[0].picks.length > 0) {
       this.draftIntro.push('Your league selected ' + this.leagueService.completedDrafts[0].picks.length + ' players.');
       this.draftIntro.push('Let\'s see if one of you has the chops to be an NFL GM.');
