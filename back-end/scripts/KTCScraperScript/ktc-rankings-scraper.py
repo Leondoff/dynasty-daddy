@@ -43,7 +43,8 @@ def getSleeperData():
 class Player:
     def __init__(self, id, name, first_name, last_name, team, position, sfPositionRank, positionRank, age, experience,
                  sf_value, value, sleeperId=None, college=None, injury_status=None, weight=None, height=None,
-                 jersey_number=-1, active=None, mflId=None, fc_sf_value=None, fc_value=None):
+                 jersey_number=-1, active=None, mflId=None, fc_sf_value=None, fc_value=None, fc_position_rank=None,
+                 fc_sf_position_rank=None):
         self.id = id
         self.name = name
         self.first_name = first_name
@@ -66,11 +67,14 @@ class Player:
         self.mflId = mflId
         self.fc_sf_value = fc_sf_value
         self.fc_value = fc_value
+        self.fc_sf_position_rank = fc_sf_position_rank
+        self.fc_position_rank = fc_position_rank
 
     def toString(self):
         print(self.id, self.name, self.first_name, self.last_name, self.team, self.position, self.sfPositionRank,
               self.positionRank, self.age, self.experience, self.sf_value, self.value, self.sleeperId, self.college,
-              self.injury_status, self.weight, self.height, self.jersey_number, self.active, self.mflId, self.fc_sf_value, self.fc_value)
+              self.injury_status, self.weight, self.height, self.jersey_number, self.active, self.mflId, self.fc_sf_value,
+              self.fc_value, self.fc_sf_position_rank, self.fc_position_rank)
 
 
 #################################
@@ -153,6 +157,8 @@ for player in sf_rankings:
     mflId = mflPlayerIdMap.get(playerId)
     fcSfValue = fantasyCalcSFDict.get(playerId)['value'] if fantasyCalcSFDict.get(playerId) != None else 0
     fcStdValue = fantasyCalcSTDDict.get(playerId)['value'] if fantasyCalcSTDDict.get(playerId) != None else 0
+    fcSfRank = fantasyCalcSFDict.get(playerId)['rank'] if fantasyCalcSFDict.get(playerId) != None else None
+    fcRank = fantasyCalcSTDDict.get(playerId)['rank'] if fantasyCalcSTDDict.get(playerId) != None else None
     playerExp, jerseyNum = 0, 0
     college, injuryStatus, active, weight, height = None, None, None, None, None
     if sleeperId is not None:
@@ -174,7 +180,7 @@ for player in sf_rankings:
                None if str(oneQBPostion.text.strip())[2:] == 'CK' else str(oneQBPostion.text.strip())[2:],
                None if playerAge is None else str(playerAge.text.strip())[:2], playerExp,
                sfTradeValue.text.strip(), tradeValue.text.strip(), sleeperId, college, injuryStatus, weight, height,
-               jerseyNum, active, mflId, fcSfValue, fcStdValue))
+               jerseyNum, active, mflId, fcSfValue, fcStdValue, fcSfRank, fcRank))
 
 # for player in players:
 #      player.toString()
@@ -256,9 +262,9 @@ try:
                 cursor.execute(playerIdsStatement, (player.id, player.mflId, player.id, player.mflId))
 
             # player values insert daily values
-            cursor.execute('''INSERT into player_values(name_id, sf_position_rank, position_rank, sf_trade_value, trade_value, fc_sf_trade_value, fc_trade_value)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)''', (
-                player.id, player.sfPositionRank, player.positionRank, player.sf_value, player.value, player.fc_sf_value, player.fc_value))
+            cursor.execute('''INSERT into player_values(name_id, sf_position_rank, position_rank, sf_trade_value, trade_value, fc_sf_trade_value, fc_trade_value, fc_sf_position_rank, fc_position_rank)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)''', (
+                player.id, player.sfPositionRank, player.positionRank, player.sf_value, player.value, player.fc_sf_value, player.fc_value, player.fc_sf_position_rank, player.fc_position_rank))
 
         # player adp rankings updated
         for adp in playerADPs:
