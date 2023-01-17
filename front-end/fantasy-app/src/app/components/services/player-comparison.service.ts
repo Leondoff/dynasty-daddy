@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/assets/FantasyPlayer';
+import {FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint} from '../../model/assets/FantasyPlayer';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {PlayerComparison} from '../model/playerComparison';
 import {ChartDataSets} from 'chart.js';
@@ -59,7 +59,7 @@ export class PlayerComparisonService {
   ) {
   }
 
-  regeneratePlayerCompData(): Observable<any> {
+  regeneratePlayerCompData(fantasyMarket: FantasyMarket = this.playerService.selectedMarket): Observable<any> {
     const playersToUpdate = [];
     this.selectedPlayers.map(player => {
       playersToUpdate.push(this.playerService.getPlayerByNameId(player.id));
@@ -89,10 +89,11 @@ export class PlayerComparisonService {
    * @param player
    * @param defaultPlayer
    * @param isGroup2
+   * @param fantasyMarket
    * @private
    * TODO clean up redundant code
    */
-  private addNewPlayer(player: FantasyPlayerDataPoint[], defaultPlayer: FantasyPlayer, isGroup2: boolean = false): void {
+  private addNewPlayer(player: FantasyPlayerDataPoint[], defaultPlayer: FantasyPlayer, isGroup2: boolean = false, fantasyMarket: FantasyMarket = this.playerService.selectedMarket): void {
     if (this.lineChartData[0]?.data.length === 0) {
       this.lineChartData.splice(0, 1);
     }
@@ -101,7 +102,7 @@ export class PlayerComparisonService {
       for (const dataPoint of player) {
         if (this.lineChartLabels.includes(this.formatDateForDisplay(dataPoint.date))) {
           const index = this.lineChartLabels.indexOf(this.formatDateForDisplay(dataPoint.date));
-          data[index] = this.isSuperFlex ? dataPoint.sf_trade_value : dataPoint.trade_value;
+          data[index] = this.playerService.getTradeValue(dataPoint, this.isSuperFlex, fantasyMarket);
         }
       }
       if (player[0]) {
@@ -117,11 +118,11 @@ export class PlayerComparisonService {
         this.selectedPlayers.push({name: defaultPlayer.full_name, id: defaultPlayer.name_id, data: player} as PlayerComparison);
       }
       this.lineChartData.push({
-        data: this.calculateGroupValue(this.selectedPlayers),
+        data: this.calculateGroupValue(this.selectedPlayers, fantasyMarket),
         label: `Group 1 (${this.selectedPlayers.length} Players)`
       });
       this.lineChartData.push({
-        data: this.calculateGroupValue(this.group2SelectedPlayers),
+        data: this.calculateGroupValue(this.group2SelectedPlayers, fantasyMarket),
         label: `Group 2 (${this.group2SelectedPlayers.length} Players)`
       });
     }
@@ -131,7 +132,7 @@ export class PlayerComparisonService {
   /**
    * refreshes table
    */
-  refreshTable(): void {
+  refreshTable(fantasyMarket: FantasyMarket = this.playerService.selectedMarket): void {
     this.lineChartData = [];
     if (!this.isGroupMode) {
       for (const player of this.selectedPlayers) {
@@ -139,7 +140,7 @@ export class PlayerComparisonService {
         for (const dataPoint of player.data) {
           if (this.lineChartLabels.includes(this.formatDateForDisplay(dataPoint.date))) {
             const index = this.lineChartLabels.indexOf(this.formatDateForDisplay(dataPoint.date));
-            data[index] = this.isSuperFlex ? dataPoint.sf_trade_value : dataPoint.trade_value;
+            data[index] = this.playerService.getTradeValue(dataPoint, this.isSuperFlex, fantasyMarket);
           }
         }
         // dont update selected player data cause it's the source of truth
@@ -167,9 +168,10 @@ export class PlayerComparisonService {
   /**
    * calculates aggregated player values
    * @param players
+   * @param fantasyMarket
    * @private
    */
-  calculateGroupValue(players: PlayerComparison[]): number[] {
+  calculateGroupValue(players: PlayerComparison[], fantasyMarket: FantasyMarket = this.playerService.selectedMarket): number[] {
     const data = [];
     for (const player of players) {
       for (const dataPoint of player.data) {
@@ -178,7 +180,7 @@ export class PlayerComparisonService {
           if (!data[index]) {
             data[index] = 0;
           }
-          data[index] += this.isSuperFlex ? dataPoint.sf_trade_value : dataPoint.trade_value;
+          data[index] += this.playerService.getTradeValue(dataPoint, this.isSuperFlex, fantasyMarket);
         }
       }
     }
@@ -190,7 +192,7 @@ export class PlayerComparisonService {
    * @param player
    * @param isGroup2
    */
-  onRemove(player: PlayerComparison, isGroup2: boolean = false): void {
+  onRemove(player: PlayerComparison, isGroup2: boolean = false, fantasyMarket: FantasyMarket = this.playerService.selectedMarket): void {
     if (this.isGroupMode) {
       if (isGroup2) {
         this.group2SelectedPlayers = this.group2SelectedPlayers.filter(p => {
@@ -217,10 +219,11 @@ export class PlayerComparisonService {
    * add player to chart, fetches data from db
    * @param player
    * @param isGroup2
+   * @param fantasyMarket
    */
-  addPlayerToCharts(player: FantasyPlayer, isGroup2: boolean = false): void {
+  addPlayerToCharts(player: FantasyPlayer, isGroup2: boolean = false, fantasyMarket: FantasyMarket = this.playerService.selectedMarket): void {
     this.fantasyPlayerApiService.getHistoricalPlayerValueById(player.name_id, this.isAllTime).subscribe((data) => {
-        !this.isGroupMode ? this.addNewPlayer(data, player) : this.addNewPlayer(data, player, isGroup2);
+        !this.isGroupMode ? this.addNewPlayer(data, player, false, fantasyMarket) : this.addNewPlayer(data, player, isGroup2, fantasyMarket);
       }
     );
   }
@@ -228,12 +231,12 @@ export class PlayerComparisonService {
   /**
    * handles toggle group mode
    */
-  toggleGroupMode(): void {
+  toggleGroupMode(fantasyMarket: FantasyMarket = this.playerService.selectedMarket): void {
     if (!this.isGroupMode) {
       if (this.selectedPlayers.length === 0) {
         this.selectedPlayers = this.group2SelectedPlayers.slice();
       }
     }
-    this.refreshTable();
+    this.refreshTable(fantasyMarket);
   }
 }

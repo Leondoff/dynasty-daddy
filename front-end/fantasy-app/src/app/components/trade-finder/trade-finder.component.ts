@@ -94,7 +94,8 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
       this.tradeFinderService.selectedPlayers,
       this.tradeFinderService.selectedTeamUserId,
       this.isSuperflex,
-      this.filterPosGroup
+      this.filterPosGroup,
+      this.playerService.selectedMarket
     );
     // filters trades with no players or duplicate trades out
     // TODO do we want to couple this logic in the trade finder service?
@@ -120,5 +121,14 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
    */
   filterPicksByTeam(): FantasyPlayer[] {
     return this.powerRankingsService.findTeamFromRankingsByUserId(this.tradeFinderService.selectedTeamUserId)?.picks?.players || [];
+  }
+
+  /**
+   * handles updating the selected market
+   * @param $event changed market value
+   */
+  onMarketChange($event): void {
+    this.playerService.selectedMarket = $event;
+    this.generateTradeOffers()
   }
 }

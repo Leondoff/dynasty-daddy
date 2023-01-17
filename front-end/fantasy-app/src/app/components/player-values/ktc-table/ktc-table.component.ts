@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import { FantasyPlayer } from '../../../model/assets/FantasyPlayer';
+import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -32,6 +32,9 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   @Input()
   isSuperFlex: boolean;
 
+  @Input()
+  fantasyMarket: FantasyMarket;
+
   /** mat paginator */
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
@@ -40,6 +43,9 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
 
   /** columns to display */
   displayedColumns: string[] = [];
+
+  /** playerValues Table caches certain values for players */
+  playerInfoCache: {}
 
   /** mat table datasource */
   dataSource: MatTableDataSource<FantasyPlayer> = new MatTableDataSource<FantasyPlayer>();
@@ -55,11 +61,12 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
   }
 
   ngOnInit(): void {
-    this.refreshTableDetails();
+    // this.refreshTableDetails();
   }
 
   ngOnChanges(): void {
     this.refreshTableDetails();
+    this.generatePlayerTableCache();
   }
 
   /**
@@ -71,15 +78,15 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
     } else {
       this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'trade_value'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
     }
-    this.dataSource = new MatTableDataSource(this.playerService.sortListOfPlayers(this.playerValueService.filteredPlayers, this.isSuperFlex));
+    this.dataSource = new MatTableDataSource(this.playerService.sortListOfPlayers(this.playerValueService.filteredPlayers, this.isSuperFlex, this.fantasyMarket));
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'halfppr':
-          return this.playerService.getPlayerPointsByFormat(item.sleeper_id, this.leagueService.getLeagueScoringFormat());
+          return this.playerInfoCache[item.name_id].points;
         case 'change':
-          return this.isSuperFlex ? item.sf_change : item.standard_change;
+          return this.playerInfoCache[item.name_id].change;
         case 'trade_value':
-          return this.isSuperFlex ? item.sf_trade_value : item.trade_value;
+          return this.playerInfoCache[item.name_id].value;
         case 'avg_adp':
           if (item.avg_adp === 0) {
             return 'desc' === this.sort.direction ? Number.MIN_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
@@ -99,11 +106,42 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
    * @param element player to add to comparison
    */
   openPlayerComparison(element: FantasyPlayer): void {
-    this.playerComparisonService.addPlayerToCharts(element);
+    this.playerComparisonService.addPlayerToCharts(element, false, this.fantasyMarket);
     this.router.navigate(['players/comparison'],
       {
         queryParams: this.leagueSwitchService.buildQueryParams()
       }
     );
+  }
+
+  generatePlayerTableCache(): void {
+    this.playerInfoCache = {}
+    this.playerService.playerValues.forEach(player => {
+      this.playerInfoCache[player.name_id] = {
+        isHigh: this.isMonthHighOrLow(player, true),
+        isLow: this.isMonthHighOrLow(player, false),
+        change: this.playerService.getTradeValue(player, this.isSuperFlex, this.playerService.selectedMarket, 'change'),
+        value: this.playerService.getTradeValue(player, this.isSuperFlex, this.fantasyMarket),
+        points: this.playerService.getPlayerPointsByFormat(player.sleeper_id, this.leagueService.getLeagueScoringFormat()),
+        rank: this.playerService.getTradeValue(player, this.isSuperFlex, this.fantasyMarket, 'rank')
+      }
+    });
+  }
+
+  /**
+   * wrapper function that will determine if the player is at 3 month high/low or not
+   * @param player player to check
+   * @param isHigh boolean return
+   * @returns 
+   */
+  isMonthHighOrLow(player: FantasyPlayer, isHigh: boolean): boolean {
+    const curValue = this.playerService.getTradeValue(player, this.isSuperFlex);
+    if (isHigh) {
+      const threeMonthHigh = this.playerService.getTradeValue(player, this.isSuperFlex, this.playerService.selectedMarket, 'three_month_high');
+      return curValue === threeMonthHigh;
+    } else {
+      const threeMonthLow = this.playerService.getTradeValue(player, this.isSuperFlex, this.playerService.selectedMarket, 'three_month_low');
+      return curValue === threeMonthLow;
+    }
   }
 }

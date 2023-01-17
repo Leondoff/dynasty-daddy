@@ -46,6 +46,10 @@ export class FantasyPlayerApiService {
             (player.sf_trade_value - player.last_month_value_sf) / (player.sf_trade_value === 0 ? 1 : player.sf_trade_value) * 100);
           player.standard_change = Math.round(
             (player.trade_value - player.last_month_value) / (player.trade_value === 0 ? 1 : player.trade_value) * 100);
+          player.fc_sf_change = Math.round(
+            (player.fc_sf_trade_value - player.fc_last_month_value_sf) / (player.fc_sf_trade_value === 0 ? 1 : player.fc_sf_trade_value) * 100);
+          player.fc_standard_change = Math.round(
+            (player.fc_trade_value - player.fc_last_month_value) / (player.fc_trade_value === 0 ? 1 : player.fc_trade_value) * 100);
           return player;
         });
         }, err => {

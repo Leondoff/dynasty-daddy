@@ -106,12 +106,12 @@
 
       <ng-container matColumnDef="adp">
         <mat-header-cell *matHeaderCellDef>Plus/Minus</mat-header-cell>
-        <mat-cell *matCellDef="let player"><div><span class="small-text__light">+/-</span> {{getADPPlusMinus(player)}}</div></mat-cell>
+        <mat-cell *matCellDef="let player"><div><span class="small-text__light">+/-</span> {{adpPlayerValues[player.name_id].adpPlusMinus}}</div></mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="value">
         <mat-header-cell *matHeaderCellDef>Trade Value</mat-header-cell>
-        <mat-cell *matCellDef="let player">{{leagueService.isLeagueLoaded() && !leagueService.selectedLeague.isSuperflex ? player.trade_value : player.sf_trade_value}}</mat-cell>
+        <mat-cell *matCellDef="let player">{{adpPlayerValues[player.name_id].value}}</mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="['value', 'name', 'adp', 'rank']"></mat-header-row>

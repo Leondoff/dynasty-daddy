@@ -1,23 +1,23 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {TradeService} from '../services/trade.service';
-import {TradePackage} from '../model/tradePackage';
-import {PlayerService} from '../../services/player.service';
-import {BaseComponent} from '../base-component.abstract';
-import {FormControl} from '@angular/forms';
-import {ReplaySubject, Subject, timer} from 'rxjs';
-import {MatSelect} from '@angular/material/select';
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
-import {take, takeUntil} from 'rxjs/operators';
-import {ConfigService} from '../../services/init/config.service';
-import {LeagueService} from '../../services/league.service';
-import {PowerRankingsService} from '../services/power-rankings.service';
-import {TeamPowerRanking} from '../model/powerRankings';
-import {PlayerComparisonService} from '../services/player-comparison.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {LeagueSwitchService} from '../services/league-switch.service';
-import {DisplayService} from '../../services/utilities/display.service';
-import {LeagueTeam} from '../../model/league/LeagueTeam';
-import {DraftCapital} from '../../model/assets/DraftCapital';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { TradeService } from '../services/trade.service';
+import { TradePackage } from '../model/tradePackage';
+import { PlayerService } from '../../services/player.service';
+import { BaseComponent } from '../base-component.abstract';
+import { FormControl } from '@angular/forms';
+import { ReplaySubject, Subject, timer } from 'rxjs';
+import { MatSelect } from '@angular/material/select';
+import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { take, takeUntil } from 'rxjs/operators';
+import { ConfigService } from '../../services/init/config.service';
+import { LeagueService } from '../../services/league.service';
+import { PowerRankingsService } from '../services/power-rankings.service';
+import { TeamPowerRanking } from '../model/powerRankings';
+import { PlayerComparisonService } from '../services/player-comparison.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { DisplayService } from '../../services/utilities/display.service';
+import { LeagueTeam } from '../../model/league/LeagueTeam';
+import { DraftCapital } from '../../model/assets/DraftCapital';
 
 @Component({
   selector: 'app-trade-center',
@@ -98,9 +98,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   /** mock power rankings for trade */
   public team2MockRankings: TeamPowerRanking;
 
-  @ViewChild('singleSelect', {static: true}) singleSelect: MatSelect;
+  @ViewChild('singleSelect', { static: true }) singleSelect: MatSelect;
 
-  @ViewChild('singleSelect2', {static: true}) singleSelect2: MatSelect;
+  @ViewChild('singleSelect2', { static: true }) singleSelect2: MatSelect;
 
   constructor(
     public tradeTool: TradeService,
@@ -124,8 +124,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       this.initializeTradeCalculator();
     }
     this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
-        this.initializeTradeCalculator();
-      }),
+      this.initializeTradeCalculator();
+    }),
       this.leagueSwitchService.leagueChanged$.subscribe(() => {
         this.switchLeagueTradePackage();
       }),
@@ -247,7 +247,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     const trade = new TradePackage(
       player1,
       player2,
-      this.acceptanceVariance
+      this.acceptanceVariance,
+      this.playerService.selectedMarket
     );
     if (this.leagueService.selectedLeague) {
       trade.team1UserId = this.selectedTeam1 || this.tradeTool.tradePackage?.team1UserId;
@@ -363,12 +364,11 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * return trade background color
    */
   getTradeBackgroundColor(): object {
-    if (this.tradeTool.tradePackage?.valueAdjustmentSide &&
-      this.tradeTool.tradePackage?.valueToEvenTrade
+    if (this.tradeTool.tradePackage?.valueToEvenTrade
       > this.tradeTool.tradePackage?.acceptanceBufferAmount) {
-      return {'background-color': 'darkred'};
+      return { 'background-color': 'darkred' };
     } else {
-      return {'background-color': '#434342'};
+      return { 'background-color': '#434342' };
     }
   }
 
@@ -609,11 +609,23 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     }
     // 5 == draft capital since it is stored in a separate part of the object
     if (metricInd === 5) {
-      return tradeSide === 1 ? this.team1Rankings?.picks.rank - this.team1MockRankings?.picks.rank :
-        this.team2Rankings?.picks.rank - this.team2MockRankings?.picks.rank;
+      switch (this.playerService.selectedMarket) {
+        case FantasyMarket.FantasyCalc:
+          return tradeSide === 1 ? this.team1Rankings?.picks.fcRank - this.team1MockRankings?.picks.fcRank :
+            this.team2Rankings?.picks.fcRank - this.team2MockRankings?.picks.fcRank;
+        default:
+          return tradeSide === 1 ? this.team1Rankings?.picks.rank - this.team1MockRankings?.picks.rank :
+            this.team2Rankings?.picks.rank - this.team2MockRankings?.picks.rank;
+      }
     }
-    return tradeSide === 1 ? this.team1Rankings?.roster[metricInd].rank - this.team1MockRankings?.roster[metricInd].rank :
-      this.team2Rankings?.roster[metricInd].rank - this.team2MockRankings?.roster[metricInd].rank;
+    switch (this.playerService.selectedMarket) {
+      case FantasyMarket.FantasyCalc:
+        return tradeSide === 1 ? this.team1Rankings?.roster[metricInd].fcRank - this.team1MockRankings?.roster[metricInd].fcRank :
+          this.team2Rankings?.roster[metricInd].fcRank - this.team2MockRankings?.roster[metricInd].fcRank;
+      default:
+        return tradeSide === 1 ? this.team1Rankings?.roster[metricInd].rank - this.team1MockRankings?.roster[metricInd].rank :
+          this.team2Rankings?.roster[metricInd].rank - this.team2MockRankings?.roster[metricInd].rank;
+    }
   }
 
   /**
@@ -631,5 +643,14 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     } else {
       return 8;
     }
+  }
+
+  /**
+   * When the fantasy market is changed
+   * @param $event change market 
+   */
+  onMarketChange($event): void {
+    this.playerService.selectedMarket = $event;
+    this.processTrade();
   }
 }

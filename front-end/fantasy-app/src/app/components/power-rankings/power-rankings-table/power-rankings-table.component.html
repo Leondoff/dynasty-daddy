@@ -1,7 +1,7 @@
 <div class="power-ranking-container">
   <div>
-    <div [ngClass]="{'button-left': !configService.isMobile, 'margin-top-10': configService.isMobile}">
-      <mat-form-field class="button-left player-value-checkbox-margin" [ngClass]="{'mat-dropdown-wide-300': !configService.isMobile, 'mat-dropdown-wide-100': configService.isMobile}" color="accent">
+    <div [ngClass]="{'button-left': !configService.isMobile, 'center-text': configService.isMobile}" [ngStyle]="configService.isMobile ? 'align-items: center;' : ''">
+      <mat-form-field class="player-value-checkbox-margin" [ngClass]="{'button-left mat-dropdown-wide-300': !configService.isMobile, 'mat-dropdown-wide-250': configService.isMobile}" color="accent">
         <mat-label>Search Player</mat-label>
         <input matInput type="text" (keyup)="searchFilterPowerRankings()" [(ngModel)]="searchVal">
         <button mat-button *ngIf="searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="resetSearchFilter()">
@@ -9,10 +9,20 @@
         </button>
       </mat-form-field>
     </div>
-    <span class="container_spacer"></span>
-    <div [ngClass]="{'button-right': !configService.isMobile, 'button-left': configService.isMobile}">
-      <button mat-raised-button color="accent"
-              (click)="expandCollapseAll()">{{getToggleButtonText()}}
+    <span class="container_spacer" *ngIf="!configService.isMobile"></span>
+    <div [ngClass]="{'button-right': !configService.isMobile}" class="center-text">
+      <!-- Fantasy Market Mobile Dropdown -->
+      <span *ngIf="configService.isMobile">
+        <mat-form-field appearance="standard" color="accent" class="mat-dropdown-wide-200">
+          <mat-label>Fantasy Market</mat-label>
+          <mat-select [value]="powerRankingsService.rankingMarket" (selectionChange)="updateFantasyMarket($event)">
+            <mat-option *ngFor="let market of powerRankingsService.rankingMetricsOptions"
+                        [value]="market.value">{{market.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </span>
+      <button mat-icon-button color="accent"
+              (click)="expandCollapseAll()"><mat-icon>{{isExpanded() ? 'close_fullscreen' : 'open_in_full'}}</mat-icon>
       </button>
       <button mat-icon-button *ngIf="!configService.isMobile" (click)="showAdvancedSettings = !showAdvancedSettings">
         <mat-icon>settings</mat-icon>
@@ -26,7 +36,7 @@
         <mat-form-field appearance="standard" color="accent">
           <mat-label>Order Chart</mat-label>
           <mat-select [(ngModel)]="powerRankingsService.powerRankingChartOption">
-          <mat-option [value]="0">Overall</mat-option>
+          <mat-option [value]="0">Overall Value</mat-option>
           <mat-option [value]="1">ADP-Based Starter</mat-option>
           <mat-option [value]="2">Elo Adjusted Starter</mat-option>
           <mat-option [value]="3">QB Rank</mat-option>
@@ -38,7 +48,13 @@
         </mat-form-field>
       </span>
       <span>
-        <mat-slide-toggle color="primary" [(ngModel)]="toggleADPValues">Toggle Value/ADP</mat-slide-toggle>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Fantasy Market</mat-label>
+          <mat-select [value]="powerRankingsService.rankingMarket" (selectionChange)="updateFantasyMarket($event)">
+            <mat-option *ngFor="let market of powerRankingsService.rankingMetricsOptions"
+                        [value]="market.value">{{market.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </span>
     </div>
   </div>
@@ -59,12 +75,12 @@
 
       <ng-container matColumnDef="tier">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Tier</th>
-        <td mat-cell *matCellDef="let element"> {{displayService.getTierFromNumber(element.tier)}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].tier}} </td>
       </ng-container>
 
       <ng-container matColumnDef="overallRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Overall Rank</th>
-        <td mat-cell *matCellDef="let element"> {{element.overallRank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="starterRank">
@@ -74,27 +90,27 @@
 
       <ng-container matColumnDef="qbRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>QB Rank</th>
-        <td mat-cell *matCellDef="let element"> {{element.roster[0].rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['QB'].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="rbRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>RB Rank</th>
-        <td mat-cell *matCellDef="let element"> {{element.roster[1]?.rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['RB'].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="wrRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>WR Rank</th>
-        <td mat-cell *matCellDef="let element"> {{element.roster[2]?.rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['WR'].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="teRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>TE Rank</th>
-        <td mat-cell *matCellDef="let element"> {{element.roster[3]?.rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['TE'].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="draftRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Draft Rank</th>
-        <td mat-cell *matCellDef="let element"> {{element.picks.rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['PI'].rank}} </td>
       </ng-container>
 
       <!--   Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
@@ -114,9 +130,9 @@
                   <span class="small-text__light">Overall Value: </span>
                   <div>
                 <span
-                  class="mid-bold-text">{{isSuperFlex ? element.sfTradeValueOverall : element.tradeValueOverall}}</span>
+                  class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].value}}</span>
                     <span class="small-text__light"> (Rank: <span
-                      [ngClass]="{'success__alert': element.overallRank < alertThreshold, 'warning__alert': element.overallRank > alertThreshold * 2}">{{element.overallRank}}</span>)</span>
+                      [ngClass]="{'success__alert': powerRankingCache[element.team.roster.rosterId].isGreen, 'warning__alert': powerRankingCache[element.team.roster.rosterId].isRed}">{{powerRankingCache[element.team.roster.rosterId].rank}}</span>)</span>
                   </div>
                 </div>
                 <div>
@@ -130,7 +146,7 @@
                 <div>
                   <span class="small-text__light">Tier: </span>
                   <div><span
-                    class="mid-bold-text">{{displayService.getTierFromNumber(element.tier)}}</span>
+                    class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].tier}}</span>
                   </div>
                 </div>
                 <div class="margin-top-25">
@@ -138,12 +154,12 @@
                   <button mat-icon-button matTooltip="Copy Whole Roster" matTooltipPosition="above" (click)="copyWholeFromTeam(element)"><mat-icon>copy_all</mat-icon></button>
                 </div>
               </div>
-              <div *ngFor="let positionGroup of element.roster" class="grid-16">
+              <div *ngFor="let positionGroup of element.roster;" class="grid-16">
                 <div>
               <span><span class="small-text__light">{{positionGroup.position}} Value: </span> <span
-                class="mid-bold-text">{{isSuperFlex ? positionGroup.sfTradeValue : positionGroup.tradeValue}}</span></span>
+                class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].value}}</span></span>
                   <div class="small-text__light"> Rank: <span
-                    [ngClass]="{'success__alert': positionGroup.rank < alertThreshold, 'warning__alert': positionGroup.rank > alertThreshold * 2}">{{positionGroup.rank}}</span>
+                    [ngClass]="{'success__alert': powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].isGreen, 'warning__alert': powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].isRed}">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].rank}}</span>
                   </div>
                 </div>
                 <hr class="dark">
@@ -151,22 +167,22 @@
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isStarter(element, player)" matTooltip="Starter" matTooltipPosition="above">grade</mat-icon></span>
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isInjured(player)" matTooltip="{{player.injury_status}}" matTooltipPosition="above">healing</mat-icon></span>
                   <span innerHTML="{{ configService.isMobile ? player.last_name : player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}}</span>
-                  <span *ngIf="!toggleADPValues" [ngClass]="{'success__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) > 6000, 'urgent__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) < 2000}"> {{isSuperFlex ? player.sf_trade_value : player.trade_value}}</span>
-                  <span *ngIf="toggleADPValues" [ngClass]="{'success__alert': player.avg_adp < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (leagueService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '--'}}</span>
+                  <span *ngIf="powerRankingsService.rankingMarket !== 2" [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
+                  <span *ngIf="powerRankingsService.rankingMarket === 2" [ngClass]="{'success__alert': player.avg_adp < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (leagueService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '--'}}</span>
                 </div>
               </div>
               <div class="grid-16" *ngIf="leagueService.selectedLeague.type == 2">
                 <div>
               <span><span class="small-text__light">Upcoming Picks: </span><span
-                class="mid-bold-text">{{isSuperFlex ? element.picks.sfTradeValue : element.picks.tradeValue}}</span></span>
+                class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].value}}</span></span>
                   <div class="small-text__light"> Rank: <span
-                    [ngClass]="{'success__alert': element.picks.rank < alertThreshold, 'warning__alert': element.picks.rank > alertThreshold * 2}">{{element.picks.rank}}</span>
+                    [ngClass]="{'success__alert': powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].isGreen, 'warning__alert': powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].isRed}">{{powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].rank}}</span>
                   </div>
                 </div>
                 <hr class="dark">
                 <div *ngFor="let player of element.picks.players">
                   <span innerHTML="{{ player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}} </span>
-                  <span [ngClass]="{'success__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) > 6000, 'urgent__alert': (isSuperFlex ? player.sf_trade_value : player.trade_value) < 2000}"> {{isSuperFlex ? player.sf_trade_value : player.trade_value}}</span>
+                  <span [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
                 </div>
               </div>
             </div>

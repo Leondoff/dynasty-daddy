@@ -6,6 +6,7 @@ import {DraftService} from '../services/draft.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
 import {delay} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
+import { ConfigService } from 'src/app/services/init/config.service';
 
 @Component({
   selector: 'app-draft',
@@ -24,18 +25,19 @@ export class DraftComponent extends BaseComponent implements OnInit {
   errorLoadingMsg = 'Error generating draft. Please try reloading league.'
 
   constructor(public leagueService: LeagueService,
-              private playersService: PlayerService,
+              public playerService: PlayerService,
               public leagueSwitchService: LeagueSwitchService,
+              public configService: ConfigService,
               private route: ActivatedRoute,
               public mockDraftService: DraftService) {
     super();
   }
 
   ngOnInit(): void {
-    if (this.leagueService.selectedLeague && this.playersService.playerValues.length !== 0) {
+    if (this.leagueService.selectedLeague && this.playerService.playerValues.length !== 0) {
       this.initServices();
     } else {
-      this.playersService.loadPlayerValuesForToday();
+      this.playerService.loadPlayerValuesForToday();
     }
     this.addSubscriptions(
       this.leagueSwitchService.leagueChanged$.pipe(delay(1000)).subscribe(() => {
@@ -54,7 +56,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
    */
   private initServices(): void {
     this.mockDraftService.generateDraft(
-      this.playersService.playerValues,
+      this.playerService.playerValues,
       this.leagueService.selectedLeague.isSuperflex,
       this.leagueService.upcomingDrafts[0]?.playerType
     );

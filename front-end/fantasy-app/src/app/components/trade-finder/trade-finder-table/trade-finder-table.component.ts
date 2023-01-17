@@ -1,10 +1,9 @@
 import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
+import {FantasyMarket, FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {TradeFinderService} from '../../services/trade-finder.service';
 import { MatSort } from '@angular/material/sort';
-import { element } from 'protractor';
 import { ConfigService } from 'src/app/services/init/config.service';
 
 @Component({
@@ -19,6 +18,9 @@ export class TradeFinderTableComponent implements OnInit, OnChanges {
 
   @Input()
   isSuperflex: boolean;
+
+  @Input()
+  selectedMarket: FantasyMarket;
 
   // mat sort element
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -51,7 +53,7 @@ export class TradeFinderTableComponent implements OnInit, OnChanges {
       if (property === 'playerName') {
         return item.full_name;
       } else if (property === 'value') {
-        return this.isSuperflex ? item.sf_trade_value : item.trade_value;
+        return this.playerService.getTradeValue(item, this.isSuperflex, this.selectedMarket);
       } else {
         return item[property];
       }

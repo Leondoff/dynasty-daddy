@@ -59,13 +59,10 @@ export class DraftService {
     }
     // sort players by value
     // TODO refactor
-    this.selectablePlayers.sort((playerA, playerB) => {
-      if (this.leagueService.selectedLeague.isSuperflex) {
-        return playerB.sf_trade_value - playerA.sf_trade_value;
-      } else {
-        return playerB.trade_value - playerA.trade_value;
-      }
-    });
+    this.selectablePlayers = this.playerService.sortListOfPlayers(
+      this.selectablePlayers,
+      this.leagueService.selectedLeague.isSuperflex
+    )
     this.valueSelectedPlayers = this.selectablePlayers.slice();
   }
 
@@ -145,10 +142,9 @@ export class DraftService {
    */
   getPickValueRatio(pick: LeagueCompletedPickDTO): number {
     const pickValue = this.getPickValue(pick.round);
-    return this.leagueService.selectedLeague.isSuperflex ? (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-      this.leagueService.selectedLeague.leaguePlatform)?.sf_trade_value || 0) / pickValue :
-      (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-        this.leagueService.selectedLeague.leaguePlatform)?.trade_value || 0) / pickValue;
+    const player = this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
+      this.leagueService.selectedLeague.leaguePlatform)
+    return (player ? this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex) : 0) / pickValue;
   }
 
   /**
@@ -158,10 +154,9 @@ export class DraftService {
    */
   getPickValueAdded(pick: LeagueCompletedPickDTO): number {
     const pickValue = this.getPickValue(pick.round);
-    return this.leagueService.selectedLeague.isSuperflex ? (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-      this.leagueService.selectedLeague.leaguePlatform)?.sf_trade_value || 0) - pickValue :
-      (this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-        this.leagueService.selectedLeague.leaguePlatform)?.trade_value || 0) - pickValue;
+    const player = this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
+      this.leagueService.selectedLeague.leaguePlatform)
+    return (player ? this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex) : 0) - pickValue;
   }
 
   /**
@@ -181,15 +176,11 @@ export class DraftService {
     for (let round = 0; round < selectedDraft.draft.rounds; round++) {
       let totalValue = 0;
       for (let pickNum = 0; pickNum < this.leagueService.selectedLeague.totalRosters; pickNum++) {
-        totalValue += this.leagueService.selectedLeague.isSuperflex ?
-          this.playerService.getPlayerByPlayerPlatformId(
-            selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
-            this.leagueService.selectedLeague.leaguePlatform
-          )?.sf_trade_value || 0 :
-          this.playerService.getPlayerByPlayerPlatformId(
-            selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
-            this.leagueService.selectedLeague.leaguePlatform
-          )?.trade_value || 0;
+        const player = this.playerService.getPlayerByPlayerPlatformId(
+          selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
+          this.leagueService.selectedLeague.leaguePlatform
+        );
+        totalValue += player ? this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex) : 0;
       }
       roundValue.push(Math.round(totalValue / this.leagueService.selectedLeague.totalRosters));
     }

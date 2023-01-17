@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {StudPlayerResponse, TradePackage} from '../model/tradePackage';
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
-import {PlayerService} from '../../services/player.service';
-import {LeagueService} from '../../services/league.service';
+import { Injectable } from '@angular/core';
+import { StudPlayerResponse, TradePackage } from '../model/tradePackage';
+import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { PlayerService } from '../../services/player.service';
+import { LeagueService } from '../../services/league.service';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
 
 @Injectable({
@@ -25,7 +25,7 @@ export class TradeService {
    * @param isSuperFlex is superflex league
    */
   determineTrade(undeterminedTradePackage: TradePackage, isSuperFlex: boolean): TradePackage {
-    let processedTrade = this.determineValueAdjustment(undeterminedTradePackage, isSuperFlex);
+    let processedTrade = this.updateTradePackageValues(undeterminedTradePackage, isSuperFlex);
     // used for multi-value edge case
     const initialValueToEvenTrade = processedTrade.valueToEvenTrade;
     // trade finder processing for finding fair trade
@@ -48,11 +48,7 @@ export class TradeService {
         if (!processedTrade.team2UserId) {
           processedTrade.setTeam2(playerToAdd.owner?.userId);
         }
-        // update trade evaluations
-        processedTrade = this.determineValueAdjustment(
-          processedTrade.addTeam2Assets(playerToAdd),
-          isSuperFlex
-        );
+        processedTrade = this.updateTradePackageValues(processedTrade.addTeam2Assets(playerToAdd), isSuperFlex);
         // handles edge case where team selects multiple players and the value needed to even is on the user not the other team
         if (processedTrade.getWhichSideIsFavored() === 2) {
           // clear out trade and update the value to even trade
@@ -61,6 +57,22 @@ export class TradeService {
       }
     }
     return processedTrade;
+  }
+
+  /**
+   * Helper function for updating trade package evaluations
+   * @param tradePackage TradePackage to update
+   * @param isSuperFlex is super flex
+   * @returns 
+   */
+  private updateTradePackageValues(tradePackage: TradePackage, isSuperFlex: boolean): TradePackage {
+    // update trade evaluations
+    if (tradePackage.fantasyMarket === FantasyMarket.KeepTradeCut) {
+      return this.determineValueAdjustment(tradePackage, isSuperFlex)
+    } else {
+      tradePackage = tradePackage.setIsSuperFlex(isSuperFlex).calculateAssetValues().calculateValueToEvenTrade();
+      return tradePackage.setAcceptanceBuffer((tradePackage.team1AssetsValue + tradePackage.team2AssetsValue) * (tradePackage.acceptanceVariance / 100));
+    }
   }
 
   /**
@@ -171,7 +183,7 @@ export class TradeService {
     const userIdFilter = tradePackage.getWhichSideIsFavored() === 1 ? tradePackage.team2UserId : tradePackage.team1UserId;
     // filter list by user id then filter by value last filter by if player is in current trade
     let sortedList = this.filterPlayersList(userIdFilter)
-      .filter(player => isSuperFlex ? player.sf_trade_value <= maxValue : player.trade_value <= maxValue)
+      .filter(player => this.playerService.getTradeValue(player, isSuperFlex, tradePackage.fantasyMarket) <= maxValue)
       .filter(player => !tradePackage?.team1Assets.includes(player) && !tradePackage?.team2Assets.includes(player))
       .filter(player => !tradePackage.excludePosGroup.includes(player.position));
     if (tradePackage.autoFillTrade) {
@@ -179,8 +191,8 @@ export class TradeService {
         || player.owner !== null && player.owner.userId !== tradePackage.team1UserId));
     }
     // sort list by largest value
-    return sortedList.sort((a, b) => isSuperFlex ?
-      b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value).slice(0, listLength);
+    return sortedList.sort((a, b) => this.playerService.getTradeValue(b, isSuperFlex, tradePackage.fantasyMarket) -
+      this.playerService.getTradeValue(b, isSuperFlex, tradePackage.fantasyMarket)).slice(0, listLength);
   }
 
   /**

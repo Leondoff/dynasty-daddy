@@ -9,14 +9,14 @@
   </div>
   <div class="margin-top-10">
     <div [ngClass]="{'button-left': !configService.isMobile, 'margin-top-10': configService.isMobile}">
-      <mat-form-field class="button-left player-value-checkbox-margin" [ngClass]="{'mat-dropdown-wide-300': !configService.isMobile, 'mat-dropdown-wide-100': configService.isMobile}" color="accent">
+      <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" [ngClass]="{'mat-dropdown-wide-300': !configService.isMobile}" color="accent">
         <mat-label>Search Player</mat-label>
         <input matInput type="text" (keyup)="updatePlayerFilters()" [(ngModel)]="searchVal">
       </mat-form-field>
     </div>
     <span *ngIf="!configService.isMobile" class="container_spacer"></span>
     <div [ngClass]="{'button-right': !configService.isMobile, 'margin-top-10': configService.isMobile}">
-      <mat-form-field appearance="standard" color="accent" style="margin-right: 15px">
+      <mat-form-field appearance="standard" color="accent">
         <mat-label>Select Position Group</mat-label>
         <mat-select (selectionChange)="updatePositionTable($event)" [value]="selectedPosition">
           <mat-option *ngFor="let pos of posGroup" [value]="pos.value">

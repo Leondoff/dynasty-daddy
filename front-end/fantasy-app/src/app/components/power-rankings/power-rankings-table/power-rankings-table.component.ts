@@ -1,23 +1,24 @@
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {animate, state, style, transition, trigger} from '@angular/animations';
-import {TeamPowerRanking, TeamRankingTier} from '../../model/powerRankings';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
-import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
-import {LeagueService} from '../../../services/league.service';
-import {ConfigService} from '../../../services/init/config.service';
-import {PlayerService} from '../../../services/player.service';
-import {Clipboard} from '@angular/cdk/clipboard';
-import {DisplayService} from '../../../services/utilities/display.service';
-import {LeagueSwitchService} from '../../services/league-switch.service';
-import {LeagueType} from "../../../model/league/LeagueDTO";
-import { PowerRankingsService } from '../../services/power-rankings.service';
+import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { PositionPowerRanking, TeamPowerRanking, TeamRankingTier } from '../../model/powerRankings';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
+import { LeagueService } from '../../../services/league.service';
+import { ConfigService } from '../../../services/init/config.service';
+import { PlayerService } from '../../../services/player.service';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { DisplayService } from '../../../services/utilities/display.service';
+import { LeagueSwitchService } from '../../services/league-switch.service';
+import { LeagueType } from "../../../model/league/LeagueDTO";
+import { PowerRankingMarket, PowerRankingsService } from '../../services/power-rankings.service';
+import { group } from 'console';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
   [
-    state('collapsed, void', style({height: '0px'})),
-    state('expanded', style({height: '*'})),
+    state('collapsed, void', style({ height: '0px' })),
+    state('expanded', style({ height: '*' })),
     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     transition('expanded <=> void', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
   ]);
@@ -41,9 +42,6 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   // toggles the advanced setting bar
   showAdvancedSettings: boolean = false;
 
-  // toggle trade value vs adp value in expanded table
-  toggleADPValues: boolean = false;
-
   // datasource for mat table
   dataSource: MatTableDataSource<TeamPowerRanking> = new MatTableDataSource<TeamPowerRanking>();
 
@@ -57,7 +55,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   alertThreshold: number;
 
   // mat sort element
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   // search name
   searchVal: string = '';
@@ -65,24 +63,73 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   // used to keep track of the displayed teams in table
   displayedRankingsSize: number;
 
+  /** team ranking cache */
+  powerRankingCache = {};
+
+  /** Player cache for power rankings */
+  playerCache = {};
+
   constructor(public leagueService: LeagueService,
-              public configService: ConfigService,
-              public playerService: PlayerService,
-              public powerRankingsService: PowerRankingsService,
-              public leagueSwitchService: LeagueSwitchService,
-              public displayService: DisplayService,
-              private clipboard: Clipboard) {
+    public configService: ConfigService,
+    public playerService: PlayerService,
+    public powerRankingsService: PowerRankingsService,
+    public leagueSwitchService: LeagueSwitchService,
+    public displayService: DisplayService,
+    private clipboard: Clipboard) {
   }
 
   ngOnInit(): void {
     this.alertThreshold = this.powerRankings.length / 3;
     this.handleLeagueTypeChanges();
     this.createNewTableDataSource(this.powerRankings);
+    this.refreshPowerRankingCache();
   }
 
   ngOnChanges(): void {
     this.dataSource.data = this.powerRankings;
     this.handleLeagueTypeChanges();
+    this.refreshPowerRankingCache();
+  }
+
+  /**
+   * Refresh the power ranking value cache
+   * Used so that DOM doesn't have to make a bunch of redundant calls
+   * for player value, team value etc
+   */
+  refreshPowerRankingCache(): void {
+    this.playerCache = {};
+    this.playerService.playerValues.forEach(player => {
+      this.playerCache[player.name_id] = {
+        value: this.playerService.getTradeValue(player, this.isSuperFlex),
+        isRed: this.playerService.getTradeValue(player, this.isSuperFlex) < 2000,
+        isGreen: this.playerService.getTradeValue(player, this.isSuperFlex) > 6000
+      }
+    });
+    this.powerRankingCache = {};
+    this.powerRankings.forEach(team => {
+      this.powerRankingCache[team.team.roster.rosterId] = {
+        tier: this.displayService.getTierFromNumber(team.tier),
+        value: this.powerRankingsService.getTeamPowerRankingValue(team),
+        rank: this.powerRankingsService.getTeamPowerRankingValue(team, 'rank'),
+        isGreen: this.powerRankingsService.getTeamPowerRankingValue(team, 'rank') < this.alertThreshold,
+        isRed: this.powerRankingsService.getTeamPowerRankingValue(team, 'rank') > this.alertThreshold * 2,
+        rosters: {}
+      }
+      team.roster.forEach((group) => {
+        this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
+          value: this.powerRankingsService.getPosGroupValue(group),
+          rank: this.powerRankingsService.getPosGroupValue(group, 'rank'),
+          isRed: this.powerRankingsService.getPosGroupValue(group, 'rank') > this.alertThreshold * 2,
+          isGreen: this.powerRankingsService.getPosGroupValue(group, 'rank') < this.alertThreshold
+        }
+      });
+      this.powerRankingCache[team.team.roster.rosterId].rosters[team.picks.position] = {
+        value: this.powerRankingsService.getPosGroupValue(team.picks),
+        rank: this.powerRankingsService.getPosGroupValue(team.picks, 'rank'),
+        isRed: this.powerRankingsService.getPosGroupValue(team.picks, 'rank') > this.alertThreshold * 2,
+        isGreen: this.powerRankingsService.getPosGroupValue(team.picks, 'rank') < this.alertThreshold
+      }
+    });
   }
 
   /**
@@ -91,9 +138,10 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    */
   private handleLeagueTypeChanges(): void {
     if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+      this.powerRankingsService.rankingMarket = this.playerService.selectedMarket.valueOf();
       this.columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank', 'draftRank']
     } else {
-      this.toggleADPValues = true;
+      this.powerRankingsService.rankingMarket = PowerRankingMarket.ADP;
       this.columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
     }
   }
@@ -208,28 +256,28 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
     const allTeams = this.powerRankings.slice();
     const filteredRows: TeamPowerRanking[] = [];
     allTeams.map(team => {
-        // if match add to list bool
-        let addToTable = false;
-        // loop thru team rosters and match names
-        team.roster.map(roster =>
-          roster.players.map(player => {
-            if (player.full_name.toLowerCase().includes(this.searchVal.toLowerCase())) {
-              addToTable = true;
-            }
-          })
-        );
-        // do owner and team name match
-        if (
-          team.team.owner.ownerName.toLowerCase().includes(this.searchVal.toLowerCase())
-          || team.team.owner.teamName.toLowerCase().includes(this.searchVal.toLowerCase())
-        ) {
-          addToTable = true;
-        }
-        // add team to filtered list
-        if (addToTable) {
-          filteredRows.push(team);
-        }
+      // if match add to list bool
+      let addToTable = false;
+      // loop thru team rosters and match names
+      team.roster.map(roster =>
+        roster.players.map(player => {
+          if (player.full_name.toLowerCase().includes(this.searchVal.toLowerCase())) {
+            addToTable = true;
+          }
+        })
+      );
+      // do owner and team name match
+      if (
+        team.team.owner.ownerName.toLowerCase().includes(this.searchVal.toLowerCase())
+        || team.team.owner.teamName.toLowerCase().includes(this.searchVal.toLowerCase())
+      ) {
+        addToTable = true;
       }
+      // add team to filtered list
+      if (addToTable) {
+        filteredRows.push(team);
+      }
+    }
     );
     // update table with filtered results
     this.createNewTableDataSource(filteredRows);
@@ -253,15 +301,23 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
       } else if (property === 'owner') {
         return item.team.owner?.ownerName;
       } else if (property === 'qbRank') {
-        return item.roster[0].rank;
+        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
+          item.roster[0].fcRank : item.roster[0].rank;
       } else if (property === 'rbRank') {
-        return item.roster[1].rank;
+        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
+          item.roster[1].fcRank : item.roster[1].rank;
       } else if (property === 'wrRank') {
-        return item.roster[2].rank;
+        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
+          item.roster[2].fcRank : item.roster[2].rank;
       } else if (property === 'teRank') {
-        return item.roster[3].rank;
+        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
+          item.roster[3].fcRank : item.roster[3].rank;
       } else if (property === 'draftRank') {
-        return item.picks.rank;
+        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
+          item.picks.fcRank : item.picks.rank;
+      } else if (property === 'overallRank') {
+        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
+          item.fcOverallRank : item.overallRank;
       } else {
         return item[property];
       }
@@ -270,16 +326,10 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   }
 
   /**
-   * returns toggle button text based on state of page
+   * returns if power rankings are expanded
    */
-  getToggleButtonText(): string {
-    if (this.searchVal.length > 0 && this.expandedElement.length !== this.powerRankings.length) {
-      return 'Show All';
-    } else if (this.expandedElement.length === this.powerRankings.length) {
-      return 'Collapse All';
-    } else {
-      return 'Expand All';
-    }
+  isExpanded(): boolean {
+    return this.expandedElement.length === this.powerRankings.length;
   }
 
   /**
@@ -288,5 +338,17 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   resetSearchFilter(): void {
     this.searchVal = '';
     this.createNewTableDataSource(this.powerRankings);
+  }
+
+  /**
+   * update the fantasy market and power ranking selection
+   * @param $event 
+   */
+  updateFantasyMarket($event): void {
+    this.powerRankingsService.rankingMarket = $event.value;
+    if (this.powerRankingsService.rankingMarket !== PowerRankingMarket.ADP) {
+      this.playerService.selectedMarket = this.powerRankingsService.rankingMarket.valueOf();
+    }
+    this.refreshPowerRankingCache();
   }
 }

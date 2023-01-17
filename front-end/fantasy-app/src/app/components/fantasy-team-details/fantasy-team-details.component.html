@@ -132,7 +132,10 @@
     <mat-tab label="Roster Management">
       <div class="mid-bold-text margin-top-10 center-text">Roster Trends</div>
       <div class="margin-top-10 center-text">Biggest movers in the past month for {{selectedTeam?.owner?.teamName}}'s roster.</div>
-      <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25" *ngIf="roster.length > 0 && teamAggregates">
+      <div [ngClass]="{'right-align-text': !configService.isMobile, 'center-text': configService.isMobile}">
+        <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
+      </div>
+      <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="roster.length > 0 && teamAggregates">
         <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
           <div class="small-text__light text__light disabled__color">Overall Value</div>
           <div class="mid-bold-text margin-top-10">{{teamAggregates['OV_value']}} ({{teamAggregates['OV_change'] > 0 ? '+' : ''}}{{teamAggregates['OV_change']}}%)</div>
@@ -158,7 +161,7 @@
         <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25" *ngIf="roster.length > 0">
           <mat-card fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="40%" class="item mat-elevation-z4">
             <div class="mid-bold-text center-text margin-bot-25">Position Rankings</div>
-            <app-fantasy-team-rankings-radar-chart [powerRankings]="powerRankingsService.powerRankings" [selectedTeam]="selectedTeam"></app-fantasy-team-rankings-radar-chart>
+            <app-fantasy-team-rankings-radar-chart [powerRankings]="powerRankingsService.powerRankings" [selectedTeam]="selectedTeam" [selectedMarket]="playerService.selectedMarket"></app-fantasy-team-rankings-radar-chart>
           </mat-card>
           <span fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="40%" >
             <mat-card class="item mat-elevation-z4">
@@ -166,7 +169,7 @@
               <table>
                 <tr *ngFor="let player of getBiggestMovers(true)">
                   <th style="text-align: left">{{player.full_name}}</th>
-                  <th style="text-align: right">+{{leagueService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
+                  <th style="text-align: right">+{{playerService.getTradeValue(player, leagueService?.selectedLeague?.isSuperflex, playerService.selectedMarket, 'change')}}%</th>
                 </tr>
               </table>
             </mat-card>
@@ -175,7 +178,7 @@
               <table>
                 <tr *ngFor="let player of getBiggestMovers(false)">
                   <th style="text-align: left">{{player.full_name}}</th>
-                  <th style="text-align: right">{{leagueService.selectedLeague.isSuperflex ? player.sf_change : player.standard_change}}%</th>
+                  <th style="text-align: right">{{playerService.getTradeValue(player, leagueService?.selectedLeague?.isSuperflex, playerService.selectedMarket, 'change')}}%</th>
                 </tr>
               </table>
             </mat-card>  
@@ -198,7 +201,7 @@
                  class="responsive center-img">
             <mat-card-content class="center-text">
               <div class="small-text__light">Trade Value</div>
-              <div class="mid-bold-text">{{player.sf_trade_value}}</div>
+              <div class="mid-bold-text">{{playerService.getTradeValue(player, leagueService?.selectedLeague?.isSuperflex, playerService.selectedMarket)}}</div>
             </mat-card-content>
             <mat-card-actions class="center-text">
               <button mat-button [routerLink]="['../../../players/details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">Player Details</button>
@@ -211,7 +214,10 @@
     <mat-tab label="Activity Feed">
       <div class="mid-bold-text margin-top-10 center-text">Activity Feed</div>
       <div class="margin-top-10 center-text">Recent moves by {{selectedTeam?.owner?.teamName}}</div>
-      <div class="margin-top-25">
+      <div [ngClass]="{'right-align-text': !configService.isMobile, 'center-text': configService.isMobile}">
+        <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
+      </div>
+      <div>
         <div class="center-text">Activity Metrics</div>
         <div class="metrics--box">
           <mat-card>
@@ -238,18 +244,18 @@
         <div *ngFor="let transaction of filterTeamActivity" class="transaction--box">
           <div class="transaction--box__row">
             <span class="mid-bold-text transaction--box__start">{{transaction.headerDisplay}}</span>
-            <span class="mid-bold-text transaction--box__end" [ngClass]="transaction.netValue > 0 ? 'success__alert' : 'urgent__alert'">{{transaction.netValue}}</span>
+            <span class="mid-bold-text transaction--box__end" [ngClass]="(playerService.selectedMarket === 1 ? transaction.fcNetValue : transaction.netValue) > 0 ? 'success__alert' : 'urgent__alert'">{{playerService.selectedMarket === 1 ? transaction.fcNetValue : transaction.netValue}}</span>
           </div>
           <div *ngIf="transaction.adds.length > 0">
             <div *ngFor="let addedPlayer of transaction.adds" class="transaction--box__row">
               <span class="transaction--box__start"><mat-icon class="transaction-icon">add</mat-icon>{{addedPlayer?.playerName}}</span>
-              <span class="transaction--box__end">{{addedPlayer?.value}}</span>
+              <span class="transaction--box__end">{{playerService.selectedMarket === 1 ? addedPlayer?.fcValue : addedPlayer?.value}}</span>
             </div>
           </div>
           <div *ngIf="transaction.drops.length > 0">
             <div *ngFor="let droppedPlayer of transaction.drops" class="transaction--box__row">
               <span class="transaction--box__start"><mat-icon class="transaction-icon">remove</mat-icon>{{droppedPlayer?.playerName}}</span>
-              <span class="transaction--box__end">{{droppedPlayer?.value}}</span>
+              <span class="transaction--box__end">{{playerService.selectedMarket === 1 ? droppedPlayer?.fcValue : droppedPlayer?.value}}</span>
             </div>
           </div>
         </div>

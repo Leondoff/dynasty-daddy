@@ -43,7 +43,7 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
 
   /** combo input property for chart */
   selectedMetrics: { value: string, displayName: string }[] = [!this.leagueService.selectedLeague?.isSuperflex ?
-    {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex)'}
+    {value: 'trade_value', displayName: 'Trade Value (SuperFlex)'}
     : {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex)'}, {value: 'pts_half_ppr', displayName: 'Fantasy Points (Half PPR)'}];
 
   /** binding to x select */
@@ -89,8 +89,10 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
     {value: 'pts_half_ppr', displayName: 'Fantasy Points (Half PPR)'},
     {value: 'pts_ppr', displayName: 'Fantasy Points (PPR)'},
     {value: 'pts_std', displayName: 'Fantasy Points (Standard)'},
-    {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex)'},
-    {value: 'trade_value', displayName: 'Trade Value (Standard)'},
+    {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex, KeepTradeCut)'},
+    {value: 'trade_value', displayName: 'Trade Value (Standard, KeepTradeCut)'},
+    {value: 'fc_sf_trade_value', displayName: 'Trade Value (SuperFlex, FantasyCalc)'},
+    {value: 'fc_trade_value', displayName: 'Trade Value (Standard, FantasyCalc)'},
     {value: 'gp', displayName: 'Games Played'},
     {value: 'avg_adp', displayName: 'Average ADP'}
   ];

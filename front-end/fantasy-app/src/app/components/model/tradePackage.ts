@@ -1,4 +1,4 @@
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
+import {FantasyMarket, FantasyPlayer} from '../../model/assets/FantasyPlayer';
 
 export class TradePackage {
   team1UserId: string = null;
@@ -16,12 +16,14 @@ export class TradePackage {
   acceptanceBufferAmount: number = 1000;
   isSuperFlex: boolean = true;
   autoFillTrade: boolean = false;
+  fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
   excludePosGroup: string[] = [];
 
-  constructor(team1Assets: FantasyPlayer[], team2Assets: FantasyPlayer[], acceptanceVariance: number = 5) {
+  constructor(team1Assets: FantasyPlayer[], team2Assets: FantasyPlayer[], acceptanceVariance: number = 5, fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut) {
     this.team1Assets = team1Assets;
     this.team2Assets = team2Assets;
     this.acceptanceVariance = acceptanceVariance;
+    this.fantasyMarket = fantasyMarket;
   }
 
   setTeam1(userId: string): TradePackage {
@@ -71,8 +73,8 @@ export class TradePackage {
   }
 
   calculateAssetValues(): TradePackage {
-    this.team1AssetsValue = this.getTotalValueOfPlayersFromList(this.team1Assets, this.isSuperFlex);
-    this.team2AssetsValue = this.getTotalValueOfPlayersFromList(this.team2Assets, this.isSuperFlex);
+    this.team1AssetsValue = this.getTotalValueOfPlayersFromList(this.team1Assets, this.isSuperFlex, this.fantasyMarket);
+    this.team2AssetsValue = this.getTotalValueOfPlayersFromList(this.team2Assets, this.isSuperFlex, this.fantasyMarket);
     return this;
   }
 
@@ -132,10 +134,17 @@ export class TradePackage {
   /**
    * accepts a list of players and returns the total trade value of list
    */
-  private getTotalValueOfPlayersFromList(players: FantasyPlayer[], isSuperFlex: boolean = true): number {
+  private getTotalValueOfPlayersFromList(players: FantasyPlayer[], isSuperFlex: boolean = true, fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut): number {
     let totalValue = 0;
     players?.map(player => {
-      totalValue += isSuperFlex ? player.sf_trade_value : player.trade_value;
+      switch (fantasyMarket) {
+        case FantasyMarket.FantasyCalc:
+          totalValue += !isSuperFlex ? player.fc_trade_value : player.fc_sf_trade_value;
+          break;
+        default:
+          totalValue += !isSuperFlex ? player.trade_value : player.sf_trade_value;
+          break;
+      }
     });
     return totalValue;
   }
