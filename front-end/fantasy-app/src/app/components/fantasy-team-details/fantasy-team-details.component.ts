@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
 import { PowerRankingsService } from '../services/power-rankings.service';
 import { PlayerService } from '../../services/player.service';
-import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
 import { PlayerComparisonService } from '../services/player-comparison.service';
 import { TransactionsService } from '../services/transactions.service';
 import { TransactionUI } from '../model/transaction';
@@ -88,14 +88,15 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   getBiggestMovers(isRiser: boolean): FantasyPlayer[] {
     const tempRoster = this.roster?.slice();
     return tempRoster.filter(player => {
-      return (this.leagueService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value) > 1000;
+      return (this.playerService.getTradeValue(player, this.leagueService?.selectedLeague?.isSuperflex)) > 1000;
     }).sort((a, b) => {
       if (isRiser) {
-        return this.leagueService.selectedLeague.isSuperflex ? b.sf_change - a.sf_change : b.standard_change - a.standard_change;
+        return this.playerService.getTradeValue(b, this.leagueService?.selectedLeague?.isSuperflex, this.playerService.selectedMarket, 'change') -
+        this.playerService.getTradeValue(a, this.leagueService?.selectedLeague?.isSuperflex, this.playerService.selectedMarket, 'change');
       } else {
-        return this.leagueService.selectedLeague.isSuperflex ? a.sf_change - b.sf_change : a.standard_change - b.standard_change;
-      }
-    }).slice(0, 5);
+        return this.playerService.getTradeValue(a, this.leagueService?.selectedLeague?.isSuperflex, this.playerService.selectedMarket, 'change') -
+        this.playerService.getTradeValue(b, this.leagueService?.selectedLeague?.isSuperflex, this.playerService.selectedMarket, 'change');      }
+    }).slice(0,5);
   }
 
   getSelectedTeam(): void {
@@ -112,11 +113,8 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
       }
     }
     this.roster.sort((a, b) => {
-      if (this.leagueService.selectedLeague.isSuperflex) {
-        return b.sf_trade_value - a.sf_trade_value;
-      } else {
-        return b.trade_value - a.trade_value;
-      }
+        return this.playerService.getTradeValue(b, this.leagueService?.selectedLeague?.isSuperflex) -
+          this.playerService.getTradeValue(a, this.leagueService?.selectedLeague?.isSuperflex)
     });
 
     this.pageLoaded = true;
@@ -134,8 +132,10 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     const aggMap = {};
     for (const pos of positions) {
       const playerGroup = pos === 'OV' ? this.roster.slice() : this.roster.slice().filter(it => it.position === pos)
-      aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value), 0);
-      const lastMonth = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value), 0)
+      aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex)), 0);
+      const lastMonth = playerGroup.reduce((s, player) => s + (this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
+        (this.leagueService.selectedLeague.isSuperflex ? player.fc_last_month_value_sf : player.fc_last_month_value) :
+        (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value)), 0)
       aggMap[pos + '_change'] = Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100);
     }
     return aggMap;
@@ -218,4 +218,14 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
  */
   private getAveragePoints = (weeksPlayed: number) =>
     Math.round(this.selectedTeam.roster.teamMetrics.fpts / weeksPlayed);
+
+
+  /**
+   * handles changing of fantasy market
+   * @param $event 
+   */
+  onMarketChange($event): void {
+    this.playerService.selectedMarket = $event;
+    this.teamAggregates = this.getTeamPositionAggregates();
+  }
 }

@@ -21,7 +21,7 @@
 <mat-chip-list
   *ngIf="playerComparisonService.selectedPlayers.length !== 0 && (!playerComparisonService.isGroupMode || (playerComparisonService.isGroupMode && !data.isGroup2))">
   <mat-chip *ngFor="let player of playerComparisonService.selectedPlayers"
-            (removed)="playerComparisonService.onRemove(player)">{{player.name}}
+            (removed)="playerComparisonService.onRemove(player, false, data.fantasyMarket)">{{player.name}}
     <mat-icon matChipRemove>cancel</mat-icon>
   </mat-chip>
 </mat-chip-list>
@@ -29,7 +29,7 @@
 <mat-chip-list
   *ngIf="playerComparisonService.group2SelectedPlayers.length !== 0 && (playerComparisonService.isGroupMode && data.isGroup2)">
   <mat-chip *ngFor="let player of playerComparisonService.group2SelectedPlayers"
-            (removed)="playerComparisonService.onRemove(player, true)">{{player.name}}
+            (removed)="playerComparisonService.onRemove(player, true, data.fantasyMarket)">{{player.name}}
     <mat-icon matChipRemove>cancel</mat-icon>
   </mat-chip>
 </mat-chip-list>
@@ -64,7 +64,7 @@
   <div class="margin-top-10">
     <div *ngFor="let player of filteredList" (click)="addPlayer(player)"
          class="modal-players-list__item">{{player.position}} - {{player.full_name}}
-      <span class="disabled__color"> {{player.team}}  {{player.position}}{{player.sf_position_rank}}</span></div>
+      <span class="disabled__color"> {{player.team}}  {{player.position}}{{playerService.getTradeValue(player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank')}}</span></div>
   </div>
   <br>
   <button mat-raised-button color="accent" class="button-right" (click)="finishAdding()">Finish</button>

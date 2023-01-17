@@ -1,15 +1,15 @@
 /* tslint:disable:object-literal-key-quotes */
-import {Injectable} from '@angular/core';
-import {FantasyPlayer} from '../model/assets/FantasyPlayer';
-import {FantasyPlayerApiService} from './api/fantasy-player-api.service';
-import {forkJoin, Observable, of, Subject} from 'rxjs';
-import {LeagueTeam} from '../model/league/LeagueTeam';
-import {SleeperApiService} from './api/sleeper/sleeper-api.service';
-import {map} from 'rxjs/operators';
-import {NflService} from './utilities/nfl.service';
-import {mean, standardDeviation, variance} from 'simple-statistics';
-import {PlayerInsights} from '../components/model/playerInsights';
-import {LeaguePlatform} from '../model/league/FantasyPlatformDTO';
+import { Injectable } from '@angular/core';
+import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../model/assets/FantasyPlayer';
+import { FantasyPlayerApiService } from './api/fantasy-player-api.service';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { LeagueTeam } from '../model/league/LeagueTeam';
+import { SleeperApiService } from './api/sleeper/sleeper-api.service';
+import { map } from 'rxjs/operators';
+import { NflService } from './utilities/nfl.service';
+import { mean, standardDeviation, variance } from 'simple-statistics';
+import { PlayerInsights } from '../components/model/playerInsights';
+import { LeaguePlatform } from '../model/league/FantasyPlatformDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -36,29 +36,32 @@ export class PlayerService {
 
   /** league leaders for stat categories */
   leagueLeaders = {
-    pts_half_ppr: {value: 0, sleeperId: ''},
-    pts_ppr: {value: 0, sleeperId: ''},
-    pts_std: {value: 0, sleeperId: ''},
-    rec: {value: 0, sleeperId: ''},
-    pass_yd: {value: 0, sleeperId: ''},
-    pass_td: {value: 0, sleeperId: ''},
-    rush_att: {value: 0, sleeperId: ''},
-    rush_td: {value: 0, sleeperId: ''},
-    rush_yd: {value: 0, sleeperId: ''},
-    rec_yd: {value: 0, sleeperId: ''},
-    pass_cmp: {value: 0, sleeperId: ''},
-    fum_lost: {value: 0, sleeperId: ''},
-    pass_int: {value: 0, sleeperId: ''},
-    rec_td: {value: 0, sleeperId: ''},
-    rec_tgt: {value: 0, sleeperId: ''}
+    pts_half_ppr: { value: 0, sleeperId: '' },
+    pts_ppr: { value: 0, sleeperId: '' },
+    pts_std: { value: 0, sleeperId: '' },
+    rec: { value: 0, sleeperId: '' },
+    pass_yd: { value: 0, sleeperId: '' },
+    pass_td: { value: 0, sleeperId: '' },
+    rush_att: { value: 0, sleeperId: '' },
+    rush_td: { value: 0, sleeperId: '' },
+    rush_yd: { value: 0, sleeperId: '' },
+    rec_yd: { value: 0, sleeperId: '' },
+    pass_cmp: { value: 0, sleeperId: '' },
+    fum_lost: { value: 0, sleeperId: '' },
+    pass_int: { value: 0, sleeperId: '' },
+    rec_td: { value: 0, sleeperId: '' },
+    rec_tgt: { value: 0, sleeperId: '' }
   };
 
   /** subject for loading player values */
   currentPlayerValuesLoaded$: Subject<void> = new Subject<void>();
 
+  /** currently selected market fantasy market */
+  selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
+
   constructor(private fantasyPlayerApiService: FantasyPlayerApiService,
-              private sleeperApiService: SleeperApiService,
-              private nflService: NflService) {
+    private sleeperApiService: SleeperApiService,
+    private nflService: NflService) {
   }
 
   /**
@@ -124,21 +127,21 @@ export class PlayerService {
         observe.push(this.sleeperApiService.getSleeperStatsForWeek(
           currentYearInd.toString(),
           currentWeekInd).pipe(map((weeklyStats) => {
-          this.pastSeasonWeeklyStats[weekNum] = weeklyStats;
-          return of(weeklyStats);
-        })));
+            this.pastSeasonWeeklyStats[weekNum] = weeklyStats;
+            return of(weeklyStats);
+          })));
 
         observe.push(this.sleeperApiService.getSleeperProjectionsForWeek(
           currentYearInd.toString(),
           currentWeekInd).pipe(map((weeklyStats) => {
-          this.pastSeasonWeeklyProjections[weekNum] = weeklyStats;
-          return of(weeklyStats);
-        })));
+            this.pastSeasonWeeklyProjections[weekNum] = weeklyStats;
+            return of(weeklyStats);
+          })));
         currentWeekInd--;
       }
       forkJoin(observe).subscribe(() => {
-          return of(this.pastSeasonWeeklyStats);
-        }
+        return of(this.pastSeasonWeeklyStats);
+      }
       );
       return of(this.pastSeasonWeeklyStats);
     }));
@@ -273,18 +276,16 @@ export class PlayerService {
    * @param nameId name of player to get adj to
    * @param posFilter what pos to filter on, if empty include all
    * @param isSuperflex is value superflex or standard, default to true
+   * @param fantasyMarket Enum of what fantasy market to use
    */
-  getAdjacentPlayersByNameId(nameId: string, posFilter: string = '', isSuperflex: boolean = true): FantasyPlayer[] {
+  getAdjacentPlayersByNameId(nameId: string, posFilter: string = '', isSuperflex: boolean = true, fantasyMarket: FantasyMarket = this.selectedMarket): { rank: number, player: FantasyPlayer }[] {
     const cleanedPlayerList = this.cleanOldPlayerData(this.playerValues);
-    if (!isSuperflex) {
-      cleanedPlayerList.sort((a, b) => {
-        return b.trade_value - a.trade_value;
-      });
-    }
+    cleanedPlayerList.sort((a, b) => {
+      return this.getTradeValue(b, isSuperflex, fantasyMarket) - this.getTradeValue(a, isSuperflex, fantasyMarket);
+    });
     const players = this.getAdjacentPlayersFromList(nameId, cleanedPlayerList, posFilter);
     return players.sort((a, b) => {
-      return isSuperflex ? b.sf_trade_value - a.sf_trade_value
-        : b.trade_value - a.trade_value;
+      return a.rank - b.rank
     });
   }
 
@@ -298,7 +299,7 @@ export class PlayerService {
     cleanedPlayerList.sort((a, b) => {
       return a.avg_adp - b.avg_adp;
     });
-    return this.getAdjacentPlayersFromList(nameId, cleanedPlayerList).sort((a, b) => {
+    return this.getAdjacentPlayersFromList(nameId, cleanedPlayerList).map(it => it.player).sort((a, b) => {
       return a.avg_adp - b.avg_adp;
     });
   }
@@ -310,17 +311,17 @@ export class PlayerService {
    * @param posFilter position to filter from
    * @private
    */
-  private getAdjacentPlayersFromList(nameId: string, cleanedPlayerList: FantasyPlayer[], posFilter: string = ''): FantasyPlayer[] {
+  private getAdjacentPlayersFromList(nameId: string, cleanedPlayerList: FantasyPlayer[], posFilter: string = ''): { rank: number, player: FantasyPlayer }[] {
     const players = [];
     const playerRank = this.getRankOfPlayerByNameId(nameId, cleanedPlayerList);
     for (let upInd = playerRank - 1; upInd >= 0 && players.length < 4; upInd--) {
       if (posFilter.length === 0 || cleanedPlayerList[upInd].position === posFilter) {
-        players.push(cleanedPlayerList[upInd]);
+        players.push({ rank: upInd, player: cleanedPlayerList[upInd] });
       }
     }
     for (let downInd = playerRank; downInd < cleanedPlayerList.length && players.length < 9; downInd++) {
       if (posFilter.length === 0 || cleanedPlayerList[downInd].position === posFilter) {
-        players.push(cleanedPlayerList[downInd]);
+        players.push({ rank: downInd, player: cleanedPlayerList[downInd] });
       }
     }
     return players;
@@ -442,14 +443,11 @@ export class PlayerService {
    * returns a list of sorted players
    * @param players unsorted players list
    * @param isSuperFlex is league super flex
+   * @param marketType enum fantasy market to sort on
    */
-  sortListOfPlayers(players: FantasyPlayer[], isSuperFlex: boolean = true): FantasyPlayer[] {
+  sortListOfPlayers(players: FantasyPlayer[], isSuperFlex: boolean = true, marketType: FantasyMarket = this.selectedMarket): FantasyPlayer[] {
     return players.sort((playerA, playerB) => {
-      if (isSuperFlex) {
-        return playerB.sf_trade_value - playerA.sf_trade_value;
-      } else {
-        return playerB.trade_value - playerA.trade_value;
-      }
+      return this.getTradeValue(playerB, isSuperFlex, marketType) - this.getTradeValue(playerA, isSuperFlex, marketType);
     });
   }
 
@@ -475,5 +473,35 @@ export class PlayerService {
    */
   getPlayerPointsByFormat(sleeperId: string, formatString: string): number {
     return this.playerStats[sleeperId]?.[formatString];
+  }
+
+  getTradeValue(player: FantasyPlayer | FantasyPlayerDataPoint,
+    isSuperflex: boolean = true,
+    marketType: FantasyMarket = this.selectedMarket,
+    metric: string = ''
+  ): number {
+    if (!player) return 0;
+    switch (marketType) {
+      case FantasyMarket.FantasyCalc:
+        if (Object.keys(player).includes('fc_standard_change')) {
+          if (metric === 'change') return !isSuperflex ? (player as FantasyPlayer).fc_standard_change : (player as FantasyPlayer).fc_sf_change;
+          if (metric === 'three_month_low') return !isSuperflex ? (player as FantasyPlayer).fc_three_month_low : (player as FantasyPlayer).fc_three_month_low_sf;
+          if (metric === 'three_month_high') return !isSuperflex ? (player as FantasyPlayer).fc_three_month_high : (player as FantasyPlayer).fc_three_month_high_sf;
+          if (metric === 'all_time_low') return !isSuperflex ? (player as FantasyPlayer).fc_all_time_low : (player as FantasyPlayer).fc_all_time_low_sf;
+          if (metric === 'all_time_high') return !isSuperflex ? (player as FantasyPlayer).fc_all_time_high : (player as FantasyPlayer).fc_all_time_high_sf;
+          if (metric === 'rank') return !isSuperflex ? (player as FantasyPlayer).fc_position_rank : (player as FantasyPlayer).fc_sf_position_rank;
+        }
+        return !isSuperflex ? player.fc_trade_value : player.fc_sf_trade_value;
+      default:
+        if (Object.keys(player).includes('standard_change')) {
+          if (metric === 'change') return !isSuperflex ? (player as FantasyPlayer).standard_change : (player as FantasyPlayer).sf_change;
+          if (metric === 'three_month_low') return !isSuperflex ? (player as FantasyPlayer).three_month_low : (player as FantasyPlayer).three_month_low_sf;
+          if (metric === 'three_month_high') return !isSuperflex ? (player as FantasyPlayer).three_month_high : (player as FantasyPlayer).three_month_high_sf;
+          if (metric === 'all_time_low') return !isSuperflex ? (player as FantasyPlayer).all_time_low : (player as FantasyPlayer).all_time_low_sf;
+          if (metric === 'all_time_high') return !isSuperflex ? (player as FantasyPlayer).all_time_high : (player as FantasyPlayer).all_time_high_sf;
+          if (metric === 'rank') return !isSuperflex ? (player as FantasyPlayer).position_rank : (player as FantasyPlayer).sf_position_rank;
+        }
+        return !isSuperflex ? player.trade_value : player.sf_trade_value;
+    }
   }
 }

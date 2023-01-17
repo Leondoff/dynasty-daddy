@@ -99,6 +99,7 @@ import { WrappedCardSummaryComponent } from './components/wrapped/wrapped-card-s
 import { LoginErrorComponenet } from './components/sub-components/login-error/login-error.component';
 import { PlayerQueryBuilderComponent } from './components/sub-components/player-query-builder/player-query-builder.component';
 import { FilterPlayerValuesModalComponent } from './components/modals/filter-player-values-modal/filter-player-values-modal.component';
+import { FantasyMarketDropdown } from './components/sub-components/fantasy-market-dropdown/fantasy-market-dropdown.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -157,6 +158,7 @@ let UniversalDeviceDetectorService;
     EloTeamComparisonModalComponent,
     EditLeagueSettingsModalComponent,
     FilterPlayerValuesModalComponent,
+    FantasyMarketDropdown,
     WrappedComponent,
     WrappedWelcomeComponent,
     WrappedTransactionsComponent,

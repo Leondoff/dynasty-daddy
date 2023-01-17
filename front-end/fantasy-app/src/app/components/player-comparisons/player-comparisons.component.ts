@@ -18,7 +18,7 @@ import {LeagueSwitchService} from '../services/league-switch.service';
 })
 export class PlayerComparisonsComponent extends BaseComponent implements AfterViewInit {
 
-  constructor(private playerService: PlayerService,
+  constructor(public playerService: PlayerService,
               public leagueService: LeagueService,
               private dialog: MatDialog,
               public playerComparisonService: PlayerComparisonService,
@@ -82,16 +82,6 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
   }
 
   /**
-   * adds random player to list
-   */
-  addRandomPlayer(): void {
-    this.playerComparisonService.addPlayerToCharts(this.activePlayers[this.getRandomPlayer()]);
-    if (this.playerComparisonService.isGroupMode) {
-      this.playerComparisonService.addPlayerToCharts(this.activePlayers[this.getRandomPlayer()], true);
-    }
-  }
-
-  /**
    * launches add new player modal
    * @param isGroup2 is group mode enabled
    */
@@ -101,6 +91,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
       width: '800px',
       data: {
         isGroup2,
+        selectedMarket: this.playerService.selectedMarket
       }
     });
   }
@@ -112,7 +103,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
   drop(event: any): void {
     if (event.previousIndex !== event.currentIndex && !this.playerComparisonService.isGroupMode) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      this.playerComparisonService.refreshTable();
+      this.playerComparisonService.refreshTable(this.playerService.selectedMarket);
     }
   }
 
@@ -122,7 +113,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
   resetPlayerComp(): void {
     this.playerComparisonService.selectedPlayers = [];
     this.playerComparisonService.group2SelectedPlayers = [];
-    this.playerComparisonService.refreshTable();
+    this.playerComparisonService.refreshTable(this.playerService.selectedMarket);
   }
 
   /**
@@ -130,12 +121,14 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
    * @private
    */
   private resetPlayerCompPlayers(): void {
-    if (
-      this.activePlayers.length > 0
-    ) {
+    if (this.activePlayers.length > 0) {
       const playerNum = this.getRandomPlayer(true);
-      this.playerComparisonService.addPlayerToCharts(this.activePlayers[playerNum]);
-      this.playerComparisonService.addPlayerToCharts(this.activePlayers[playerNum + 1]);
+      this.playerComparisonService.addPlayerToCharts(this.activePlayers[playerNum], false, this.playerService.selectedMarket);
+      this.playerComparisonService.addPlayerToCharts(this.activePlayers[playerNum + 1], false, this.playerService.selectedMarket);
     }
+  }
+
+  onMarketChange($event): void {
+    this.playerService.selectedMarket = $event;
   }
 }

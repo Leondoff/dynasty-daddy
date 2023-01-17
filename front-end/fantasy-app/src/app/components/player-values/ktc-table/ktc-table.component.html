@@ -1,6 +1,5 @@
 <div class="margin-top-10 mat-elevation-z8" [hidden]="playerValueService.filteredPlayers.length === 0">
-  <mat-table [dataSource]="dataSource" matSort matSortActive="{{isSuperFlex ? 'sf_trade_value' : 'trade_value'}}"
-    matSortDirection="desc">
+  <mat-table [dataSource]="dataSource" matSort>
 
     <!-- Name Column -->
     <ng-container matColumnDef="full_name">
@@ -16,8 +15,7 @@
     <ng-container matColumnDef="position">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{configService.isMobile ? 'Pos' :
         'Position'}}</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.position == 'PI' ? 'PICK' : element.position}} {{isSuperFlex ?
-        element.sf_position_rank : element.position_rank}}</mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.position == 'PI' ? 'PICK' : element.position}} {{playerInfoCache[element.name_id]?.rank || '--'}}</mat-cell>
     </ng-container>
 
     <!-- Age Column -->
@@ -44,13 +42,12 @@
     <!-- Fantasy Points -->
     <ng-container matColumnDef="halfppr">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{playerService.playerStatsYear}} Points</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{playerService.getPlayerPointsByFormat(element.sleeper_id,
-        leagueService.getLeagueScoringFormat()) || '---'}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{playerInfoCache[element.name_id].points || '---'}}</mat-cell>
     </ng-container>
 
     <!-- Avg ADP Column -->
     <ng-container matColumnDef="avg_adp">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>Avg Pos ADP</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Pos ADP</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.avg_adp || '---'}}</mat-cell>
     </ng-container>
 
@@ -58,16 +55,16 @@
     <ng-container matColumnDef="trade_value">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Trade Value</mat-header-cell>
       <mat-cell *matCellDef="let element"
-        [ngClass]="{'warning__alert': isSuperFlex ? (element.sf_trade_value === element.three_month_low_sf) : (element.trade_value === element.three_month_low), 'success__alert':  isSuperFlex ? (element.sf_trade_value === element.three_month_high_sf) : (element.trade_value === element.three_month_high)}">{{isSuperFlex
-        ? element.sf_trade_value : element.trade_value}} </mat-cell>
+        [ngClass]="{'warning__alert': playerInfoCache[element.name_id].isLow, 'success__alert': playerInfoCache[element.name_id].isHigh}">
+        {{playerInfoCache[element.name_id].value}} </mat-cell>
     </ng-container>
 
     <!-- % change Column -->
     <ng-container matColumnDef="change">
       <mat-header-cell *matHeaderCellDef mat-sort-header>% Change</mat-header-cell>
       <mat-cell *matCellDef="let element"> <span
-          [ngClass]="{'success__alert': isSuperFlex ? element.sf_change > 0 : element.standard_change > 0, 'warning__alert': isSuperFlex ? element.sf_change < 0 : element.standard_change < 0}">{{isSuperFlex
-          ? element.sf_change : element.standard_change}}%</span></mat-cell>
+          [ngClass]="{'success__alert': playerInfoCache[element.name_id].change > 0, 'warning__alert': playerInfoCache[element.name_id].change < 0}">
+          {{playerInfoCache[element.name_id].change}}%</span></mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="actions">
@@ -97,7 +94,7 @@
     <ng-container *ngIf="selectedLeague" matColumnDef="owner">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Owner</mat-header-cell>
       <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">
-        <div *ngIf="leagueService.isLeagueLoaded()">{{element.owner?.ownerName || '---'}}</div>
+        <div *ngIf="leagueService.isLeagueLoaded">{{element.owner?.ownerName || '---'}}</div>
         <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent"
           style="max-width: 200px"></mat-progress-bar>
       </mat-cell>

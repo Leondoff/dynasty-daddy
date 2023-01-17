@@ -1,12 +1,12 @@
-import {AfterViewInit, ChangeDetectorRef, Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {FantasyPlayer, FantasyPlayerDataPoint} from '../../../model/assets/FantasyPlayer';
-import {PlayerService} from '../../../services/player.service';
-import {LeagueService} from '../../../services/league.service';
-import {ChartDataSets, ChartOptions} from 'chart.js';
-import {BaseChartDirective, Label} from 'ng2-charts';
-import {Router} from '@angular/router';
-import {PlayerComparisonService} from '../../services/player-comparison.service';
-import {LeagueSwitchService} from '../../services/league-switch.service';
+import { AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../../../model/assets/FantasyPlayer';
+import { PlayerService } from '../../../services/player.service';
+import { LeagueService } from '../../../services/league.service';
+import { ChartDataSets, ChartOptions } from 'chart.js';
+import { BaseChartDirective, Label } from 'ng2-charts';
+import { Router } from '@angular/router';
+import { PlayerComparisonService } from '../../services/player-comparison.service';
+import { LeagueSwitchService } from '../../services/league-switch.service';
 
 @Component({
   selector: 'app-player-details-insights',
@@ -26,11 +26,14 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   @Input()
   selectedPlayerValues: FantasyPlayerDataPoint[];
 
+  @Input()
+  selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
+
   /** list of adjacent players overall */
-  overallAdjPlayers: FantasyPlayer[];
+  overallAdjPlayers: { rank: number, player: FantasyPlayer }[];
 
   /** list of adjacent players based on position */
-  positionAdjPlayers: FantasyPlayer[];
+  positionAdjPlayers: { rank: number, player: FantasyPlayer }[];
 
   /** display columns */
   displayedColumns: string[] = ['rank', 'name', 'value'];
@@ -84,12 +87,15 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   public lineChartPlugins = [];
   public chartColors: any[] = [];
 
+  public playerCache = {};
+  public adjOverallValues = {};
+  public adjPosValues = {};
+
   constructor(
     public playerService: PlayerService,
     public leagueService: LeagueService,
     private playerComparisonService: PlayerComparisonService,
     private leagueSwitchService: LeagueSwitchService,
-    private cdr: ChangeDetectorRef,
     private router: Router) {
   }
 
@@ -100,13 +106,48 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   ngOnInit(): void {
     this.isSuperflex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : true;
     this.overallAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
-      this.selectedPlayer?.name_id, '', this.leagueService.selectedLeague?.isSuperflex);
+      this.selectedPlayer?.name_id, '', this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
     this.positionAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
-      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.leagueService.selectedLeague?.isSuperflex);
+      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
+    this.cachePlayerData();
   }
 
   ngOnChanges(): void {
     this.generateChartData();
+    this.overallAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
+      this.selectedPlayer?.name_id, '', this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
+    this.positionAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
+      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
+    this.cachePlayerData();
+  }
+
+  /**
+   * set up player cache data
+   */
+  cachePlayerData(): void {
+    this.playerCache = {}
+    this.playerCache = {
+      value: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket),
+      stdValue: this.playerService.getTradeValue(this.selectedPlayer, false, this.selectedMarket),
+      change: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'change'),
+      allTimeHigh: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'all_time_high'),
+      allTimeLow: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'all_time_low'),
+      threeMonthHigh: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'three_month_high'),
+      threeMonthLow:this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'three_month_low')
+    }
+    this.adjOverallValues = {}
+    this.overallAdjPlayers.forEach(player => {
+      this.adjOverallValues[player.player.name_id] = {
+        value: this.playerService.getTradeValue(player.player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket)
+      }
+    });
+    this.adjPosValues = {}
+    this.positionAdjPlayers.forEach(player => {
+      this.adjPosValues[player.player.name_id] = {
+        value: this.playerService.getTradeValue(player.player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket),
+        rank: this.playerService.getTradeValue(player.player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank'),
+      }
+    });
   }
 
   /**
@@ -126,7 +167,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
           this.selectedPlayerValues.map(dataPoint => {
             if (new Date(new Date(dateLabel).setHours(0, 0, 0, 0)).getTime()
               === new Date(new Date(dataPoint.date).setHours(0, 0, 0, 0)).getTime()) {
-              dataList.push(this.leagueService.selectedLeague?.isSuperflex === false ? dataPoint.trade_value : dataPoint.sf_trade_value);
+              dataList.push(this.playerService.getTradeValue(dataPoint, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket));
               this.lineChartLabels.push(this.playerComparisonService.formatDateForDisplay(dataPoint.date));
               dataPointInd++;
             }
@@ -139,7 +180,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
           }
         }
         // reverse data
-        this.lineChartData.push({label: this.selectedPlayer.full_name, data: dataList});
+        this.lineChartData.push({ label: this.selectedPlayer.full_name, data: dataList });
         this.lineChartLabels.reverse();
         if (dataList[dataList.length - 1] === null ?
           dataList[dataList.length - 2] > dataList[0]
@@ -167,7 +208,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
    * @param selectedPlayer player data
    */
   openPlayerComparison(selectedPlayer: FantasyPlayer): void {
-    this.playerComparisonService.addPlayerToCharts(selectedPlayer);
+    this.playerComparisonService.addPlayerToCharts(selectedPlayer, false, this.selectedMarket);
     this.router.navigate(['players/comparison'],
       {
         queryParams: this.leagueSwitchService.buildQueryParams()

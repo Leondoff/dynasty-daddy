@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
-import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
+import {FantasyMarket, FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {LeagueService} from '../../../services/league.service';
@@ -65,7 +65,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
               public playerComparisonService: PlayerComparisonService,
               private queryService: QueryService,
               private dialog: MatDialog,
-              @Inject(MAT_DIALOG_DATA) public data: { isGroup2: boolean },
+              @Inject(MAT_DIALOG_DATA) public data: { isGroup2: boolean, selectedMarket: FantasyMarket },
               public leagueService: LeagueService,
               public configService: ConfigService) {
   }
@@ -95,8 +95,8 @@ export class AddPlayerComparisonModalComponent implements OnInit {
       }
     }
     if (addable) {
-      this.playerComparisonService.isGroupMode ? this.playerComparisonService.addPlayerToCharts(player, this.data.isGroup2)
-        : this.playerComparisonService.addPlayerToCharts(player);
+      this.playerComparisonService.isGroupMode ? this.playerComparisonService.addPlayerToCharts(player, this.data.isGroup2, this.data.selectedMarket)
+        : this.playerComparisonService.addPlayerToCharts(player, false, this.data.selectedMarket);
     }
   }
 
@@ -106,7 +106,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
    * @param isGroup2 is group 2 or not
    */
   onRemove(player: FantasyPlayer, isGroup2: boolean = false): void {
-    this.playerComparisonService.onRemove({name: player.full_name, data: [], id: player.name_id}, isGroup2);
+    this.playerComparisonService.onRemove({name: player.full_name, data: [], id: player.name_id}, isGroup2, this.data.selectedMarket);
   }
 
   /**
@@ -177,7 +177,7 @@ export class AddPlayerComparisonModalComponent implements OnInit {
   addQueryResults(): void {
     if (this.toggleOverwritePlayers) {
       this.data.isGroup2 ? this.playerComparisonService.group2SelectedPlayers = [] : this.playerComparisonService.selectedPlayers = [];
-      this.playerComparisonService.refreshTable();
+      this.playerComparisonService.refreshTable(this.data.selectedMarket);
     }
     for (const player of this.queryList) {
       this.addPlayer(player);

@@ -1,21 +1,21 @@
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {MatTableDataSource} from '@angular/material/table';
-import {LeagueTeam} from '../../../model/league/LeagueTeam';
-import {MatPaginator} from '@angular/material/paginator';
-import {LeagueService} from '../../../services/league.service';
-import {PlayerService} from '../../../services/player.service';
-import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
-import {ConfigService} from '../../../services/init/config.service';
-import {ChartOptions, ChartType} from 'chart.js';
-import {BaseChartDirective, Label} from 'ng2-charts';
+import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { LeagueTeam } from '../../../model/league/LeagueTeam';
+import { MatPaginator } from '@angular/material/paginator';
+import { LeagueService } from '../../../services/league.service';
+import { PlayerService } from '../../../services/player.service';
+import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
+import { ConfigService } from '../../../services/init/config.service';
+import { ChartOptions, ChartType } from 'chart.js';
+import { BaseChartDirective, Label } from 'ng2-charts';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {RdYlBu11} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.brewer';
-import {PlayerComparisonService} from '../../services/player-comparison.service';
-import {Router} from '@angular/router';
-import {NflService} from '../../../services/utilities/nfl.service';
-import {LeagueSwitchService} from '../../services/league-switch.service';
-import {LeagueCompletedPickDTO} from '../../../model/league/LeagueCompletedPickDTO';
-import {CompletedDraft} from '../../../model/league/CompletedDraft';
+import { ClassicColorBlind10 } from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import { PlayerComparisonService } from '../../services/player-comparison.service';
+import { Router } from '@angular/router';
+import { NflService } from '../../../services/utilities/nfl.service';
+import { LeagueSwitchService } from '../../services/league-switch.service';
+import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
+import { CompletedDraft } from '../../../model/league/CompletedDraft';
 import { DraftService } from '../../services/draft.service';
 
 @Component({
@@ -29,14 +29,17 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   @Input()
   selectedDraft: CompletedDraft;
 
+  @Input()
+  selectedMarket: FantasyMarket;
+
   /** columns */
   displayedColumns = this.configService.isMobile ? ['pickNumber', 'owner', 'selectedPlayer'] : ['pickNumber', 'team', 'owner', 'selectedPlayer', 'actions'];
 
   /** mat paginator */
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   /** chart set up */
-  @ViewChild(BaseChartDirective, {static: true}) chart: BaseChartDirective;
+  @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
   /** pie chart values */
   public pieChartOptions: ChartOptions = {
@@ -46,7 +49,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     },
     plugins: {
       colorschemes: {
-        scheme: RdYlBu11,
+        scheme: ClassicColorBlind10,
         override: true
       }
     }
@@ -77,6 +80,9 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   /** keepers by roster id */
   keepersByTeam: {} = {};
 
+  /** cache of draft display fields */
+  draftCache = {};
+
   /** filtered draft list */
   filteredDraftPicks: LeagueCompletedPickDTO[] = [];
 
@@ -96,13 +102,13 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   pickValues: FantasyPlayer[] = [];
 
   constructor(public leagueService: LeagueService,
-              public draftService: DraftService,
-              public playerService: PlayerService,
-              public configService: ConfigService,
-              public playerComparisonService: PlayerComparisonService,
-              public leagueSwitchService: LeagueSwitchService,
-              private nflService: NflService,
-              private router: Router) {
+    public draftService: DraftService,
+    public playerService: PlayerService,
+    public configService: ConfigService,
+    public playerComparisonService: PlayerComparisonService,
+    public leagueSwitchService: LeagueSwitchService,
+    private nflService: NflService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -114,6 +120,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     this.refreshMetrics();
     this.paginator.pageIndex = 0;
     this.dataSource.paginator = this.paginator;
+    this.cacheDraft();
   }
 
   ngOnChanges(): void {
@@ -122,6 +129,22 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     this.refreshMetrics();
     this.paginator.pageIndex = 0;
     this.dataSource.paginator = this.paginator;
+    this.cacheDraft();
+  }
+
+  cacheDraft(): void {
+    this.draftCache = {}
+    this.selectedDraft.picks.forEach(pick => {
+      this.draftCache[pick.pickNumber] = {
+        owner: this.getOwnerName(pick.rosterId),
+        team: this.getTeamName(pick.rosterId),
+        player: this.configService.isMobile ?
+          (pick.position || this.leagueService.platformPlayersMap[pick.playerId].position) + ' ' + (pick.lastName || this.leagueService.platformPlayersMap[pick.playerId].full_name) :
+          (pick.position || this.leagueService.platformPlayersMap[pick.playerId].position) + ' ' + (pick.firstName ? (pick.firstName + ' ' + pick.lastName) : this.leagueService.platformPlayersMap[pick.playerId].full_name),
+        value: this.getPlayerByPlayerPlatformId(pick.playerId) ? this.playerService.getTradeValue(this.getPlayerByPlayerPlatformId(pick.playerId), this.isSuperFlex) : 'None',
+        nameId: this.getPlayerByPlayerPlatformId(pick.playerId)?.name_id
+      }
+    });
   }
 
   /**
@@ -142,7 +165,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
    * @param rosterId roster id
    * return name
    */
-  getTeamName(rosterId: string): string {
+  getTeamName(rosterId: number | string): string {
     for (const team of this.leagueService.leagueTeamDetails) {
       if (team.roster.rosterId.toString() === rosterId.toString()) {
         return team.owner?.teamName;
@@ -202,8 +225,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     let fantasyPlayer = this.playerService.getPlayerByPlayerPlatformId(topPick.playerId, this.leagueService.selectedLeague.leaguePlatform);
     for (const pick of this.selectedDraft.picks.slice(1)) {
       const tempPlayer = this.playerService.getPlayerByPlayerPlatformId(pick.playerId, this.leagueService.selectedLeague.leaguePlatform);
-      if (this.isSuperFlex ? fantasyPlayer?.sf_trade_value < tempPlayer?.sf_trade_value
-        : fantasyPlayer?.trade_value < tempPlayer?.trade_value) {
+      if ((fantasyPlayer ? this.playerService.getTradeValue(fantasyPlayer, this.isSuperFlex) : 0) < (tempPlayer ? this.playerService.getTradeValue(tempPlayer, this.isSuperFlex): 0)) {
         topPick = pick;
         fantasyPlayer = tempPlayer;
       }
@@ -284,8 +306,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
               pickWithValues.push({
                 player: fantasyPlayer.full_name,
                 pick: `${pick.round}.${pick.pickNumber % this.leagueService.selectedLeague.totalRosters}`,
-                value: this.isSuperFlex ? fantasyPlayer.sf_trade_value - this.draftService.roundPickValue[pick.round - 1]
-                  : fantasyPlayer.trade_value - this.draftService.roundPickValue[pick.round - 1]
+                value: this.playerService.getTradeValue(fantasyPlayer, this.isSuperFlex) - this.draftService.roundPickValue[pick.round - 1]
               });
             }
           }

@@ -27,6 +27,9 @@
         (change)="processTrade()"></mat-slider>
     </span>
     <span class="container_spacer"></span>
+    <span class="button-right">
+      <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
+    </span>
   </div>
 
 
@@ -69,9 +72,9 @@
             </span>
           </td>
           <td class="trade-info-col">
-            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{isSuperFlex ? player.sf_position_rank : player.position_rank}} • {{player.team}} • {{player.age}} y.o</span>
+            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{playerService.getTradeValue(player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank')}} • {{player.team}} • {{player.age}} y.o</span>
           </td>
-          <td class="mid-bold-text trade-value-col">{{isSuperFlex ? player.sf_trade_value : player.trade_value}}</td>
+          <td class="mid-bold-text trade-value-col">{{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}</td>
           <mat-icon class="trade-rm-icon" (click)="removePlayerFromTeam1(i)">cancel</mat-icon>
         </tr>
         <tr *ngIf="tradeTool.tradePackage?.valueAdjustmentSide == 1 && tradeTool.tradePackage?.valueAdjustment != 0">
@@ -97,7 +100,7 @@
               </span>
             </td>
             <td class="small-text__light warning__alert trade-value-col-drop">
-              -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
+              -{{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}
             </td>
           </tr>
         </ng-container>
@@ -142,10 +145,10 @@
             </span>
           </td>
           <td class="trade-info-col">
-            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{isSuperFlex ? player.sf_position_rank : player.position_rank}} • {{player.team}} • {{player.age}} y.o</span>
+            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{playerService.getTradeValue(player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank')}} • {{player.team}} • {{player.age}} y.o</span>
           </td>
           <td class="mid-bold-text trade-value-col">
-            {{isSuperFlex ? player.sf_trade_value : player.trade_value}}
+            {{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}
           </td>
           <mat-icon class="trade-rm-icon" (click)="removePlayerFromTeam2(i)">cancel</mat-icon>
         </tr>
@@ -172,7 +175,7 @@
               </span>
             </td>
             <td class="small-text__light warning__alert trade-value-col-drop">
-              -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
+              -{{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}
             </td>
           </tr>
         </ng-container>
@@ -191,7 +194,7 @@
         <div class="large-bold-header-text">Fair Trade</div>
         <div (click)="openPlayerComparisonPage()" class="link--text__no__underline small-text__light margin-top-10" style="text-decoration-line: underline;">View in Player Comparison</div>
       </div>
-      <div *ngIf="tradeTool.tradePackage?.valueAdjustmentSide && tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount">
+      <div *ngIf="tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount">
         <div class="mid-bold-text center-text margin-top-10">
           <mat-icon class="trade-arrow-icon" *ngIf="favoredSide == 1">arrow_back</mat-icon>
           Favors {{favoredSide == 2 ? team1Rankings?.team.owner.ownerName || 'Team 2' : team2Rankings?.team.owner.ownerName || 'Team 1'}}
@@ -214,7 +217,7 @@
           <tr>
             <td *ngIf="player.position == 'PI'" style="width: 70%">{{player.full_name}}</td>
             <td *ngIf="player.position != 'PI'" style="width: 70%" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">{{player.full_name}}</td>
-            <td style="width: 30%">{{player.sf_trade_value}}</td>
+            <td style="width: 30%">{{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}</td>
             <td style="width: 5px" (click)="favoredSide == 2 ? addPlayerToTeam1(player) : addPlayerToTeam2(player)">
               <mat-icon class="trade-rm-icon">add_circle</mat-icon>
             </td>

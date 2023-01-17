@@ -16,6 +16,7 @@ export class TransactionUI {
   adds: TransactionPlayer[];
   drops: TransactionPlayer[];
   netValue: number;
+  fcNetValue: number;
   picks: any[];
   createdAt: number;
   rosterIds: number[];
@@ -25,5 +26,6 @@ export class TransactionUI {
 export class TransactionPlayer {
   playerName: string;
   value: number;
+  fcValue: number;
   rosterId: number;
 }

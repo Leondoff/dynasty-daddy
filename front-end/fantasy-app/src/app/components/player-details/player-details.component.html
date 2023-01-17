@@ -38,8 +38,7 @@
       <div class="standings-row">
         <div class="standings-col vertical-break__right__dark">
           <div class="small-text__light text__light disabled__color">Position Rank</div>
-          <div *ngIf="leagueService.selectedLeague" class="mid-bold-text">{{leagueService.selectedLeague.isSuperflex ? selectedPlayer.sf_position_rank || '--' : selectedPlayer.position_rank || '--'}}</div>
-          <div *ngIf="!leagueService.selectedLeague" class="mid-bold-text">{{selectedPlayer.sf_position_rank || '--'}}</div>
+          <div class="mid-bold-text">{{this.playerService.getTradeValue(selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank') || '--'}}</div>
         </div>
         <div class="standings-col vertical-break__right__dark">
           <div class="small-text__light text__light disabled__color">Experience</div>
@@ -60,10 +59,10 @@
       <div class="button-right center-text">
         <mat-card>
           <div class="text__light">{{configService.isMobile ? 'Value' : 'Trade Value'}}</div>
-          <div *ngIf="leagueService.selectedLeague" class="large-bold-header-text">{{leagueService.selectedLeague.isSuperflex ? selectedPlayer.sf_trade_value : selectedPlayer.trade_value}}
-          <div class="small-text__light margin-top-10">{{leagueService.selectedLeague.isSuperflex ? selectedPlayer.sf_change : selectedPlayer.standard_change}}% change in 30 days</div></div>
-          <div *ngIf="!leagueService.selectedLeague" [ngClass]="{'large-bold-header-text': !configService.isMobile}"><span class="small-text__light">Superflex: </span>  {{selectedPlayer.sf_trade_value}}
-            <div *ngIf="!configService.isMobile"><span class="small-text__light">Standard: </span> {{selectedPlayer.trade_value}}</div>
+          <div *ngIf="leagueService.selectedLeague" class="large-bold-header-text">{{playerService.getTradeValue(selectedPlayer, leagueService?.selectedLeague?.isSuperflex, playerService.selectedMarket)}}
+          <div class="small-text__light margin-top-10">{{playerService.getTradeValue(selectedPlayer, leagueService?.selectedLeague?.isSuperflex, playerService.selectedMarket, 'change')}}% change in 30 days</div></div>
+          <div *ngIf="!leagueService.selectedLeague" [ngClass]="{'large-bold-header-text': !configService.isMobile}"><span class="small-text__light">Superflex: </span>  {{playerService.getTradeValue(selectedPlayer, true, playerService.selectedMarket)}}
+            <div *ngIf="!configService.isMobile"><span class="small-text__light">Standard: </span> {{playerService.getTradeValue(selectedPlayer, false, playerService.selectedMarket)}}</div>
           </div>
         </mat-card>
       </div>
@@ -75,15 +74,18 @@
       <div class="mid-bold-text margin-top-10 center-text">Past 18 Week Summary</div>
       <div class="margin-top-10 center-text">Below is the past 18 weeks of points and projections based on Sleeper's <span class="info__alert">{{leagueService.getScoringFormatDisplay()}}</span> scoring.
       </div>
-      <app-player-details-weekly-stats-line-chart  [selectedPlayerInsights]="selectedPlayerInsights" [selectedPlayer]="selectedPlayer"></app-player-details-weekly-stats-line-chart>
+      <app-player-details-weekly-stats-line-chart  [selectedPlayerInsights]="selectedPlayerInsights" [selectedPlayer]="selectedPlayer" [selectedMarket]="playerService.selectedMarket"></app-player-details-weekly-stats-line-chart>
     </mat-tab>
     <mat-tab label="Future Insights">
       <div class="mid-bold-text margin-top-10 center-text">Player Insights</div>
       <div class="margin-top-10 center-text">A collection of metrics and insights on {{selectedPlayer.full_name}}.
       </div>
-      <app-player-details-insights [selectedPlayer]="selectedPlayer" [selectedPlayerValues]="historicalTradeValue"></app-player-details-insights>
+      <div [ngClass]="{'right-align-text': !configService.isMobile, 'center-text': configService.isMobile}">
+        <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
+      </div>
+      <app-player-details-insights [selectedPlayer]="selectedPlayer" [selectedPlayerValues]="historicalTradeValue" [selectedMarket]="playerService.selectedMarket"></app-player-details-insights>
     </mat-tab>
-    <mat-tab label="Past Box Scores">
+    <mat-tab label="Game logs">
       <app-player-details-weekly-box-scores-table *ngIf="isPlayerStatsGenerated()" [selectedPlayer]="selectedPlayer"></app-player-details-weekly-box-scores-table>
     </mat-tab>
   </mat-tab-group>

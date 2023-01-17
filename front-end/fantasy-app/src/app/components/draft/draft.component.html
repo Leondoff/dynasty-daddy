@@ -2,7 +2,7 @@
 <div class="center-text margin-top-10">
   View past drafts with current day values, or create a mock draft for upcoming draft with the new rookie class.
 </div>
-<div *ngIf="leagueService.isLeagueLoaded() && (mockDraftService.teamPicks.length > 0 || leagueService.completedDrafts.length > 0)" class="grid-100 button-right margin-top-10">
+<div *ngIf="leagueService.isLeagueLoaded() && (mockDraftService.teamPicks.length > 0 || leagueService.completedDrafts.length > 0)" class="grid-100 margin-top-10" [ngClass]="{'center-text': configService.isMobile, 'button-right': !configService.isMobile}">
   <mat-form-field appearance="outline" color="accent">
     <mat-label>Select a Draft</mat-label>
     <mat-select [(ngModel)]="mockDraftService.selectedDraft">
@@ -16,6 +16,13 @@
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
+  <span *ngIf="!configService.isMobile" class="right-align-text" style="float: right;">
+    <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="playerService.selectedMarket = $event"></fantasy-market-dropdown>
+  </span>
+  <!-- mobile fantasy market -->
+  <div *ngIf="configService.isMobile" class="center-text">
+    <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="playerService.selectedMarket = $event"></fantasy-market-dropdown>
+  </div>
 </div>
 
 <div *ngIf="leagueService.isLeagueLoaded()">
@@ -35,7 +42,7 @@
   </div>
 
   <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming'" class="margin-top-25">
-    <app-completed-draft-table [selectedDraft]="mockDraftService.selectedDraft"></app-completed-draft-table>
+    <app-completed-draft-table [selectedDraft]="mockDraftService.selectedDraft" [selectedMarket]="playerService.selectedMarket"></app-completed-draft-table>
   </div>
 
 </div>

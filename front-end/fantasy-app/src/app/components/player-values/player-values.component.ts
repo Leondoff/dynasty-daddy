@@ -72,4 +72,8 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
     this.playerValueService.applyFilters();
   }
 
+  onMarketChange($event): void {
+    this.playerService.selectedMarket = $event
+  }
+
 }

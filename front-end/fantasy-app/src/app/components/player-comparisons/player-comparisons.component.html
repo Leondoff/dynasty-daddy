@@ -1,15 +1,14 @@
 <div class="content-wrapper">
   <div class="margin-top-10 large-bold-header-text center-text">Player Value Comparisons</div>
   <div class="center-text margin-top-10">
-    Player values are scraped from <a class="info__alert" href="https://keeptradecut.com/" target="_blank">KeepTradeCut.com</a>
-    dynasty rankings calculated from over <span class="info__alert">2.5 million</span> data points.
+    Player values are from the selected fantasy market. You can select what market to use below.
     <div>The scoring is <span class="info__alert">{{leagueService.getScoringFormatDisplay()}}</span>, the table below will update depending on whether your
-      league is Superflex or not.
+      league is superflex or not.
     </div>
   </div>
 
-  <div class="center-text margin-top-25"  *ngIf="configService.isMobile">
-    <div>
+  <div class="center-text"  *ngIf="configService.isMobile">
+    <div class="margin-top-10">
       <mat-slide-toggle color="primary" class="player-value-checkbox-margin"
                         [(ngModel)]="playerComparisonService.isSuperFlex"
                         (change)="playerComparisonService.refreshTable()" class="player-value-checkbox-margin">
@@ -22,6 +21,7 @@
       </mat-slide-toggle>
     </div>
     <div class="margin-top-10">
+      <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
       <button mat-raised-button (click)="resetPlayerComp()" class="player-value-checkbox-margin"><mat-icon class="add-icon-button">refresh</mat-icon> Reset</button>
     </div>
   </div>
@@ -38,13 +38,13 @@
     <span class="button-right" *ngIf="!configService.isMobile">
       <mat-slide-toggle color="primary" class="player-value-checkbox-margin"
                         [(ngModel)]="playerComparisonService.isSuperFlex"
-                        (change)="playerComparisonService.refreshTable()" class="player-value-checkbox-margin">
+                        (change)="playerComparisonService.refreshTable(selectedMarket)" class="player-value-checkbox-margin">
       SuperFlex
       </mat-slide-toggle>
-      <span style="padding-right: 5px">
-        <button mat-stroked-button (click)="addRandomPlayer()" class="player-value-checkbox-margin"><mat-icon class="add-icon-button">add</mat-icon> Random Player</button>
+      <span style="padding-right: 10px;">
+        <button mat-raised-button (click)="resetPlayerComp()" class="player-value-checkbox-margin"><mat-icon class="add-icon-button">refresh</mat-icon> Clear</button>
       </span>
-      <button mat-raised-button (click)="resetPlayerComp()" class="player-value-checkbox-margin"><mat-icon class="add-icon-button">refresh</mat-icon> Clear</button>
+      <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
     </span>
   </div>
 
@@ -56,7 +56,7 @@
                    [cdkDropListData]="playerComparisonService.selectedPlayers"
                    (cdkDropListDropped)="drop($event)">
       <mat-chip cdkDrag *ngFor="let player of playerComparisonService.selectedPlayers"
-                (removed)="playerComparisonService.onRemove(player)">{{player.name}}
+                (removed)="playerComparisonService.onRemove(player, false, selectedMarket)">{{player.name}}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
     </mat-chip-list>
@@ -76,13 +76,13 @@
                    [cdkDropListData]="playerComparisonService.group2SelectedPlayers"
                    (cdkDropListDropped)="drop($event)">
       <mat-chip cdkDrag *ngFor="let player of playerComparisonService.group2SelectedPlayers"
-                (removed)="playerComparisonService.onRemove(player, true)">{{player.name}}
+                (removed)="playerComparisonService.onRemove(player, true, playerService.selectedMarket)">{{player.name}}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
     </mat-chip-list>
   </div>
 
   <div class="margin-top-50">
-    <app-trade-value-line-chart></app-trade-value-line-chart>
+    <app-trade-value-line-chart [selectedMarket]="playerService.selectedMarket"></app-trade-value-line-chart>
   </div>
 </div>

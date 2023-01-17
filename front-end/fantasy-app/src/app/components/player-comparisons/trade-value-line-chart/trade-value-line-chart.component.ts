@@ -1,5 +1,5 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {BaseChartDirective, Label} from 'ng2-charts';
+import {Component, OnInit, ViewChild, Input, OnChanges} from '@angular/core';
+import {BaseChartDirective} from 'ng2-charts';
 import {ChartOptions} from 'chart.js';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {BaseComponent} from '../../base-component.abstract';
@@ -7,13 +7,17 @@ import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
 import {RdYlBu11} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.brewer';
 import {ConfigService} from '../../../services/init/config.service';
 import {tap} from 'rxjs/operators';
+import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 
 @Component({
   selector: 'app-trade-value-line-chart',
   templateUrl: './trade-value-line-chart.component.html',
   styleUrls: ['./trade-value-line-chart.component.css']
 })
-export class TradeValueLineChartComponent extends BaseComponent implements OnInit {
+export class TradeValueLineChartComponent extends BaseComponent implements OnInit, OnChanges {
+
+  @Input()
+  selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
   /** chart set up */
   @ViewChild(BaseChartDirective, {static: true}) chart: BaseChartDirective;
@@ -113,6 +117,10 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
     }));
   }
 
+  ngOnChanges(): void {
+    this.updateTable();
+  }
+
   /**
    * rerender chart with data
    */
@@ -136,7 +144,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
     // make new api requests if data is toggled between all time
     if (this.selectedDateFilter === 'alltime' && !this.playerComparisonService.isAllTime) {
       this.playerComparisonService.isAllTime = true;
-      this.playerComparisonService.regeneratePlayerCompData().pipe(tap(res => console.log('player data: ', res)));
+      this.playerComparisonService.regeneratePlayerCompData(this.selectedMarket).pipe(tap(res => console.log('player data: ', res)));
     } else if (this.selectedDateFilter !== 'alltime' && this.playerComparisonService.isAllTime) {
       this.playerComparisonService.isAllTime = false;
     }
@@ -146,7 +154,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
       yesterday.setDate(yesterday.getDate() - (displayDays - i));
       this.playerComparisonService.lineChartLabels.push(this.playerComparisonService.formatDateForDisplay(yesterday.toString()));
     }
-    this.playerComparisonService.refreshTable();
+    this.playerComparisonService.refreshTable(this.selectedMarket);
   }
 
   /**

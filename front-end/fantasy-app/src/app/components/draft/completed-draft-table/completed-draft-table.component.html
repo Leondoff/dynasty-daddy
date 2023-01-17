@@ -79,20 +79,20 @@
             <!-- Pos Column -->
             <ng-container matColumnDef="team">
               <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{getTeamName(element.rosterId.toString())}}</mat-cell>
+              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber].team}}</mat-cell>
             </ng-container>
 
             <!-- Age Column -->
             <ng-container matColumnDef="owner">
               <mat-header-cell *matHeaderCellDef>Owner</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{getOwnerName(element.rosterId)}}</mat-cell>
+              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber].owner}}</mat-cell>
             </ng-container>
 
             <!-- Value Column -->
             <ng-container matColumnDef="selectedPlayer">
               <mat-header-cell *matHeaderCellDef>Selected Pick (current value)</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{configService.isMobile ? (element.position || leagueService.platformPlayersMap[element.playerId].position) + ' ' + (element.lastName || leagueService.platformPlayersMap[element.playerId].full_name) : (element.position || leagueService.platformPlayersMap[element.playerId].position) + ' ' + (element.firstName ? (element.firstName + ' ' + element.lastName) : leagueService.platformPlayersMap[element.playerId].full_name)}}
-                - {{leagueService.selectedLeague.isSuperflex ? getPlayerByPlayerPlatformId(element.playerId)?.sf_trade_value || 'None' : getPlayerByPlayerPlatformId(element.playerId)?.trade_value || 'None'}}
+              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber].player}}
+                - {{draftCache[element.pickNumber].value || 'None'}}
               </mat-cell>
             </ng-container>
 
@@ -104,13 +104,13 @@
                   <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item *ngIf="getPlayerByPlayerPlatformId(element.playerId)" (click)="openPlayerComparison(getPlayerByPlayerPlatformId(element.playerId))">
+                  <button mat-menu-item *ngIf="draftCache[element.pickNumber].nameId" (click)="openPlayerComparison(getPlayerByPlayerPlatformId(element.playerId))">
                     <span>Add to Player Comparison</span>
                   </button>
-                  <button *ngIf="element.position !== 'PI' && getPlayerByPlayerPlatformId(element.playerId)" mat-menu-item [routerLink]="['../../players/details/', getPlayerByPlayerPlatformId(element.playerId)?.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+                  <button *ngIf="element.position !== 'PI' && draftCache[element.pickNumber].nameId" mat-menu-item [routerLink]="['../../players/details/', draftCache[element.pickNumber].nameId]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
                     <span>View Player Page</span>
                   </button>
-                  <button mat-menu-item [routerLink]="['../team', getOwnerName(element.rosterId)]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
+                  <button mat-menu-item [routerLink]="['../team', draftCache[element.pickNumber].owner]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
                     <span>View Team Page</span>
                   </button>
                 </mat-menu>
@@ -119,7 +119,7 @@
 
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="draft-element-row"
-                     [ngClass]="{'accent__color__background': leagueService.leagueUser?.userData.username === getOwnerName(row.rosterId)}"></mat-row>
+                     [ngClass]="{'accent__color__background': leagueService.leagueUser?.userData.username === draftCache[row.pickNumber].owner}"></mat-row>
           </mat-table>
           <mat-paginator [pageSizeOptions]="[pageLength, 2 * pageLength, 4 * pageLength]" showFirstLastButtons></mat-paginator>
         </div>
