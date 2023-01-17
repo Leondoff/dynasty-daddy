@@ -1,14 +1,14 @@
-import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
-import {ChartDataSets, ChartOptions} from 'chart.js';
+import { AfterViewInit, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
+import { ChartDataSets, ChartOptions } from 'chart.js';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
-import {BaseChartDirective, Label} from 'ng2-charts';
-import {PlayerService} from '../../../services/player.service';
-import {BaseComponent} from '../../base-component.abstract';
-import {PlayerInsights} from '../../model/playerInsights';
-import {LeagueService} from '../../../services/league.service';
-import {variance} from 'simple-statistics';
+import { ClassicColorBlind10 } from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import { BaseChartDirective, Label } from 'ng2-charts';
+import { PlayerService } from '../../../services/player.service';
+import { BaseComponent } from '../../base-component.abstract';
+import { PlayerInsights } from '../../model/playerInsights';
+import { LeagueService } from '../../../services/league.service';
+import { variance } from 'simple-statistics';
 
 @Component({
   selector: 'app-player-details-weekly-stats-line-chart',
@@ -27,6 +27,9 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
   /** selected player insights */
   @Input()
   selectedPlayerInsights: PlayerInsights;
+
+  @Input()
+  selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
   /** total points aggregate */
   totalPoints = 0;
@@ -89,14 +92,20 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
   public lineChartPlugins = [];
   public adjacentADP = [];
 
+  public adpPlayerValues = {}
+
   constructor(public playerService: PlayerService,
-              public leagueService: LeagueService,
-              private cdr: ChangeDetectorRef) {
+    public leagueService: LeagueService,
+    private cdr: ChangeDetectorRef) {
     super();
   }
 
   ngOnInit(): void {
     // do nothing
+  }
+
+  ngOnChanges(): void {
+    this.cachePlayerData();
   }
 
   ngAfterViewInit(): void {
@@ -111,7 +120,20 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
         this.leagueService.selectedLeague?.isSuperflex || true
       );
     }
+    this.cachePlayerData();
     this.cdr.detectChanges();
+  }
+
+  cachePlayerData(): void {
+    this.adpPlayerValues = {};
+    this.adjacentADP.forEach(player => {
+      this.adpPlayerValues[player.name_id] = {
+        value: this.playerService.getTradeValue(
+          player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket
+        ),
+        adpPlusMinus: this.getADPPlusMinus(player)
+      }
+    });
   }
 
   /**
@@ -138,8 +160,8 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
         this.lineChartLabels.push(this.playerService.getWeekByIndex(i));
       }
     }
-    this.lineChartData.push({label: 'Actual', data: stats.reverse()});
-    this.lineChartData.push({label: 'Projected', data: projections.reverse()});
+    this.lineChartData.push({ label: 'Actual', data: stats.reverse() });
+    this.lineChartData.push({ label: 'Projected', data: projections.reverse() });
     this.lineChartLabels.reverse();
     if (this.chart && this.chart.chart) {
       this.chart.chart.data.datasets = this.lineChartData;

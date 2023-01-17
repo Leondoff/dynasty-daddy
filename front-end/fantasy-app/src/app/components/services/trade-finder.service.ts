@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
+import {FantasyMarket, FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {TradePackage} from '../model/tradePackage';
 import {TradeService} from './trade.service';
 
@@ -29,11 +29,12 @@ export class TradeFinderService {
     userId: string,
     isSuperFlex: boolean = true,
     posFilterList: boolean[],
-    limit: number = 10
+    fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut,
+    limit: number = 10,
   ): TradePackage[] {
     const tradePackages = [];
     for (let i = 0; i < limit; i++) {
-      const newTrade = new TradePackage(players, [])
+      const newTrade = new TradePackage(players, [], 5, fantasyMarket)
         .setTeam1(userId)
         .setExcludePlayerList(this.buildExcludePlayerList(posFilterList))
         .enableAutofill();

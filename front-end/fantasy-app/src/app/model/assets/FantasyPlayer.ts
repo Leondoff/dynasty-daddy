@@ -3,7 +3,6 @@ import {LeagueOwnerDTO} from '../league/LeagueOwnerDTO';
 
 export class FantasyPlayer {
 
-  constructor() {}
   id: number;
   name_id: string;
   sleeper_id: string;
@@ -13,8 +12,8 @@ export class FantasyPlayer {
   last_name: string;
   team: string;
   position: string;
-  sf_position_rank: string;
-  position_rank: string;
+  sf_position_rank: number;
+  position_rank: number;
   age: number;
   experience: number;
   injury_status: string;
@@ -41,16 +40,35 @@ export class FantasyPlayer {
   rtsports_adp: number = null;
   underdog_adp: number = null;
   drafters_adp: number = null;
-}
+  fc_sf_trade_value: number;
+  fc_trade_value: number;
+  fc_sf_position_rank: number;
+  fc_position_rank: number;
+  fc_all_time_high_sf: number;
+  fc_all_time_low_sf: number;
+  fc_all_time_high: number;
+  fc_all_time_low: number;
+  fc_three_month_high_sf: number;
+  fc_three_month_high: number;
+  fc_three_month_low_sf: number;
+  fc_three_month_low: number;
+  fc_last_month_value: number;
+  fc_last_month_value_sf: number;
+  fc_sf_change: number = null;
+  fc_standard_change: number = null;
 
+  constructor() {}
+}
 
 export class FantasyPlayerDataPoint {
   name_id: string;
   full_name: string;
-  sf_position_rank: string;
-  position_rank: string;
+  sf_position_rank: number;
+  position_rank: number;
   sf_trade_value: number;
   trade_value: number;
+  fc_sf_trade_value: number;
+  fc_trade_value: number;
   date: string;
 }
 
@@ -60,4 +78,9 @@ export enum Position {
   WR,
   TE,
   PICK,
+}
+
+export enum FantasyMarket {
+  KeepTradeCut,
+  FantasyCalc
 }

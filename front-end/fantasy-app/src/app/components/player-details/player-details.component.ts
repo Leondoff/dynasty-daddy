@@ -1,14 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {PlayerService} from '../../services/player.service';
-import {BaseComponent} from '../base-component.abstract';
-import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/assets/FantasyPlayer';
-import {FantasyPlayerApiService} from '../../services/api/fantasy-player-api.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {LeagueService} from '../../services/league.service';
-import {PlayerComparisonService} from '../services/player-comparison.service';
-import {ConfigService} from '../../services/init/config.service';
-import {PlayerInsights} from '../model/playerInsights';
-import {LeagueSwitchService} from '../services/league-switch.service';
+import { Component, OnInit } from '@angular/core';
+import { PlayerService } from '../../services/player.service';
+import { BaseComponent } from '../base-component.abstract';
+import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../../model/assets/FantasyPlayer';
+import { FantasyPlayerApiService } from '../../services/api/fantasy-player-api.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LeagueService } from '../../services/league.service';
+import { PlayerComparisonService } from '../services/player-comparison.service';
+import { ConfigService } from '../../services/init/config.service';
+import { PlayerInsights } from '../model/playerInsights';
+import { LeagueSwitchService } from '../services/league-switch.service';
 
 @Component({
   selector: 'app-player-details',
@@ -30,13 +30,13 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
   historicalTradeValue: FantasyPlayerDataPoint[];
 
   constructor(public playerService: PlayerService,
-              private fantasyPlayerApiService: FantasyPlayerApiService,
-              private route: ActivatedRoute,
-              public leagueService: LeagueService,
-              private router: Router,
-              private playerComparisonService: PlayerComparisonService,
-              public leagueSwitchService: LeagueSwitchService,
-              public configService: ConfigService) {
+    private fantasyPlayerApiService: FantasyPlayerApiService,
+    private route: ActivatedRoute,
+    public leagueService: LeagueService,
+    private router: Router,
+    private playerComparisonService: PlayerComparisonService,
+    public leagueSwitchService: LeagueSwitchService,
+    public configService: ConfigService) {
     super();
   }
 
@@ -52,12 +52,12 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
       this.playerService.loadPlayerValuesForToday();
     }
     this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
-        this.playersLoaded = true;
-        this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
-      }),
+      this.playersLoaded = true;
+      this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
+    }),
       this.fantasyPlayerApiService.getHistoricalPlayerValueById(nameId).subscribe((data) => {
-          this.historicalTradeValue = data;
-        }
+        this.historicalTradeValue = data;
+      }
       ),
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
@@ -128,11 +128,20 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
    * @param selectedPlayer player data
    */
   openPlayerComparison(selectedPlayer: FantasyPlayer): void {
-    this.playerComparisonService.addPlayerToCharts(selectedPlayer);
+    this.playerComparisonService.addPlayerToCharts(selectedPlayer, false, this.playerService.selectedMarket);
     this.router.navigate(['players/comparison'],
       {
         queryParams: this.leagueSwitchService.buildQueryParams()
       }
     );
   }
+
+  /**
+   * handles changing of fantasy market
+   * @param $event 
+   */
+  onMarketChange($event): void {
+    this.playerService.selectedMarket = $event;
+  }
+
 }

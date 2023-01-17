@@ -9,6 +9,9 @@ export class TeamPowerRanking {
   sfTradeValueOverall: number = 0;
   tradeValueOverall: number = 0;
   overallRank: number;
+  fcSfTradeValueOverall: number = 0;
+  fcTradeValueOverall: number = 0;
+  fcOverallRank: number = 0;
   starterRank: number;
   adpValueStarter: number = 0;
   eloAdpValueStarter: number = 0;
@@ -16,11 +19,13 @@ export class TeamPowerRanking {
   eloADPValueStarterHistory: number[] = [];
   tier: number;
 
-  constructor(team: LeagueTeam, players: PositionPowerRanking[], sfTradeValue: number, tradeValue: number, picks: PositionPowerRanking) {
+  constructor(team: LeagueTeam, players: PositionPowerRanking[], sfTradeValue: number, tradeValue: number, picks: PositionPowerRanking, fcSfTradeValue: number, fcTradeValue: number) {
     this.team = team;
     this.roster = players;
     this.sfTradeValueOverall = sfTradeValue;
     this.tradeValueOverall = tradeValue;
+    this.fcSfTradeValueOverall = fcSfTradeValue;
+    this.fcTradeValueOverall = fcTradeValue;
     this.picks = picks;
   }
 
@@ -41,17 +46,22 @@ export class TeamPowerRanking {
 }
 
 export class PositionPowerRanking {
-  constructor(pos: string, sfTradeValue: number, tradeValue: number, groupList: FantasyPlayer[]) {
+  constructor(pos: string, sfTradeValue: number, tradeValue: number, groupList: FantasyPlayer[], fcSfTradeValue: number, fcTradeValue: number) {
     this.sfTradeValue = sfTradeValue;
     this.tradeValue = tradeValue;
     this.players = groupList;
     this.position = pos;
+    this.fcSfTradeValue = fcSfTradeValue;
+    this.fcTradeValue = fcTradeValue;
   }
 
   rank: number;
   position: string;
   sfTradeValue: number;
   tradeValue: number;
+  fcRank: number;
+  fcSfTradeValue: number;
+  fcTradeValue: number;
   players: FantasyPlayer[];
 }
 

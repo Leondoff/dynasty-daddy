@@ -1,12 +1,13 @@
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {BaseChartDirective, Label} from 'ng2-charts';
-import {ChartDataSets, ChartOptions} from 'chart.js';
-import {LeagueService} from '../../../services/league.service';
-import {ConfigService} from '../../../services/init/config.service';
+import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { BaseChartDirective, Label } from 'ng2-charts';
+import { ChartDataSets, ChartOptions } from 'chart.js';
+import { LeagueService } from '../../../services/league.service';
+import { ConfigService } from '../../../services/init/config.service';
 import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {RdYlBu11} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.brewer';
-import {TeamPowerRanking} from '../../model/powerRankings';
-import {LeagueType} from "../../../model/league/LeagueDTO";
+import { ClassicColorBlind10 } from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import { TeamPowerRanking } from '../../model/powerRankings';
+import { LeagueType } from "../../../model/league/LeagueDTO";
+import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 
 @Component({
   selector: 'app-power-rankings-chart',
@@ -15,13 +16,16 @@ import {LeagueType} from "../../../model/league/LeagueDTO";
 })
 export class PowerRankingsChartComponent implements OnInit, OnChanges {
 
-  @ViewChild(BaseChartDirective, {static: true}) chart: BaseChartDirective;
+  @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
   @Input()
   powerRankings: TeamPowerRanking[];
 
   @Input()
   selectedOrder: PowerRankingOrder = PowerRankingOrder.OVERALL;
+
+  @Input()
+  selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
   /**
    * ng2-chart options
@@ -71,7 +75,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
     },
     plugins: {
       colorschemes: {
-        scheme: RdYlBu11,
+        scheme: ClassicColorBlind10,
         override: true
       }
     }
@@ -83,7 +87,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
   dataLabels: Label[] = [];
 
   constructor(private leagueService: LeagueService,
-              public configService: ConfigService) {
+    public configService: ConfigService) {
   }
 
   ngOnInit(): void {
@@ -99,27 +103,37 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
    */
   refreshChart(): void {
     this.dataLabels = [];
-    this.powerRankings.sort((a,b) => {
+    this.powerRankings.sort((a, b) => {
       switch (this.selectedOrder) {
-        case PowerRankingOrder.ELO_STARTER: 
+        case PowerRankingOrder.ELO_STARTER:
           return b.eloAdpValueStarter - a.eloAdpValueStarter;
-        case PowerRankingOrder.QB_RANK: 
-          return a.roster[0].rank - b.roster[0].rank;
-        case PowerRankingOrder.RB_RANK: 
-          return a.roster[1].rank - b.roster[1].rank;
-        case PowerRankingOrder.WR_RANK: 
-          return a.roster[2].rank - b.roster[2].rank;
-        case PowerRankingOrder.TE_RANK: 
-          return a.roster[3].rank - b.roster[3].rank;
-        case PowerRankingOrder.PICK_RANK: 
-          return a.picks.rank - b.picks.rank;
+        case PowerRankingOrder.QB_RANK:
+          return this.selectedMarket === FantasyMarket.FantasyCalc ?
+            a.roster[0].fcRank - b.roster[0].fcRank : a.roster[0].rank - b.roster[0].rank;
+        case PowerRankingOrder.RB_RANK:
+          return this.selectedMarket === FantasyMarket.FantasyCalc ?
+            a.roster[1].fcRank - b.roster[1].fcRank : a.roster[1].rank - b.roster[1].rank;
+        case PowerRankingOrder.WR_RANK:
+          return this.selectedMarket === FantasyMarket.FantasyCalc ?
+            a.roster[2].fcRank - b.roster[2].fcRank : a.roster[2].rank - b.roster[2].rank;
+        case PowerRankingOrder.TE_RANK:
+          return this.selectedMarket === FantasyMarket.FantasyCalc ?
+            a.roster[3].fcRank - b.roster[3].fcRank : a.roster[3].rank - b.roster[3].rank;
+        case PowerRankingOrder.PICK_RANK:
+          return this.selectedMarket === FantasyMarket.FantasyCalc ?
+            a.picks.fcRank - b.picks.fcRank : a.picks.rank - b.picks.rank;
         case PowerRankingOrder.STARTER:
           return b.adpValueStarter - a.adpValueStarter;
         default:
-          if (this.leagueService.selectedLeague.isSuperflex) {
-            return b.sfTradeValueOverall - a.sfTradeValueOverall
-          } else {
-            return b.tradeValueOverall - a.tradeValueOverall
+          switch (this.selectedMarket) {
+            case FantasyMarket.FantasyCalc:
+              return !this.leagueService.selectedLeague.isSuperflex ?
+                b.fcTradeValueOverall - a.fcTradeValueOverall :
+                b.fcSfTradeValueOverall - a.fcSfTradeValueOverall;
+            default:
+              return !this.leagueService.selectedLeague.isSuperflex ?
+                b.tradeValueOverall - a.tradeValueOverall :
+                b.sfTradeValueOverall - a.sfTradeValueOverall;
           }
       }
     });
@@ -139,16 +153,38 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
       const temp = [];
       for (const team of this.powerRankings) {
         const rosterInd = this.dataLabels.indexOf(team.team.owner?.ownerName);
-        temp[rosterInd] = this.leagueService.selectedLeague.isSuperflex ? team.roster[index].sfTradeValue : team.roster[index].tradeValue;
-        this.data[index] = {data: temp, label: pos, hoverBackgroundColor: []};
+        switch (this.selectedMarket) {
+          case FantasyMarket.FantasyCalc:
+            !this.leagueService.selectedLeague.isSuperflex ?
+              temp[rosterInd] = team.roster[index].fcTradeValue :
+              temp[rosterInd] = team.roster[index].fcSfTradeValue;
+            break;
+          default:
+            !this.leagueService.selectedLeague.isSuperflex ?
+              temp[rosterInd] = team.roster[index].tradeValue :
+              temp[rosterInd] = team.roster[index].sfTradeValue;
+            break;
+        }
+        this.data[index] = { data: temp, label: pos, hoverBackgroundColor: [] };
       }
     });
     if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
       const tempPicks = [];
       for (const team of this.powerRankings) {
         const index = this.dataLabels.indexOf(team.team.owner?.ownerName);
-        tempPicks[index] = this.leagueService.selectedLeague.isSuperflex ? team.picks.sfTradeValue : team.picks.tradeValue;
-        this.data[4] = {data: tempPicks, label: 'Draft Capital', hoverBackgroundColor: []};
+        switch (this.selectedMarket) {
+          case FantasyMarket.FantasyCalc:
+            !this.leagueService.selectedLeague.isSuperflex ?
+              tempPicks[index] = team.picks.fcTradeValue :
+              tempPicks[index] = team.picks.fcSfTradeValue;
+            break;
+          default:
+            !this.leagueService.selectedLeague.isSuperflex ?
+              tempPicks[index] = team.picks.tradeValue :
+              tempPicks[index] = team.picks.sfTradeValue;
+            break;
+        }
+        this.data[4] = { data: tempPicks, label: 'Draft Capital', hoverBackgroundColor: [] };
       }
     }
   }

@@ -1,16 +1,16 @@
-import {Injectable} from '@angular/core';
-import {LeagueTeam} from '../../model/league/LeagueTeam';
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
-import {PositionPowerRanking, TeamPowerRanking} from '../model/powerRankings';
-import {LeagueService} from '../../services/league.service';
-import {PlayerService} from '../../services/player.service';
-import {Observable, of} from 'rxjs';
-import {max, min} from 'simple-statistics';
-import {MatchupService} from './matchup.service';
-import {NflService} from '../../services/utilities/nfl.service';
-import {EloService} from '../../services/utilities/elo.service';
-import {LeagueType} from '../../model/league/LeagueDTO';
-import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
+import { Injectable } from '@angular/core';
+import { LeagueTeam } from '../../model/league/LeagueTeam';
+import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { PositionPowerRanking, TeamPowerRanking } from '../model/powerRankings';
+import { LeagueService } from '../../services/league.service';
+import { PlayerService } from '../../services/player.service';
+import { Observable, of } from 'rxjs';
+import { max, min } from 'simple-statistics';
+import { MatchupService } from './matchup.service';
+import { NflService } from '../../services/utilities/nfl.service';
+import { EloService } from '../../services/utilities/elo.service';
+import { LeagueType } from '../../model/league/LeagueDTO';
+import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
 import { PowerRankingOrder } from '../power-rankings/power-rankings-chart/power-rankings-chart.component';
 
 @Injectable({
@@ -19,10 +19,10 @@ import { PowerRankingOrder } from '../power-rankings/power-rankings-chart/power-
 export class PowerRankingsService {
 
   constructor(private leagueService: LeagueService,
-              public playerService: PlayerService,
-              private matchupService: MatchupService,
-              private eloService: EloService,
-              private nflService: NflService
+    public playerService: PlayerService,
+    private matchupService: MatchupService,
+    private eloService: EloService,
+    private nflService: NflService
   ) {
   }
 
@@ -32,8 +32,19 @@ export class PowerRankingsService {
   /** supported position groups to power rank */
   positionGroups: string[] = ['QB', 'RB', 'WR', 'TE'];
 
+  /** rankings metric options */
+  rankingMetricsOptions: {}[] =
+    [
+      { 'value': 0, 'display': 'KeepTradeCut' },
+      { 'value': 1, 'display': 'FantasyCalc' },
+      { 'value': 2, 'display': 'ADP' }
+    ]
+
   /** power rankings table filter options */
   powerRankingChartOption: PowerRankingOrder = PowerRankingOrder.OVERALL;
+
+  /** rankings options */
+  rankingMarket: PowerRankingMarket = PowerRankingMarket.KeepTradeCut;
 
   /**
    * Sorts team power rankings array by starter value
@@ -86,7 +97,7 @@ export class PowerRankingsService {
    * @param teams
    * @param players
    * @param leaguePlatform
-   * @param isMockRankings boolean
+   * @param isMockRankings boolean for trade calculator mock
    */
   generatePowerRankings(
     teams: LeagueTeam[],
@@ -100,6 +111,8 @@ export class PowerRankingsService {
         const roster = [];
         let sfTradeValueTotal = 0;
         let tradeValueTotal = 0;
+        let fcSfTradeValueTotal = 0;
+        let fcTradeValueTotal = 0;
         // TODO refactor this section both comparisons are redundant
         for (const playerPlatformId of team?.roster?.players) {
           for (const player of players) {
@@ -107,6 +120,8 @@ export class PowerRankingsService {
               roster.push(player);
               sfTradeValueTotal += player.sf_trade_value;
               tradeValueTotal += player.trade_value;
+              fcSfTradeValueTotal += player.fc_sf_trade_value;
+              fcTradeValueTotal += player.fc_trade_value;
               break;
             }
           }
@@ -115,15 +130,19 @@ export class PowerRankingsService {
         for (const group of this.positionGroups) {
           let sfTradeValue = 0;
           let tradeValue = 0;
+          let fcSfTradeValue = 0;
+          let fcTradeValue = 0;
           let groupList: FantasyPlayer[] = [];
           groupList = roster.filter(player => {
             if (player.position === group) {
               sfTradeValue += player.sf_trade_value;
               tradeValue += player.trade_value;
+              fcSfTradeValue += player.fc_sf_trade_value;
+              fcTradeValue += player.fc_trade_value;
               return player;
             }
           });
-          positionRoster.push(new PositionPowerRanking(group, sfTradeValue, tradeValue, groupList));
+          positionRoster.push(new PositionPowerRanking(group, sfTradeValue, tradeValue, groupList, fcSfTradeValue, fcTradeValue));
         }
         const pickValues = players.filter(player => {
           return player.position === 'PI';
@@ -131,41 +150,55 @@ export class PowerRankingsService {
         const picks: FantasyPlayer[] = [];
         let sfPickTradeValue = 0;
         let pickTradeValue = 0;
+        let fcSfPickTradeValue = 0;
+        let fcPickTradeValue = 0;
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
           // combine upcoming and future draft capital for rankings
           const allPicks = team.draftCapital.concat(team.futureDraftCapital);
           allPicks.map(pick => {
-              for (const pickValue of pickValues) {
-                if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {
-                  if (pick.pick < 5 && pickValue.last_name.includes('Early')) {
-                    sfPickTradeValue += pickValue.sf_trade_value;
-                    pickTradeValue += pickValue.trade_value;
-                    sfTradeValueTotal += pickValue.sf_trade_value;
-                    tradeValueTotal += pickValue.trade_value;
-                    picks.push(pickValue);
-                    break;
-                  } else if (pick.pick > 8 && pickValue.last_name.includes('Late')) {
-                    sfPickTradeValue += pickValue.sf_trade_value;
-                    pickTradeValue += pickValue.trade_value;
-                    sfTradeValueTotal += pickValue.sf_trade_value;
-                    tradeValueTotal += pickValue.trade_value;
-                    picks.push(pickValue);
-                    break;
-                  } else if (pick.pick > 4 && pick.pick < 9 && pickValue.last_name.includes('Mid')) {
-                    sfPickTradeValue += pickValue.sf_trade_value;
-                    pickTradeValue += pickValue.trade_value;
-                    sfTradeValueTotal += pickValue.sf_trade_value;
-                    tradeValueTotal += pickValue.trade_value;
-                    picks.push(pickValue);
-                    break;
-                  }
+            for (const pickValue of pickValues) {
+              if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {
+                if (pick.pick < 5 && pickValue.last_name.includes('Early')) {
+                  sfPickTradeValue += pickValue.sf_trade_value;
+                  pickTradeValue += pickValue.trade_value;
+                  sfTradeValueTotal += pickValue.sf_trade_value;
+                  tradeValueTotal += pickValue.trade_value;
+                  fcSfPickTradeValue += pickValue.fc_sf_trade_value;
+                  fcPickTradeValue += pickValue.fc_trade_value;
+                  fcSfTradeValueTotal += pickValue.fc_sf_trade_value;
+                  fcTradeValueTotal += pickValue.fc_trade_value;
+                  picks.push(pickValue);
+                  break;
+                } else if (pick.pick > 8 && pickValue.last_name.includes('Late')) {
+                  sfPickTradeValue += pickValue.sf_trade_value;
+                  pickTradeValue += pickValue.trade_value;
+                  sfTradeValueTotal += pickValue.sf_trade_value;
+                  tradeValueTotal += pickValue.trade_value;
+                  fcSfPickTradeValue += pickValue.fc_sf_trade_value;
+                  fcPickTradeValue += pickValue.fc_trade_value;
+                  fcSfTradeValueTotal += pickValue.fc_sf_trade_value;
+                  fcTradeValueTotal += pickValue.fc_trade_value;
+                  picks.push(pickValue);
+                  break;
+                } else if (pick.pick > 4 && pick.pick < 9 && pickValue.last_name.includes('Mid')) {
+                  sfPickTradeValue += pickValue.sf_trade_value;
+                  pickTradeValue += pickValue.trade_value;
+                  sfTradeValueTotal += pickValue.sf_trade_value;
+                  tradeValueTotal += pickValue.trade_value;
+                  fcSfPickTradeValue += pickValue.fc_sf_trade_value;
+                  fcPickTradeValue += pickValue.fc_trade_value;
+                  fcSfTradeValueTotal += pickValue.fc_sf_trade_value;
+                  fcTradeValueTotal += pickValue.fc_trade_value;
+                  picks.push(pickValue);
+                  break;
                 }
               }
             }
+          }
           );
         }
-        const rankedPicks = new PositionPowerRanking('PI', sfPickTradeValue, pickTradeValue, picks);
-        newPowerRankings.push(new TeamPowerRanking(team, positionRoster, sfTradeValueTotal, tradeValueTotal, rankedPicks));
+        const rankedPicks = new PositionPowerRanking('PI', sfPickTradeValue, pickTradeValue, picks, fcSfPickTradeValue, fcPickTradeValue);
+        newPowerRankings.push(new TeamPowerRanking(team, positionRoster, sfTradeValueTotal, tradeValueTotal, rankedPicks, fcSfTradeValueTotal, fcTradeValueTotal));
       });
       this.rankTeams(newPowerRankings, this.leagueService.selectedLeague.isSuperflex);
     } catch (e: any) {
@@ -183,19 +216,13 @@ export class PowerRankingsService {
     teams.map(team => {
       for (const group of team.roster) {
         group.players.sort((a, b) => {
-          if (isSuperflex) {
-            return b.sf_trade_value - a.sf_trade_value;
-          } else {
-            return b.trade_value - a.trade_value;
-          }
+          return this.playerService.getTradeValue(b, isSuperflex, this.playerService.selectedMarket) -
+            this.playerService.getTradeValue(a, isSuperflex, this.playerService.selectedMarket);
         });
       }
       team.picks.players.sort((a, b) => {
-        if (isSuperflex) {
-          return b.sf_trade_value - a.sf_trade_value;
-        } else {
-          return b.trade_value - a.trade_value;
-        }
+        return this.playerService.getTradeValue(b, isSuperflex, this.playerService.selectedMarket) -
+          this.playerService.getTradeValue(a, isSuperflex, this.playerService.selectedMarket);
       });
     });
     return teams;
@@ -212,27 +239,35 @@ export class PowerRankingsService {
     teams = this.sortRosterByValue(teams, isSuperflex);
     // Rank position groups
     this.positionGroups.forEach((value, index) => {
-      teams.sort((teamA, teamB) => {
-        if (isSuperflex) {
-          return teamB.roster[index].sfTradeValue - teamA.roster[index].sfTradeValue;
-        } else {
-          return teamB.roster[index].tradeValue - teamA.roster[index].tradeValue;
-        }
-      });
-      teams.forEach((team, teamIndex) => {
-        team.roster[index].rank = teamIndex + 1;
+      this.rankingMetricsOptions.slice(0, 2).forEach((metric) => {
+        teams.sort((teamA, teamB) => {
+          return this.getPosGroupValue(teamB.roster[index], '', metric['value']) - this.getPosGroupValue(teamA.roster[index], '', metric['value']);
+        });
+        teams.forEach((team, teamIndex) => {
+          switch (metric['value']) {
+            case PowerRankingMarket.FantasyCalc:
+              team.roster[index].fcRank = teamIndex + 1;
+              break;
+            default:
+              team.roster[index].rank = teamIndex + 1;
+          }
+        });
       });
     });
     // Rank picks
-    teams.sort((teamA, teamB) => {
-      if (isSuperflex) {
-        return teamB.picks.sfTradeValue - teamA.picks.sfTradeValue;
-      } else {
-        return teamB.picks.tradeValue - teamA.picks.tradeValue;
-      }
-    });
-    teams.forEach((team, teamIndex) => {
-      team.picks.rank = teamIndex + 1;
+    this.rankingMetricsOptions.slice(0, 2).forEach((metric) => {
+      teams.sort((teamA, teamB) => {
+        return this.getPosGroupValue(teamB.picks, '', metric['value']) - this.getPosGroupValue(teamA.picks, '', metric['value']);
+      });
+      teams.forEach((team, teamIndex) => {
+        switch (metric['value']) {
+          case PowerRankingMarket.FantasyCalc:
+            team.picks.fcRank = teamIndex + 1;
+            break;
+          default:
+            team.picks.rank = teamIndex + 1;
+        }
+      });
     });
     // calculate best starting lineup
     this.calculateADPValue(teams);
@@ -246,15 +281,24 @@ export class PowerRankingsService {
       team.starterRank = index + 1;
     });
     // rank overall points
-    teams.sort((teamA, teamB) => {
-      if (isSuperflex) {
-        return teamB.sfTradeValueOverall - teamA.sfTradeValueOverall;
-      } else {
-        return teamB.tradeValueOverall - teamA.tradeValueOverall;
-      }
-    });
-    teams.forEach((team, index) => {
-      team.overallRank = index + 1;
+    this.rankingMetricsOptions.slice(0, 2).forEach((metric) => {
+      teams.sort((teamA, teamB) => {
+        switch (metric['value']) {
+          case PowerRankingMarket.FantasyCalc:
+            return !this.leagueService.selectedLeague.isSuperflex ? teamB.fcTradeValueOverall - teamA.fcTradeValueOverall: teamB.fcSfTradeValueOverall - teamA.fcSfTradeValueOverall;     
+          default:
+            return !this.leagueService.selectedLeague.isSuperflex ? teamB.tradeValueOverall - teamA.tradeValueOverall: teamB.sfTradeValueOverall - teamA.sfTradeValueOverall;    
+        }
+      });
+      teams.forEach((team, teamIndex) => {
+        switch (metric['value']) {
+          case PowerRankingMarket.FantasyCalc:
+            team.fcOverallRank = teamIndex + 1;
+            break;
+          default:
+            team.overallRank = teamIndex + 1;
+        }
+      });
     });
     this.setTeamTiers(teams, isSuperflex);
   }
@@ -443,18 +487,18 @@ export class PowerRankingsService {
 
     // assign tier based on grouping
     groups.reverse().map((group, ind) => {
-        // set super team if criteria is met
-        if (group.length === 1 && ind === 0) {
-          group[0].tier = ind;
-          // set trust the process if criteria is met
-        } else if (group.length === 1 && ind === groups.length - 1) {
-          group[0].tier = 5;
-        } else {
-          group.map((team) => {
-            team.tier = ind + 1;
-          });
-        }
+      // set super team if criteria is met
+      if (group.length === 1 && ind === 0) {
+        group[0].tier = ind;
+        // set trust the process if criteria is met
+      } else if (group.length === 1 && ind === groups.length - 1) {
+        group[0].tier = 5;
+      } else {
+        group.map((team) => {
+          team.tier = ind + 1;
+        });
       }
+    }
     );
   }
 
@@ -557,4 +601,58 @@ export class PowerRankingsService {
     }
     return null;
   }
+
+  /**
+   * get position group value based on settings
+   * @param group 
+   * @param metric 
+   * @param selectedMarket
+   * @returns 
+   */
+  getPosGroupValue(group: PositionPowerRanking, metric: string = '', selectedMarket: FantasyMarket = this.playerService.selectedMarket): number {
+    switch (selectedMarket) {
+      case FantasyMarket.FantasyCalc:
+        if (metric === 'rank') {
+          return group.fcRank;
+        }
+        return !this.leagueService.selectedLeague.isSuperflex ?
+          group.fcTradeValue : group.fcSfTradeValue;
+      default:
+        if (metric === 'rank') {
+          return group.rank;
+        }
+        return !this.leagueService.selectedLeague.isSuperflex ?
+          group.tradeValue : group.sfTradeValue;
+    }
+  }
+
+  /**
+   * get power rankings value based on settings
+   * @param team 
+   * @param metric
+   * @param selectedMarket
+   * @returns 
+   */
+  getTeamPowerRankingValue(team: TeamPowerRanking, metric: string = '', selectedMarket: FantasyMarket = this.playerService.selectedMarket): number {
+    switch (selectedMarket) {
+      case FantasyMarket.FantasyCalc:
+        if (metric === 'rank') {
+          return team.fcOverallRank;
+        }
+        return !this.leagueService.selectedLeague.isSuperflex ?
+          team.fcTradeValueOverall : team.fcSfTradeValueOverall;
+      default:
+        if (metric === 'rank') {
+          return team.overallRank;
+        }
+        return !this.leagueService.selectedLeague.isSuperflex ?
+          team.tradeValueOverall : team.sfTradeValueOverall
+    }
+  }
+}
+
+export enum PowerRankingMarket {
+  KeepTradeCut,
+  FantasyCalc,
+  ADP
 }

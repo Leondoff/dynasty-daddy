@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
+import { FantasyMarket, FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
 import { LeagueService } from 'src/app/services/league.service';
 import { PlayerService } from 'src/app/services/player.service';
