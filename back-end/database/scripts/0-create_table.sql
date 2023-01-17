@@ -13,6 +13,8 @@ create table player_values
     trade_value int,
     fc_sf_trade_value int,
     fc_trade_value int,
+    fc_sf_position_rank int,
+    fc_position_rank int,
     created_at timestamp not null default CURRENT_TIMESTAMP
 );
 
@@ -187,19 +189,19 @@ select distinct
 on (player_info.name_id) player_info.name_id              as name_id,
     pi.sleeper_id                    as sleeper_id,
     pi.mfl_id,
-    player_info.full_name            as full_name,
-    player_info.first_name           as first_name,
-    player_info.last_name            as last_name,
-    player_info.team                 as team,
-    player_info.position             as position,
-    player_info.age                  as age,
-    player_info.experience           as experience,
-    player_info.injury_status        as injury_status,
-    coalesce(pv.trade_value, 0)      as trade_value,
-    coalesce(pv.sf_trade_value, 0)   as sf_trade_value,
-    pv.sf_position_rank              as sf_position_rank,
-    coalesce(pv.position_rank, null) as position_rank,
-    pv.created_at                    as date,
+    player_info.full_name               as full_name,
+    player_info.first_name              as first_name,
+    player_info.last_name               as last_name,
+    player_info.team                    as team,
+    player_info.position                as position,
+    player_info.age                     as age,
+    player_info.experience              as experience,
+    player_info.injury_status           as injury_status,
+    coalesce(pv.trade_value, 0)         as trade_value,
+    coalesce(pv.sf_trade_value, 0)      as sf_trade_value,
+    coalesce(pv.sf_position_rank, null) as sf_position_rank,
+    coalesce(pv.position_rank, null)    as position_rank,
+    pv.created_at                       as date,
     allTimeHighSF.all_time_high_sf,
     allTimeLowSF.all_time_low_sf,
     allTimeHigh.all_time_high,
@@ -248,53 +250,53 @@ CREATE MATERIALIZED VIEW if not exists mat_vw_fc_player_values
 AS
 Select *
 From (
-         WITH allTimeHighSFFc (name_id, all_time_high_sf_fc) as (select player_info.name_id    as name_id,
-                                                                   max(pv.fc_sf_trade_value) as all_time_high_sf_fc
+         WITH allTimeHighSFFc (name_id, fc_all_time_high_sf) as (select player_info.name_id    as name_id,
+                                                                   max(pv.fc_sf_trade_value) as fc_all_time_high_sf
                                                             from player_info
                                                                      left join player_values pv on player_info.name_id = pv.name_id
                                                             group by player_info.name_id),
-              allTimeHighFc (name_id, all_time_high_fc) as (select player_info.name_id as name_id,
-                                                              max(pv.fc_trade_value) as all_time_high_fc
+              allTimeHighFc (name_id, fc_all_time_high) as (select player_info.name_id as name_id,
+                                                              max(pv.fc_trade_value) as fc_all_time_high
                                                        from player_info
                                                                 left join player_values pv on player_info.name_id = pv.name_id
                                                        group by player_info.name_id),
-              allTimeLowSFFc (name_id, all_time_low_sf_fc) as (select player_info.name_id    as name_id,
-                                                                 min(pv.fc_sf_trade_value) as all_time_low_sf_fc
+              allTimeLowSFFc (name_id, fc_all_time_low_sf) as (select player_info.name_id    as name_id,
+                                                                 min(pv.fc_sf_trade_value) as fc_all_time_low_sf
                                                           from player_info
                                                                    left join player_values pv on player_info.name_id = pv.name_id
                                                           group by player_info.name_id),
-              allTimeLowFc (name_id, all_time_low_fc) as (select player_info.name_id as name_id,
-                                                            min(pv.fc_trade_value) as all_time_low_fc
+              allTimeLowFc (name_id, fc_all_time_low) as (select player_info.name_id as name_id,
+                                                            min(pv.fc_trade_value) as fc_all_time_low
                                                      from player_info
                                                               left join player_values pv on player_info.name_id = pv.name_id
                                                      group by player_info.name_id),
-              threeMonthHighSfFc (name_id, three_month_high_sf_fc) as (select player_info.name_id    as name_id,
-                                                                         max(pv.fc_sf_trade_value) as three_month_high_sf_fc
+              threeMonthHighSfFc (name_id, fc_three_month_high_sf) as (select player_info.name_id    as name_id,
+                                                                         max(pv.fc_sf_trade_value) as fc_three_month_high_sf
                                                                   from player_info
                                                                            left join player_values pv on player_info.name_id = pv.name_id
                                                                   WHERE pv.created_at::date > now()::date - 90
          group by player_info.name_id),
-    threeMonthHighFc (name_id, three_month_high_fc) as (select player_info.name_id as name_id,
-    max(pv.fc_trade_value) as three_month_high_fc
+    threeMonthHighFc (name_id, fc_three_month_high) as (select player_info.name_id as name_id,
+    max(pv.fc_trade_value) as fc_three_month_high
 from player_info
     left join player_values pv on player_info.name_id = pv.name_id
 WHERE pv.created_at::date > now()::date - 90
 group by player_info.name_id),
-    threeMonthLowSfFc (name_id, three_month_low_sf_fc) as (select player_info.name_id    as name_id,
-    min(pv.fc_sf_trade_value) as three_month_low_sf_fc
+    threeMonthLowSfFc (name_id, fc_three_month_low_sf) as (select player_info.name_id    as name_id,
+    min(pv.fc_sf_trade_value) as fc_three_month_low_sf
 from player_info
     left join player_values pv on player_info.name_id = pv.name_id
 WHERE pv.created_at::date > now()::date - 90
 group by player_info.name_id),
-    threeMonthLowFc (name_id, three_month_low_fc) as (select player_info.name_id as name_id,
-    min(pv.fc_trade_value) as three_month_low_fc
+    threeMonthLowFc (name_id, fc_three_month_low) as (select player_info.name_id as name_id,
+    min(pv.fc_trade_value) as fc_three_month_low
 from player_info
     left join player_values pv on player_info.name_id = pv.name_id
 WHERE pv.created_at::date > now()::date - 90
 group by player_info.name_id),
-    lastMonthValue (name_id, last_month_value_sf_fc, last_month_value_fc) as (select player_info.name_id as name_id,
-    pv.fc_sf_trade_value   as last_month_value_sf_fc,
-    pv.fc_trade_value      as last_month_value_fc
+    lastMonthValue (name_id, fc_last_month_value_sf, fc_last_month_value) as (select player_info.name_id as name_id,
+    pv.fc_sf_trade_value   as fc_last_month_value_sf,
+    pv.fc_trade_value      as fc_last_month_value
 from player_info
     left join player_values pv on player_info.name_id = pv.name_id
 WHERE pv.created_at::date = now()::date - 30)
@@ -302,16 +304,18 @@ select distinct
 on (player_info.name_id) player_info.name_id,
     coalesce(pv.fc_trade_value, 0)      as fc_trade_value,
     coalesce(pv.fc_sf_trade_value, 0)   as fc_sf_trade_value,
-    allTimeHighSFFc.all_time_high_sf_fc,
-    allTimeLowSFFc.all_time_low_sf_fc,
-    allTimeHighFc.all_time_high_fc,
-    allTimeLowFc.all_time_low_fc,
-    threeMonthHighSfFc.three_month_high_sf_fc,
-    threeMonthHighFc.three_month_high_fc,
-    threeMonthLowSfFc.three_month_low_sf_fc,
-    threeMonthLowFc.three_month_low_fc,
-    lastMonthValue.last_month_value_fc,
-    lastMonthValue.last_month_value_sf_fc
+    coalesce(pv.fc_sf_position_rank, null)      as fc_sf_position_rank,
+    coalesce(pv.fc_position_rank, null)   as fc_position_rank,
+    allTimeHighSFFc.fc_all_time_high_sf,
+    allTimeLowSFFc.fc_all_time_low_sf,
+    allTimeHighFc.fc_all_time_high,
+    allTimeLowFc.fc_all_time_low,
+    threeMonthHighSfFc.fc_three_month_high_sf,
+    threeMonthHighFc.fc_three_month_high,
+    threeMonthLowSfFc.fc_three_month_low_sf,
+    threeMonthLowFc.fc_three_month_low,
+    lastMonthValue.fc_last_month_value,
+    lastMonthValue.fc_last_month_value_sf
 from player_info
     left join player_values pv
 on player_info.name_id = pv.name_id and pv.created_at > now()::date - 1
@@ -327,9 +331,8 @@ on player_info.name_id = pv.name_id and pv.created_at > now()::date - 1
 where player_info.active is not false
 order by player_info.name_id, pv.id desc
     ) as T
-order by fc_sf_trade_value dess
+order by fc_sf_trade_value desc
 WITH NO DATA;
 
 CREATE UNIQUE INDEX ON mat_vw_fc_player_values (name_id);
 REFRESH MATERIALIZED VIEW mat_vw_fc_player_values;
--- REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_fc_player_values;
