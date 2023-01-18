@@ -12,6 +12,7 @@ import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 })
 export class HeaderComponent extends BaseComponent implements OnInit {
 
+  hasClosedHeader: boolean = false;
 
   constructor(public leagueService: LeagueService,
               public configService: ConfigService,

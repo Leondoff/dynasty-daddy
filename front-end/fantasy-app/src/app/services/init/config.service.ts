@@ -24,6 +24,12 @@ export class ConfigService extends BaseComponent {
 
   private _isMobile: boolean = false;
 
+  private _showHeaderInfo: boolean = false;
+
+  private _headerInfoText: string = '';
+
+  private _headerInfoURL: string = '';
+
   /** config options list for application */
   configOptions: ConfigOption[] = [];
 
@@ -38,6 +44,18 @@ export class ConfigService extends BaseComponent {
     return this._isMobile;
   }
 
+  get isShowInfoHeader(): boolean {
+    return this._showHeaderInfo;
+  }
+
+  get headerInfoText(): string {
+    return this._headerInfoText;
+  }
+
+  get headerInfoURL(): string {
+    return this._headerInfoURL;
+  }
+
   checkIfMobile = () =>
     this._isMobile = this.deviceDetectorService.isMobile()
 
@@ -47,6 +65,9 @@ export class ConfigService extends BaseComponent {
     // load config options
     this.addSubscriptions(this.configApiService.fetchAllConfigOptions().subscribe((options) => {
         this.configOptions = options;
+        this._showHeaderInfo = this.getConfigOptionByKey('show_header_info')?.configValue === 'true';
+        this._headerInfoText = this.getConfigOptionByKey('header_info_text')?.configValue;
+        this._headerInfoURL = this.getConfigOptionByKey('header_info_url')?.configValue;
       }
     ));
   }
