@@ -42,3 +42,10 @@
 .insight__row div {
   flex: 1 1 auto;
 }
+
+.open-window-button {
+  font-size: 18px;
+  cursor: pointer;
+  vertical-align: sub;
+  margin-left: 5px;
+}

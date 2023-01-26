@@ -61,7 +61,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
         display: true,
         type: 'time',
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: false,
@@ -72,7 +72,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
       yAxes: [{
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: false,
@@ -167,7 +167,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
           this.selectedPlayerValues.map(dataPoint => {
             if (new Date(new Date(dateLabel).setHours(0, 0, 0, 0)).getTime()
               === new Date(new Date(dataPoint.date).setHours(0, 0, 0, 0)).getTime()) {
-              dataList.push(this.playerService.getTradeValue(dataPoint, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket));
+              dataList.push(this.playerService.getTradeValue(dataPoint, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket) || 0);
               this.lineChartLabels.push(this.playerComparisonService.formatDateForDisplay(dataPoint.date));
               dataPointInd++;
             }
@@ -187,10 +187,19 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
           : dataList[dataList.length - 1] > dataList[0]) {
           this.chartColors = [
             {
-              backgroundColor: 'rgba(55,185,32,0.4)',
-              borderColor: '#4ab92d',
-              pointBackgroundColor: '#4ab92d',
-              pointBorderColor: '#ffffff'
+              backgroundColor: 'rgba(87, 235, 161, 0.25)',
+              borderColor: '#57eba1',
+              pointBackgroundColor: '#96F2C4',
+              pointBorderColor: '#96F2C4'
+            }
+          ];
+        } else {
+          this.chartColors = [
+            {
+              backgroundColor: 'rgba(254, 129, 128, 0.25)',
+              borderColor: '#fe8180',
+              pointBackgroundColor: '#ffadad',
+              pointBorderColor: '#ffadad'
             }
           ];
         }

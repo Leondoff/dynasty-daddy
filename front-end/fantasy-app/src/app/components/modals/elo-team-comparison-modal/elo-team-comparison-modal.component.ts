@@ -1,14 +1,13 @@
 import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {BaseChartDirective, Label} from 'ng2-charts';
-import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {Classic20} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {LeagueService} from '../../../services/league.service';
 import {PowerRankingsService} from '../../services/power-rankings.service';
 import {PlayerService} from '../../../services/player.service';
 import {MatDialog} from '@angular/material/dialog';
 import Chart from 'chart.js';
 import * as ChartAnnotation from 'chartjs-plugin-annotation';
+import { ComparisonColorPalette } from '../../services/color.service';
 
 @Component({
   selector: 'app-elo-team-comparison-modal',
@@ -43,7 +42,7 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
         id: 'x-axis-0',
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -55,7 +54,7 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
         id: 'y-axis-0',
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -88,7 +87,7 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
     },
     plugins: {
       colorschemes: {
-        scheme: Classic20,
+        scheme: ComparisonColorPalette,
         override: true
       }
     }

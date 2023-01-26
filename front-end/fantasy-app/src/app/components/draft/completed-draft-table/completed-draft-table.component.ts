@@ -8,8 +8,6 @@ import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlaye
 import { ConfigService } from '../../../services/init/config.service';
 import { ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective, Label } from 'ng2-charts';
-import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import { ClassicColorBlind10 } from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import { PlayerComparisonService } from '../../services/player-comparison.service';
 import { Router } from '@angular/router';
 import { NflService } from '../../../services/utilities/nfl.service';
@@ -17,6 +15,7 @@ import { LeagueSwitchService } from '../../services/league-switch.service';
 import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
 import { CompletedDraft } from '../../../model/league/CompletedDraft';
 import { DraftService } from '../../services/draft.service';
+import { BarChartColorPalette } from '../../services/color.service';
 
 @Component({
   selector: 'app-completed-draft-table',
@@ -49,7 +48,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     },
     plugins: {
       colorschemes: {
-        scheme: ClassicColorBlind10,
+        scheme: BarChartColorPalette,
         override: true
       }
     }

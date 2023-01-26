@@ -1,14 +1,13 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
 import { ChartDataSets, ChartOptions } from 'chart.js';
-import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import { ClassicColorBlind10 } from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import { BaseChartDirective, Label } from 'ng2-charts';
 import { PlayerService } from '../../../services/player.service';
 import { BaseComponent } from '../../base-component.abstract';
 import { PlayerInsights } from '../../model/playerInsights';
 import { LeagueService } from '../../../services/league.service';
 import { variance } from 'simple-statistics';
+import { ComparisonColorPalette } from '../../services/color.service';
 
 @Component({
   selector: 'app-player-details-weekly-stats-line-chart',
@@ -56,7 +55,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
       xAxes: [{
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -70,7 +69,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
         },
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -79,10 +78,9 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
         }
       }],
     },
-
     plugins: {
       colorschemes: {
-        scheme: ClassicColorBlind10,
+        scheme: ComparisonColorPalette,
         override: true
       }
     }
@@ -160,14 +158,13 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
         this.lineChartLabels.push(this.playerService.getWeekByIndex(i));
       }
     }
-    this.lineChartData.push({ label: 'Actual', data: stats.reverse() });
-    this.lineChartData.push({ label: 'Projected', data: projections.reverse() });
+    this.lineChartData.push({ label: 'Actual', data: stats.reverse(), fill: true });
+    this.lineChartData.push({ label: 'Projected', data: projections.reverse(), fill: false });
     this.lineChartLabels.reverse();
     if (this.chart && this.chart.chart) {
       this.chart.chart.data.datasets = this.lineChartData;
       this.chart.chart.data.labels = this.lineChartLabels;
     }
-
     this.adjacentADP = this.playerService.getAdjacentADPPlayersByNameId(this.selectedPlayer.name_id, this.selectedPlayer.position);
   }
 

@@ -13,7 +13,7 @@ import {LeagueSwitchService} from "../../services/league-switch.service";
 @Component({
   selector: 'app-player-pos-table',
   templateUrl: './player-pos-table.component.html',
-  styleUrls: ['./player-pos-table.component.css']
+  styleUrls: ['./player-pos-table.component.scss']
 })
 export class PlayerPosTableComponent implements OnInit, OnChanges {
 

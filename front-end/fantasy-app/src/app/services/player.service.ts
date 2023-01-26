@@ -220,7 +220,7 @@ export class PlayerService {
   getWeekByIndex(index: number): string {
     index--;
     if (this.nflService.stateOfNFL) {
-      let weekNum = this.nflService.stateOfNFL.completedWeek - index;
+      let weekNum = this.nflService.getCompletedWeekForSeason(this.nflService.stateOfNFL.season) - index;
       let year = Number(this.nflService.stateOfNFL.season);
       if (weekNum < 1) {
         year--;

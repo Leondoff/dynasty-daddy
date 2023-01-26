@@ -1,3 +1,5 @@
+@import "../../../../styles.scss";
+
 table {
   width: 100%;
   min-width: 500px;
@@ -8,11 +10,11 @@ tr.power-ranking-detail-row {
 }
 
 tr.power-ranking-element-row:not(.power-ranking-expanded-row):hover {
-  background: #c33163;
+  background: $dark-bg-lighter-30;
 }
 
 tr.power-ranking-element-row:not(.power-ranking-expanded-row):active {
-  background: #c33163;
+  background: mat-color($mat-accent, main);
 }
 
 .power-ranking-element-row td {

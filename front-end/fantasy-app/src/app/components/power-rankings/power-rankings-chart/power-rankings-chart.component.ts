@@ -3,11 +3,10 @@ import { BaseChartDirective, Label } from 'ng2-charts';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { LeagueService } from '../../../services/league.service';
 import { ConfigService } from '../../../services/init/config.service';
-import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import { ClassicColorBlind10 } from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import { TeamPowerRanking } from '../../model/powerRankings';
 import { LeagueType } from "../../../model/league/LeagueDTO";
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
+import { BarChartColorPalette } from '../../services/color.service';
 
 @Component({
   selector: 'app-power-rankings-chart',
@@ -45,7 +44,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
         display: true,
         stacked: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: !this.configService.isMobile,
@@ -57,7 +56,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
         display: true,
         stacked: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -75,7 +74,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
     },
     plugins: {
       colorschemes: {
-        scheme: ClassicColorBlind10,
+        scheme: BarChartColorPalette,
         override: true
       }
     }

@@ -9,12 +9,12 @@
 
   <div class="center-text"  *ngIf="configService.isMobile">
     <div class="margin-top-10">
-      <mat-slide-toggle color="primary" class="player-value-checkbox-margin"
+      <mat-slide-toggle color="accent" class="player-value-checkbox-margin"
                         [(ngModel)]="playerComparisonService.isSuperFlex"
                         (change)="playerComparisonService.refreshTable()" class="player-value-checkbox-margin">
         SuperFlex
       </mat-slide-toggle>
-      <mat-slide-toggle color="primary"
+      <mat-slide-toggle color="accent"
                         [(ngModel)]="playerComparisonService.isGroupMode"
                         (change)="playerComparisonService.toggleGroupMode()" class="player-value-checkbox-margin">
         Groups
@@ -28,7 +28,7 @@
   <div class="margin-top-25">
     <div class="button-left">
       <button mat-raised-button color="accent" (click)="addNewPlayerModal()"><mat-icon class="add-icon-button">add</mat-icon> Players {{playerComparisonService.isGroupMode ? 'to Group 1' : ''}}</button>
-      <mat-slide-toggle color="primary" *ngIf="!configService.isMobile"
+      <mat-slide-toggle color="accent" *ngIf="!configService.isMobile"
                         [(ngModel)]="playerComparisonService.isGroupMode"
                         (change)="playerComparisonService.toggleGroupMode()" class="player-value-checkbox-margin">
         Enable Groups
@@ -36,7 +36,7 @@
     </div>
     <span class="container_spacer"></span>
     <span class="button-right" *ngIf="!configService.isMobile">
-      <mat-slide-toggle color="primary" class="player-value-checkbox-margin"
+      <mat-slide-toggle color="accent" class="player-value-checkbox-margin"
                         [(ngModel)]="playerComparisonService.isSuperFlex"
                         (change)="playerComparisonService.refreshTable(selectedMarket)" class="player-value-checkbox-margin">
       SuperFlex

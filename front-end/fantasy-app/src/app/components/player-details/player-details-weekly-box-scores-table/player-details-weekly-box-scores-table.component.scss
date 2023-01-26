@@ -1,13 +1,11 @@
+@import "../../../../styles.scss";
+
 .mat-row:nth-child(even){
-  background-color: #373737;
+  background-color: $dark-bg-lighter-10;
 }
 
 .box-score-element-row:hover {
-  background: #577380;
-}
-
-.box-score-element-row:active {
-  background: #577380;
+  background: $dark-bg-lighter-30;
 }
 
 .content {

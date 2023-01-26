@@ -3,11 +3,10 @@ import {BaseChartDirective} from 'ng2-charts';
 import {ChartOptions} from 'chart.js';
 import {PlayerComparisonService} from '../../services/player-comparison.service';
 import {BaseComponent} from '../../base-component.abstract';
-import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {RdYlBu11} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.brewer';
 import {ConfigService} from '../../../services/init/config.service';
 import {tap} from 'rxjs/operators';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
+import { ComparisonColorPalette } from '../../services/color.service';
 
 @Component({
   selector: 'app-trade-value-line-chart',
@@ -86,7 +85,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
         threshold: 100
       },
       colorschemes: {
-        scheme: RdYlBu11,
+        scheme: ComparisonColorPalette,
         override: true
       }
     }

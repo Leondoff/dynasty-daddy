@@ -21,7 +21,7 @@
           </mat-select>
         </mat-form-field>
       </span>
-      <button mat-icon-button color="accent"
+      <button mat-icon-button
               (click)="expandCollapseAll()"><mat-icon>{{isExpanded() ? 'close_fullscreen' : 'open_in_full'}}</mat-icon>
       </button>
       <button mat-icon-button *ngIf="!configService.isMobile" (click)="showAdvancedSettings = !showAdvancedSettings">
@@ -195,7 +195,7 @@
           class="power-ranking-element-row"
           [class.power-ranking-expanded-row]="checkExpanded(element)"
           (click)="pushPopElement(element)"
-          [ngClass]="{'accent__color__background': leagueService.leagueUser?.userData.user_id === element.team.owner?.userId}">
+          [ngClass]="{'mat-table-highlight': leagueService.leagueUser?.userData.user_id === element.team.owner?.userId}">
       </tr>
       <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="power-ranking-detail-row"></tr>
     </table>
