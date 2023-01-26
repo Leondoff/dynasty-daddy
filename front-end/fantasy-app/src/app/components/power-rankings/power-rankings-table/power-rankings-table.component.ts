@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { PositionPowerRanking, TeamPowerRanking, TeamRankingTier } from '../../model/powerRankings';
+import { TeamPowerRanking } from '../../model/powerRankings';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
@@ -12,7 +12,6 @@ import { DisplayService } from '../../../services/utilities/display.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { LeagueType } from "../../../model/league/LeagueDTO";
 import { PowerRankingMarket, PowerRankingsService } from '../../services/power-rankings.service';
-import { group } from 'console';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -26,7 +25,7 @@ export const detailExpand = trigger('detailExpand',
 @Component({
   selector: 'app-power-rankings-table',
   templateUrl: './power-rankings-table.component.html',
-  styleUrls: ['./power-rankings-table.component.css'],
+  styleUrls: ['./power-rankings-table.component.scss'],
   animations: [detailExpand],
 })
 export class PowerRankingsTableComponent implements OnInit, OnChanges {
@@ -98,11 +97,20 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    */
   refreshPowerRankingCache(): void {
     this.playerCache = {};
+
+    // sort rosters by selected metric
+    this.powerRankingsService.powerRankings = this.powerRankingsService.sortRosterByValue(
+      this.powerRankingsService.powerRankings,
+      this.isSuperFlex
+    )
+
     this.playerService.playerValues.forEach(player => {
       this.playerCache[player.name_id] = {
         value: this.playerService.getTradeValue(player, this.isSuperFlex),
-        isRed: this.playerService.getTradeValue(player, this.isSuperFlex) < 2000,
-        isGreen: this.playerService.getTradeValue(player, this.isSuperFlex) > 6000
+        isRed: this.playerService.getTradeValue(player, this.isSuperFlex) <
+          (this.playerService.selectedMarket === FantasyMarket.FantasyCalc ? 1500 : 2000),
+        isGreen: this.playerService.getTradeValue(player, this.isSuperFlex) >
+          (this.playerService.selectedMarket === FantasyMarket.FantasyCalc ? 5500 : 6000),
       }
     });
     this.powerRankingCache = {};

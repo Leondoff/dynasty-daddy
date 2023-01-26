@@ -1,12 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {Label} from 'ng2-charts';
-import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
 import {MatchupService} from '../../services/matchup.service';
 import {LeagueTeam} from '../../../model/league/LeagueTeam';
 import {LeagueService} from '../../../services/league.service';
 import {NflService} from "../../../services/utilities/nfl.service";
+import { ComparisonColorPalette as ComparisonColorPalette } from '../../services/color.service';
 
 @Component({
   selector: 'app-fantasy-team-details-weekly-points-chart',
@@ -43,7 +42,7 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
       xAxes: [{
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -54,7 +53,7 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
       yAxes: [{
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -65,7 +64,7 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
     },
     plugins: {
       colorschemes: {
-        scheme: ClassicColorBlind10,
+        scheme: ComparisonColorPalette,
         override: true
       }
     }
@@ -121,7 +120,7 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
       label: this.selectedTeam.owner?.teamName,
       data: weeklyPoints
     });
-    this.lineChartData.push({label: 'Opponent', data: oppPoints});
+    this.lineChartData.push({label: 'Opponent', data: oppPoints, fill: false});
   }
 
 }

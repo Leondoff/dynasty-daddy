@@ -11,7 +11,7 @@
     <ng-container *ngFor="let col of displayColumns.slice(1)">
       <ng-container [matColumnDef]="col">
         <mat-header-cell class="mat-table-center-text" *matHeaderCellDef>{{matchupService.getTeamName(col, leagueService.leagueTeamDetails)}}</mat-header-cell>
-        <mat-cell class="mat-table-center-text" [ngClass]="{'accent__color__background': areSameTeam(col, element.rosterId)}" *matCellDef="let element">{{getRecord(element, col)}}</mat-cell>
+        <mat-cell class="mat-table-center-text" [ngClass]="{'mat-table-highlight': areSameTeam(col, element.rosterId)}" *matCellDef="let element">{{getRecord(element, col)}}</mat-cell>
       </ng-container>
     </ng-container>
 

@@ -55,7 +55,7 @@
             </div>
             <div>
               <button mat-raised-button [disabled]="!usernameInput || (usernameInput == leagueService.leagueUser?.userData?.username && selectedYear == leagueService.selectedYear)"
-                      color="primary" (click)="fetchSleeperInfo()">Sign In
+                      color="accent" (click)="fetchSleeperInfo()">Sign In
               </button>
             </div>
             <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 0">
@@ -84,7 +84,7 @@
             </mat-form-field>
             <div>
               <button mat-raised-button [disabled]="!sleeperLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
-                      color="primary" (click)="loginWithSleeperLeagueId()">Sign In
+                      color="accent" (click)="loginWithSleeperLeagueId()">Sign In
               </button>
             </div>
           </div>
@@ -126,7 +126,7 @@
               </div>
               <div>
                 <button mat-raised-button [disabled]="!mflLeagueIdInput"
-                        color="primary" (click)="loginWithMFLLeagueId()">Sign In
+                        color="accent" (click)="loginWithMFLLeagueId()">Sign In
                 </button>
               </div>
             </div>

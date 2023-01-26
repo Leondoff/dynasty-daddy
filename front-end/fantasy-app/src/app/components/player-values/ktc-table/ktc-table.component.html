@@ -6,7 +6,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{configService.isMobile ? element.first_name.substr(0, 1) + '. ' +
         element.last_name : element.full_name}} <span *ngIf="(element.experience === 0 && element.position !== 'PI')"
-          matBadge="R" matBadgeOverlap="false"></span>
+          matBadge="R" matBadgeOverlap="false" matBadgeColor="accent"></span>
         <!--          <span class="small-text__light">{{element.team}}</span>-->
       </mat-cell>
     </ng-container>
@@ -29,13 +29,13 @@
     <ng-container matColumnDef="injury">
       <mat-header-cell *matHeaderCellDef></mat-header-cell>
       <mat-cell *matCellDef="let element"><span *ngIf="element.injury_status != ''"
-          [matTooltip]="element.injury_status" [matTooltipPosition]="'above'"><mat-icon class="color_yellow"
+          [matTooltip]="element.injury_status" [matTooltipPosition]="'above'"><mat-icon color="warn"
             *ngIf="element.injury_status == 'Questionable'">question_mark</mat-icon><mat-icon color="warn"
             *ngIf="element.injury_status == 'Doubtful'">question_mark</mat-icon><mat-icon color="warn"
-            *ngIf="element.injury_status == 'COV'">coronavirus</mat-icon><mat-icon color="warn"
+            *ngIf="element.injury_status == 'COV'">coronavirus</mat-icon><mat-icon class="urgent__alert"
             *ngIf="element.injury_status == 'IR' || element.injury_status == 'PUP'">healing</mat-icon><mat-icon
             color="warn" *ngIf="element.injury_status == 'Sus'">report_problem</mat-icon><mat-icon
-            *ngIf="element.injury_status == 'NA'">question_mark</mat-icon><mat-icon class="color_yellow"
+            *ngIf="element.injury_status == 'NA'">question_mark</mat-icon><mat-icon color="warn"
             *ngIf="element.injury_status == 'Out'">healing</mat-icon></span></mat-cell>
     </ng-container>
 
@@ -94,7 +94,7 @@
     <ng-container *ngIf="selectedLeague" matColumnDef="owner">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Owner</mat-header-cell>
       <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">
-        <div *ngIf="leagueService.isLeagueLoaded">{{element.owner?.ownerName || '---'}}</div>
+        <div *ngIf="leagueService.isLeagueLoaded()">{{element.owner?.ownerName || '---'}}</div>
         <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent"
           style="max-width: 200px"></mat-progress-bar>
       </mat-cell>
@@ -104,7 +104,7 @@
     <mat-row class="ktc-table-element-row" *matRowDef="let row; columns: displayedColumns;"
       [routerLink]="row.position !== 'PI' ? ['../details', row.name_id] : []"
       [queryParams]="leagueSwitchService.buildQueryParams()"
-      [ngClass]="{'accent__color__background': leagueService.leagueUser && leagueService.leagueUser?.userData?.user_id === row.owner?.userId && selectedLeague}"
+      [ngClass]="{'mat-table-highlight': leagueService.leagueUser && leagueService.leagueUser?.userData?.user_id === row.owner?.userId && selectedLeague}"
       gaEvent="nav_player_page" gaCategory="page_nav"></mat-row>
   </mat-table>
   <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>

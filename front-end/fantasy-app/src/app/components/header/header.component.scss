@@ -1,0 +1,13 @@
+@import "../../../styles.scss";
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+a {
+  all: unset;
+}
+
+.header-info {
+  background-color: mat-color($mat-success, darker);
+}

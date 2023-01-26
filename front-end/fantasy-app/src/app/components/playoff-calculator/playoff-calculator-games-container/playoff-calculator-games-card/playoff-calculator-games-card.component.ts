@@ -8,7 +8,7 @@ import {LeagueSwitchService} from '../../../services/league-switch.service';
 @Component({
   selector: 'app-playoff-calculator-games-card',
   templateUrl: './playoff-calculator-games-card.component.html',
-  styleUrls: ['./playoff-calculator-games-card.component.css']
+  styleUrls: ['./playoff-calculator-games-card.component.scss']
 })
 export class PlayoffCalculatorGamesCardComponent implements OnInit {
 
@@ -41,7 +41,7 @@ export class PlayoffCalculatorGamesCardComponent implements OnInit {
   ngOnInit(): void {
     this.team1 = this.leagueService.getTeamByRosterId(this.game?.matchUpDetails.team1RosterId);
     this.team2 = this.leagueService.getTeamByRosterId(this.game?.matchUpDetails.team2RosterId);
-    this.probGradient = this.colorService.getColorGradientArray(100, '#7f7f7f', '#0173aa');
+    this.probGradient = this.colorService.getColorGradientArray(101, '#28283c', '#3f7bfb');
   }
 
   /** get color for percent */

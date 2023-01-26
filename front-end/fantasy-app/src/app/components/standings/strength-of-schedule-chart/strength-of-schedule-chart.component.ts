@@ -33,7 +33,7 @@ export class StrengthOfScheduleChartComponent implements OnInit {
       xAxes: [{
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -44,7 +44,7 @@ export class StrengthOfScheduleChartComponent implements OnInit {
       yAxes: [{
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -75,7 +75,7 @@ export class StrengthOfScheduleChartComponent implements OnInit {
       this.data.push({
         data: team.value,
         label: 'Avg. Opp. Starters',
-        backgroundColor: this.colorService.getColorGradientArray(sortedData.length, '#ED2938', '#00FF7F'),
+        backgroundColor: this.colorService.getColorGradientArray(sortedData.length,  '#e31d1d', '#008f51'),
         hoverBackgroundColor: [],
       });
       this.dataLabels.push(team.team);

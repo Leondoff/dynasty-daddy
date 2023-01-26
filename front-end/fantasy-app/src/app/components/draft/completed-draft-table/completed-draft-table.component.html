@@ -52,16 +52,16 @@
         <div class="margin-top-10">
           <span class="container_spacer"></span>
           <span class="button-right">
-            <mat-checkbox class="player-value-checkbox-margin" color="primary" [(ngModel)]="filterPosGroup[0]"
+            <mat-checkbox class="player-value-checkbox-margin" color="accent" [(ngModel)]="filterPosGroup[0]"
                           (change)="updateDraftFilters()">QB
             </mat-checkbox>
-            <mat-checkbox class="player-value-checkbox-margin" color="primary" [(ngModel)]="filterPosGroup[1]"
+            <mat-checkbox class="player-value-checkbox-margin" color="accent" [(ngModel)]="filterPosGroup[1]"
                           (change)="updateDraftFilters()">RB
             </mat-checkbox>
-            <mat-checkbox class="player-value-checkbox-margin" color="primary" [(ngModel)]="filterPosGroup[2]"
+            <mat-checkbox class="player-value-checkbox-margin" color="accent" [(ngModel)]="filterPosGroup[2]"
                           (change)="updateDraftFilters()">WR
             </mat-checkbox>
-            <mat-checkbox class="player-value-checkbox-margin" color="primary" [(ngModel)]="filterPosGroup[3]"
+            <mat-checkbox class="player-value-checkbox-margin" color="accent" [(ngModel)]="filterPosGroup[3]"
                           (change)="updateDraftFilters()">TE
             </mat-checkbox>
           </span>
@@ -119,7 +119,7 @@
 
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="draft-element-row"
-                     [ngClass]="{'accent__color__background': leagueService.leagueUser?.userData.username === draftCache[row.pickNumber].owner}"></mat-row>
+                     [ngClass]="{'mat-table-highlight': leagueService.leagueUser?.userData.username === draftCache[row.pickNumber].owner}"></mat-row>
           </mat-table>
           <mat-paginator [pageSizeOptions]="[pageLength, 2 * pageLength, 4 * pageLength]" showFirstLastButtons></mat-paginator>
         </div>

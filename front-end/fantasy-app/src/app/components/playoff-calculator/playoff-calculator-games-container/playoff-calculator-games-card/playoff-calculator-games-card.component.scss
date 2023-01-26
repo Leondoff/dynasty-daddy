@@ -1,3 +1,5 @@
+@import "../../../../../styles.scss";
+
 .mat-card {
   width: 350px;
   height: auto;
@@ -15,9 +17,9 @@
 }
 
 .game-win__color {
-  background: darkgreen;
+  background: mat-color($mat-success, darker);
 }
 
 .game-score__color {
-  background: #7f7f7f;
+  background: $dark-bg-lighter-20;
 }

@@ -22,7 +22,7 @@ import { DraftCapital } from '../../model/assets/DraftCapital';
 @Component({
   selector: 'app-trade-center',
   templateUrl: './trade-center.component.html',
-  styleUrls: ['./trade-center.component.css']
+  styleUrls: ['./trade-center.component.scss']
 })
 export class TradeCenterComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -366,7 +366,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   getTradeBackgroundColor(): object {
     if (this.tradeTool.tradePackage?.valueToEvenTrade
       > this.tradeTool.tradePackage?.acceptanceBufferAmount) {
-      return { 'background-color': 'darkred' };
+      return { 'background-color': '#ff3b3b' };
     } else {
       return { 'background-color': '#434342' };
     }
