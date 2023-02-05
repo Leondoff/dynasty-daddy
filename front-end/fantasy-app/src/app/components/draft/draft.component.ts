@@ -76,4 +76,9 @@ export class DraftComponent extends BaseComponent implements OnInit {
     this.resetTrigger = !this.resetTrigger;
   }
 
+  createMockDraft(): void {
+    this.mockDraftService.mapDraftObjects(this.leagueService.leagueTeamDetails);
+    console.log(this.leagueService.getTeamByRosterId(1))
+  }
+
 }

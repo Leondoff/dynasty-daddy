@@ -543,11 +543,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    */
   handleMockDraftCapitalChanges(team: LeagueTeam, picksToRemove: FantasyPlayer[], picksToAdd: FantasyPlayer[]): void {
     picksToRemove.forEach(pick => {
-      if (pick.first_name === team.draftCapital[0]?.year) {
-        team.draftCapital = this.removePickFromDraftCapital(team.draftCapital, pick);
-      } else {
         team.futureDraftCapital = this.removePickFromDraftCapital(team.futureDraftCapital, pick);
-      }
     });
     team.futureDraftCapital = team.futureDraftCapital.concat(...picksToAdd.map(asset => this.convertFantasyPlayerToDraftCapital(asset)));
   }
