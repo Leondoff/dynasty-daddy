@@ -213,7 +213,7 @@ export class TradeService {
       // get draft capital for team in filter
       const team = this.leagueService.getTeamByUserId(userId);
       if (team && this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
-        const picks = this.leagueService.getDraftCapitalToNameId([...team.futureDraftCapital, ...team.draftCapital]);
+        const picks = this.leagueService.getDraftCapitalToNameId(team.futureDraftCapital);
         picks.map(pick => {
           const pickPlayer = this.playerService.getPlayerByNameId(pick);
           if (pickPlayer) {

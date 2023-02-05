@@ -10,6 +10,6 @@ export class LeagueTeam {
 
   owner: LeagueOwnerDTO;
   roster: LeagueRosterDTO;
-  draftCapital: DraftCapital[] = [];
+  upcomingDraftOrder: DraftCapital[] = [];
   futureDraftCapital: DraftCapital[] = [];
 }
