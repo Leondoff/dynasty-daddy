@@ -122,7 +122,6 @@ export class SleeperService {
       // fetch rosters and drafts picks
       return this.sleeperApiService.getSleeperRostersByLeagueId(league.selectedLeague.leagueId)
         .pipe(mergeMap((rosters: LeagueRosterDTO[]) => {
-          console.log('Fetching Roster Ids...');
           league.leagueTeamDetails = [];
           rosters.map(roster => {
             // find existing owner or create a new one
@@ -166,7 +165,7 @@ export class SleeperService {
                 if (draft.type === 'snake' && i + 1 % 2 === 0) {
                   slotPick = league.selectedLeague.totalRosters - slot;
                 }
-                draftPicks.push(new DraftCapital(true, i + 1, Number(slot), draft.season));
+                draftPicks.push(new DraftCapital(i + 1, Number(slot), draft.season));
               }
               const rosterId = draft.slotToRosterId[slot];
               tradedPicks.reverse();
@@ -181,7 +180,7 @@ export class SleeperService {
                     pickSlot = league.selectedLeague.totalRosters - pickSlot;
                   }
                   if (!SleeperService.doesPickAlreadyExist(tradedPick, draftPicks, pickSlot)) {
-                    draftPicks.push(new DraftCapital(false, tradedPick.round, pickSlot, tradedPick.season));
+                    draftPicks.push(new DraftCapital(tradedPick.round, pickSlot, tradedPick.season));
                   }
                 }
               });
@@ -229,7 +228,7 @@ export class SleeperService {
             year++
           ) {
             for (let i = 0; i < league.selectedLeague.draftRounds; i++) {
-              draftPicks.push(new DraftCapital(true, i + 1, league.selectedLeague.totalRosters / 2, year.toString()));
+              draftPicks.push(new DraftCapital(i + 1, league.selectedLeague.totalRosters / 2, year.toString(), team.roster.rosterId));
             }
           }
           // TODO repeated code here
@@ -238,8 +237,8 @@ export class SleeperService {
               && tradedPick.ownerId === team.roster.rosterId
               && tradedPick.rosterId !== team.roster.rosterId
             ) {
-              draftPicks.push(new DraftCapital(false, tradedPick.round,
-                league.selectedLeague.totalRosters / 2, tradedPick.season));
+              draftPicks.push(new DraftCapital(tradedPick.round,
+                league.selectedLeague.totalRosters / 2, tradedPick.season, tradedPick.rosterId));
             }
           });
           tradedPicks.map((tradedPick: LeagueRawTradePicksDTO) => {

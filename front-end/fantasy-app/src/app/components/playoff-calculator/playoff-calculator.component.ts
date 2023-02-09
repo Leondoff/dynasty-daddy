@@ -10,10 +10,10 @@ import { FormControl } from '@angular/forms';
 import { BaseComponent } from '../base-component.abstract';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { ActivatedRoute } from '@angular/router';
-import { AddPlayerComparisonModalComponent } from "../modals/add-player-comparison-modal/add-player-comparison-modal.component";
 import { EloTeamComparisonModalComponent } from "../modals/elo-team-comparison-modal/elo-team-comparison-modal.component";
 import { MatDialog } from "@angular/material/dialog";
 import { PlayerService } from "../../services/player.service";
+import { DownloadService } from 'src/app/services/utilities/download.service';
 
 @Component({
   selector: 'app-playoff-calculator',
@@ -76,6 +76,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     public matchupService: MatchupService,
     public configService: ConfigService,
     private playerService: PlayerService,
+    private downloadService: DownloadService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
     public leagueSwitchService: LeagueSwitchService) {
@@ -247,22 +248,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
 
     const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Season_Projections_${this.leagueService.selectedLeague.season}_${this.selectedWeek}.csv`;
 
-    const blob = new Blob([seasonOddsCSV], { type: 'text/csv;charset=utf-8;' });
-    if (navigator.msSaveBlob) { // IE 10+
-      navigator.msSaveBlob(blob, filename);
-    } else {
-      const link = document.createElement('a');
-      if (link.download !== undefined) { // feature detection
-        // Browsers that support HTML5 download attribute
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    }
+    this.downloadService.downloadCSVFile(seasonOddsCSV, filename);
   }
 
   /**

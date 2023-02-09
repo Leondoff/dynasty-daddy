@@ -153,9 +153,9 @@ export class PowerRankingsService {
         let fcSfPickTradeValue = 0;
         let fcPickTradeValue = 0;
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
-          const allPicks = team.futureDraftCapital;
-          allPicks.map(pick => {
+          team.futureDraftCapital.map(pick => {
             for (const pickValue of pickValues) {
+              // TODO refactor this
               if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {
                 if (pick.pick < 5 && pickValue.last_name.includes('Early')) {
                   sfPickTradeValue += pickValue.sf_trade_value;
@@ -599,6 +599,23 @@ export class PowerRankingsService {
       }
     }
     return null;
+  }
+
+  /**
+   * Fetch Team array if not top 20%
+   * @param rosterId teams roster id
+   * @returns 
+   */
+  getTeamNeedsFromRosterId(rosterId: number): string[] {
+    const teamNeeds = [];
+    const team = this.findTeamFromRankingsByRosterId(rosterId);
+    team.roster.slice().sort((a,b) => b.rank - a.rank).forEach(pos => {
+      if (pos.rank > this.powerRankings.length * .35) {
+        teamNeeds.push(pos.position);
+      }
+    });
+
+    return teamNeeds;
   }
 
   /**

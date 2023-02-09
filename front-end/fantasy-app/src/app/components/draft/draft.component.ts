@@ -1,12 +1,15 @@
-import {Component, OnInit} from '@angular/core';
-import {LeagueService} from '../../services/league.service';
-import {PlayerService} from '../../services/player.service';
-import {BaseComponent} from '../base-component.abstract';
-import {DraftService} from '../services/draft.service';
-import {LeagueSwitchService} from '../services/league-switch.service';
-import {delay} from 'rxjs/operators';
-import {ActivatedRoute} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { LeagueService } from '../../services/league.service';
+import { PlayerService } from '../../services/player.service';
+import { BaseComponent } from '../base-component.abstract';
+import { DraftService } from '../services/draft.service';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { delay } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from 'src/app/services/init/config.service';
+import { DownloadService } from 'src/app/services/utilities/download.service';
+import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
+import { PowerRankingsService } from '../services/power-rankings.service';
 
 @Component({
   selector: 'app-draft',
@@ -18,6 +21,9 @@ export class DraftComponent extends BaseComponent implements OnInit {
   /** rerender table when refreshed */
   resetTrigger: boolean = true;
 
+  /** show advanced settings  */
+  showAdvancedSettings: boolean = false;
+
   /** no drafts found error message */
   noDraftsErrMsg = 'Cannot find any drafts. Please select a league.';
 
@@ -25,11 +31,13 @@ export class DraftComponent extends BaseComponent implements OnInit {
   errorLoadingMsg = 'Error generating draft. Please try reloading league.'
 
   constructor(public leagueService: LeagueService,
-              public playerService: PlayerService,
-              public leagueSwitchService: LeagueSwitchService,
-              public configService: ConfigService,
-              private route: ActivatedRoute,
-              public mockDraftService: DraftService) {
+    public playerService: PlayerService,
+    public leagueSwitchService: LeagueSwitchService,
+    public configService: ConfigService,
+    private route: ActivatedRoute,
+    private powerRankingsService: PowerRankingsService,
+    private downloadService: DownloadService,
+    public mockDraftService: DraftService) {
     super();
   }
 
@@ -41,8 +49,8 @@ export class DraftComponent extends BaseComponent implements OnInit {
     }
     this.addSubscriptions(
       this.leagueSwitchService.leagueChanged$.pipe(delay(1000)).subscribe(() => {
-          this.initServices();
-        }
+        this.initServices();
+      }
       ),
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
@@ -55,16 +63,12 @@ export class DraftComponent extends BaseComponent implements OnInit {
    * @private
    */
   private initServices(): void {
-    this.mockDraftService.generateDraft(
-      this.playerService.playerValues,
-      this.leagueService.selectedLeague.isSuperflex,
-      this.leagueService.upcomingDrafts[0]?.playerType
-    );
-    this.mockDraftService.mapDraftObjects(this.leagueService.leagueTeamDetails);
-    if (this.mockDraftService.teamPicks.length > 0) {
-      this.mockDraftService.selectedDraft = 'upcoming';
+    this.mockDraftService.mockDraftRounds = this.leagueService.selectedLeague.draftRounds || 4;
+    this.mockDraftService.generateDraft();
+    if (this.leagueService.completedDrafts.length > 0) {
+      this.mockDraftService.selectedDraft = this.leagueService.completedDrafts[0];
     } else {
-      this.mockDraftService.selectedDraft = this.leagueService.completedDrafts[0] || null;
+      this.mockDraftService.selectedDraft = this.mockDraftService.teamPicks.length > 0 ? 'upcoming' : null;
     }
   }
 
@@ -72,13 +76,66 @@ export class DraftComponent extends BaseComponent implements OnInit {
    * wraps mock draft service call to reset
    */
   resetMockDraft(): void {
-    this.mockDraftService.resetDraftList();
     this.resetTrigger = !this.resetTrigger;
   }
 
+  /**
+   * Refresh mock draft player set
+   */
+  changeDraftPlayers(): void {
+    this.mockDraftService.generateDraft();
+    this.resetMockDraft();
+  }
+
+  /**
+   * select market handle
+   * @param market new market
+   */
+  onMarketChange(market): void {
+    this.playerService.selectedMarket = market;
+    if (this.mockDraftService.selectedDraft === 'upcoming') {
+      this.changeDraftPlayers()
+    }
+  }
+
+  /**
+   * generate a mock draft
+   */
   createMockDraft(): void {
+    this.mockDraftService.teamPicks = [];
+    this.mockDraftService.selectedDraft = 'upcoming';
     this.mockDraftService.mapDraftObjects(this.leagueService.leagueTeamDetails);
-    console.log(this.leagueService.getTeamByRosterId(1))
+    this.resetMockDraft();
+  }
+
+  /**
+   * Exports mock draft data to CSV file
+   */
+  exportMockDraft(): void {
+    const draftData: any[][] = []
+    draftData.push([`Mock Draft for ${this.leagueService.selectedLeague.name} - ${this.mockDraftService.mockDraftRounds} Rounds - ${this.leagueService.selectedLeague.isSuperflex ? 'Superflex' : 'Standard (1 QB)'}`]);
+    draftData.push([]);
+    draftData.push([
+      ['Pick', 'Team', 'Owner', 'Notes', 'Team Needs', 'Player', 'Position', 'Age', 'KeepTradeCut Value', 'FantasyCalc Value'],
+    ]);
+    this.mockDraftService.teamPicks.forEach((pick, ind) => {
+      const player = this.mockDraftService.mockDraftSelectedPlayers[ind];
+      const row = [pick.pickdisplay, pick.pickTeam, pick.pickOwner,
+        pick.originalRosterId !== pick.rosterId ? `Traded from ${this.leagueService.getTeamByRosterId(pick.originalRosterId)?.owner.teamName}` : "",
+        `${this.powerRankingsService.getTeamNeedsFromRosterId(pick.rosterId).join("-")}`,
+        player?.full_name, player?.position, player?.age,
+        this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex, FantasyMarket.KeepTradeCut),
+        this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex, FantasyMarket.FantasyCalc)
+      ];
+
+      draftData.push(row);
+    });
+
+    const formattedDraftData = draftData.map(e => e.join(',')).join('\n');
+
+    const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Mock_Draft_${this.mockDraftService.mockDraftRounds}_Rounds_${new Date().toISOString().slice(0, 10)}.csv`;
+
+    this.downloadService.downloadCSVFile(formattedDraftData, filename);
   }
 
 }
