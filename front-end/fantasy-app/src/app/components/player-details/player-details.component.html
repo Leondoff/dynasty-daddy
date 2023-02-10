@@ -40,29 +40,33 @@
           <div class="small-text__light text__light light_bg_color">Position Rank</div>
           <div class="mid-bold-text">{{this.playerService.getTradeValue(selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank') || '--'}}</div>
         </div>
-        <div class="standings-col vertical-break__right__dark">
+        <div class="standings-col vertical-break__right__dark" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Experience</div>
           <div class="mid-bold-text">{{selectedPlayer.experience == 0 ? 'Rookie' : selectedPlayer.experience}}
             Year{{selectedPlayer.experience >= 1 ? 's' : ''}}</div>
         </div>
-        <div class="standings-col vertical-break__right__dark">
+        <div class="standings-col vertical-break__right__dark" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">{{playerService.playerStatsYear}} Points</div>
           <div class="mid-bold-text">{{playerService.getPlayerPointsByFormat(selectedPlayer.sleeper_id, (selectedLeague?.getLeagueScoringFormat() || 'pts_half_ppr')) || '--'}}</div>
         </div>
-        <div class="standings-col">
+        <div class="standings-col" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Last 5 Weeks Average</div>
           <div class="mid-bold-text">{{getLast5WeekAverage()}}</div>
         </div>
+        <div class="standings-col" *ngIf="configService.isMobile">
+          <div class="small-text__light text__light light_bg_color">Trade Value</div>
+          <div class="mid-bold-text">{{playerService.getTradeValue(selectedPlayer, leagueService?.selectedLeague?.isSuperflex)}}</div>
+        </div>
       </div>
     </div>
-    <div class="flex-item-details grid-15">
+    <div class="flex-item-details grid-15" *ngIf="!configService.isMobile">
       <div class="button-right center-text">
         <mat-card>
-          <div class="text__light">{{configService.isMobile ? 'Value' : 'Trade Value'}}</div>
+          <div class="text__light">Trade Value</div>
           <div *ngIf="leagueService.selectedLeague" class="large-bold-header-text">{{playerService.getTradeValue(selectedPlayer, leagueService?.selectedLeague?.isSuperflex, playerService.selectedMarket)}}
           <div class="small-text__light margin-top-10">{{playerService.getTradeValue(selectedPlayer, leagueService?.selectedLeague?.isSuperflex, playerService.selectedMarket, 'change')}}% change in 30 days</div></div>
-          <div *ngIf="!leagueService.selectedLeague" [ngClass]="{'large-bold-header-text': !configService.isMobile}"><span class="small-text__light">Superflex: </span>  {{playerService.getTradeValue(selectedPlayer, true, playerService.selectedMarket)}}
-            <div *ngIf="!configService.isMobile"><span class="small-text__light">Standard: </span> {{playerService.getTradeValue(selectedPlayer, false, playerService.selectedMarket)}}</div>
+          <div *ngIf="!leagueService.selectedLeague"><span class="small-text__light">Superflex: </span>  {{playerService.getTradeValue(selectedPlayer, true, playerService.selectedMarket)}}
+            <div><span class="small-text__light">Standard: </span> {{playerService.getTradeValue(selectedPlayer, false, playerService.selectedMarket)}}</div>
           </div>
         </mat-card>
       </div>

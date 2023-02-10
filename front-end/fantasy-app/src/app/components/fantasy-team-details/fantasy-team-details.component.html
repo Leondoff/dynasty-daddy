@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="flex-item-details grid-70">
-      <div class="large-bold-header-text">Team {{selectedTeam?.owner?.teamName}}</div>
+      <div [ngClass]="{'large-bold-header-text': !configService.isMobile, 'mid-bold-text': configService.isMobile}">Team {{selectedTeam?.owner?.teamName}}</div>
       <br>
       <div>
         <span
@@ -34,15 +34,15 @@
           <div class="small-text__light text__light light_bg_color">Tier</div>
           <div class="mid-bold-text">{{displayService.getTierFromNumber(powerRankingsService.findTeamFromRankingsByRosterId(selectedTeam?.roster.rosterId).tier)}}</div>
         </div>
-        <div class="standings-col vertical-break__right__dark">
+        <div class="standings-col vertical-break__right__dark" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Starter Rank</div>
           <div class="mid-bold-text">{{powerRankingsService.findTeamFromRankingsByRosterId(selectedTeam?.roster.rosterId).starterRank}}</div>
         </div>
-        <div class="standings-col vertical-break__right__dark">
+        <div class="standings-col vertical-break__right__dark" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Overall Rank</div>
           <div class="mid-bold-text">{{powerRankingsService.findTeamFromRankingsByRosterId(selectedTeam?.roster.rosterId).overallRank}}</div>
         </div>
-        <div class="standings-col vertical-break__right__dark">
+        <div class="standings-col vertical-break__right__dark" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Average Points</div>
           <div class="mid-bold-text" *ngIf="seasonInsights">{{seasonInsights['avg_points']}}</div>
         </div>
