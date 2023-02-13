@@ -10,18 +10,6 @@ playerExceptionsMap = {
     'jeffwilsonrb': 'jefferywilsonrb'
 }
 
-# format pick number to be a string
-# this is needed to align with name id format
-def formatPickNumber(round):
-    if round == '1':
-        return '1st'
-    elif round == '2':
-        return '2nd'
-    elif round == '3':
-        return '3rd'
-    else:
-        return '4th'    
-
 # format api response to dict
 # Dict format will be {value: number, rank: number}
 def formatFantasyCalcDict(response):
@@ -30,7 +18,7 @@ def formatFantasyCalcDict(response):
         # special formatting for picks
         if player['player']['position'] == 'PICK':
             pickNameIds = []
-            pickRound = formatPickNumber(player['player']['name'][-1])
+            pickRound = PlayerService.formatPickNumber(player['player']['name'][-1])
             for pickType in ['early', 'mid', 'late']:
                  pickNameIds.append(player['player']['name'][0 : 4] + pickType + pickRound + 'pi')
             for pick in pickNameIds:
