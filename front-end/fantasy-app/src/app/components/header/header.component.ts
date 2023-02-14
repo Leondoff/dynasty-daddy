@@ -8,10 +8,11 @@ import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent extends BaseComponent implements OnInit {
 
+  hasClosedHeader: boolean = false;
 
   constructor(public leagueService: LeagueService,
               public configService: ConfigService,

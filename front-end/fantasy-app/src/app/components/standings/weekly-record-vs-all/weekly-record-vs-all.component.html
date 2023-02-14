@@ -11,7 +11,7 @@
     <ng-container *ngFor="let col of displayColumns.slice(1, displayColumns.length-1)">
       <ng-container [matColumnDef]="col">
         <mat-header-cell class="mat-table-center-text" *matHeaderCellDef mat-sort-header>Week {{col}}</mat-header-cell>
-        <mat-cell class="mat-table-center-text" *matCellDef="let element" [ngClass]="{'disabled__color': element.records[col][0] === 0 && element.records[col][1] === 0}" >{{getRecord(element, col)}}</mat-cell>
+        <mat-cell class="mat-table-center-text" *matCellDef="let element" [ngClass]="{'light_bg_color': element.records[col][0] === 0 && element.records[col][1] === 0}" >{{getRecord(element, col)}}</mat-cell>
       </ng-container>
     </ng-container>
 

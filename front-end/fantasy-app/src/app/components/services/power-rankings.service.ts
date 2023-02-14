@@ -153,8 +153,7 @@ export class PowerRankingsService {
         let fcSfPickTradeValue = 0;
         let fcPickTradeValue = 0;
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
-          // combine upcoming and future draft capital for rankings
-          const allPicks = team.draftCapital.concat(team.futureDraftCapital);
+          const allPicks = team.futureDraftCapital;
           allPicks.map(pick => {
             for (const pickValue of pickValues) {
               if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {

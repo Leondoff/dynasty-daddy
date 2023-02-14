@@ -1,4 +1,8 @@
 <div class="app-header">
+  <div *ngIf="configService.isShowInfoHeader && !hasClosedHeader" class="center-text header-info" [ngStyle]="configService.isMobile ? {'font-size': '12px', 'height': '38px'} : {'font-size': '22px', 'height': '64px'}">
+    {{configService.headerInfoText}}<span class="button-right" style="cursor: pointer; padding-right: 10px" [ngStyle]="configService.isMobile ? {'font-size': '30px'} : {'font-size': '40px'}"><mat-icon (click)="hasClosedHeader = true">close</mat-icon></span>
+    <div><a href="{{configService.headerInfoURL}}" target="_blank" gaEvent="click_header_info" gaCategory="nav_sponsor"><span class="link--text__dot__underline">Click here for more!</span></a></div>
+  </div>
   <mat-toolbar color="primary" *ngIf="!configService.isMobile">
     <button mat-button [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="header-icon">home</mat-icon> Home</button>
     <button mat-button [matMenuTriggerFor]="leagueMenu"><mat-icon class="header-icon">people</mat-icon> League</button>

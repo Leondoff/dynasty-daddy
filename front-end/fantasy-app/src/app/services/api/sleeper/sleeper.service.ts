@@ -140,8 +140,7 @@ export class SleeperService {
           return this.sleeperApiService.getSleeperDraftbyLeagueId(league.selectedLeague.leagueId)
             .pipe(mergeMap((draftIds: string[]) => {
               draftIds.map((draftId: string) => {
-                console.log('processing draft:', draftId);
-                return this.assignPicks$(draftId, league).subscribe();
+                return this.loadDrafts$(draftId, league).subscribe();
               }
               );
               return this.generateFutureDraftCapital$(league);
@@ -154,7 +153,7 @@ export class SleeperService {
 
 
   // TODO clean up mock draft code... create separate object or use draft capital from team details
-  private assignPicks$(draftId: string, league: LeagueWrapper): Observable<LeagueWrapper> {
+  private loadDrafts$(draftId: string, league: LeagueWrapper): Observable<LeagueWrapper> {
     return this.sleeperApiService.getSleeperDraftDetailsByDraftId(draftId).pipe(mergeMap((draft: LeagueRawDraftOrderDTO) => {
       if (draft.status === 'pre_draft' && draft.draftOrder) {
         return this.sleeperApiService.getSleeperTradedPicksByDraftId(draft.draftId)
@@ -186,7 +185,7 @@ export class SleeperService {
                   }
                 }
               });
-              team.draftCapital = draftPicks;
+              team.upcomingDraftOrder = draftPicks;
             });
             league.upcomingDrafts.push(draft);
             return of(league);
@@ -219,12 +218,13 @@ export class SleeperService {
    * @private
    */
   private generateFutureDraftCapital$(league: LeagueWrapper): Observable<LeagueWrapper> {
+    const draftPickOffset = league.completedDrafts.length > 0 ? 1 : 0;
     return this.sleeperApiService.getSleeperTradedPicksByLeagueId(league.selectedLeague.leagueId)
       .pipe(mergeMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
         league.leagueTeamDetails.map((team: LeagueTeam) => {
           let draftPicks: DraftCapital[] = [];
           for (
-            let year = Number(league.selectedLeague.season) + 1;
+            let year = Number(league.selectedLeague.season) + draftPickOffset;
             year < Number(league.selectedLeague.season) + 4;
             year++
           ) {
@@ -234,7 +234,7 @@ export class SleeperService {
           }
           // TODO repeated code here
           tradedPicks.map((tradedPick: LeagueRawTradePicksDTO) => {
-            if (Number(tradedPick.season) > Number(league.selectedLeague.season)
+            if (Number(tradedPick.season) >= Number(league.selectedLeague.season) + draftPickOffset
               && tradedPick.ownerId === team.roster.rosterId
               && tradedPick.rosterId !== team.roster.rosterId
             ) {
@@ -243,8 +243,7 @@ export class SleeperService {
             }
           });
           tradedPicks.map((tradedPick: LeagueRawTradePicksDTO) => {
-            if (Number(tradedPick.season) > Number(league.selectedLeague.season)
-              && tradedPick.ownerId !== team.roster.rosterId
+            if (tradedPick.ownerId !== team.roster.rosterId
               && tradedPick.rosterId === team.roster.rosterId
             ) {
               draftPicks = SleeperService.removeDraftPick(draftPicks.slice(), tradedPick);

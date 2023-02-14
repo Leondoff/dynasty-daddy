@@ -7,7 +7,7 @@
 
 <div class="margin-top-25">
   <div class="ktc-table-container">
-    <div>
+    <div [ngStyle]="configService.isMobile ? {'align-self': 'center'} : {}">
       <span [ngClass]="{'button-left': !configService.isMobile}">
         <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" color="accent">
           <mat-label>Search Player</mat-label>
@@ -31,33 +31,33 @@
       <span [ngClass]="{'button-left': !configService.isMobile}">
         <mat-checkbox
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
-          color="primary" [(ngModel)]="playerValueService.filterPosGroup[0]" (change)="playerValueService.applyFilters()">QB</mat-checkbox>
+          color="accent" [(ngModel)]="playerValueService.filterPosGroup[0]" (change)="playerValueService.applyFilters()">QB</mat-checkbox>
         <mat-checkbox
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
-          color="primary" [(ngModel)]="playerValueService.filterPosGroup[1]" (change)="playerValueService.applyFilters()">RB</mat-checkbox>
+          color="accent" [(ngModel)]="playerValueService.filterPosGroup[1]" (change)="playerValueService.applyFilters()">RB</mat-checkbox>
         <mat-checkbox
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
-          color="primary" [(ngModel)]="playerValueService.filterPosGroup[2]" (change)="playerValueService.applyFilters()">WR</mat-checkbox>
+          color="accent" [(ngModel)]="playerValueService.filterPosGroup[2]" (change)="playerValueService.applyFilters()">WR</mat-checkbox>
         <mat-checkbox
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
-          color="primary" [(ngModel)]="playerValueService.filterPosGroup[3]" (change)="playerValueService.applyFilters()">TE</mat-checkbox>
+          color="accent" [(ngModel)]="playerValueService.filterPosGroup[3]" (change)="playerValueService.applyFilters()">TE</mat-checkbox>
         <mat-checkbox
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
-          color="primary" [(ngModel)]="playerValueService.filterPosGroup[4]"
+          color="accent" [(ngModel)]="playerValueService.filterPosGroup[4]"
           [disabled]="playerValueService.showFreeAgents || playerValueService.showRookies || (leagueService.selectedLeague && leagueService.selectedLeague.type !== 2)"
           (change)="playerValueService.applyFilters()">Picks</mat-checkbox>
       </span>
       <span *ngIf="!configService.isMobile" class="container_spacer"></span>
       <span [ngClass]="{'button-right': !configService.isMobile}">
-        <mat-slide-toggle *ngIf="leagueService.leagueStatus !== 'NONE'" color="primary" [(ngModel)]="playerValueService.showFreeAgents"
+        <mat-slide-toggle *ngIf="leagueService.leagueStatus !== 'NONE'" color="accent" [(ngModel)]="playerValueService.showFreeAgents"
           (change)="playerValueService.applyFilters()" class="player-value-checkbox-margin">
           {{configService.isMobile ? 'FA' : 'Free Agents'}}
         </mat-slide-toggle>
-        <mat-slide-toggle color="primary" [(ngModel)]="playerValueService.showRookies" (change)="playerValueService.applyFilters()"
+        <mat-slide-toggle color="accent" [(ngModel)]="playerValueService.showRookies" (change)="playerValueService.applyFilters()"
           class="player-value-checkbox-margin">
           {{configService.isMobile ? 'Rookies' : 'Rookies Only'}}
         </mat-slide-toggle>
-        <mat-slide-toggle color="primary" [(ngModel)]="playerValueService.isSuperFlex"
+        <mat-slide-toggle color="accent" [(ngModel)]="playerValueService.isSuperFlex"
           class="player-value-checkbox-margin">
           {{configService.isMobile ? 'SF' : 'SuperFlex'}}
         </mat-slide-toggle>

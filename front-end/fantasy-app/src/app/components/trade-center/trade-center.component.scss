@@ -1,3 +1,5 @@
+@import "../../../styles.scss";
+
 .trade-dropdown {
   width: 100% !important;
   padding-left: 12.5%;
@@ -30,7 +32,7 @@
 .trade-value-col {
   text-align: right;
   width: 10%;
-  color: lightblue;
+  color: mat-color($mat-accent, lighter);
 }
 
 .trade-value-col-drop {
@@ -94,4 +96,17 @@
 
 .teamSelect {
   font-size: 14px !important;
+}
+
+.failed-trade-text-color {
+  color: mat-color($mat-alert, lighter);
+}
+
+.uneven-trade-bg-color {
+  background-color: mat-color($mat-alert, darker);
+  color: mat-color($mat-alert, lighter);
+}
+
+.fair-trade-bg-color {
+  background-color: $dark-bg-lighter-20;
 }

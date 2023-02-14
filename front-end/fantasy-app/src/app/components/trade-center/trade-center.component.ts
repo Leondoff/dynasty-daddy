@@ -22,7 +22,7 @@ import { DraftCapital } from '../../model/assets/DraftCapital';
 @Component({
   selector: 'app-trade-center',
   templateUrl: './trade-center.component.html',
-  styleUrls: ['./trade-center.component.css']
+  styleUrls: ['./trade-center.component.scss']
 })
 export class TradeCenterComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -366,7 +366,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   getTradeBackgroundColor(): object {
     if (this.tradeTool.tradePackage?.valueToEvenTrade
       > this.tradeTool.tradePackage?.acceptanceBufferAmount) {
-      return { 'background-color': 'darkred' };
+      return { 'background-color': '#ff3b3b' };
     } else {
       return { 'background-color': '#434342' };
     }
@@ -543,11 +543,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    */
   handleMockDraftCapitalChanges(team: LeagueTeam, picksToRemove: FantasyPlayer[], picksToAdd: FantasyPlayer[]): void {
     picksToRemove.forEach(pick => {
-      if (pick.first_name === team.draftCapital[0]?.year) {
-        team.draftCapital = this.removePickFromDraftCapital(team.draftCapital, pick);
-      } else {
         team.futureDraftCapital = this.removePickFromDraftCapital(team.futureDraftCapital, pick);
-      }
     });
     team.futureDraftCapital = team.futureDraftCapital.concat(...picksToAdd.map(asset => this.convertFantasyPlayerToDraftCapital(asset)));
   }

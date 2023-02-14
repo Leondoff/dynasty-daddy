@@ -73,7 +73,7 @@ export class DraftService {
   mapDraftObjects(teams: LeagueTeam[]): void {
     if (this.teamPicks.length === 0) {
       teams.map(team => {
-        for (const pick of team.draftCapital) {
+        for (const pick of team.upcomingDraftOrder) {
           if (pick.year === this.leagueService.selectedLeague.season) {
             this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * 12) + pick.pick,
               this.createPickString(pick),

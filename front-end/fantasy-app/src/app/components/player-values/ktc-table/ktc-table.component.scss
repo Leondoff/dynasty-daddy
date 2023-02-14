@@ -1,3 +1,5 @@
+@import "../../../../styles.scss";
+
 .mat-column-position,
 .mat-column-avg_adp,
 .mat-column-age,
@@ -49,11 +51,9 @@
 }
 
 .ktc-table-element-row:hover {
-  background: #c33163;
+  background: $dark-bg-lighter-30;
 }
 
 .ktc-table-element-row:active {
-  background: #c33163;
+  background: mat-color($mat-accent, main)
 }
-
-.material-icons.color_yellow { color: #fdca40; }

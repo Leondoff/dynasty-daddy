@@ -1,3 +1,5 @@
+@import "../../../../styles.scss";
+
 .mat-column-position,
 .mat-column-age,
 .mat-column-actions {
@@ -48,11 +50,7 @@
 }
 
 .ktc-table-element-row:hover {
-  background: #c33163;
-}
-
-.ktc-table-element-row:active {
-  background: #c33163;
+  background: $dark-bg-lighter-30;
 }
 
 .pos-table-container-wrapper {

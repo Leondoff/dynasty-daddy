@@ -3,8 +3,7 @@ import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {Color} from 'chartjs-plugin-datalabels/types/options';
 import {LeagueService} from '../../../services/league.service';
-import 'chartjs-plugin-colorschemes/src/plugins/plugin.colorschemes';
-import {ClassicColorBlind10} from 'chartjs-plugin-colorschemes/src/colorschemes/colorschemes.tableau';
+import { ComparisonColorPalette } from '../../services/color.service';
 
 @Component({
   selector: 'app-team-transactions-chart',
@@ -40,7 +39,7 @@ export class TeamTransactionsChartComponent implements OnInit {
       xAxes: [{
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -51,7 +50,7 @@ export class TeamTransactionsChartComponent implements OnInit {
       yAxes: [{
         display: true,
         gridLines: {
-          display: true
+          display: false
         },
         scaleLabel: {
           display: true,
@@ -62,7 +61,7 @@ export class TeamTransactionsChartComponent implements OnInit {
     },
     plugins: {
       colorschemes: {
-        scheme: ClassicColorBlind10,
+        scheme: ComparisonColorPalette,
         override: true
       }
     }

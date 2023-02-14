@@ -16,7 +16,7 @@ import { PlayerValueService } from '../../services/player-value.service';
 @Component({
   selector: 'app-ktc-table',
   templateUrl: './ktc-table.component.html',
-  styleUrls: ['./ktc-table.component.css']
+  styleUrls: ['./ktc-table.component.scss']
 })
 export class KtcTableComponent extends BaseComponent implements OnInit, OnChanges {
 

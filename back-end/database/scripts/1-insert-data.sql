@@ -16,3 +16,6 @@ INSERT INTO config (config_key, config_value, description, created_at, updated_a
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('demo_league_id', '815332006815723520', 'League Id for the demo button to load (using older league ids can cause longer loading and unexpected outcomes)', DEFAULT, DEFAULT)
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('allow_mfl_login', 'false', 'Boolean - feature flag to hid or show mfl login', DEFAULT, DEFAULT)
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('enable_wrapped', 'false', 'Boolean - feature flag to enable wrapped buttons', DEFAULT, DEFAULT)
+INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('show_header_info', 'false', 'Boolean - if true display header info bar', DEFAULT, DEFAULT)
+INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('header_info_text', '', 'String - header text for the info bar', DEFAULT, DEFAULT)
+INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('header_info_url', '', 'String - URL for content', DEFAULT, DEFAULT)
