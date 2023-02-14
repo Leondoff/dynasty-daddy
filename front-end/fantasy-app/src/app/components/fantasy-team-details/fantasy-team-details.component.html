@@ -46,17 +46,21 @@
           <div class="small-text__light text__light light_bg_color">Average Points</div>
           <div class="mid-bold-text" *ngIf="seasonInsights">{{seasonInsights['avg_points']}}</div>
         </div>
-        <div class="standings-col vertical-break__right__dark">
+        <div class="standings-col vertical-break__right__dark" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Points For</div>
           <div class="mid-bold-text" *ngIf="seasonInsights">{{seasonInsights['points_for']}}</div>
         </div>
-        <div class="standings-col">
+        <div class="standings-col" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Max Points For</div>
           <div class="mid-bold-text" *ngIf="seasonInsights">{{seasonInsights['points_pot']}}</div>
         </div>
+        <div class="standings-col" *ngIf="configService.isMobile">
+          <div class="small-text__light text__light light_bg_color">Record</div>
+          <div class="mid-bold-text" *ngIf="seasonInsights">{{selectedTeam?.roster.teamMetrics.wins}} - {{selectedTeam?.roster.teamMetrics.losses}}</div>
+        </div>
       </div>
     </div>
-    <div class="flex-item-details grid-15">
+    <div class="flex-item-details grid-15" *ngIf="!configService.isMobile">
       <div class="button-right center-text">
         <mat-card>
           <div class="text__light" style="padding-right: 10px; padding-left: 10px">Record</div>
