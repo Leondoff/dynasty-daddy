@@ -14,7 +14,8 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "chart.js"
+              "chart.js",
+              "chartjs-plugin-colorschemes"
             ],
             "outputPath": "dist/dynasty",
             "index": "src/index.html",
