@@ -40,6 +40,10 @@
   display: none;
 }
 
+.team-draft-player {
+  overflow: unset !important;
+}
+
 ::ng-deep .team-draft-player .mat-select-arrow {
   display: none;
 }
