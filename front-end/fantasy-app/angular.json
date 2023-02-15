@@ -14,7 +14,9 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "chartjs-plugin-colorschemes"
+              "chart.js",
+              "chartjs-plugin-colorschemes",
+              "javascript-color-gradient"
             ],
             "outputPath": "dist/dynasty",
             "index": "src/index.html",
@@ -52,26 +54,26 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
                 }
               ]
-            }
-          }
+            },
+            "development": {}
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "fantasy-app:build"
           },
           "configurations": {
             "production": {
               "browserTarget": "fantasy-app:build:production"
+            },
+            "development": {
+              "browserTarget": "fantasy-app:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -112,17 +114,19 @@
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "fantasy-app:serve"
+            "protractorConfig": "e2e/protractor.conf.js"
           },
           "configurations": {
             "production": {
               "devServerTarget": "fantasy-app:serve:production"
+            },
+            "development": {
+              "devServerTarget": "fantasy-app:serve:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         }
       }
     }
-  },
-  "defaultProject": "fantasy-app"
+  }
 }

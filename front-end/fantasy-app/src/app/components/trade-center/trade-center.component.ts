@@ -3,7 +3,7 @@ import { TradeService } from '../services/trade.service';
 import { TradePackage } from '../model/tradePackage';
 import { PlayerService } from '../../services/player.service';
 import { BaseComponent } from '../base-component.abstract';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { ReplaySubject, Subject, timer } from 'rxjs';
 import { MatSelect } from '@angular/material/select';
 import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
@@ -30,19 +30,19 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   protected players: FantasyPlayer[] = [];
 
   /** control for the selected player */
-  public playerCtrl: FormControl = new FormControl();
+  public playerCtrl: UntypedFormControl = new UntypedFormControl();
 
   /** control for the MatSelect filter keyword */
-  public playerFilterCtrl: FormControl = new FormControl();
+  public playerFilterCtrl: UntypedFormControl = new UntypedFormControl();
 
   /** list of players filtered by search keyword */
   public filteredTeam1Players: ReplaySubject<FantasyPlayer[]> = new ReplaySubject<FantasyPlayer[]>(1);
 
   /** control for the selected player */
-  public player2Ctrl: FormControl = new FormControl();
+  public player2Ctrl: UntypedFormControl = new UntypedFormControl();
 
   /** control for the MatSelect filter keyword */
-  public player2FilterCtrl: FormControl = new FormControl();
+  public player2FilterCtrl: UntypedFormControl = new UntypedFormControl();
 
   /** list of players filtered by search keyword */
   public filteredTeam2Players: ReplaySubject<FantasyPlayer[]> = new ReplaySubject<FantasyPlayer[]>(1);
@@ -218,7 +218,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * filter players for selected dropdown
    * @protected
    */
-  protected filterTeamPlayers(filterCtrl: FormControl, userId: string, filterSubscription: ReplaySubject<FantasyPlayer[]>): any {
+  protected filterTeamPlayers(filterCtrl: UntypedFormControl, userId: string, filterSubscription: ReplaySubject<FantasyPlayer[]>): any {
     if (!this.players) {
       return;
     }

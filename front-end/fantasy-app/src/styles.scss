@@ -1,23 +1,23 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
 
 // Fonts
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
-     
+
 $fontConfig: (
-  display-4: mat-typography-level(112px, 112px, 300, 'Roboto', -0.0134em),
-  display-3: mat-typography-level(56px, 56px, 400, 'Roboto', -0.0089em),
-  display-2: mat-typography-level(45px, 48px, 400, 'Roboto', 0.0000em),
-  display-1: mat-typography-level(34px, 40px, 400, 'Roboto', 0.0074em),
-  headline: mat-typography-level(24px, 32px, 400, 'Roboto', 0.0000em),
-  title: mat-typography-level(20px, 32px, 500, 'Roboto', 0.0075em),
-  subheading-2: mat-typography-level(16px, 28px, 400, 'Roboto', 0.0094em),
-  subheading-1: mat-typography-level(15px, 24px, 500, 'Roboto', 0.0067em),
-  body-2: mat-typography-level(14px, 24px, 500, 'Roboto', 0.0179em),
-  body-1: mat-typography-level(14px, 20px, 400, 'Roboto', 0.0179em),
-  button: mat-typography-level(14px, 14px, 500, 'Roboto', 0.0893em),
-  caption: mat-typography-level(12px, 20px, 400, 'Roboto', 0.0333em),
-  input: mat-typography-level(inherit, 1.125, 400, 'Roboto', 1.5px)
+  display-4: mat.define-typography-level(112px, 112px, 300, 'Roboto', -0.0134em),
+  display-3: mat.define-typography-level(56px, 56px, 400, 'Roboto', -0.0089em),
+  display-2: mat.define-typography-level(45px, 48px, 400, 'Roboto', 0.0000em),
+  display-1: mat.define-typography-level(34px, 40px, 400, 'Roboto', 0.0074em),
+  headline: mat.define-typography-level(24px, 32px, 400, 'Roboto', 0.0000em),
+  title: mat.define-typography-level(20px, 32px, 500, 'Roboto', 0.0075em),
+  subheading-2: mat.define-typography-level(16px, 28px, 400, 'Roboto', 0.0094em),
+  subheading-1: mat.define-typography-level(15px, 24px, 500, 'Roboto', 0.0067em),
+  body-2: mat.define-typography-level(14px, 24px, 500, 'Roboto', 0.0179em),
+  body-1: mat.define-typography-level(14px, 20px, 400, 'Roboto', 0.0179em),
+  button: mat.define-typography-level(14px, 14px, 500, 'Roboto', 0.0893em),
+  caption: mat.define-typography-level(12px, 20px, 400, 'Roboto', 0.0333em),
+  input: mat.define-typography-level(inherit, 1.125, 400, 'Roboto', 1.5px)
 );
 
 // Foreground Elements
@@ -31,21 +31,21 @@ $dark-dividers: rgba($dark-primary-text, 0.12);
 $dark-focused: rgba($dark-primary-text, 0.12);
 
 $mat-light-theme-foreground: (
-  base:              black,
-  divider:           $dark-dividers,
-  dividers:          $dark-dividers,
-  disabled:          $dark-disabled-text,
-  disabled-button:   rgba($dark-text, 0.26),
-  disabled-text:     $dark-disabled-text,
-  elevation:         black,
-  secondary-text:    $dark-accent-text,
-  hint-text:         $dark-disabled-text,
-  accent-text:       $dark-accent-text,
-  icon:              $dark-accent-text,
-  icons:             $dark-accent-text,
-  text:              $dark-primary-text,
-  slider-min:        $dark-primary-text,
-  slider-off:        rgba($dark-text, 0.26),
+  base: black,
+  divider: $dark-dividers,
+  dividers: $dark-dividers,
+  disabled: $dark-disabled-text,
+  disabled-button: rgba($dark-text, 0.26),
+  disabled-text: $dark-disabled-text,
+  elevation: black,
+  secondary-text: $dark-accent-text,
+  hint-text: $dark-disabled-text,
+  accent-text: $dark-accent-text,
+  icon: $dark-accent-text,
+  icons: $dark-accent-text,
+  text: $dark-primary-text,
+  slider-min: $dark-primary-text,
+  slider-off: rgba($dark-text, 0.26),
   slider-off-active: $dark-disabled-text,
 );
 
@@ -58,83 +58,83 @@ $light-dividers: rgba($light-primary-text, 0.12);
 $light-focused: rgba($light-primary-text, 0.12);
 
 $mat-dark-theme-foreground: (
-  base:              $light-text,
-  divider:           $light-dividers,
-  dividers:          $light-dividers,
-  disabled:          $light-disabled-text,
-  disabled-button:   rgba($light-text, 0.3),
-  disabled-text:     $light-disabled-text,
-  elevation:         black,
-  hint-text:         $light-disabled-text,
-  secondary-text:    $light-accent-text,
-  accent-text:       $light-accent-text,
-  text:              $light-text,
-  slider-min:        $light-text,
-  slider-off:        rgba($light-text, 0.3),
+  base: $light-text,
+  divider: $light-dividers,
+  dividers: $light-dividers,
+  disabled: $light-disabled-text,
+  disabled-button: rgba($light-text, 0.3),
+  disabled-text: $light-disabled-text,
+  elevation: black,
+  hint-text: $light-disabled-text,
+  secondary-text: $light-accent-text,
+  accent-text: $light-accent-text,
+  text: $light-text,
+  slider-min: $light-text,
+  slider-off: rgba($light-text, 0.3),
   slider-off-active: rgba($light-text, 0.3),
 );
 
 // Background config
 // Light bg
-$light-background:    #fafafa;
-$light-bg-darker-5:   darken($light-background, 5%);
-$light-bg-darker-10:  darken($light-background, 10%);
-$light-bg-darker-20:  darken($light-background, 20%);
-$light-bg-darker-30:  darken($light-background, 30%);
-$light-bg-lighter-5:  lighten($light-background, 5%);
-$dark-bg-tooltip:     lighten(#1d1d28, 20%);
-$dark-bg-alpha-4:     rgba(#1d1d28, 0.04);
-$dark-bg-alpha-12:    rgba(#1d1d28, 0.12);
+$light-background: #fafafa;
+$light-bg-darker-5: darken($light-background, 5%);
+$light-bg-darker-10: darken($light-background, 10%);
+$light-bg-darker-20: darken($light-background, 20%);
+$light-bg-darker-30: darken($light-background, 30%);
+$light-bg-lighter-5: lighten($light-background, 5%);
+$dark-bg-tooltip: lighten(#1d1d28, 20%);
+$dark-bg-alpha-4: rgba(#1d1d28, 0.04);
+$dark-bg-alpha-12: rgba(#1d1d28, 0.12);
 
 $mat-light-theme-background: (
-  background:               $light-background,
-  status-bar:               $light-bg-darker-20,
-  app-bar:                  $light-bg-darker-5,
-  hover:                    $dark-bg-alpha-4,
-  card:                     $light-bg-lighter-5,
-  dialog:                   $light-bg-lighter-5,
-  tooltip:                  $dark-bg-tooltip,
-  disabled-button:          $dark-bg-alpha-12,
-  raised-button:            $light-bg-lighter-5,
-  focused-button:           $dark-focused,
-  selected-button:          $light-bg-darker-20,
+  background: $light-background,
+  status-bar: $light-bg-darker-20,
+  app-bar: $light-bg-darker-5,
+  hover: $dark-bg-alpha-4,
+  card: $light-bg-lighter-5,
+  dialog: $light-bg-lighter-5,
+  tooltip: $dark-bg-tooltip,
+  disabled-button: $dark-bg-alpha-12,
+  raised-button: $light-bg-lighter-5,
+  focused-button: $dark-focused,
+  selected-button: $light-bg-darker-20,
   selected-disabled-button: $light-bg-darker-30,
-  disabled-button-toggle:   $light-bg-darker-10,
-  unselected-chip:          $light-bg-darker-10,
-  disabled-list-option:     $light-bg-darker-10,
+  disabled-button-toggle: $light-bg-darker-10,
+  unselected-chip: $light-bg-darker-10,
+  disabled-list-option: $light-bg-darker-10,
 );
 
 // Dark bg
-$dark-background:     #1d1d28;
-$dark-bg-lighter-5:   lighten($dark-background, 5%);
-$dark-bg-lighter-10:  lighten($dark-background, 10%);
-$dark-bg-lighter-20:  lighten($dark-background, 20%);
-$dark-bg-lighter-30:  lighten($dark-background, 30%);
-$dark-bg-lighter-40:  lighten($dark-background, 40%);
-$light-bg-alpha-4:    rgba(#fafafa, 0.04);
-$light-bg-alpha-12:   rgba(#fafafa, 0.12);
+$dark-background: #1d1d28;
+$dark-bg-lighter-5: lighten($dark-background, 5%);
+$dark-bg-lighter-10: lighten($dark-background, 10%);
+$dark-bg-lighter-20: lighten($dark-background, 20%);
+$dark-bg-lighter-30: lighten($dark-background, 30%);
+$dark-bg-lighter-40: lighten($dark-background, 40%);
+$light-bg-alpha-4: rgba(#fafafa, 0.04);
+$light-bg-alpha-12: rgba(#fafafa, 0.12);
 
 // Background palette for dark themes.
 $mat-dark-theme-background: (
-  background:               $dark-background,
-  status-bar:               $dark-bg-lighter-20,
-  app-bar:                  $dark-bg-lighter-5,
-  hover:                    $light-bg-alpha-4,
-  card:                     $dark-bg-lighter-5,
-  dialog:                   $dark-bg-lighter-5,
-  tooltip:                  $dark-bg-lighter-20,
-  disabled-button:          $light-bg-alpha-12,
-  raised-button:            $dark-bg-lighter-5,
-  focused-button:           $light-focused,
-  selected-button:          $dark-bg-lighter-20,
+  background: $dark-background,
+  status-bar: $dark-bg-lighter-20,
+  app-bar: $dark-bg-lighter-5,
+  hover: $light-bg-alpha-4,
+  card: $dark-bg-lighter-5,
+  dialog: $dark-bg-lighter-5,
+  tooltip: $dark-bg-lighter-20,
+  disabled-button: $light-bg-alpha-12,
+  raised-button: $dark-bg-lighter-5,
+  focused-button: $light-focused,
+  selected-button: $dark-bg-lighter-20,
   selected-disabled-button: $dark-bg-lighter-30,
-  disabled-button-toggle:   $dark-bg-lighter-10,
-  unselected-chip:          $dark-bg-lighter-20,
-  disabled-list-option:     $dark-bg-lighter-10,
+  disabled-button-toggle: $dark-bg-lighter-10,
+  unselected-chip: $dark-bg-lighter-20,
+  disabled-list-option: $dark-bg-lighter-10,
 );
 
 // Compute font config
-@include mat-core($fontConfig);
+@include mat.core($fontConfig);
 
 body {
   --primary-color: #c33163;
@@ -143,20 +143,20 @@ body {
   --text-primary-color: #{$light-primary-text};
   --text-primary-lighter-color: #{$dark-primary-text};
   --text-primary-darker-color: #{$light-primary-text};
-}   
+}
+
 $mat-primary: (
   main: #c33163,
   lighter: #edc1d0,
   darker: #ae1f47,
-  200: #c33163, // For slide toggle,
-  contrast : (
-    main: $light-primary-text,
+  200: #c33163,
+  // For slide toggle,
+  contrast : (main: $light-primary-text,
     lighter: $dark-primary-text,
     darker: $light-primary-text,
   )
 );
-$theme-primary: mat-palette($mat-primary, main, lighter, darker);
-
+$theme-primary: mat.define-palette($mat-primary, main, lighter, darker);
 
 body {
   --accent-color: #3f7bfb;
@@ -165,20 +165,20 @@ body {
   --text-accent-color: #{$light-primary-text};
   --text-accent-lighter-color: #{$dark-primary-text};
   --text-accent-darker-color: #{$light-primary-text};
-}   
+}
+
 $mat-accent: (
   main: #3f7bfb,
   lighter: #c5d7fe,
   darker: #295ef9,
-  200: #3f7bfb, // For slide toggle,
-  contrast : (
-    main: $light-primary-text,
+  200: #3f7bfb,
+  // For slide toggle,
+  contrast : (main: $light-primary-text,
     lighter: $dark-primary-text,
     darker: $light-primary-text,
   )
 );
-$theme-accent: mat-palette($mat-accent, main, lighter, darker);
-
+$theme-accent: mat.define-palette($mat-accent, main, lighter, darker);
 
 body {
   --warn-color: #faa356;
@@ -187,35 +187,52 @@ body {
   --text-warn-color: #{$dark-primary-text};
   --text-warn-lighter-color: #{$dark-primary-text};
   --text-warn-darker-color: #{$dark-primary-text};
-}   
+}
+
 $mat-warn: (
   main: #faa356,
   lighter: #fee3cc,
   darker: #f8883c,
-  200: #faa356, // For slide toggle,
-  contrast : (
-    main: $dark-primary-text,
+  200: #faa356,
+  // For slide toggle,
+  contrast : (main: $dark-primary-text,
     lighter: $dark-primary-text,
     darker: $dark-primary-text,
   )
 );
-$theme-warn: mat-palette($mat-warn, main, lighter, darker);
-;
+$theme-warn: mat.define-palette($mat-warn, main, lighter, darker);
 
-$theme: mat-dark-theme($theme-primary, $theme-accent, $theme-warn);
-$altTheme: mat-light-theme($theme-primary, $theme-accent, $theme-warn);
+$theme: (
+  primary: $theme-primary,
+  accent: $theme-accent,
+  warn: $theme-warn,
+  is-dark: true,
+  foreground: $mat-dark-theme-foreground,
+  background: $mat-dark-theme-background,
+);
+$altTheme: (
+  primary: $theme-primary,
+  accent: $theme-accent,
+  warn: $theme-warn,
+  is-dark: false,
+  foreground: $mat-light-theme-foreground,
+  background: $mat-light-theme-background,
+);
 
 // Theme Init
-@include angular-material-theme($theme);
+@include mat.all-component-themes($theme);
 
 .theme-alternate {
-  @include angular-material-theme($altTheme);
+  @include mat.all-component-themes($altTheme);
 }
+
 
 // Specific component overrides, pieces that are not in line with the general theming
 
 // Handle buttons appropriately, with respect to line-height
-.mat-raised-button, .mat-stroked-button, .mat-flat-button {
+.mat-raised-button,
+.mat-stroked-button,
+.mat-flat-button {
   padding: 0 1.15em;
   margin: 0 .65em;
   min-width: 3em;
@@ -232,9 +249,9 @@ $mat-alert: (
   main: #fe8180,
   lighter: #ffadad,
   darker: #e31d1d,
-  200: #fe5d5c, // For slide toggle,
-  contrast : (
-    main: $dark-primary-text,
+  200: #fe5d5c,
+  // For slide toggle,
+  contrast : (main: $dark-primary-text,
     lighter: $dark-primary-text,
     darker: $dark-primary-text,
   )
@@ -245,9 +262,9 @@ $mat-success: (
   main: #57eba1,
   lighter: #57eba1,
   darker: #008f51,
-  200: #39d98a, // For slide toggle,
-  contrast : (
-    main: $dark-primary-text,
+  200: #39d98a,
+  // For slide toggle,
+  contrast : (main: $dark-primary-text,
     lighter: $dark-primary-text,
     darker: $dark-primary-text,
   )
@@ -261,7 +278,10 @@ app-navbar {
   z-index: 2;
 }
 
-html, body, app-root, .app-frame {
+html,
+body,
+app-root,
+.app-frame {
   // background: #303030;
   background: #1d1d28;
   font-family: 'Roboto';
@@ -273,29 +293,34 @@ html, body, app-root, .app-frame {
   box-sizing: border-box;
   color: #e0e0e0;
 }
+
 .content-wrapper {
   display: flex;
-  flex: 1 1 auto;     /* 1 */
+  flex: 1 1 auto;
+  /* 1 */
   position: relative;
   flex-direction: column;
   min-width: 1px;
   max-width: 1600px;
   margin: 0 auto;
   z-index: 1;
-  width: 100%;        /* 2 */
+  width: 100%;
+  /* 2 */
   padding: 8px 24px 24px;
 }
 
 .content-wrapper__mobile {
   display: flex;
-  flex: 1 1 auto;     /* 1 */
+  flex: 1 1 auto;
+  /* 1 */
   position: relative;
   flex-direction: column;
   min-width: 1px;
   max-width: 1600px;
   margin: 0 auto;
   z-index: 1;
-  width: 100%; /* 2 */
+  width: 100%;
+  /* 2 */
   padding-right: 5px;
   padding-left: 5px;
 }
@@ -304,26 +329,31 @@ html, body, app-root, .app-frame {
   min-height: 100%;
   margin-bottom: -50px;
 }
+
 .main:after {
   content: "";
   display: block;
   height: 100px;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: inherit;
 }
 
 .footer {
   display: flex;
-  flex: 1 1 auto;     /* 1 */
+  flex: 1 1 auto;
+  /* 1 */
   position: relative;
   flex-direction: column;
   min-width: 1px;
   max-width: 1400px;
   margin: auto;
   z-index: 1;
-  width: 100%;        /* 2 */
+  width: 100%;
+  /* 2 */
   text-align: left;
 }
 
@@ -364,6 +394,7 @@ html, body, app-root, .app-frame {
 
 .info-icon {
   font-size: 14px !important;
+  height: unset !important;
   text-align-last: justify;
   cursor: help;
 }
@@ -539,12 +570,12 @@ html, body, app-root, .app-frame {
 }
 
 .link--text__no__underline:hover {
-  color: mat-color($mat-accent, main);
+  color: mat.get-color-from-palette($mat-accent, main);
   cursor: pointer;
 }
 
 .link--text__no__underline__warnings:hover {
-  color: mat-color($mat-warn, main);
+  color: mat.get-color-from-palette($mat-warn, main);
   cursor: pointer;
 }
 
@@ -553,7 +584,7 @@ html, body, app-root, .app-frame {
 }
 
 .link--text__dot__underline:hover {
-  color: mat-color($mat-accent, main);
+  color: mat.get-color-from-palette($mat-accent, main);
   cursor: pointer;
 }
 
@@ -562,8 +593,9 @@ html, body, app-root, .app-frame {
   border: 1px solid $dark-bg-lighter-30;
   cursor: pointer;
 }
+
 .modal-players-list__item:hover {
-  background-color: mat-color($mat-accent, main);
+  background-color: mat.get-color-from-palette($mat-accent, main);
 }
 
 
@@ -614,23 +646,23 @@ hr.dark {
  */
 
 .success__alert {
-  color: mat-color($mat-success, main);
+  color: mat.get-color-from-palette($mat-success, main);
 }
 
 .warning__alert {
-  color: mat-color($mat-warn, main);
+  color: mat.get-color-from-palette($mat-warn, main);
 }
 
 .urgent__alert {
-  color: mat-color($mat-alert, main);
+  color: mat.get-color-from-palette($mat-alert, main);
 }
 
 .info__alert {
-  color: mat-color($mat-accent, main);
+  color: mat.get-color-from-palette($mat-accent, main);
 }
 
 .accent__background {
-  background: mat-color($mat-accent, main);
+  background: mat.get-color-from-palette($mat-accent, main);
 }
 
 .light_bg_color {
@@ -638,7 +670,7 @@ hr.dark {
 }
 
 .primary__color {
-  color: mat-color($mat-primary, main);
+  color: mat.get-color-from-palette($mat-primary, main);
 }
 
 .mat-table-highlight {
@@ -646,7 +678,7 @@ hr.dark {
 }
 
 .accent_color {
-  color: mat-color($mat-accent, main)
+  color: mat.get-color-from-palette($mat-accent, main);
 }
 
 /**
@@ -722,7 +754,7 @@ hr.dark {
   flex-direction: column;
   min-width: 300px;
   justify-content: center;
-  margin:0px auto;
+  margin: 0px auto;
   max-width: 1200px;
   white-space: nowrap;
 }
@@ -732,7 +764,7 @@ hr.dark {
   flex-direction: column;
   min-width: 300px;
   justify-content: center;
-  margin:0px auto;
+  margin: 0px auto;
   max-width: 1000px;
   white-space: nowrap;
   overflow: hidden;
@@ -753,15 +785,15 @@ hr.dark {
   min-width: 400px;
   max-width: 1000px;
   justify-content: center;
-  margin:0px auto;
+  margin: 0px auto;
 }
 
 .playoff-calc-table-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-align:center;
-  margin:0px auto;
+  text-align: center;
+  margin: 0px auto;
 }
 
 .flex-start-container {
@@ -795,19 +827,19 @@ tr.table-detail-row {
 }
 
 .mat-table-right {
-  display:flex;
-  justify-content:flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .table-dropdown-right {
-  display:flex;
-  justify-content:flex-end;
+  display: flex;
+  justify-content: flex-end;
   padding-right: 25%;
 }
 
 .mat-form-field-center {
-  display:flex;
-  justify-content:center;
+  display: flex;
+  justify-content: center;
 }
 
 
@@ -825,7 +857,7 @@ tr.table-detail-row {
   flex-direction: column;
   //padding-left: 20px;
   max-width: 300px;
-  margin:15px auto;
+  margin: 15px auto;
 }
 
 .metrics--box {
@@ -858,7 +890,7 @@ tr.table-detail-row {
   width: 100%;
   height: auto;
   max-width: 40px;
-  padding:1px 15px 1px 1px;
+  padding: 1px 15px 1px 1px;
 }
 
 .games-image {
@@ -880,6 +912,7 @@ tr.table-detail-row {
   border-radius: 5px;
   border: 1px solid #577380;
 }
+
 .query-row::after {
   content: '';
   position: absolute;
@@ -891,6 +924,7 @@ tr.table-detail-row {
   border-color: #577380 !important;
   border-width: 0 0 0 1px !important;
 }
+
 .query-row::before {
   content: '';
   position: absolute;
@@ -902,13 +936,15 @@ tr.table-detail-row {
   border-color: #577380 !important;
   border-width: 0 0 1px 1px !important;
 }
+
 .query-error {
-  border-color: mat-color($mat-warn, main);
+  border-color: mat.get-color-from-palette($mat-warn, main);
 }
+
 .query-warning {
   margin-top: 4px;
   text-align: center;
-  color: mat-color($mat-warn, main);
+  color: mat.get-color-from-palette($mat-warn, main);
 }
 
 .mat-tab-body-content {
@@ -926,9 +962,11 @@ tr.table-detail-row {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -945,19 +983,19 @@ tr.table-detail-row {
 .wrapped-context {
   width: 100%;
   position: absolute;
-  top:25vh;
+  top: 25vh;
 }
 
 .wrapped-context-low {
   width: 100%;
   position: absolute;
-  top:40vh;
+  top: 40vh;
 }
 
 .wrapped-context-high {
   width: 100%;
   position: absolute;
-  top:10vh;
+  top: 10vh;
 }
 
 .wrapped-context-exit {

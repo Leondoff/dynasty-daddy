@@ -7,7 +7,7 @@
 
 <div class="margin-top-25">
   <div class="ktc-table-container">
-    <div>
+    <div [ngStyle]="configService.isMobile ? {'align-self': 'center'} : {}">
       <span [ngClass]="{'button-left': !configService.isMobile}">
         <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" color="accent">
           <mat-label>Search Player</mat-label>

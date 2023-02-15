@@ -19,6 +19,7 @@ export class DownloadService {
     downloadCSVFile(csvData: string, filename: string): void {
         csvData += this.DynastyDaddyFooter;
         const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+        let navigator: any = window.navigator;
         if (navigator.msSaveBlob) { // IE 10+
             navigator.msSaveBlob(blob, filename);
         } else {

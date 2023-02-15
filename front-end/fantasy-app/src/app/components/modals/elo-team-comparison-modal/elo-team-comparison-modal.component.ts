@@ -5,8 +5,6 @@ import {LeagueService} from '../../../services/league.service';
 import {PowerRankingsService} from '../../services/power-rankings.service';
 import {PlayerService} from '../../../services/player.service';
 import {MatDialog} from '@angular/material/dialog';
-import Chart from 'chart.js';
-import * as ChartAnnotation from 'chartjs-plugin-annotation';
 import { ComparisonColorPalette } from '../../services/color.service';
 
 @Component({
@@ -63,28 +61,6 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
         }
       }],
     },
-    annotation: {
-      annotations: [
-        {
-          drawTime: 'afterDatasetsDraw',
-          id: 'hline',
-          type: 'line',
-          mode: 'vertical',
-          scaleID: 'x-axis-0',
-          borderColor: 'orange',
-          borderWidth: 2,
-          label: {
-            position: 'bottom',
-            content: 'Playoffs',
-            fontColor: 'orange',
-            enabled: true,
-            font: {
-              weight: 'bold'
-            }
-          }
-        }
-      ],
-    },
     plugins: {
       colorschemes: {
         scheme: ComparisonColorPalette,
@@ -94,7 +70,7 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
   };
   public lineChartLegend = true;
   public lineChartType = 'line';
-  public lineChartPlugins = [ChartAnnotation];
+  public lineChartPlugins = [];
 
   constructor(private leagueService: LeagueService,
               private playerService: PlayerService,
@@ -104,7 +80,6 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    Chart.pluginService.register(ChartAnnotation);
   }
 
   ngAfterViewInit(): void {
@@ -119,8 +94,6 @@ export class EloTeamComparisonModalComponent implements OnInit, AfterViewInit {
   generateDataSets(): void {
     this.lineChartData = [];
     this.lineChartLabels = [];
-    // set playoff start annotation
-    this.lineChartOptions.annotation.annotations[0].value = 'Week ' + this.leagueService.selectedLeague.playoffStartWeek;
     for (let i = this.leagueService.selectedLeague.startWeek; i < (this.leagueService.selectedLeague.season > '2020' ? 19 : 18); i++) {
       this.lineChartLabels.push('Week ' + i);
     }

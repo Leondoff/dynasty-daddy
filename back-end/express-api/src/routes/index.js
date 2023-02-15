@@ -14,7 +14,7 @@ const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
 indexRouter.get('/player/all/today', getCurrentPlayerValues);
 indexRouter.get('/player/all/prev/:intervalDays', getPrevPlayerValues);
-indexRouter.get('/player/sleeper/:id', getHistoricalPlayerValueById);
+indexRouter.get('/player/:id', getHistoricalPlayerValueById);
 indexRouter.get('/config/all', getConfigValues);
 
 // MFL wrapper

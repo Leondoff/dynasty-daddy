@@ -9,11 +9,6 @@
   /*max-height: 2000px;*/
 }
 
-.icon--break {
-  vertical-align: baseline;
-  font-size: 10px;
-}
-
 .standings-row {
   display: table;
   width: 100%; /*Optional*/

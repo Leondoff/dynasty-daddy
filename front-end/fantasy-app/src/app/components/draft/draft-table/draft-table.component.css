@@ -32,6 +32,10 @@
   cursor: pointer;
 }
 
+.draft-player {
+  overflow: unset !important;
+}
+
 ::ng-deep .draft-player .mat-select-arrow {
   display: none;
 }
