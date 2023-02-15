@@ -6,7 +6,7 @@ import { MatchUpProbability } from '../model/playoffCalculator';
 import { MatchupService } from '../services/matchup.service';
 import { PowerRankingsService } from '../services/power-rankings.service';
 import { ConfigService } from '../../services/init/config.service';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { BaseComponent } from '../base-component.abstract';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { ActivatedRoute } from '@angular/router';
@@ -60,7 +60,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     { display: 'Win championship', value: 'winChampionship', isDisabled: false }];
 
   /** form control for metrics dropdown */
-  selectedMetrics = new FormControl();
+  selectedMetrics = new UntypedFormControl();
 
   /** no league selected error message */
   noLeagueErrMsg = 'Cannot generate playoff calculator because no league is selected.';
@@ -248,8 +248,9 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Season_Projections_${this.leagueService.selectedLeague.season}_${this.selectedWeek}.csv`;
 
     const blob = new Blob([seasonOddsCSV], { type: 'text/csv;charset=utf-8;' });
-    if (navigator.msSaveBlob) { // IE 10+
-      navigator.msSaveBlob(blob, filename);
+    let newVariable: any = window.navigator;
+    if (newVariable.msSaveBlob) { // IE 10+
+      newVariable.msSaveBlob(blob, filename);
     } else {
       const link = document.createElement('a');
       if (link.download !== undefined) { // feature detection

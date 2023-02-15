@@ -11,7 +11,8 @@
 }
 
 .icon--break {
-  vertical-align: baseline;
+  vertical-align: middle;
+  height: unset !important;
   font-size: 10px;
 }
 

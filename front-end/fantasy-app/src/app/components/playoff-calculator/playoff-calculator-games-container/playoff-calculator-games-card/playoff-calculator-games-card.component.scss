@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 @import "../../../../../styles.scss";
 
 .mat-card {
@@ -17,7 +19,7 @@
 }
 
 .game-win__color {
-  background: mat-color($mat-success, darker);
+  background: mat.get-color-from-palette($mat-success, darker);
 }
 
 .game-score__color {

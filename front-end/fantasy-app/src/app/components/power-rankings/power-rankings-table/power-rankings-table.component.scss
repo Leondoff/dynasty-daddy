@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 @import "../../../../styles.scss";
 
 table {
@@ -14,7 +16,7 @@ tr.power-ranking-element-row:not(.power-ranking-expanded-row):hover {
 }
 
 tr.power-ranking-element-row:not(.power-ranking-expanded-row):active {
-  background: mat-color($mat-accent, main);
+  background: mat.get-color-from-palette($mat-accent, main);
 }
 
 .power-ranking-element-row td {

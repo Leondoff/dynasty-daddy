@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 @import "../../../styles.scss";
 
 .trade-dropdown {
@@ -32,7 +34,7 @@
 .trade-value-col {
   text-align: right;
   width: 10%;
-  color: mat-color($mat-accent, lighter);
+  color: mat.get-color-from-palette($mat-accent, lighter);
 }
 
 .trade-value-col-drop {
@@ -99,12 +101,12 @@
 }
 
 .failed-trade-text-color {
-  color: mat-color($mat-alert, lighter);
+  color: mat.get-color-from-palette($mat-alert, lighter);
 }
 
 .uneven-trade-bg-color {
-  background-color: mat-color($mat-alert, darker);
-  color: mat-color($mat-alert, lighter);
+  background-color: mat.get-color-from-palette($mat-alert, darker);
+  color: mat.get-color-from-palette($mat-alert, lighter);
 }
 
 .fair-trade-bg-color {

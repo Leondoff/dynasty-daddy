@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 @import "../../../styles.scss";
 
 .spacer {
@@ -9,5 +11,5 @@ a {
 }
 
 .header-info {
-  background-color: mat-color($mat-accent, darker);
+  background-color: mat.get-color-from-palette($mat-accent, darker);
 }
