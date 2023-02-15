@@ -5,7 +5,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {ChartOptions, ChartType} from 'chart.js';
 import {Label, PluginServiceGlobalRegistrationAndOptions, SingleDataSet} from 'ng2-charts';
 import { LeagueService } from 'src/app/services/league.service';
-import { ComparisonColorPalette } from '../../services/color.service';
+import { ComparisonColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-player-details-weekly-box-scores-table',

@@ -4,7 +4,7 @@ import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {LeagueService} from '../../../services/league.service';
 import {Color} from 'chartjs-plugin-datalabels/types/options';
-import {ColorService} from '../../services/color.service';
+import {ColorService} from '../../../services/utilities/color.service';
 
 
 @Component({

@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {LeagueService} from '../../../services/league.service';
-import { ComparisonColorPalette } from '../../services/color.service';
+import { ComparisonColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-weekly-median-chart',

@@ -5,7 +5,7 @@ import { TeamPowerRanking } from '../../model/powerRankings';
 import { LeagueService } from 'src/app/services/league.service';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
-import { ComparisonColorPalette } from '../../services/color.service';
+import { ComparisonColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-fantasy-team-rankings-radar-chart',

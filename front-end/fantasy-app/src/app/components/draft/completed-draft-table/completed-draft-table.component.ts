@@ -15,7 +15,7 @@ import { LeagueSwitchService } from '../../services/league-switch.service';
 import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
 import { CompletedDraft } from '../../../model/league/CompletedDraft';
 import { DraftService } from '../../services/draft.service';
-import { BarChartColorPalette } from '../../services/color.service';
+import { BarChartColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-completed-draft-table',

@@ -6,7 +6,7 @@ import {BaseComponent} from '../../base-component.abstract';
 import {ConfigService} from '../../../services/init/config.service';
 import {tap} from 'rxjs/operators';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
-import { ComparisonColorPalette } from '../../services/color.service';
+import { ComparisonColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-trade-value-line-chart',

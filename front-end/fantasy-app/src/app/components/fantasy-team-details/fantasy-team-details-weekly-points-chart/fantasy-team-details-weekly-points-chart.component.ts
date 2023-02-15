@@ -5,7 +5,7 @@ import {MatchupService} from '../../services/matchup.service';
 import {LeagueTeam} from '../../../model/league/LeagueTeam';
 import {LeagueService} from '../../../services/league.service';
 import {NflService} from "../../../services/utilities/nfl.service";
-import { ComparisonColorPalette as ComparisonColorPalette } from '../../services/color.service';
+import { ComparisonColorPalette as ComparisonColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-fantasy-team-details-weekly-points-chart',

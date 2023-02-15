@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {MatchUpProbability} from '../../../model/playoffCalculator';
 import {LeagueTeam} from '../../../../model/league/LeagueTeam';
 import {LeagueService} from '../../../../services/league.service';
-import {ColorService} from '../../../services/color.service';
+import {ColorService} from '../../../../services/utilities/color.service';
 import {LeagueSwitchService} from '../../../services/league-switch.service';
 
 @Component({

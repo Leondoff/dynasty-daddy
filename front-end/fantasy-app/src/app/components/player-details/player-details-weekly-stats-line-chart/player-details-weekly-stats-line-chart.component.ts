@@ -7,7 +7,7 @@ import { BaseComponent } from '../../base-component.abstract';
 import { PlayerInsights } from '../../model/playerInsights';
 import { LeagueService } from '../../../services/league.service';
 import { variance } from 'simple-statistics';
-import { ComparisonColorPalette } from '../../services/color.service';
+import { ComparisonColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-player-details-weekly-stats-line-chart',
