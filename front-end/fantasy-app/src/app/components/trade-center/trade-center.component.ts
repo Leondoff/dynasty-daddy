@@ -585,7 +585,6 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       return null;
     }
     return new DraftCapital(
-      false,
       Number(pick.last_name.charAt(pick.last_name.length - 3)),
       this.getPickNumber(pick),
       pick.first_name

@@ -2,43 +2,87 @@
 <div class="center-text margin-top-10">
   View past drafts with current day values, or create a mock draft for upcoming draft with the new rookie class.
 </div>
-<div *ngIf="leagueService.isLeagueLoaded() && (mockDraftService.teamPicks.length > 0 || leagueService.completedDrafts.length > 0)" class="grid-100 margin-top-10" [ngClass]="{'center-text': configService.isMobile, 'button-right': !configService.isMobile}">
+<div *ngIf="leagueService.isLeagueLoaded()" class="grid-100 margin-top-10" [ngClass]="{'center-text': configService.isMobile, 'button-right': !configService.isMobile}">
   <mat-form-field appearance="outline" color="accent">
     <mat-label>Select a Draft</mat-label>
     <mat-select [(ngModel)]="mockDraftService.selectedDraft">
-      <mat-optgroup label="Upcoming" *ngIf="mockDraftService.teamPicks.length > 0">
-        <mat-option value="upcoming">Mock Draft: {{mockDraftService.teamPicks.length / leagueService.selectedLeague.totalRosters}} Rounds</mat-option>
-      </mat-optgroup>
       <mat-optgroup label="Completed" *ngIf="leagueService.completedDrafts.length > 0">
         <mat-option *ngFor="let draft of leagueService.completedDrafts"
                     [value]="draft">Draft: {{draft.draft.season}} - {{draft.draft.rounds}} Rounds
         </mat-option>
       </mat-optgroup>
+      <mat-optgroup label="Upcoming" *ngIf="mockDraftService.teamPicks.length > 0">
+        <mat-option value="upcoming">Mock Draft: {{mockDraftService.teamPicks.length / leagueService.selectedLeague.totalRosters}} Rounds</mat-option>
+      </mat-optgroup>
+      <mat-option *ngIf="mockDraftService.teamPicks.length === 0" (click)="createMockDraft()">Create Mock Draft</mat-option>
     </mat-select>
   </mat-form-field>
   <span *ngIf="!configService.isMobile" class="right-align-text" style="float: right;">
-    <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="playerService.selectedMarket = $event"></fantasy-market-dropdown>
+    <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
   </span>
   <!-- mobile fantasy market -->
   <div *ngIf="configService.isMobile" class="center-text">
-    <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="playerService.selectedMarket = $event"></fantasy-market-dropdown>
+    <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
   </div>
 </div>
 
 <div *ngIf="leagueService.isLeagueLoaded()">
-  <div *ngIf="mockDraftService.selectedDraft == 'upcoming'" class="margin-top-25 mock-draft-table-container">
-    <div class="mid-bold-text center-text warning__alert margin-bot-10 margin-top-10">This feature is currently in Beta. There may be inconsistencies with the draft order or long load times.</div>
-    <div>
-      <mat-button-toggle-group [(ngModel)]="mockDraftService.mockDraftConfig" class="button-left"
-                               style="overflow: auto">
-        <mat-button-toggle value="player">Player Value</mat-button-toggle>
-        <!--      <mat-button-toggle value="team">Team Needs</mat-button-toggle>-->
-        <mat-button-toggle value="custom">Custom</mat-button-toggle>
-      </mat-button-toggle-group>
-      <span class="container_spacer"></span>
-      <button class="button-right" mat-raised-button color="accent" (click)="resetMockDraft()">Reset</button>
+  <div *ngIf="mockDraftService.selectedDraft == 'upcoming'" class="margin-top-25" [ngClass]="{'mock-draft-mobile': configService.isMobile}">
+    <div class="mock-draft-table-container">
+      <div>
+        <mat-button-toggle-group [(ngModel)]="mockDraftService.mockDraftConfig" class="button-left"
+                                style="overflow: auto">
+          <mat-button-toggle value="player">Best Value</mat-button-toggle>
+          <mat-button-toggle value="team">Team Need</mat-button-toggle>
+          <mat-button-toggle value="custom">Custom</mat-button-toggle>
+        </mat-button-toggle-group>
+        <span class="container_spacer"></span>
+        <span class="button-right">
+          <button mat-raised-button color="accent" (click)="resetMockDraft()">Reset</button>
+          <button mat-icon-button (click)="showAdvancedSettings = !showAdvancedSettings">
+            <mat-icon>settings</mat-icon>
+          </button>
+        </span>
+      </div>
+      <div *ngIf="showAdvancedSettings" class="margin-top-10">
+        <span class="button-left">
+          <span>
+            <mat-form-field color="accent" style="width: 56px;">
+              <mat-label>Round</mat-label>
+              <input matInput type="number" [max]="30" [min]="1" [(ngModel)]="mockDraftService.mockDraftRounds" (change)="createMockDraft()" (keyup)="createMockDraft()">
+            </mat-form-field>
+          </span>
+          <span style="padding-left: 10px">
+            <mat-form-field appearance="standard" color="accent" style="width: 102px;">
+              <mat-label>Draft Order</mat-label>
+              <mat-select [(ngModel)]="mockDraftService.mockDraftOrder" (selectionChange)="createMockDraft()">
+              <mat-option [value]="0">Linear</mat-option>
+              <mat-option [value]="1">Snake</mat-option>
+              <mat-option [value]="2">3rd Round Reversal</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </span>
+        <span class="container_spacer"></span>
+        <span class="button-right">
+          <span>
+            <mat-form-field appearance="standard" color="accent">
+              <mat-label>Mock Draft Players</mat-label>
+              <mat-select [(ngModel)]="mockDraftService.mockDraftPlayerType" (selectionChange)="changeDraftPlayers()">
+              <mat-option [value]="0">Rookies</mat-option>
+              <mat-option [value]="1">Vets Only</mat-option>
+              <mat-option [value]="2">All Players</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </span>
+      </div>
+      <app-draft-table [mockDraftConfig]="mockDraftService.mockDraftConfig" [isReset]="resetTrigger"></app-draft-table>
     </div>
-    <app-draft-table [mockDraftConfig]="mockDraftService.mockDraftConfig" [isReset]="resetTrigger"></app-draft-table>
+
+    <div class="center-text margin-top-25">
+      <button mat-stroked-button (click)="exportMockDraft()"><mat-icon>download</mat-icon> Download Mock Draft</button>
+    </div>
   </div>
 
   <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming'" class="margin-top-25">
@@ -55,5 +99,9 @@
 
 <app-login-error [errorHeader]="noDraftsErrMsg" *ngIf="leagueService.leagueStatus === 'NONE'"></app-login-error>
 
-<app-login-error [errorHeader]="errorLoadingMsg" *ngIf="leagueService.isLeagueLoaded() && mockDraftService.teamPicks.length == 0 && leagueService.completedDrafts.length == 0 && leagueService.upcomingDrafts.length == 0 && mockDraftService.selectedDraft == null"></app-login-error>
-
+<div *ngIf="leagueService.isLeagueLoaded() && mockDraftService.teamPicks.length === 0 && leagueService.completedDrafts.length === 0" class="center-text">
+  <div class="warning__alert">No draft found for {{leagueService.selectedLeague.name}}. Want to create a mock draft?</div>
+  <div class="margin-top-25">
+    <button mat-raised-button color="accent" (click)="createMockDraft()"><mat-icon>format_list_numbered</mat-icon> Create Mock Draft</button>
+  </div>
+</div>

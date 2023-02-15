@@ -7,45 +7,52 @@
       <mat-cell *matCellDef="let element">{{element.pickdisplay}}</mat-cell>
     </ng-container>
 
-    <!-- Pos Column -->
+    <!-- Team Column -->
     <ng-container matColumnDef="team">
       <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.pickTeam}}</mat-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-icon (click)=teamSelect.open() class="team-draft-player">arrow_drop_down
+          <mat-select #teamSelect style="width: 25px; font-size: 14px;" appearance="none">
+            <mat-option *ngFor="let team of leagueService.leagueTeamDetails" (click)="selectTeamForPick(team, element.pick-1)">{{team.owner.teamName}} - {{team.owner.ownerName}}</mat-option>
+          </mat-select>
+        </mat-icon>
+        <div style="font-size: 16px">
+          {{element.pickTeam}}<span class="light_bg_color" style="font-size: 10px; padding-left: 5px" *ngIf="!configService.isMobile && element.originalRosterId !== element.rosterId">Acquired from {{leagueService.getTeamByRosterId(element.originalRosterId)?.owner.teamName}}</span>
+        </div>
+      </mat-cell>
     </ng-container>
 
-    <!-- Age Column -->
-    <ng-container matColumnDef="owner">
-      <mat-header-cell *matHeaderCellDef>Owner</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.pickOwner}}</mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="pickValue">
-      <mat-header-cell *matHeaderCellDef>Pick Trade Value</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.pickOwner}}</mat-cell>
+    <!-- Team Needs Column -->
+    <ng-container matColumnDef="teamNeeds">
+      <mat-header-cell *matHeaderCellDef>Team Needs</mat-header-cell>
+      <mat-cell *matCellDef="let element"><span style="font-size: 16px">{{teamNeeds[element.rosterId]}}</span></mat-cell>
     </ng-container>
 
     <!-- Value Column -->
     <ng-container matColumnDef="projectedPlayer">
       <mat-header-cell *matHeaderCellDef>Projected Pick</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <!-- player value mock draft dropdown-->
-        <mat-form-field *ngIf="element.pick <= mockDraftService.selectablePlayers.length"
-                        appearance="standard" class="mat-dropdown-wide-300" color="accent">
-          <mat-select [(ngModel)]="selectedPlayers[element.pick-1]"
-                      (selectionChange)="updateDraftSelections(element.pick)" placeholder="Select Player">
-            <mat-option *ngFor="let player of mockDraftService.selectablePlayers" [disabled]="isPlayerAlreadySelected(player, this.selectedPlayers.slice(0, element.pick - 1))"
-                        [value]="player">{{player.position}} {{player.full_name}}
-              - {{!leagueService.selectedLeague.isSuperflex ? player.trade_value : player.sf_trade_value}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <span *ngIf="element.pick > mockDraftService.selectablePlayers.length">
-          No more players in system
-        </span>
+        <div *ngIf="mockDraftService.mockDraftSelectedPlayers[element.pick-1]">
+          {{configService.isMobile ? mockDraftService.mockDraftSelectedPlayers[element.pick-1].first_name.substr(0, 1) + '. ' +
+          mockDraftService.mockDraftSelectedPlayers[element.pick-1].last_name : mockDraftService.mockDraftSelectedPlayers[element.pick-1].full_name}} - {{playerService.getTradeValue(mockDraftService.mockDraftSelectedPlayers[element.pick-1], leagueService.selectedLeague.isSuperflex)}}
+        </div>
+        <mat-icon (click)=singleSelect.open()
+        *ngIf="leagueService.selectedLeague"
+        class="draft-player">person_add
+        <mat-select #singleSelect style="width: 25px; font-size: 14px;">
+          <mat-option>
+            <ngx-mat-select-search [formControl]="playerFilterCtrl" placeholderLabel="Search Player..."></ngx-mat-select-search>
+          </mat-option>
+          <mat-option *ngFor="let player of filteredDraftPlayers | async" (click)="!isPlayerAlreadySelected(player, element.pick) ? draftPlayer(player, element.pick-1) : null" [disabled]="isPlayerAlreadySelected(player, element.pick)">
+            {{player.full_name}} - {{!leagueService.selectedLeague.isSuperflex ? player.trade_value : player.sf_trade_value}} 
+          </mat-option>
+        </mat-select>
+        </mat-icon>
       </mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'mat-table-highlight': leagueService.leagueUser?.userData.username === row.pickOwner}"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'mat-table-highlight': leagueService.leagueUser?.userData.username === row.pickOwner}" style="max-height: 52px"></mat-row>
   </mat-table>
   <mat-paginator [pageSizeOptions]="[pageLength, 2 * pageLength, 4 * pageLength]" showFirstLastButtons></mat-paginator>
 </div>

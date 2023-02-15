@@ -173,14 +173,14 @@
               </div>
               <div class="grid-16" *ngIf="leagueService.selectedLeague.type == 2">
                 <div>
-              <span><span class="small-text__light">Upcoming Picks: </span><span
+              <span><span class="small-text__light">Draft Capital: </span><span
                 class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].value}}</span></span>
                   <div class="small-text__light"> Rank: <span
                     [ngClass]="{'success__alert': powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].isGreen, 'warning__alert': powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].isRed}">{{powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].rank}}</span>
                   </div>
                 </div>
                 <hr class="dark">
-                <div *ngFor="let player of element.picks.players">
+                <div *ngFor="let player of element.picks.players; let i = index">
                   <span innerHTML="{{ player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}} </span>
                   <span [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
                 </div>
