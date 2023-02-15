@@ -82,7 +82,7 @@ export class NflService {
    */
   getYearForStats(): string {
     switch (this.stateOfNFL.seasonType) {
-      case 'off' || 'pre':
+      case 'pre':
         return this.stateOfNFL.previousSeason;
       default:
         return this.stateOfNFL.season;
