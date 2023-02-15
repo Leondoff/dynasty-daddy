@@ -6,7 +6,7 @@ import { ConfigService } from '../../../services/init/config.service';
 import { TeamPowerRanking } from '../../model/powerRankings';
 import { LeagueType } from "../../../model/league/LeagueDTO";
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
-import { BarChartColorPalette } from '../../services/color.service';
+import { BarChartColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-power-rankings-chart',

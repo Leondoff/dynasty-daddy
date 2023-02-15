@@ -4,7 +4,7 @@ import {PowerRankingsService} from '../../services/power-rankings.service';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {PlayoffCalculatorService} from '../../services/playoff-calculator.service';
-import {ColorService} from '../../services/color.service';
+import {ColorService} from '../../../services/utilities/color.service';
 import {ConfigService} from '../../../services/init/config.service';
 import {LeagueSwitchService} from '../../services/league-switch.service';
 
@@ -116,7 +116,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
    * get color for probability
    * @param prob percent
    */
-  getProbColor(prob: number): string {
+  getProbColor(prob: number): string {    
     return this.probGradient[prob];
   }
 

@@ -3,7 +3,7 @@ import {BaseChartDirective, Label} from 'ng2-charts';
 import {ChartDataSets, ChartOptions} from 'chart.js';
 import {Color} from 'chartjs-plugin-datalabels/types/options';
 import {TeamPowerRanking, TeamRankingTier} from '../../model/powerRankings';
-import { ComparisonColorPalette } from '../../services/color.service';
+import { ComparisonColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-team-tiers-chart',

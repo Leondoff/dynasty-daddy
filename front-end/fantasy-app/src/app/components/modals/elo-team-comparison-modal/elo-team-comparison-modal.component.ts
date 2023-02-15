@@ -5,7 +5,7 @@ import {LeagueService} from '../../../services/league.service';
 import {PowerRankingsService} from '../../services/power-rankings.service';
 import {PlayerService} from '../../../services/player.service';
 import {MatDialog} from '@angular/material/dialog';
-import { ComparisonColorPalette } from '../../services/color.service';
+import { ComparisonColorPalette } from '../../../services/utilities/color.service';
 
 @Component({
   selector: 'app-elo-team-comparison-modal',

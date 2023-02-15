@@ -4,9 +4,9 @@ import { TeamMockDraftPick } from '../model/mockDraft';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
 import { LeagueService } from '../../services/league.service';
 import { CompletedDraft } from '../../model/league/CompletedDraft';
-import { DraftCapital } from '../../model/assets/DraftCapital';
 import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
 import { PlayerService } from 'src/app/services/player.service';
+import { PowerRankingsService } from './power-rankings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,51 +19,51 @@ export class DraftService {
   /** available players */
   selectablePlayers: FantasyPlayer[] = [];
 
+  /** selected players in the mock draft */
+  mockDraftSelectedPlayers: FantasyPlayer[] = [];
+
   /** currently selected draft */
   selectedDraft: CompletedDraft | string;
 
   /** current filter for mock draft */
   mockDraftConfig: string = 'player';
 
-  /** state of value selected players */
-  valueSelectedPlayers: FantasyPlayer[] = [];
-
-  /** state of custom selected players */
-  customSelectedPlayers: FantasyPlayer[] = [];
-
   /** average value of pick in round */
   roundPickValue: number[] = [];
 
-  constructor(public leagueService: LeagueService, private playerService: PlayerService) {
+  /** Mock Draft Player Type */
+  mockDraftPlayerType: MockDraftPlayerType = MockDraftPlayerType.Rookies;
+
+  /** Mock Draft Order */
+  mockDraftOrder: MockDraftOrder = MockDraftOrder.Linear;
+
+  mockDraftRounds: number;
+
+  constructor(public leagueService: LeagueService, private playerService: PlayerService, private powerRankingsService: PowerRankingsService) {
   }
 
   /**
    * generate draft order
-   * @param players list of players
-   * @param isSuperFlex is draft super flex
-   * @param playerType draft type, 1 == rookies only, 2 == vets only, 3 == all players
    */
-  generateDraft(players: FantasyPlayer[], isSuperFlex: boolean = true, playerType: number = 3): void {
-    if (playerType === 1) { // rookies only
-      this.selectablePlayers = players.filter(player => {
+  generateDraft(): void {
+    if (this.mockDraftPlayerType === MockDraftPlayerType.Rookies) { // rookies only
+      this.selectablePlayers = this.playerService.playerValues.slice().filter(player => {
         return player.experience === 0 && player.position !== 'PI';
       });
-    } else if (playerType === 2) { // vets only
-      this.selectablePlayers = players.filter(player => {
+    } else if (this.mockDraftPlayerType === MockDraftPlayerType.Vets) { // vets only
+      this.selectablePlayers = this.playerService.playerValues.slice().filter(player => {
         return player.experience !== 0 && player.position !== 'PI';
       });
     } else { // all players
-      this.selectablePlayers = players.filter(player => {
+      this.selectablePlayers = this.playerService.playerValues.slice().filter(player => {
         return player.position !== 'PI';
       });
     }
     // sort players by value
-    // TODO refactor
     this.selectablePlayers = this.playerService.sortListOfPlayers(
       this.selectablePlayers,
       this.leagueService.selectedLeague.isSuperflex
     )
-    this.valueSelectedPlayers = this.selectablePlayers.slice();
   }
 
   /**
@@ -72,19 +72,86 @@ export class DraftService {
    */
   mapDraftObjects(teams: LeagueTeam[]): void {
     if (this.teamPicks.length === 0) {
-      teams.map(team => {
-        for (const pick of team.upcomingDraftOrder) {
-          if (pick.year === this.leagueService.selectedLeague.season) {
-            this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * 12) + pick.pick,
-              this.createPickString(pick),
-              team.owner?.ownerName,
-              team.owner?.teamName));
+      if (teams[0].upcomingDraftOrder.length !== 0) {
+        teams.map(team => {
+          for (const pick of team.upcomingDraftOrder) {
+            if (pick.year === this.leagueService.selectedLeague.season) {
+              this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * 12) + pick.pick,
+                this.createPickString(pick.round, ((pick.round - 1) * 12) + pick.pick),
+                team.owner?.ownerName,
+                team.owner?.teamName,
+                team.roster.rosterId,
+                pick.originalRosterId));
+            }
+          }
+        });
+      } else {
+        const projectedDraftOrder = this.powerRankingsService.powerRankings.slice().sort((a, b) => b.starterRank - a.starterRank).map(it => it.team.roster.rosterId)
+        teams.map(team => {
+          for (const pick of team.futureDraftCapital) {
+            if (pick.year === this.leagueService.selectedLeague.season) {
+              const pickNum = projectedDraftOrder.indexOf(pick.originalRosterId) + 1
+              this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * projectedDraftOrder.length) + pickNum,
+                this.createPickString(pick.round, pickNum),
+                team.owner?.ownerName,
+                team.owner?.teamName,
+                team.roster.rosterId,
+                pick.originalRosterId));
+            }
+          }
+        });
+        this.teamPicks.sort((pickA, pickB) => {
+          return pickA.pick - pickB.pick;
+        });
+        // if extra rounds added that aren't defined
+        const roundCount = this.teamPicks.length / teams.length;
+        if (this.mockDraftRounds > roundCount) {
+          const roundsToAdd = this.mockDraftRounds - roundCount;
+          const draftRound = this.teamPicks.slice(-teams.length);
+          for (let i = 0; i < roundsToAdd; i++) {
+            draftRound.forEach(pick => {
+              const pickNum = projectedDraftOrder.indexOf(pick.originalRosterId) + 1
+              this.teamPicks.push(new TeamMockDraftPick(((roundCount + i) * projectedDraftOrder.length) + pickNum,
+                this.createPickString(roundCount + i + 1, pickNum),
+                pick.pickOwner,
+                pick.pickTeam,
+                pick.rosterId,
+                pick.rosterId));
+            });
           }
         }
-      });
-      this.teamPicks.sort((pickA, pickB) => {
-        return pickA.pick - pickB.pick;
-      });
+      }
+      // sort based on draft order (TODO clean up duplicate code?)
+      switch (this.mockDraftOrder) {
+        case MockDraftOrder.Snake: {
+          let tempDraft: TeamMockDraftPick[] = []
+          for (let i = 0; i < this.mockDraftRounds; i++) {
+            const round = this.teamPicks.slice(i * teams.length, (1 + i) * teams.length)
+            tempDraft = tempDraft.concat(i % 2 === 0 ? round : round.reverse())
+          }
+          this.teamPicks = tempDraft;
+          this.teamPicks.forEach((pick, ind) => {
+            pick.pick = ind + 1
+            pick.pickdisplay = this.createPickString(Math.trunc(ind / teams.length) + 1, ind % teams.length + 1);
+          });
+          break;
+        }
+        case MockDraftOrder.RoundReversal: {
+          let tempDraft: TeamMockDraftPick[] = []
+          for (let i = 0; i < this.mockDraftRounds; i++) {
+            const round = this.teamPicks.slice(i * teams.length, (1 + i) * teams.length)
+            tempDraft = tempDraft.concat((i % 2 === 0 && i < 2) || (i % 2 === 1 && i > 2) ? round : round.reverse())
+          }
+          this.teamPicks = tempDraft;
+          this.teamPicks.forEach((pick, ind) => {
+            pick.pick = ind + 1
+            pick.pickdisplay = this.createPickString(Math.trunc(ind / teams.length) + 1, ind % teams.length + 1);
+          });
+          break;
+        }
+        default:
+          break;
+      }
     }
   }
 
@@ -92,7 +159,40 @@ export class DraftService {
    * reset mock drafts to defaults
    */
   resetDraftList(): void {
-    this.mockDraftConfig === 'custom' ? this.customSelectedPlayers = [] : this.valueSelectedPlayers = this.selectablePlayers.slice();
+    switch (this.mockDraftConfig) {
+      case 'player':
+        this.mockDraftSelectedPlayers = [];
+        this.teamPicks.forEach((_, ind) => {
+          this.mockDraftSelectedPlayers.push(this.selectablePlayers[ind]);
+        });
+        break;
+      case 'team':
+        this.mockDraftSelectedPlayers = [];
+        const teamNeedsMap = {}
+        this.powerRankingsService.powerRankings.forEach(team => {
+          teamNeedsMap[team.team.roster.rosterId] =
+            this.powerRankingsService.getTeamNeedsFromRosterId(team.team.roster.rosterId)
+        });
+        this.teamPicks.forEach((pick, ind) => {
+          const playerValueMap = {}
+          const playerOptions = this.selectablePlayers.slice()
+            .filter(p => !this.mockDraftSelectedPlayers.includes(p))
+            .slice(0, 6);
+          playerOptions.forEach(p => {
+            const playerNeed = teamNeedsMap[pick.rosterId].findIndex(teamNeed => teamNeed === p.position)
+            if (playerNeed >= 0) {
+              const needsBoost = (teamNeedsMap[pick.rosterId].length - playerNeed) * .1 + 1
+              playerValueMap[p.name_id] = this.playerService.getTradeValue(p, this.leagueService.selectedLeague.isSuperflex) * needsBoost
+            }
+          })
+          playerOptions.sort((a, b) => playerValueMap[b.name_id] - playerValueMap[a.name_id])
+          this.mockDraftSelectedPlayers.push(playerOptions[0]);
+        });
+        break;
+      default:
+        this.mockDraftSelectedPlayers = [];
+        break;
+    }
   }
 
   /**
@@ -101,8 +201,8 @@ export class DraftService {
    * @private
    * returns string
    */
-  private createPickString(pick: DraftCapital): string {
-    return pick.round.toString() + '.' + (pick.pick > 9 ? pick.pick.toString() : '0' + pick.pick.toString());
+  private createPickString(round: number, pick: number): string {
+    return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString());
   }
 
   /**
@@ -122,8 +222,6 @@ export class DraftService {
     this.selectablePlayers = [];
     this.teamPicks = [];
     this.mockDraftConfig = 'player';
-    this.valueSelectedPlayers = [];
-    this.customSelectedPlayers = [];
   }
 
 
@@ -229,4 +327,16 @@ export class DraftService {
       return b.valueAdded - a.valueAdded;
     });
   }
+}
+
+export enum MockDraftPlayerType {
+  Rookies,
+  Vets,
+  All
+}
+
+export enum MockDraftOrder {
+  Linear,
+  Snake,
+  RoundReversal
 }

@@ -15,8 +15,8 @@ export class ColorService {
   getColorGradientArray(length: number, color1: string, color2: string): [] {
     const colorGradient = new Gradient();
     colorGradient.setMidpoint(length);
-    colorGradient.setGradient(color1, color2);
-    return colorGradient.getArray();
+    colorGradient.setColorGradient(color1, color2);
+    return colorGradient.getColors();
   }
 
   /**
