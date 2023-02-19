@@ -53,7 +53,7 @@ export class TradeFinderTableComponent implements OnInit, OnChanges {
       if (property === 'playerName') {
         return item.full_name;
       } else if (property === 'value') {
-        return this.playerService.getTradeValue(item, this.isSuperflex, this.selectedMarket);
+        return this.isSuperflex ? item.sf_trade_value : item.trade_value;
       } else {
         return item[property];
       }

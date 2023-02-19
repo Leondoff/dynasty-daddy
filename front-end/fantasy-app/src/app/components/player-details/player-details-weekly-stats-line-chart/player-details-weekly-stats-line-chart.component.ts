@@ -126,9 +126,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
     this.adpPlayerValues = {};
     this.adjacentADP.forEach(player => {
       this.adpPlayerValues[player.name_id] = {
-        value: this.playerService.getTradeValue(
-          player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket
-        ),
+        value: (this.leagueService?.selectedLeague?.isSuperflex || true) ? player.sf_trade_value : player.trade_value,
         adpPlusMinus: this.getADPPlusMinus(player)
       }
     });

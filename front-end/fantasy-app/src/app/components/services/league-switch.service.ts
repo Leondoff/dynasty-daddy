@@ -68,7 +68,7 @@ export class LeagueSwitchService extends BaseComponent {
     this.playersService.resetOwners();
     this.transactionService.reset();
     this.tradeService.reset();
-    console.time('Fetch Sleeper League Data');
+    console.time('Fetch League Data');
     this.addSubscriptions(this.leagueService.loadNewLeague$(this.selectedLeague).subscribe((x) => {
         this.leagueService.leagueTeamDetails.map((team) => {
           this.playersService.generateRoster(team, this.selectedLeague.leaguePlatform);
@@ -89,7 +89,7 @@ export class LeagueSwitchService extends BaseComponent {
             this.leagueService.leagueStatus = 'DONE';
             this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id 
               || this.leagueService.leagueTeamDetails[0]?.owner?.userId;
-            console.timeEnd('Fetch Sleeper League Data');
+            console.timeEnd('Fetch League Data');
             this.leagueChanged$.next(this.selectedLeague);
             this.lastTimeRefreshed = new Date();
             this.updateQueryParams();

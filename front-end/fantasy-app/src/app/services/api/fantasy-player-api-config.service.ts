@@ -12,12 +12,22 @@ export class FantasyPlayerApiConfigService {
 
   private _getHistoricalPlayerValues = '';
 
+  private _getPlayerValuesForMarket = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
 
   set getPlayerValuesForTodayEndpoint(value: string) {
     this._getPlayerValuesForTodayEndpoint = value;
+  }
+
+  get getPlayerValuesForMarketEndpoint(): string {
+    return this._getPlayerValuesForMarket;
+  }
+
+  set getPlayerValuesForMarketEndpoint(value: string) {
+    this._getPlayerValuesForMarket = value;
   }
 
   get getPrevPlayerValuesEndpoint(): string {

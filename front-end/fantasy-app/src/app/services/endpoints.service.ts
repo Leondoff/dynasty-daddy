@@ -10,9 +10,9 @@ import {MflApiConfigService} from './api/mfl/mfl-api-config.service';
 export class EndpointsService {
 
   // TODO add cloud base url for api
-  private baseUrl = 'https://dynasty-daddy.com/api';
+  // private baseUrl = 'https://dynasty-daddy.com/api';
   // uncomment for dev environment
-  // private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = 'http://localhost:3000/api';
 
   constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
               private sleeperApiConfigService: SleeperApiConfigService,
@@ -27,6 +27,7 @@ export class EndpointsService {
 
     // Fantasy Player Database Endpoints
     this.fantasyPlayerApiConfigService.getPlayerValuesForTodayEndpoint = this.baseUrl + '/v1/player/all/today';
+    this.fantasyPlayerApiConfigService.getPlayerValuesForMarketEndpoint = this.baseUrl + '/v1/player/all/market/';
     this.fantasyPlayerApiConfigService.getPrevPlayerValuesEndpoint = this.baseUrl + '/v1/player/all/prev/';
     this.fantasyPlayerApiConfigService.getHistoricalPlayerValues = this.baseUrl + '/v1/player/';
 

@@ -167,8 +167,8 @@
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isStarter(element, player)" matTooltip="Starter" matTooltipPosition="above">grade</mat-icon></span>
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isInjured(player)" matTooltip="{{player.injury_status}}" matTooltipPosition="above">healing</mat-icon></span>
                   <span innerHTML="{{ configService.isMobile ? player.last_name : player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}}</span>
-                  <span *ngIf="powerRankingsService.rankingMarket !== 2" [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
-                  <span *ngIf="powerRankingsService.rankingMarket === 2" [ngClass]="{'success__alert': player.avg_adp < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (leagueService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '--'}}</span>
+                  <span *ngIf="powerRankingsService.rankingMarket !== 3" [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
+                  <span *ngIf="powerRankingsService.rankingMarket === 3" [ngClass]="{'success__alert': player.avg_adp < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (leagueService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '--'}}</span>
                 </div>
               </div>
               <div class="grid-16" *ngIf="leagueService.selectedLeague.type == 2">

@@ -8,6 +8,8 @@ import { LeagueService } from '../../services/league.service';
 import { PlayerValueService } from '../services/player-value.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FilterPlayerValuesModalComponent } from '../modals/filter-player-values-modal/filter-player-values-modal.component';
+import { DownloadService } from 'src/app/services/utilities/download.service';
+import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 
 @Component({
   selector: 'app-player-values',
@@ -23,6 +25,7 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
     public configService: ConfigService,
     public leagueService: LeagueService,
     private dialog: MatDialog,
+    private downloadService: DownloadService,
     public playerValueService: PlayerValueService,
     public leagueSwitchService: LeagueSwitchService,
     private route: ActivatedRoute) {
@@ -67,13 +70,73 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
     this.playerValueService.applyFilters();
   }
 
-  clearTextSearch(): void{
+  clearTextSearch(): void {
     this.playerValueService.searchVal = '';
     this.playerValueService.applyFilters();
   }
 
   onMarketChange($event): void {
     this.playerService.selectedMarket = $event
+  }
+
+  /**
+   * exports player table to csv
+   */
+  exportPlayerValuesTable(): void {
+    let playerValues = {};
+    this.addSubscriptions(this.playerService.fetchTradeValuesForAllMarket().subscribe(values => {
+      for (let market in FantasyMarket) {
+        playerValues[market] = values[market];
+      }
+      const playerData: any[][] = []
+      playerData.push([`Player Values for ${new Date().toISOString().slice(0, 10)} - ${this.playerValueService.isSuperFlex ? 'Superflex' : 'Standard (1 QB)'}`]);
+      const filterRow = ['Filters'];
+      let postionGroupString = '';
+      if (this.playerValueService.filterPosGroup[0]) postionGroupString += 'QB '
+      if (this.playerValueService.filterPosGroup[1]) postionGroupString += 'RB '
+      if (this.playerValueService.filterPosGroup[2]) postionGroupString += 'WR '
+      if (this.playerValueService.filterPosGroup[3]) postionGroupString += 'TE '
+      if (this.playerValueService.filterPosGroup[4]) postionGroupString += 'Picks'
+      filterRow.push(postionGroupString);
+      if (this.playerValueService.showFreeAgents) {filterRow.push('Free Agents Only')};
+      if (this.playerValueService.showRookies) {filterRow.push('Rookies Only')};
+      if (this.playerValueService.isAdvancedFiltered) {filterRow.push(JSON.stringify(this.playerValueService.query))}
+      playerData.push(filterRow);
+      playerData.push([]);
+      playerData.push([
+        ['Name', 'Position', 'Age', 'Owner', 'Avg Pos ADP', 'KeepTradeCut', 'KeepTradeCut % Change', 'FantasyCalc', 'FantasyCalc % Change', 'Dynasty Process', 'Dynasty Process % Change'],
+      ]);
+      this.playerValueService.filteredPlayers.forEach((player, ind) => {
+        const playerRow = [player?.full_name, player?.position, player?.age, player?.owner?.ownerName,
+        player?.avg_adp > 0 ? player?.avg_adp : '',
+        this.leagueService.selectedLeague.isSuperflex ?
+          playerValues[0][player?.name_id]?.sf_trade_value || 0 :
+          playerValues[0][player?.name_id]?.trade_value || 0,
+        this.leagueService.selectedLeague.isSuperflex ?
+          playerValues[0][player?.name_id]?.sf_change || 0 :
+          playerValues[0][player?.name_id]?.standard_change || 0,
+        this.leagueService.selectedLeague.isSuperflex ?
+          playerValues[1][player?.name_id]?.sf_trade_value || 0 :
+          playerValues[1][player?.name_id]?.trade_value || 0,
+        this.leagueService.selectedLeague.isSuperflex ?
+          playerValues[1][player?.name_id]?.sf_change || 0 :
+          playerValues[1][player?.name_id]?.standard_change || 0,
+        this.leagueService.selectedLeague.isSuperflex ?
+          playerValues[2][player?.name_id]?.sf_trade_value || 0 :
+          playerValues[2][player?.name_id]?.trade_value || 0,
+        this.leagueService.selectedLeague.isSuperflex ?
+          playerValues[2][player?.name_id]?.sf_change || 0 :
+          playerValues[2][player?.name_id]?.standard_change || 0
+        ];
+        playerData.push(playerRow);
+      });
+
+      const formattedDraftData = playerData.map(e => e.join(',')).join('\n');
+
+      const filename = `Dynasty_Daddy_Player_List_${new Date().toISOString().slice(0, 10)}.csv`;
+
+      this.downloadService.downloadCSVFile(formattedDraftData, filename);
+    }));
   }
 
 }

@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {LeagueService} from '../../services/league.service';
-import {PowerRankingsService} from '../services/power-rankings.service';
-import {PlayerService} from '../../services/player.service';
-import {BaseComponent} from '../base-component.abstract';
-import {LeagueSwitchService} from '../services/league-switch.service';
-import {delay} from 'rxjs/operators';
-import {ActivatedRoute} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { LeagueService } from '../../services/league.service';
+import { PowerRankingsService } from '../services/power-rankings.service';
+import { PlayerService } from '../../services/player.service';
+import { BaseComponent } from '../base-component.abstract';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { delay } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-power-rankings',
@@ -21,10 +21,10 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
   noLeagueErrMsg = 'Unable to create rankings. Please select a league.'
 
   constructor(public leagueService: LeagueService,
-              public powerRankingService: PowerRankingsService,
-              private playersService: PlayerService,
-              private route: ActivatedRoute,
-              public leagueSwitchService: LeagueSwitchService) {
+    public powerRankingService: PowerRankingsService,
+    private playersService: PlayerService,
+    private route: ActivatedRoute,
+    public leagueSwitchService: LeagueSwitchService) {
 
     super();
   }
@@ -33,10 +33,10 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     this.playersService.loadPlayerValuesForToday();
     this.mapPowerRankings();
     // TODO potentially improve how this functions
-    this.addSubscriptions(this.leagueSwitchService.leagueChanged$.pipe(delay(1500)).subscribe(() => {
-          this.mapPowerRankings();
-        }
-      ),
+    this.addSubscriptions(
+      this.leagueSwitchService.leagueChanged$.pipe(delay(1500)).subscribe(() => {
+        this.mapPowerRankings();
+      }),
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
       }));

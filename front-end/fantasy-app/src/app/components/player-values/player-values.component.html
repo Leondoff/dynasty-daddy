@@ -66,6 +66,9 @@
     <app-ktc-table *ngIf="playersLoaded && playerValueService.filteredPlayers" [players]="playerValueService.filteredPlayers"
       [selectedLeague]="leagueService.selectedLeague" [isSuperFlex]="playerValueService.isSuperFlex" [fantasyMarket]="playerService.selectedMarket"></app-ktc-table>
   </div>
+  <div class="center-text margin-top-50" *ngIf="playersLoaded && playerValueService.filteredPlayers?.length > 0">
+    <button mat-stroked-button (click)="exportPlayerValuesTable()"><mat-icon>download</mat-icon> Download Players Data</button>
+  </div>
   <div *ngIf="!playersLoaded">
     <div style="min-height: 300px" class="center-spinner">
       <mat-spinner></mat-spinner>

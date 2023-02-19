@@ -183,7 +183,7 @@ export class TradeService {
     const userIdFilter = tradePackage.getWhichSideIsFavored() === 1 ? tradePackage.team2UserId : tradePackage.team1UserId;
     // filter list by user id then filter by value last filter by if player is in current trade
     let sortedList = this.filterPlayersList(userIdFilter)
-      .filter(player => this.playerService.getTradeValue(player, isSuperFlex, tradePackage.fantasyMarket) <= maxValue)
+      .filter(player => (isSuperFlex ? player.sf_trade_value : player.trade_value) <= maxValue)
       .filter(player => !tradePackage?.team1Assets.includes(player) && !tradePackage?.team2Assets.includes(player))
       .filter(player => !tradePackage.excludePosGroup.includes(player.position));
     if (tradePackage.autoFillTrade) {
@@ -191,8 +191,7 @@ export class TradeService {
         || player.owner !== null && player.owner.userId !== tradePackage.team1UserId));
     }
     // sort list by largest value
-    return sortedList.sort((a, b) => this.playerService.getTradeValue(b, isSuperFlex, tradePackage.fantasyMarket) -
-      this.playerService.getTradeValue(b, isSuperFlex, tradePackage.fantasyMarket)).slice(0, listLength);
+    return sortedList.sort((a, b) => isSuperFlex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value).slice(0, listLength);
   }
 
   /**

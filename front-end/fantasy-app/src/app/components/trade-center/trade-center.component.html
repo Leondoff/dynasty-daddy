@@ -38,7 +38,7 @@
       <div class="mid-bold-text center-text margin-bot-10 margin-top-25">
         <mat-icon (click)=team2Select.open()
                   *ngIf="leagueService.selectedLeague"
-                  class="team-dropdown-arrow-icon">arrow_drop_down
+                  class="team-dropdown-arrow-icon" style="overflow: unset !important;">arrow_drop_down
           <mat-select
             #team2Select
             [(ngModel)]="selectedTeam2"
@@ -72,9 +72,9 @@
             </span>
           </td>
           <td class="trade-info-col">
-            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{playerService.getTradeValue(player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank')}} • {{player.team}} • {{player.age}} y.o</span>
+            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{(this.leagueService?.selectedLeague?.isSuperflex || true) ? player.sf_position_rank : player.position_rank}} • {{player.team}} • {{player.age}} y.o</span>
           </td>
-          <td class="mid-bold-text trade-value-col">{{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}</td>
+          <td class="mid-bold-text trade-value-col">{{isSuperFlex ? player.sf_trade_value : player.trade_value}}</td>
           <mat-icon class="trade-rm-icon" (click)="removePlayerFromTeam1(i)">cancel</mat-icon>
         </tr>
         <tr *ngIf="tradeTool.tradePackage?.valueAdjustmentSide == 1 && tradeTool.tradePackage?.valueAdjustment != 0">
@@ -100,7 +100,7 @@
               </span>
             </td>
             <td class="small-text__light warning__alert trade-value-col-drop">
-              -{{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}
+              -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
             </td>
           </tr>
         </ng-container>
@@ -111,7 +111,7 @@
       <div class="mid-bold-text center-text margin-bot-10 margin-top-25">
         <mat-icon (click)=team1Select.open()
                   *ngIf="leagueService.selectedLeague"
-                  class="team-dropdown-arrow-icon">arrow_drop_down
+                  class="team-dropdown-arrow-icon" style="overflow: unset !important;">arrow_drop_down
           <mat-select
             #team1Select
             [(ngModel)]="selectedTeam1"
@@ -145,10 +145,10 @@
             </span>
           </td>
           <td class="trade-info-col">
-            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{playerService.getTradeValue(player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank')}} • {{player.team}} • {{player.age}} y.o</span>
+            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{(this.leagueService?.selectedLeague?.isSuperflex || true) ? player.sf_trade_value : player.trade_value}} • {{player.team}} • {{player.age}} y.o</span>
           </td>
           <td class="mid-bold-text trade-value-col">
-            {{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}
+            {{isSuperFlex ? player.sf_trade_value : player.trade_value}}
           </td>
           <mat-icon class="trade-rm-icon" (click)="removePlayerFromTeam2(i)">cancel</mat-icon>
         </tr>
@@ -175,7 +175,7 @@
               </span>
             </td>
             <td class="small-text__light warning__alert trade-value-col-drop">
-              -{{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}
+              -{{isSuperFlex ? player.sf_trade_value : player.trade_value}}
             </td>
           </tr>
         </ng-container>
@@ -217,7 +217,7 @@
           <tr>
             <td *ngIf="player.position == 'PI'" style="width: 70%">{{player.full_name}}</td>
             <td *ngIf="player.position != 'PI'" style="width: 70%" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">{{player.full_name}}</td>
-            <td style="width: 30%">{{playerService.getTradeValue(player, isSuperFlex, playerService.selectedMarket)}}</td>
+            <td style="width: 30%">{{isSuperFlex ? player.sf_trade_value : player.trade_value}}</td>
             <td style="width: 5px" (click)="favoredSide == 2 ? addPlayerToTeam1(player) : addPlayerToTeam2(player)">
               <mat-icon class="trade-rm-icon">add_circle</mat-icon>
             </td>
