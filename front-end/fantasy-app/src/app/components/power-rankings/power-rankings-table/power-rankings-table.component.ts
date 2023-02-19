@@ -12,6 +12,7 @@ import { DisplayService } from '../../../services/utilities/display.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { LeagueType } from "../../../model/league/LeagueDTO";
 import { PowerRankingMarket, PowerRankingsService } from '../../services/power-rankings.service';
+import { BaseComponent } from '../../base-component.abstract';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -28,7 +29,7 @@ export const detailExpand = trigger('detailExpand',
   styleUrls: ['./power-rankings-table.component.scss'],
   animations: [detailExpand],
 })
-export class PowerRankingsTableComponent implements OnInit, OnChanges {
+export class PowerRankingsTableComponent extends BaseComponent implements OnInit, OnChanges {
 
   // team power rankings generated from service
   @Input()
@@ -46,9 +47,6 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
 
   // columns to display in table
   columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
-
-  // list of expanded details for teams.
-  expandedElement: any[] = [];
 
   // determines if team is top 3rd or bottom 3rd of league
   alertThreshold: number;
@@ -75,6 +73,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
     public leagueSwitchService: LeagueSwitchService,
     public displayService: DisplayService,
     private clipboard: Clipboard) {
+      super();
   }
 
   ngOnInit(): void {
@@ -106,36 +105,36 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
 
     this.playerService.playerValues.forEach(player => {
       this.playerCache[player.name_id] = {
-        value: this.playerService.getTradeValue(player, this.isSuperFlex),
-        isRed: this.playerService.getTradeValue(player, this.isSuperFlex) <
-          (this.playerService.selectedMarket === FantasyMarket.FantasyCalc ? 1500 : 2000),
-        isGreen: this.playerService.getTradeValue(player, this.isSuperFlex) >
-          (this.playerService.selectedMarket === FantasyMarket.FantasyCalc ? 5500 : 6000),
+        value: this.isSuperFlex ? player.sf_trade_value : player.trade_value,
+        isRed: (this.isSuperFlex ? player.sf_trade_value : player.trade_value) <
+          (this.playerService.selectedMarket !== FantasyMarket.KeepTradeCut ? 1500 : 2000),
+        isGreen: (this.isSuperFlex ? player.sf_trade_value : player.trade_value) >
+          (this.playerService.selectedMarket !== FantasyMarket.KeepTradeCut ? 5500 : 6000),
       }
     });
     this.powerRankingCache = {};
     this.powerRankings.forEach(team => {
       this.powerRankingCache[team.team.roster.rosterId] = {
         tier: this.displayService.getTierFromNumber(team.tier),
-        value: this.powerRankingsService.getTeamPowerRankingValue(team),
-        rank: this.powerRankingsService.getTeamPowerRankingValue(team, 'rank'),
-        isGreen: this.powerRankingsService.getTeamPowerRankingValue(team, 'rank') < this.alertThreshold,
-        isRed: this.powerRankingsService.getTeamPowerRankingValue(team, 'rank') > this.alertThreshold * 2,
+        value: this.isSuperFlex ? team.sfTradeValueOverall : team.tradeValueOverall,
+        rank: team.overallRank,
+        isGreen: team.overallRank < this.alertThreshold,
+        isRed: team.overallRank > this.alertThreshold * 2,
         rosters: {}
       }
       team.roster.forEach((group) => {
         this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
-          value: this.powerRankingsService.getPosGroupValue(group),
-          rank: this.powerRankingsService.getPosGroupValue(group, 'rank'),
-          isRed: this.powerRankingsService.getPosGroupValue(group, 'rank') > this.alertThreshold * 2,
-          isGreen: this.powerRankingsService.getPosGroupValue(group, 'rank') < this.alertThreshold
+          value: this.isSuperFlex ? group.sfTradeValue : group.tradeValue,
+          rank: group.rank,
+          isRed: group.rank > this.alertThreshold * 2,
+          isGreen: group.rank < this.alertThreshold
         }
       });
       this.powerRankingCache[team.team.roster.rosterId].rosters[team.picks.position] = {
-        value: this.powerRankingsService.getPosGroupValue(team.picks),
-        rank: this.powerRankingsService.getPosGroupValue(team.picks, 'rank'),
-        isRed: this.powerRankingsService.getPosGroupValue(team.picks, 'rank') > this.alertThreshold * 2,
-        isGreen: this.powerRankingsService.getPosGroupValue(team.picks, 'rank') < this.alertThreshold
+        value: this.isSuperFlex ? team.picks.sfTradeValue : team.picks.tradeValue,
+        rank: team.picks.rank,
+        isRed: team.picks.rank > this.alertThreshold * 2,
+        isGreen: team.picks.rank < this.alertThreshold
       }
     });
   }
@@ -161,8 +160,8 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    */
   checkExpanded(element: TeamPowerRanking): boolean {
     let flag = false;
-    this.expandedElement.forEach(e => {
-      if (e === element) {
+    this.powerRankingsService.expandedElement.forEach(e => {
+      if (e === element.team.owner) {
         flag = true;
       }
     });
@@ -174,11 +173,11 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    * @param element team row that was clicked
    */
   pushPopElement(element: TeamPowerRanking): void {
-    const index = this.expandedElement.indexOf(element);
+    const index = this.powerRankingsService.expandedElement.indexOf(element.team.owner);
     if (index === -1) {
-      this.expandedElement.push(element);
+      this.powerRankingsService.expandedElement.push(element.team.owner);
     } else {
-      this.expandedElement.splice(index, 1);
+      this.powerRankingsService.expandedElement.splice(index, 1);
     }
   }
 
@@ -187,10 +186,10 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    */
   expandCollapseAll(): void {
     this.dataSource.data = this.powerRankings;
-    if (this.expandedElement.length !== this.powerRankings.length) {
-      this.expandedElement = this.powerRankings.slice();
+    if (this.powerRankingsService.expandedElement.length !== this.powerRankings.length) {
+      this.powerRankingsService.expandedElement = this.powerRankings.slice().map(t => t.team.owner);
     } else {
-      this.expandedElement = [];
+      this.powerRankingsService.expandedElement = [];
     }
   }
 
@@ -289,7 +288,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
     );
     // update table with filtered results
     this.createNewTableDataSource(filteredRows);
-    this.expandedElement = filteredRows;
+    this.powerRankingsService.expandedElement = filteredRows.map(t => t.team.owner);
   }
 
   /**
@@ -309,23 +308,17 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
       } else if (property === 'owner') {
         return item.team.owner?.ownerName;
       } else if (property === 'qbRank') {
-        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
-          item.roster[0].fcRank : item.roster[0].rank;
+        return item.roster[0].rank;
       } else if (property === 'rbRank') {
-        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
-          item.roster[1].fcRank : item.roster[1].rank;
+        return item.roster[1].rank;
       } else if (property === 'wrRank') {
-        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
-          item.roster[2].fcRank : item.roster[2].rank;
+        return item.roster[2].rank;
       } else if (property === 'teRank') {
-        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
-          item.roster[3].fcRank : item.roster[3].rank;
+        return item.roster[3].rank;
       } else if (property === 'draftRank') {
-        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
-          item.picks.fcRank : item.picks.rank;
+        return item.picks.rank;
       } else if (property === 'overallRank') {
-        return this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
-          item.fcOverallRank : item.overallRank;
+        return item.overallRank;
       } else {
         return item[property];
       }
@@ -337,7 +330,7 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
    * returns if power rankings are expanded
    */
   isExpanded(): boolean {
-    return this.expandedElement.length === this.powerRankings.length;
+    return this.powerRankingsService.expandedElement.length === this.powerRankings.length;
   }
 
   /**
@@ -355,7 +348,9 @@ export class PowerRankingsTableComponent implements OnInit, OnChanges {
   updateFantasyMarket($event): void {
     this.powerRankingsService.rankingMarket = $event.value;
     if (this.powerRankingsService.rankingMarket !== PowerRankingMarket.ADP) {
-      this.playerService.selectedMarket = this.powerRankingsService.rankingMarket.valueOf();
+      this.addSubscriptions(this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
+        this.playerService.selectedMarket = this.powerRankingsService.rankingMarket.valueOf();
+      }));
     }
     this.refreshPowerRankingCache();
   }

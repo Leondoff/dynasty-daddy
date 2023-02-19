@@ -107,33 +107,21 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
         case PowerRankingOrder.ELO_STARTER:
           return b.eloAdpValueStarter - a.eloAdpValueStarter;
         case PowerRankingOrder.QB_RANK:
-          return this.selectedMarket === FantasyMarket.FantasyCalc ?
-            a.roster[0].fcRank - b.roster[0].fcRank : a.roster[0].rank - b.roster[0].rank;
+          return a.roster[0].rank - b.roster[0].rank;
         case PowerRankingOrder.RB_RANK:
-          return this.selectedMarket === FantasyMarket.FantasyCalc ?
-            a.roster[1].fcRank - b.roster[1].fcRank : a.roster[1].rank - b.roster[1].rank;
+          return a.roster[1].rank - b.roster[1].rank;
         case PowerRankingOrder.WR_RANK:
-          return this.selectedMarket === FantasyMarket.FantasyCalc ?
-            a.roster[2].fcRank - b.roster[2].fcRank : a.roster[2].rank - b.roster[2].rank;
+          return a.roster[2].rank - b.roster[2].rank;
         case PowerRankingOrder.TE_RANK:
-          return this.selectedMarket === FantasyMarket.FantasyCalc ?
-            a.roster[3].fcRank - b.roster[3].fcRank : a.roster[3].rank - b.roster[3].rank;
+          return a.roster[3].rank - b.roster[3].rank;
         case PowerRankingOrder.PICK_RANK:
-          return this.selectedMarket === FantasyMarket.FantasyCalc ?
-            a.picks.fcRank - b.picks.fcRank : a.picks.rank - b.picks.rank;
+          return a.picks.rank - b.picks.rank;
         case PowerRankingOrder.STARTER:
           return b.adpValueStarter - a.adpValueStarter;
         default:
-          switch (this.selectedMarket) {
-            case FantasyMarket.FantasyCalc:
-              return !this.leagueService.selectedLeague.isSuperflex ?
-                b.fcTradeValueOverall - a.fcTradeValueOverall :
-                b.fcSfTradeValueOverall - a.fcSfTradeValueOverall;
-            default:
-              return !this.leagueService.selectedLeague.isSuperflex ?
-                b.tradeValueOverall - a.tradeValueOverall :
-                b.sfTradeValueOverall - a.sfTradeValueOverall;
-          }
+          return !this.leagueService.selectedLeague.isSuperflex ?
+            b.tradeValueOverall - a.tradeValueOverall :
+            b.sfTradeValueOverall - a.sfTradeValueOverall;
       }
     });
     for (const team of this.powerRankings) {
@@ -152,18 +140,9 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
       const temp = [];
       for (const team of this.powerRankings) {
         const rosterInd = this.dataLabels.indexOf(team.team.owner?.ownerName);
-        switch (this.selectedMarket) {
-          case FantasyMarket.FantasyCalc:
-            !this.leagueService.selectedLeague.isSuperflex ?
-              temp[rosterInd] = team.roster[index].fcTradeValue :
-              temp[rosterInd] = team.roster[index].fcSfTradeValue;
-            break;
-          default:
-            !this.leagueService.selectedLeague.isSuperflex ?
-              temp[rosterInd] = team.roster[index].tradeValue :
-              temp[rosterInd] = team.roster[index].sfTradeValue;
-            break;
-        }
+        !this.leagueService.selectedLeague.isSuperflex ?
+          temp[rosterInd] = team.roster[index].tradeValue :
+          temp[rosterInd] = team.roster[index].sfTradeValue;
         this.data[index] = { data: temp, label: pos, hoverBackgroundColor: [] };
       }
     });
@@ -171,18 +150,9 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
       const tempPicks = [];
       for (const team of this.powerRankings) {
         const index = this.dataLabels.indexOf(team.team.owner?.ownerName);
-        switch (this.selectedMarket) {
-          case FantasyMarket.FantasyCalc:
-            !this.leagueService.selectedLeague.isSuperflex ?
-              tempPicks[index] = team.picks.fcTradeValue :
-              tempPicks[index] = team.picks.fcSfTradeValue;
-            break;
-          default:
-            !this.leagueService.selectedLeague.isSuperflex ?
-              tempPicks[index] = team.picks.tradeValue :
-              tempPicks[index] = team.picks.sfTradeValue;
-            break;
-        }
+        !this.leagueService.selectedLeague.isSuperflex ?
+          tempPicks[index] = team.picks.tradeValue :
+          tempPicks[index] = team.picks.sfTradeValue;
         this.data[4] = { data: tempPicks, label: 'Draft Capital', hoverBackgroundColor: [] };
       }
     }

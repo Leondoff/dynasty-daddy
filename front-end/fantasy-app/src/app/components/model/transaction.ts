@@ -26,6 +26,5 @@ export class TransactionUI {
 export class TransactionPlayer {
   playerName: string;
   value: number;
-  fcValue: number;
   rosterId: number;
 }

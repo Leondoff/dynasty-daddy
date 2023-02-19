@@ -34,7 +34,7 @@
       <mat-cell *matCellDef="let element">
         <div *ngIf="mockDraftService.mockDraftSelectedPlayers[element.pick-1]">
           {{configService.isMobile ? mockDraftService.mockDraftSelectedPlayers[element.pick-1].first_name.substr(0, 1) + '. ' +
-          mockDraftService.mockDraftSelectedPlayers[element.pick-1].last_name : mockDraftService.mockDraftSelectedPlayers[element.pick-1].full_name}} - {{playerService.getTradeValue(mockDraftService.mockDraftSelectedPlayers[element.pick-1], leagueService.selectedLeague.isSuperflex)}}
+          mockDraftService.mockDraftSelectedPlayers[element.pick-1].last_name : mockDraftService.mockDraftSelectedPlayers[element.pick-1].full_name}} - {{leagueService.selectedLeague.isSuperflex ? mockDraftService.mockDraftSelectedPlayers[element.pick-1].sf_trade_value : mockDraftService.mockDraftSelectedPlayers[element.pick-1].trade_value}}
         </div>
         <mat-icon (click)=singleSelect.open()
         *ngIf="leagueService.selectedLeague"

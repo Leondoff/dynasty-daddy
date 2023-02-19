@@ -125,10 +125,6 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
    */
   private getMetricForPlayer(value: string, player: FantasyPlayer): number {
     switch (value) {
-      case 'fc_sf_trade_value':
-        return player.fc_sf_trade_value;
-      case 'fc_trade_value':
-        return player.fc_trade_value;
       case 'sf_trade_value':
         return player.sf_trade_value;
       case 'trade_value':

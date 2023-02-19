@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
+import { PlayerService } from 'src/app/services/player.service';
 
 @Component({
     selector: 'fantasy-market-dropdown',
@@ -14,9 +15,13 @@ export class FantasyMarketDropdown implements OnInit {
     @Output()
     selectedMarketChange: EventEmitter<FantasyMarket> = new EventEmitter<FantasyMarket>();
 
-    fantasyMarkets = [{ 'num': FantasyMarket.KeepTradeCut, 'value': 'KeepTradeCut' }, { 'num': FantasyMarket.FantasyCalc, 'value': 'FantasyCalc' }]
+    fantasyMarkets = [
+        { 'num': FantasyMarket.KeepTradeCut, 'value': 'KeepTradeCut' },
+        { 'num': FantasyMarket.FantasyCalc, 'value': 'FantasyCalc' },
+        { 'num': FantasyMarket.DynastyProcess, 'value': 'Dynasty Process' }
+    ]
 
-    constructor() {
+    constructor(private playerService: PlayerService) {
 
     }
 
@@ -25,6 +30,8 @@ export class FantasyMarketDropdown implements OnInit {
     }
 
     changeMarket($event: any) {
-        this.selectedMarketChange.emit($event.value);
+        this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
+            this.selectedMarketChange.emit($event.value);
+        });
     }
 }

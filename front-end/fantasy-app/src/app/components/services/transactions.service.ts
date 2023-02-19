@@ -6,7 +6,6 @@ import {NflService} from '../../services/utilities/nfl.service';
 import {PlayerService} from '../../services/player.service';
 import {LeagueTeamTransactionDTO, TransactionStatus} from '../../model/league/LeagueTeamTransactionDTO';
 import {LeagueRawTradePicksDTO} from '../../model/league/LeagueRawTradePicksDTO';
-import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +36,6 @@ export class TransactionsService {
       }
       for (const activity of teamActivity) {
         activity.netValue = this.calculateNetValue(activity);
-        activity.fcNetValue = this.calculateNetValue(activity, FantasyMarket.FantasyCalc);
         activity.headerDisplay = this.getTransactionHeaderDisplay(activity, selectedTeam.roster.rosterId);
       }
       teamActivity.sort((a, b) => {
@@ -88,11 +86,10 @@ export class TransactionsService {
       return {
         playerName: player.full_name,
         value: this.leagueService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value,
-        fcValue: this.leagueService.selectedLeague.isSuperflex ? player.fc_sf_trade_value : player.fc_trade_value,
         rosterId
       };
     } else {
-      return {playerName: this.leagueService.platformPlayersMap[playerPlatformId]?.full_name, value: 0, fcValue: 0, rosterId};
+      return {playerName: this.leagueService.platformPlayersMap[playerPlatformId]?.full_name, value: 0, rosterId};
     }
   }
 
@@ -108,7 +105,6 @@ export class TransactionsService {
       return {
         playerName: pick.full_name,
         value: this.leagueService.selectedLeague.isSuperflex ? pick.sf_trade_value : pick.trade_value,
-        fcValue: this.leagueService.selectedLeague.isSuperflex ? pick.fc_sf_trade_value : pick.fc_trade_value,
         rosterId
       };
     } else {
@@ -121,8 +117,6 @@ export class TransactionsService {
         playerName: draftPick.season + ' ' + draftPick.round + placementSuffix,
         value: this.leagueService.selectedLeague.isSuperflex ?
           notFoundPick?.sf_trade_value || 0 : notFoundPick?.trade_value || 0,
-        fcValue: this.leagueService.selectedLeague.isSuperflex ?
-          notFoundPick?.fc_sf_trade_value || 0 : notFoundPick?.fc_trade_value || 0,
         rosterId
       };
     }
@@ -132,16 +126,15 @@ export class TransactionsService {
   /**
    * calculate net value of transaction
    * @param transactionUI
-   * @param fantasyMarket
    * @private
    */
-  private calculateNetValue(transaction: TransactionUI, fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut): number {
+  private calculateNetValue(transaction: TransactionUI): number {
     let netValue = 0;
     for (const add of transaction.adds) {
-      netValue += fantasyMarket === FantasyMarket.FantasyCalc ? add.fcValue : add.value;
+      netValue += add.value;
     }
     for (const drop of transaction.drops) {
-      netValue -= fantasyMarket === FantasyMarket.FantasyCalc ? drop.fcValue : drop.value;
+      netValue -= drop.value;
     }
     return netValue;
   }
@@ -193,7 +186,7 @@ export class TransactionsService {
   getNetValueAdded(teamActivity: TransactionUI[]): number {
     let netValue = 0;
     for (const activity of teamActivity) {
-      netValue += this.playerService.selectedMarket === FantasyMarket.FantasyCalc ? activity.fcNetValue : activity.netValue;
+      netValue += activity.netValue;
     }
     return netValue;
   }

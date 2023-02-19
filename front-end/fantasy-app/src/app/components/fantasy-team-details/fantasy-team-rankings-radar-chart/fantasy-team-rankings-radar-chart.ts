@@ -63,11 +63,11 @@ export class FantasyTeamRankingsRadarChart implements OnInit, OnChanges {
     this.radarDataSet = [];
     this.radarChartLabels = [ 'QB', 'RB', 'WR', 'TE'];
     const teamPowerRankings = this.powerRankings.find(team => team.team?.owner?.userId === this.selectedTeam?.owner?.userId)
-    const rankData = teamPowerRankings.roster.map(it => this.powerRankings.length - (this.selectedMarket === FantasyMarket.FantasyCalc ? it.fcRank : it.rank) + 1);
-    this.radarChartOptions.scale.ticks.max = this.powerRankings.length;
+    const rankData = teamPowerRankings.roster.map(it => this.powerRankings.length - it.rank + 2);
+    this.radarChartOptions.scale.ticks.max = this.powerRankings.length + 1;
     if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
       this.radarChartLabels.push('Picks');
-      rankData.push(this.powerRankings.length - (this.selectedMarket === FantasyMarket.FantasyCalc ? teamPowerRankings.picks.fcRank : teamPowerRankings.picks.rank) + 1);
+      rankData.push(this.powerRankings.length - teamPowerRankings.picks.rank + 1);
     }
     this.radarDataSet.push({ data: rankData });
   }
