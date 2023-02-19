@@ -10,9 +10,9 @@ import {MflApiConfigService} from './api/mfl/mfl-api-config.service';
 export class EndpointsService {
 
   // TODO add cloud base url for api
-  // private baseUrl = 'https://dynasty-daddy.com/api';
+  private baseUrl = 'https://dynasty-daddy.com/api';
   // uncomment for dev environment
-  private baseUrl = 'http://localhost:3000/api';
+  // private baseUrl = 'http://localhost:3000/api';
 
   constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
               private sleeperApiConfigService: SleeperApiConfigService,
