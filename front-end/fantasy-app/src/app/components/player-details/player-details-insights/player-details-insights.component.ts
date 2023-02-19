@@ -127,25 +127,25 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   cachePlayerData(): void {
     this.playerCache = {}
     this.playerCache = {
-      value: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket),
-      stdValue: this.playerService.getTradeValue(this.selectedPlayer, false, this.selectedMarket),
-      change: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'change'),
-      allTimeHigh: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'all_time_high'),
-      allTimeLow: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'all_time_low'),
-      threeMonthHigh: this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'three_month_high'),
-      threeMonthLow:this.playerService.getTradeValue(this.selectedPlayer, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'three_month_low')
+      value: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.sf_trade_value : this.selectedPlayer.trade_value,
+      stdValue: this.selectedPlayer.trade_value,
+      change: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.sf_change : this.selectedPlayer.standard_change,
+      allTimeHigh: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.all_time_high_sf : this.selectedPlayer.all_time_high,
+      allTimeLow: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.all_time_low_sf : this.selectedPlayer.all_time_low,
+      threeMonthHigh: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.three_month_high_sf : this.selectedPlayer.three_month_high,
+      threeMonthLow: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.three_month_low_sf : this.selectedPlayer.three_month_low
     }
     this.adjOverallValues = {}
     this.overallAdjPlayers.forEach(player => {
       this.adjOverallValues[player.player.name_id] = {
-        value: this.playerService.getTradeValue(player.player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket)
+        value: (this.leagueService?.selectedLeague?.isSuperflex || true) ? player.player.sf_trade_value : player.player.trade_value
       }
     });
     this.adjPosValues = {}
     this.positionAdjPlayers.forEach(player => {
       this.adjPosValues[player.player.name_id] = {
-        value: this.playerService.getTradeValue(player.player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket),
-        rank: this.playerService.getTradeValue(player.player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank'),
+        value: (this.leagueService?.selectedLeague?.isSuperflex || true) ? player.player.sf_trade_value : player.player.trade_value,
+        rank: (this.leagueService?.selectedLeague?.isSuperflex || true) ? player.player.sf_position_rank : player.player.position_rank
       }
     });
   }
@@ -167,7 +167,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
           this.selectedPlayerValues.map(dataPoint => {
             if (new Date(new Date(dateLabel).setHours(0, 0, 0, 0)).getTime()
               === new Date(new Date(dataPoint.date).setHours(0, 0, 0, 0)).getTime()) {
-              dataList.push(this.playerService.getTradeValue(dataPoint, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket) || 0);
+              dataList.push(this.playerService.getValueFromDataPoint(dataPoint, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket) || 0);
               this.lineChartLabels.push(this.playerComparisonService.formatDateForDisplay(dataPoint.date));
               dataPointInd++;
             }

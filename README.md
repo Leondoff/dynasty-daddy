@@ -2,7 +2,7 @@
 
 *This project is currently in Beta and is deployed to https://dynasty-daddy.com.*
 
-Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes fantasy market (KeepTradeCut, FantasyCalc) player evaluations to create metrics on each owner's fantasy league (Sleeper, MFL).
+Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes fantasy market (KeepTradeCut, FantasyCalc, DynastyProcess) player evaluations to create metrics on each owner's fantasy league (Sleeper, MFL).
 
 ## Goal
 
@@ -16,7 +16,7 @@ The goal is to provide users with a frictionless way to see player value, team v
 
 ## Architecture
 
-Dynasty Daddy's front end is an angular 11 web application with an node express api connected to a postgres database. This database is populated using a python cron job that scrapes KeepTradeCut & FantasyCalc player rankings once a day. For Sleeper & MFL's data, we use their public apis found in their documentation.
+Dynasty Daddy's front end is an angular 14 web application with an node express api connected to a postgres database. This database is populated using a python cron job that scrapes KeepTradeCut & FantasyCalc player rankings once a day. For Sleeper & MFL's data, we use their public apis found in their documentation.
 
 ## How to run locally
 

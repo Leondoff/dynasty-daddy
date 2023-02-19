@@ -71,10 +71,6 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
       ['pickNumber', 'team', 'projectedPlayer'] :
       ['pickNumber', 'team', 'teamNeeds', 'projectedPlayer'];
 
-    this.leagueService.leagueTeamDetails.forEach(team => {
-      this.teamNeeds[team.roster.rosterId] = this.powerRankingsService.getTeamNeedsFromRosterId(team.roster.rosterId).join(' · ');
-    });
-
     // listen for search field value changes
     this.playerFilterCtrl.valueChanges
       .pipe(takeUntil(this._onDestroy))
@@ -97,6 +93,9 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnChanges(): void {
     this.initializeMockDraft();
+    this.leagueService.leagueTeamDetails.forEach(team => {
+      this.teamNeeds[team.roster.rosterId] = this.powerRankingsService.getTeamNeedsFromRosterId(team.roster.rosterId).join(' · ');
+    });
   }
 
   /**

@@ -88,15 +88,14 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   getBiggestMovers(isRiser: boolean): FantasyPlayer[] {
     const tempRoster = this.roster?.slice();
     return tempRoster.filter(player => {
-      return (this.playerService.getTradeValue(player, this.leagueService?.selectedLeague?.isSuperflex)) > 1000;
+      return (this.leagueService?.selectedLeague?.isSuperflex ? player.sf_trade_value : player.trade_value) > 1000;
     }).sort((a, b) => {
       if (isRiser) {
-        return this.playerService.getTradeValue(b, this.leagueService?.selectedLeague?.isSuperflex, this.playerService.selectedMarket, 'change') -
-        this.playerService.getTradeValue(a, this.leagueService?.selectedLeague?.isSuperflex, this.playerService.selectedMarket, 'change');
+        return (this.leagueService?.selectedLeague?.isSuperflex ? b.sf_change - a.sf_change : b.standard_change - a.standard_change);
       } else {
-        return this.playerService.getTradeValue(a, this.leagueService?.selectedLeague?.isSuperflex, this.playerService.selectedMarket, 'change') -
-        this.playerService.getTradeValue(b, this.leagueService?.selectedLeague?.isSuperflex, this.playerService.selectedMarket, 'change');      }
-    }).slice(0,5);
+        return (this.leagueService?.selectedLeague?.isSuperflex ? a.sf_change - b.sf_change : a.standard_change - b.standard_change);
+      }
+    }).slice(0, 5);
   }
 
   getSelectedTeam(): void {
@@ -113,8 +112,8 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
       }
     }
     this.roster.sort((a, b) => {
-        return this.playerService.getTradeValue(b, this.leagueService?.selectedLeague?.isSuperflex) -
-          this.playerService.getTradeValue(a, this.leagueService?.selectedLeague?.isSuperflex)
+      return this.leagueService?.selectedLeague?.isSuperflex ?
+        b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value;
     });
 
     this.pageLoaded = true;
@@ -132,11 +131,9 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     const aggMap = {};
     for (const pos of positions) {
       const playerGroup = pos === 'OV' ? this.roster.slice() : this.roster.slice().filter(it => it.position === pos)
-      aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex)), 0);
-      const lastMonth = playerGroup.reduce((s, player) => s + (this.playerService.selectedMarket === FantasyMarket.FantasyCalc ?
-        (this.leagueService.selectedLeague.isSuperflex ? player.fc_last_month_value_sf : player.fc_last_month_value) :
-        (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value)), 0)
-      aggMap[pos + '_change'] = Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100);
+      aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.leagueService?.selectedLeague?.isSuperflex ? player.sf_trade_value : player.trade_value), 0);
+      const lastMonth = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value), 0)
+      aggMap[pos + '_change'] = lastMonth > 0 ? Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100) : '--';
     }
     return aggMap;
   }
@@ -144,8 +141,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   loadTransactionHistory(): void {
     // generates team activities and cleans data for display
     this.teamActivity = this.transactionsService.generateTeamTransactionHistory(this.selectedTeam);
-    this.activityShowMore = this.teamActivity.length <= 5;
-    this.filterTeamActivity = this.teamActivity.slice(0, 5);
+    this.filterTeamActivity = !this.activityShowMore ? this.teamActivity.slice(0, 5) : this.teamActivity;
   }
 
   /**
@@ -227,5 +223,6 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   onMarketChange($event): void {
     this.playerService.selectedMarket = $event;
     this.teamAggregates = this.getTeamPositionAggregates();
+    this.loadTransactionHistory();
   }
 }

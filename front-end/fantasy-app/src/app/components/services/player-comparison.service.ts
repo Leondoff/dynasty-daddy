@@ -102,7 +102,7 @@ export class PlayerComparisonService {
       for (const dataPoint of player) {
         if (this.lineChartLabels.includes(this.formatDateForDisplay(dataPoint.date))) {
           const index = this.lineChartLabels.indexOf(this.formatDateForDisplay(dataPoint.date));
-          data[index] = this.playerService.getTradeValue(dataPoint, this.isSuperFlex, fantasyMarket);
+          data[index] = this.playerService.getValueFromDataPoint(dataPoint, this.isSuperFlex, fantasyMarket);
         }
       }
       if (player[0]) {
@@ -140,7 +140,7 @@ export class PlayerComparisonService {
         for (const dataPoint of player.data) {
           if (this.lineChartLabels.includes(this.formatDateForDisplay(dataPoint.date))) {
             const index = this.lineChartLabels.indexOf(this.formatDateForDisplay(dataPoint.date));
-            data[index] = this.playerService.getTradeValue(dataPoint, this.isSuperFlex, fantasyMarket);
+            data[index] = this.playerService.getValueFromDataPoint(dataPoint, this.isSuperFlex, fantasyMarket);
           }
         }
         // dont update selected player data cause it's the source of truth
@@ -180,7 +180,7 @@ export class PlayerComparisonService {
           if (!data[index]) {
             data[index] = 0;
           }
-          data[index] += this.playerService.getTradeValue(dataPoint, this.isSuperFlex, fantasyMarket);
+          data[index] += this.playerService.getValueFromDataPoint(dataPoint, this.isSuperFlex, fantasyMarket);
         }
       }
     }

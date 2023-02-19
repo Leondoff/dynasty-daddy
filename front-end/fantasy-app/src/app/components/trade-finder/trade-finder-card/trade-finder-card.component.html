@@ -14,8 +14,8 @@
       <table >
         <tr *ngFor="let player of tradePackage.team2Assets">
           <td style="width: 50%">{{player.full_name}}</td>
-          <td class="small-text__light" style="width: 35%">{{player.position}}<span *ngIf="player.position !== 'PI'">{{playerService.getTradeValue(player, this.leagueService?.selectedLeague?.isSuperflex || true, this.selectedMarket, 'rank')}} {{player.team}}</span></td>
-          <td style="width: 15%">{{playerService.getTradeValue(player, tradePackage.isSuperFlex, tradePackage.selectedMarket)}}</td>
+          <td class="small-text__light" style="width: 35%">{{player.position}}<span *ngIf="player.position !== 'PI'">{{(this.leagueService?.selectedLeague?.isSuperflex || true) ? player.sf_position_rank : player.position_rank}} {{player.team}}</span></td>
+          <td style="width: 15%">{{tradePackage.isSuperFlex ? player.sf_trade_value : player.trade_value}}</td>
           <td style="width: 15%"></td>
           <td style="width: 15%"></td>
         </tr>

@@ -182,7 +182,7 @@ export class DraftService {
             const playerNeed = teamNeedsMap[pick.rosterId].findIndex(teamNeed => teamNeed === p.position)
             if (playerNeed >= 0) {
               const needsBoost = (teamNeedsMap[pick.rosterId].length - playerNeed) * .1 + 1
-              playerValueMap[p.name_id] = this.playerService.getTradeValue(p, this.leagueService.selectedLeague.isSuperflex) * needsBoost
+              playerValueMap[p.name_id] = (this.leagueService.selectedLeague.isSuperflex ? p.sf_trade_value : p.trade_value) * needsBoost
             }
           })
           playerOptions.sort((a, b) => playerValueMap[b.name_id] - playerValueMap[a.name_id])
@@ -242,7 +242,7 @@ export class DraftService {
     const pickValue = this.getPickValue(pick.round);
     const player = this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
       this.leagueService.selectedLeague.leaguePlatform)
-    return (player ? this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex) : 0) / pickValue;
+    return ((this.leagueService.selectedLeague.isSuperflex ? player?.sf_trade_value : player?.trade_value) || 0) / pickValue;
   }
 
   /**
@@ -254,7 +254,7 @@ export class DraftService {
     const pickValue = this.getPickValue(pick.round);
     const player = this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
       this.leagueService.selectedLeague.leaguePlatform)
-    return (player ? this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex) : 0) - pickValue;
+    return ((this.leagueService.selectedLeague.isSuperflex ? player?.sf_trade_value : player?.trade_value) || 0) - pickValue;
   }
 
   /**
@@ -278,7 +278,7 @@ export class DraftService {
           selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
           this.leagueService.selectedLeague.leaguePlatform
         );
-        totalValue += player ? this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex) : 0;
+        totalValue += (this.leagueService.selectedLeague.isSuperflex ? player?.sf_trade_value : player?.trade_value) || 0;
       }
       roundValue.push(Math.round(totalValue / this.leagueService.selectedLeague.totalRosters));
     }

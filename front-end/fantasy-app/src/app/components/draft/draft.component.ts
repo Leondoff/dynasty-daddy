@@ -112,30 +112,46 @@ export class DraftComponent extends BaseComponent implements OnInit {
    * Exports mock draft data to CSV file
    */
   exportMockDraft(): void {
-    const draftData: any[][] = []
-    draftData.push([`Mock Draft for ${this.leagueService.selectedLeague.name} - ${this.mockDraftService.mockDraftRounds} Rounds - ${this.leagueService.selectedLeague.isSuperflex ? 'Superflex' : 'Standard (1 QB)'}`]);
-    draftData.push([]);
-    draftData.push([
-      ['Pick', 'Team', 'Owner', 'Notes', 'Team Needs', 'Player', 'Position', 'Age', 'KeepTradeCut Value', 'FantasyCalc Value'],
-    ]);
-    this.mockDraftService.teamPicks.forEach((pick, ind) => {
-      const player = this.mockDraftService.mockDraftSelectedPlayers[ind];
-      const row = [pick.pickdisplay, pick.pickTeam, pick.pickOwner,
-        pick.originalRosterId !== pick.rosterId ? `Traded from ${this.leagueService.getTeamByRosterId(pick.originalRosterId)?.owner.teamName}` : "",
-        `${this.powerRankingsService.getTeamNeedsFromRosterId(pick.rosterId).join("-")}`,
-        player?.full_name, player?.position, player?.age,
-        this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex, FantasyMarket.KeepTradeCut),
-        this.playerService.getTradeValue(player, this.leagueService.selectedLeague.isSuperflex, FantasyMarket.FantasyCalc)
-      ];
-
-      draftData.push(row);
-    });
-
-    const formattedDraftData = draftData.map(e => e.join(',')).join('\n');
-
-    const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Mock_Draft_${this.mockDraftService.mockDraftRounds}_Rounds_${new Date().toISOString().slice(0, 10)}.csv`;
-
-    this.downloadService.downloadCSVFile(formattedDraftData, filename);
+    let playerValues = {};
+    this.addSubscriptions(this.playerService.fetchTradeValuesForAllMarket().subscribe(values => {
+      for (let market in FantasyMarket) {
+        playerValues[market] = values[market];
+      }
+      const draftData: any[][] = []
+      draftData.push([`Mock Draft for ${this.leagueService.selectedLeague.name} - ${this.mockDraftService.mockDraftRounds} Rounds - ${this.leagueService.selectedLeague.isSuperflex ? 'Superflex' : 'Standard (1 QB)'}`]);
+      draftData.push([]);
+      draftData.push([
+        ['Pick', 'Team', 'Owner', 'Notes', 'Team Needs', 'Player', 'Position', 'Age', 'Avg Pos ADP', 'KeepTradeCut', 'FantasyCalc', 'Dynasty Process'],
+      ]);
+      this.mockDraftService.teamPicks.forEach((pick, ind) => {
+        const player = this.mockDraftService.mockDraftSelectedPlayers[ind];
+        const row = [pick.pickdisplay, pick.pickTeam, pick.pickOwner,
+          pick.originalRosterId !== pick.rosterId ? `Traded from ${this.leagueService.getTeamByRosterId(pick.originalRosterId)?.owner.teamName}` : "",
+          `${this.powerRankingsService.getTeamNeedsFromRosterId(pick.rosterId).join("-")}`];
+        let playerRow = [];
+        if (player) {
+          playerRow = [player?.full_name, player?.position, player?.age,
+            player?.avg_adp > 0 ? player?.avg_adp : '',
+            this.leagueService.selectedLeague.isSuperflex ? 
+            playerValues[0][player?.name_id]?.sf_trade_value || 0 :
+             playerValues[0][player?.name_id]?.trade_value || 0,
+             this.leagueService.selectedLeague.isSuperflex ? 
+             playerValues[1][player?.name_id]?.sf_trade_value || 0 :
+              playerValues[1][player?.name_id]?.trade_value || 0,
+              this.leagueService.selectedLeague.isSuperflex ? 
+              playerValues[2][player?.name_id]?.sf_trade_value || 0 :
+               playerValues[2][player?.name_id]?.trade_value || 0
+          ];
+        }
+        draftData.push(row.concat(playerRow));
+      });
+  
+      const formattedDraftData = draftData.map(e => e.join(',')).join('\n');
+  
+      const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Mock_Draft_${this.mockDraftService.mockDraftRounds}_Rounds_${new Date().toISOString().slice(0, 10)}.csv`;
+  
+      this.downloadService.downloadCSVFile(formattedDraftData, filename);
+    }));
   }
 
 }

@@ -73,8 +73,8 @@ export class TradePackage {
   }
 
   calculateAssetValues(): TradePackage {
-    this.team1AssetsValue = this.getTotalValueOfPlayersFromList(this.team1Assets, this.isSuperFlex, this.fantasyMarket);
-    this.team2AssetsValue = this.getTotalValueOfPlayersFromList(this.team2Assets, this.isSuperFlex, this.fantasyMarket);
+    this.team1AssetsValue = this.getTotalValueOfPlayersFromList(this.team1Assets, this.isSuperFlex);
+    this.team2AssetsValue = this.getTotalValueOfPlayersFromList(this.team2Assets, this.isSuperFlex);
     return this;
   }
 
@@ -134,17 +134,10 @@ export class TradePackage {
   /**
    * accepts a list of players and returns the total trade value of list
    */
-  private getTotalValueOfPlayersFromList(players: FantasyPlayer[], isSuperFlex: boolean = true, fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut): number {
+  private getTotalValueOfPlayersFromList(players: FantasyPlayer[], isSuperFlex: boolean = true): number {
     let totalValue = 0;
     players?.map(player => {
-      switch (fantasyMarket) {
-        case FantasyMarket.FantasyCalc:
-          totalValue += !isSuperFlex ? player.fc_trade_value : player.fc_sf_trade_value;
-          break;
-        default:
-          totalValue += !isSuperFlex ? player.trade_value : player.sf_trade_value;
-          break;
-      }
+      totalValue += !isSuperFlex ? player.trade_value : player.sf_trade_value;
     });
     return totalValue;
   }
@@ -158,5 +151,4 @@ export class StudPlayerResponse {
     this.studPlayer = player;
     this.adjustmentMultiplier = value;
   }
-
 }

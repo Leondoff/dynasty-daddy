@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
-import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
 import { PositionPowerRanking, TeamPowerRanking } from '../model/powerRankings';
 import { LeagueService } from '../../services/league.service';
 import { PlayerService } from '../../services/player.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { max, min } from 'simple-statistics';
+import { takeUntil } from 'rxjs/operators';
 import { MatchupService } from './matchup.service';
 import { NflService } from '../../services/utilities/nfl.service';
 import { EloService } from '../../services/utilities/elo.service';
@@ -24,10 +25,24 @@ export class PowerRankingsService {
     private eloService: EloService,
     private nflService: NflService
   ) {
+
+    this.playerService.playerValuesUpdated$
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.reset();
+        this.mapPowerRankings(
+          this.leagueService.leagueTeamDetails,
+          this.playerService.playerValues,
+          this.leagueService.selectedLeague.leaguePlatform
+        );
+      });
   }
 
   /** team power rankings */
   powerRankings: TeamPowerRanking[] = [];
+
+  // list of expanded details for teams.
+  expandedElement: any[] = [];
 
   /** supported position groups to power rank */
   positionGroups: string[] = ['QB', 'RB', 'WR', 'TE'];
@@ -37,7 +52,8 @@ export class PowerRankingsService {
     [
       { 'value': 0, 'display': 'KeepTradeCut' },
       { 'value': 1, 'display': 'FantasyCalc' },
-      { 'value': 2, 'display': 'ADP' }
+      { 'value': 2, 'display': 'DynastyProcess' },
+      { 'value': 3, 'display': 'ADP' }
     ]
 
   /** power rankings table filter options */
@@ -45,6 +61,9 @@ export class PowerRankingsService {
 
   /** rankings options */
   rankingMarket: PowerRankingMarket = PowerRankingMarket.KeepTradeCut;
+
+  /** Subject that emits when the component has been destroyed. */
+  protected _onDestroy = new Subject<void>();
 
   /**
    * Sorts team power rankings array by starter value
@@ -111,8 +130,6 @@ export class PowerRankingsService {
         const roster = [];
         let sfTradeValueTotal = 0;
         let tradeValueTotal = 0;
-        let fcSfTradeValueTotal = 0;
-        let fcTradeValueTotal = 0;
         // TODO refactor this section both comparisons are redundant
         for (const playerPlatformId of team?.roster?.players) {
           for (const player of players) {
@@ -120,8 +137,6 @@ export class PowerRankingsService {
               roster.push(player);
               sfTradeValueTotal += player.sf_trade_value;
               tradeValueTotal += player.trade_value;
-              fcSfTradeValueTotal += player.fc_sf_trade_value;
-              fcTradeValueTotal += player.fc_trade_value;
               break;
             }
           }
@@ -130,19 +145,15 @@ export class PowerRankingsService {
         for (const group of this.positionGroups) {
           let sfTradeValue = 0;
           let tradeValue = 0;
-          let fcSfTradeValue = 0;
-          let fcTradeValue = 0;
           let groupList: FantasyPlayer[] = [];
           groupList = roster.filter(player => {
             if (player.position === group) {
               sfTradeValue += player.sf_trade_value;
               tradeValue += player.trade_value;
-              fcSfTradeValue += player.fc_sf_trade_value;
-              fcTradeValue += player.fc_trade_value;
               return player;
             }
           });
-          positionRoster.push(new PositionPowerRanking(group, sfTradeValue, tradeValue, groupList, fcSfTradeValue, fcTradeValue));
+          positionRoster.push(new PositionPowerRanking(group, sfTradeValue, tradeValue, groupList));
         }
         const pickValues = players.filter(player => {
           return player.position === 'PI';
@@ -150,8 +161,6 @@ export class PowerRankingsService {
         const picks: FantasyPlayer[] = [];
         let sfPickTradeValue = 0;
         let pickTradeValue = 0;
-        let fcSfPickTradeValue = 0;
-        let fcPickTradeValue = 0;
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
           team.futureDraftCapital.map(pick => {
             for (const pickValue of pickValues) {
@@ -162,10 +171,6 @@ export class PowerRankingsService {
                   pickTradeValue += pickValue.trade_value;
                   sfTradeValueTotal += pickValue.sf_trade_value;
                   tradeValueTotal += pickValue.trade_value;
-                  fcSfPickTradeValue += pickValue.fc_sf_trade_value;
-                  fcPickTradeValue += pickValue.fc_trade_value;
-                  fcSfTradeValueTotal += pickValue.fc_sf_trade_value;
-                  fcTradeValueTotal += pickValue.fc_trade_value;
                   picks.push(pickValue);
                   break;
                 } else if (pick.pick > 8 && pickValue.last_name.includes('Late')) {
@@ -173,10 +178,6 @@ export class PowerRankingsService {
                   pickTradeValue += pickValue.trade_value;
                   sfTradeValueTotal += pickValue.sf_trade_value;
                   tradeValueTotal += pickValue.trade_value;
-                  fcSfPickTradeValue += pickValue.fc_sf_trade_value;
-                  fcPickTradeValue += pickValue.fc_trade_value;
-                  fcSfTradeValueTotal += pickValue.fc_sf_trade_value;
-                  fcTradeValueTotal += pickValue.fc_trade_value;
                   picks.push(pickValue);
                   break;
                 } else if (pick.pick > 4 && pick.pick < 9 && pickValue.last_name.includes('Mid')) {
@@ -184,10 +185,6 @@ export class PowerRankingsService {
                   pickTradeValue += pickValue.trade_value;
                   sfTradeValueTotal += pickValue.sf_trade_value;
                   tradeValueTotal += pickValue.trade_value;
-                  fcSfPickTradeValue += pickValue.fc_sf_trade_value;
-                  fcPickTradeValue += pickValue.fc_trade_value;
-                  fcSfTradeValueTotal += pickValue.fc_sf_trade_value;
-                  fcTradeValueTotal += pickValue.fc_trade_value;
                   picks.push(pickValue);
                   break;
                 }
@@ -196,8 +193,8 @@ export class PowerRankingsService {
           }
           );
         }
-        const rankedPicks = new PositionPowerRanking('PI', sfPickTradeValue, pickTradeValue, picks, fcSfPickTradeValue, fcPickTradeValue);
-        newPowerRankings.push(new TeamPowerRanking(team, positionRoster, sfTradeValueTotal, tradeValueTotal, rankedPicks, fcSfTradeValueTotal, fcTradeValueTotal));
+        const rankedPicks = new PositionPowerRanking('PI', sfPickTradeValue, pickTradeValue, picks);
+        newPowerRankings.push(new TeamPowerRanking(team, positionRoster, sfTradeValueTotal, tradeValueTotal, rankedPicks));
       });
       this.rankTeams(newPowerRankings, this.leagueService.selectedLeague.isSuperflex);
     } catch (e: any) {
@@ -215,13 +212,11 @@ export class PowerRankingsService {
     teams.map(team => {
       for (const group of team.roster) {
         group.players.sort((a, b) => {
-          return this.playerService.getTradeValue(b, isSuperflex, this.playerService.selectedMarket) -
-            this.playerService.getTradeValue(a, isSuperflex, this.playerService.selectedMarket);
+          return isSuperflex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value;
         });
       }
       team.picks.players.sort((a, b) => {
-        return this.playerService.getTradeValue(b, isSuperflex, this.playerService.selectedMarket) -
-          this.playerService.getTradeValue(a, isSuperflex, this.playerService.selectedMarket);
+        return isSuperflex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value;
       });
     });
     return teams;
@@ -238,34 +233,22 @@ export class PowerRankingsService {
     teams = this.sortRosterByValue(teams, isSuperflex);
     // Rank position groups
     this.positionGroups.forEach((value, index) => {
-      this.rankingMetricsOptions.slice(0, 2).forEach((metric) => {
+      this.rankingMetricsOptions.slice(0, 3).forEach((metric) => {
         teams.sort((teamA, teamB) => {
-          return this.getPosGroupValue(teamB.roster[index], '', metric['value']) - this.getPosGroupValue(teamA.roster[index], '', metric['value']);
+          return isSuperflex ? teamB.roster[index].sfTradeValue - teamA.roster[index].sfTradeValue : teamB.roster[index].tradeValue - teamA.roster[index].tradeValue;
         });
         teams.forEach((team, teamIndex) => {
-          switch (metric['value']) {
-            case PowerRankingMarket.FantasyCalc:
-              team.roster[index].fcRank = teamIndex + 1;
-              break;
-            default:
-              team.roster[index].rank = teamIndex + 1;
-          }
+          team.roster[index].rank = teamIndex + 1;
         });
       });
     });
     // Rank picks
-    this.rankingMetricsOptions.slice(0, 2).forEach((metric) => {
+    this.rankingMetricsOptions.slice(0, 3).forEach((metric) => {
       teams.sort((teamA, teamB) => {
-        return this.getPosGroupValue(teamB.picks, '', metric['value']) - this.getPosGroupValue(teamA.picks, '', metric['value']);
+        return isSuperflex ? teamB.picks.sfTradeValue - teamA.picks.sfTradeValue : teamB.picks.tradeValue - teamA.picks.tradeValue;
       });
       teams.forEach((team, teamIndex) => {
-        switch (metric['value']) {
-          case PowerRankingMarket.FantasyCalc:
-            team.picks.fcRank = teamIndex + 1;
-            break;
-          default:
-            team.picks.rank = teamIndex + 1;
-        }
+        team.picks.rank = teamIndex + 1;
       });
     });
     // calculate best starting lineup
@@ -280,23 +263,12 @@ export class PowerRankingsService {
       team.starterRank = index + 1;
     });
     // rank overall points
-    this.rankingMetricsOptions.slice(0, 2).forEach((metric) => {
+    this.rankingMetricsOptions.slice(0, 3).forEach((metric) => {
       teams.sort((teamA, teamB) => {
-        switch (metric['value']) {
-          case PowerRankingMarket.FantasyCalc:
-            return !this.leagueService.selectedLeague.isSuperflex ? teamB.fcTradeValueOverall - teamA.fcTradeValueOverall: teamB.fcSfTradeValueOverall - teamA.fcSfTradeValueOverall;     
-          default:
-            return !this.leagueService.selectedLeague.isSuperflex ? teamB.tradeValueOverall - teamA.tradeValueOverall: teamB.sfTradeValueOverall - teamA.sfTradeValueOverall;    
-        }
+        return !this.leagueService.selectedLeague.isSuperflex ? teamB.tradeValueOverall - teamA.tradeValueOverall : teamB.sfTradeValueOverall - teamA.sfTradeValueOverall;
       });
       teams.forEach((team, teamIndex) => {
-        switch (metric['value']) {
-          case PowerRankingMarket.FantasyCalc:
-            team.fcOverallRank = teamIndex + 1;
-            break;
-          default:
-            team.overallRank = teamIndex + 1;
-        }
+        team.overallRank = teamIndex + 1;
       });
     });
     this.setTeamTiers(teams, isSuperflex);
@@ -609,7 +581,7 @@ export class PowerRankingsService {
   getTeamNeedsFromRosterId(rosterId: number): string[] {
     const teamNeeds = [];
     const team = this.findTeamFromRankingsByRosterId(rosterId);
-    team.roster.slice().sort((a,b) => b.rank - a.rank).forEach(pos => {
+    team.roster.slice().sort((a, b) => b.rank - a.rank).forEach(pos => {
       if (pos.rank > this.powerRankings.length * .35) {
         teamNeeds.push(pos.position);
       }
@@ -622,53 +594,34 @@ export class PowerRankingsService {
    * get position group value based on settings
    * @param group 
    * @param metric 
-   * @param selectedMarket
    * @returns 
    */
-  getPosGroupValue(group: PositionPowerRanking, metric: string = '', selectedMarket: FantasyMarket = this.playerService.selectedMarket): number {
-    switch (selectedMarket) {
-      case FantasyMarket.FantasyCalc:
-        if (metric === 'rank') {
-          return group.fcRank;
-        }
-        return !this.leagueService.selectedLeague.isSuperflex ?
-          group.fcTradeValue : group.fcSfTradeValue;
-      default:
-        if (metric === 'rank') {
-          return group.rank;
-        }
-        return !this.leagueService.selectedLeague.isSuperflex ?
-          group.tradeValue : group.sfTradeValue;
+  getPosGroupValue(group: PositionPowerRanking, metric: string = ''): number {
+    if (metric === 'rank') {
+      return group.rank;
     }
+    return !this.leagueService.selectedLeague.isSuperflex ?
+      group.tradeValue : group.sfTradeValue;
   }
 
   /**
    * get power rankings value based on settings
    * @param team 
    * @param metric
-   * @param selectedMarket
    * @returns 
    */
-  getTeamPowerRankingValue(team: TeamPowerRanking, metric: string = '', selectedMarket: FantasyMarket = this.playerService.selectedMarket): number {
-    switch (selectedMarket) {
-      case FantasyMarket.FantasyCalc:
-        if (metric === 'rank') {
-          return team.fcOverallRank;
-        }
-        return !this.leagueService.selectedLeague.isSuperflex ?
-          team.fcTradeValueOverall : team.fcSfTradeValueOverall;
-      default:
-        if (metric === 'rank') {
-          return team.overallRank;
-        }
-        return !this.leagueService.selectedLeague.isSuperflex ?
-          team.tradeValueOverall : team.sfTradeValueOverall
+  getTeamPowerRankingValue(team: TeamPowerRanking, metric: string = ''): number {
+    if (metric === 'rank') {
+      return team.overallRank;
     }
+    return !this.leagueService.selectedLeague.isSuperflex ?
+      team.tradeValueOverall : team.sfTradeValueOverall
   }
 }
 
 export enum PowerRankingMarket {
   KeepTradeCut,
   FantasyCalc,
+  DynastyProcess,
   ADP
 }

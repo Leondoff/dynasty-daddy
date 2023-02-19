@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {FantasyPlayer, FantasyPlayerDataPoint} from '../../model/assets/FantasyPlayer';
-import {HttpClient} from '@angular/common/http';
-import {FantasyPlayerApiConfigService} from './fantasy-player-api-config.service';
-import {Observable, of} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../../model/assets/FantasyPlayer';
+import { HttpClient } from '@angular/common/http';
+import { FantasyPlayerApiConfigService } from './fantasy-player-api-config.service';
+import { Observable, of } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -22,6 +22,11 @@ export class FantasyPlayerApiService {
    * @private
    */
   private prevPlayerList: FantasyPlayerDataPoint[];
+
+  /**
+   * cache player values that have been loaded
+   */
+  private playerValuesDict = {};
 
   constructor(private http: HttpClient, private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService) {
   }
@@ -46,15 +51,41 @@ export class FantasyPlayerApiService {
             (player.sf_trade_value - player.last_month_value_sf) / (player.sf_trade_value === 0 ? 1 : player.sf_trade_value) * 100);
           player.standard_change = Math.round(
             (player.trade_value - player.last_month_value) / (player.trade_value === 0 ? 1 : player.trade_value) * 100);
-          player.fc_sf_change = Math.round(
-            (player.fc_sf_trade_value - player.fc_last_month_value_sf) / (player.fc_sf_trade_value === 0 ? 1 : player.fc_sf_trade_value) * 100);
-          player.fc_standard_change = Math.round(
-            (player.fc_trade_value - player.fc_last_month_value) / (player.fc_trade_value === 0 ? 1 : player.fc_trade_value) * 100);
           return player;
         });
-        }, err => {
-          throw new Error(err);
-        }
+      }, err => {
+        throw new Error(err);
+      }
+      ));
+  }
+
+  /**
+   * get player values for today
+   */
+  getPlayerValueForFantasyMarket(market: FantasyMarket): Observable<{}> {
+    return this.playerValuesDict[market] != null ? of(this.playerValuesDict[market]) : this.fetchPlayerValuesForMarket(market);
+  }
+
+  /**
+   * Fetches player values for market and caches
+   * @param market market number
+   * @returns map of player values from market
+   */
+  private fetchPlayerValuesForMarket(market: number): Observable<{}> {
+    return this.http.get<FantasyPlayer[]>(this.fantasyPlayerApiConfigService.getPlayerValuesForMarketEndpoint + market.toString())
+      .pipe(map((players: FantasyPlayer[]) => {
+        this.playerValuesDict[market] = {}
+        players.forEach(player => {
+          player.sf_change = Math.round(
+            (player.sf_trade_value - player.last_month_value_sf) / (player.sf_trade_value === 0 ? 1 : player.sf_trade_value) * 100);
+          player.standard_change = Math.round(
+            (player.trade_value - player.last_month_value) / (player.trade_value === 0 ? 1 : player.trade_value) * 100);
+          this.playerValuesDict[market][player.name_id] = player;
+        });
+        return this.playerValuesDict[market];
+      }, err => {
+        throw new Error(err);
+      }
       ));
   }
 
@@ -71,8 +102,8 @@ export class FantasyPlayerApiService {
   refreshPrevPlayerValues(days: number): Observable<FantasyPlayerDataPoint[]> {
     return this.http.get<FantasyPlayerDataPoint[]>(this.fantasyPlayerApiConfigService.getPrevPlayerValuesEndpoint + days)
       .pipe(tap((players: FantasyPlayerDataPoint[]) => this.prevPlayerList = players, err => {
-          throw new Error(err);
-        }
+        throw new Error(err);
+      }
       ));
   }
 

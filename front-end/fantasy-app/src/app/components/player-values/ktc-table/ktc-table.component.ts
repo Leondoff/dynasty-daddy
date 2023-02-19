@@ -120,10 +120,10 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
       this.playerInfoCache[player.name_id] = {
         isHigh: this.isMonthHighOrLow(player, true),
         isLow: this.isMonthHighOrLow(player, false),
-        change: this.playerService.getTradeValue(player, this.isSuperFlex, this.playerService.selectedMarket, 'change'),
-        value: this.playerService.getTradeValue(player, this.isSuperFlex, this.fantasyMarket),
+        change: this.isSuperFlex ? player.sf_change : player.standard_change,
+        value: this.isSuperFlex ? player.sf_trade_value : player.trade_value,
         points: this.playerService.getPlayerPointsByFormat(player.sleeper_id, this.leagueService.getLeagueScoringFormat()),
-        rank: this.playerService.getTradeValue(player, this.isSuperFlex, this.fantasyMarket, 'rank')
+        rank: this.isSuperFlex ? player.sf_position_rank : player.position_rank,
       }
     });
   }
@@ -135,12 +135,12 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
    * @returns 
    */
   isMonthHighOrLow(player: FantasyPlayer, isHigh: boolean): boolean {
-    const curValue = this.playerService.getTradeValue(player, this.isSuperFlex);
+    const curValue = this.isSuperFlex ? player.sf_trade_value : player.trade_value;
     if (isHigh) {
-      const threeMonthHigh = this.playerService.getTradeValue(player, this.isSuperFlex, this.playerService.selectedMarket, 'three_month_high');
+      const threeMonthHigh = this.isSuperFlex ? player.three_month_high_sf : player.three_month_high; 
       return curValue === threeMonthHigh;
     } else {
-      const threeMonthLow = this.playerService.getTradeValue(player, this.isSuperFlex, this.playerService.selectedMarket, 'three_month_low');
+      const threeMonthLow = this.isSuperFlex ? player.three_month_low_sf : player.three_month_low; 
       return curValue === threeMonthLow;
     }
   }

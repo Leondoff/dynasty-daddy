@@ -42,7 +42,7 @@
     <!-- Fantasy Points -->
     <ng-container matColumnDef="halfppr">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{playerService.playerStatsYear}} Points</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{playerInfoCache[element.name_id].points || '---'}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{playerInfoCache[element.name_id]?.points || '---'}}</mat-cell>
     </ng-container>
 
     <!-- Avg ADP Column -->
@@ -55,16 +55,16 @@
     <ng-container matColumnDef="trade_value">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Trade Value</mat-header-cell>
       <mat-cell *matCellDef="let element"
-        [ngClass]="{'warning__alert': playerInfoCache[element.name_id].isLow, 'success__alert': playerInfoCache[element.name_id].isHigh}">
-        {{playerInfoCache[element.name_id].value}} </mat-cell>
+        [ngClass]="{'warning__alert': playerInfoCache[element.name_id]?.isLow, 'success__alert': playerInfoCache[element.name_id]?.isHigh}">
+        {{playerInfoCache[element.name_id]?.value}} </mat-cell>
     </ng-container>
 
     <!-- % change Column -->
     <ng-container matColumnDef="change">
       <mat-header-cell *matHeaderCellDef mat-sort-header>% Change</mat-header-cell>
       <mat-cell *matCellDef="let element"> <span
-          [ngClass]="{'success__alert': playerInfoCache[element.name_id].change > 0, 'warning__alert': playerInfoCache[element.name_id].change < 0}">
-          {{playerInfoCache[element.name_id].change}}%</span></mat-cell>
+          [ngClass]="{'success__alert': playerInfoCache[element.name_id]?.change > 0, 'warning__alert': playerInfoCache[element.name_id]?.change < 0}">
+          {{playerInfoCache[element.name_id]?.change}}%</span></mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="actions">

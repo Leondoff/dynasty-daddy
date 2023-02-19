@@ -91,8 +91,6 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
     {value: 'pts_std', displayName: 'Fantasy Points (Standard)'},
     {value: 'sf_trade_value', displayName: 'Trade Value (SuperFlex, KeepTradeCut)'},
     {value: 'trade_value', displayName: 'Trade Value (Standard, KeepTradeCut)'},
-    {value: 'fc_sf_trade_value', displayName: 'Trade Value (SuperFlex, FantasyCalc)'},
-    {value: 'fc_trade_value', displayName: 'Trade Value (Standard, FantasyCalc)'},
     {value: 'gp', displayName: 'Games Played'},
     {value: 'avg_adp', displayName: 'Average ADP'}
   ];

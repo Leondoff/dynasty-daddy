@@ -140,7 +140,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
         player: this.configService.isMobile ?
           (pick.position || this.leagueService.platformPlayersMap[pick.playerId].position) + ' ' + (pick.lastName || this.leagueService.platformPlayersMap[pick.playerId].full_name) :
           (pick.position || this.leagueService.platformPlayersMap[pick.playerId].position) + ' ' + (pick.firstName ? (pick.firstName + ' ' + pick.lastName) : this.leagueService.platformPlayersMap[pick.playerId].full_name),
-        value: this.getPlayerByPlayerPlatformId(pick.playerId) ? this.playerService.getTradeValue(this.getPlayerByPlayerPlatformId(pick.playerId), this.isSuperFlex) : 'None',
+        value: this.getPlayerByPlayerPlatformId(pick.playerId) ? (this.isSuperFlex ? this.getPlayerByPlayerPlatformId(pick.playerId).sf_trade_value : this.getPlayerByPlayerPlatformId(pick.playerId).trade_value) : 'None',
         nameId: this.getPlayerByPlayerPlatformId(pick.playerId)?.name_id
       }
     });
@@ -224,7 +224,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     let fantasyPlayer = this.playerService.getPlayerByPlayerPlatformId(topPick.playerId, this.leagueService.selectedLeague.leaguePlatform);
     for (const pick of this.selectedDraft.picks.slice(1)) {
       const tempPlayer = this.playerService.getPlayerByPlayerPlatformId(pick.playerId, this.leagueService.selectedLeague.leaguePlatform);
-      if ((fantasyPlayer ? this.playerService.getTradeValue(fantasyPlayer, this.isSuperFlex) : 0) < (tempPlayer ? this.playerService.getTradeValue(tempPlayer, this.isSuperFlex): 0)) {
+      if (((this.isSuperFlex ? fantasyPlayer?.sf_trade_value : fantasyPlayer?.trade_value) || 0) < ((this.isSuperFlex ? fantasyPlayer?.sf_trade_value : fantasyPlayer?.trade_value) || 0)) {
         topPick = pick;
         fantasyPlayer = tempPlayer;
       }
@@ -305,7 +305,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
               pickWithValues.push({
                 player: fantasyPlayer.full_name,
                 pick: `${pick.round}.${pick.pickNumber % this.leagueService.selectedLeague.totalRosters}`,
-                value: this.playerService.getTradeValue(fantasyPlayer, this.isSuperFlex) - this.draftService.roundPickValue[pick.round - 1]
+                value: (this.isSuperFlex ? fantasyPlayer.sf_trade_value : fantasyPlayer.trade_value) - this.draftService.roundPickValue[pick.round - 1]
               });
             }
           }

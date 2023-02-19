@@ -1,5 +1,5 @@
 import express from 'express';
-import {getCurrentPlayerValues, getHistoricalPlayerValueById, getPrevPlayerValues, indexPage} from '../controllers';
+import {getCurrentPlayerValues, getHistoricalPlayerValueById, getPrevPlayerValues, indexPage, getPlayerValueForMarket} from '../controllers';
 import {getConfigValues} from '../controllers/config';
 import {
   getMFlDraftResults,
@@ -13,6 +13,7 @@ import {
 const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
 indexRouter.get('/player/all/today', getCurrentPlayerValues);
+indexRouter.get('/player/all/market/:market', getPlayerValueForMarket)
 indexRouter.get('/player/all/prev/:intervalDays', getPrevPlayerValues);
 indexRouter.get('/player/:id', getHistoricalPlayerValueById);
 indexRouter.get('/config/all', getConfigValues);
