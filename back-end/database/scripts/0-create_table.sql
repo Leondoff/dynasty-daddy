@@ -193,6 +193,7 @@ select distinct
 on (player_info.name_id) player_info.name_id              as name_id,
     pi.sleeper_id                    as sleeper_id,
     pi.mfl_id,
+    pi.ff_id,
     player_info.full_name               as full_name,
     player_info.first_name              as first_name,
     player_info.last_name               as last_name,

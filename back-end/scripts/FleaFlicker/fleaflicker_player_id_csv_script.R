@@ -6,7 +6,7 @@ library(dplyr)
 library(tidyr)
 
 # load league from flea flicker
-aaa <- fleaflicker_connect(season = 2020, league_id = 312861)
+aaa <- fleaflicker_connect(season = 2022, league_id = 312861)
 
 # write rostered players to csv
 write.csv(ff_rosters(aaa), "C:\\Users\\Jeremy\\Desktop\\People.csv", row.names=FALSE)
