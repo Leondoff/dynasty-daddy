@@ -32,8 +32,8 @@ export const getFFSchedule = async (req, res) => {
 };
 
 export const getFFLeagueTransactions = async (req, res) => {
-  const { leagueId } = req.query;
-  return sendFleaFlickerRequest(leagueId, '', 'FetchLeagueTransactions', res);
+  const { leagueId, offset } = req.query;
+  return sendFleaFlickerRequest(leagueId, `&result_offset=${offset}`, 'FetchLeagueTransactions', res);
 };
 
 export const getFFTeamDraftPicks = async (req, res) => {
@@ -42,8 +42,8 @@ export const getFFTeamDraftPicks = async (req, res) => {
 };
 
 export const getFFTrades = async (req, res) => {
-  const { leagueId } = req.query;
-  return sendFleaFlickerRequest(leagueId, '&filter=TRADES_COMPLETED', 'FetchTrades', res);
+  const { leagueId, offset } = req.query;
+  return sendFleaFlickerRequest(leagueId, `&result_offset=${offset}&filter=TRADES_COMPLETED`, 'FetchTrades', res);
 };
 
 export const getFFDraft = async (req, res) => {

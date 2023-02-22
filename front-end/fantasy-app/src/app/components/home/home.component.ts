@@ -133,6 +133,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
  * loads fleaflicker data for user
  */
   fetchFleaflickerInfo(): void {
+    this.fleaflickerLeagueIdInput = '';
     this.leagueService.loadNewUser(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
     this.leagueService.selectedYear = this.selectedYear;
     this.leagueService.resetLeague();
