@@ -17,6 +17,7 @@ import {MflService} from '../../services/api/mfl/mfl.service';
 import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 import {LeagueDTO} from '../../model/league/LeagueDTO';
 import { PlayerValueService } from './player-value.service';
+import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +37,7 @@ export class LeagueSwitchService extends BaseComponent {
 
   constructor(private sleeperApiService: SleeperApiService,
               private mflService: MflService,
+              private fleaflickerService: FleaflickerService,
               private leagueService: LeagueService,
               private powerRankingService: PowerRankingsService,
               private playersService: PlayerService,
@@ -110,9 +112,10 @@ export class LeagueSwitchService extends BaseComponent {
    * loads league user and year based on string
    * @param user username
    * @param year year defaults to current year if null
+   * @param leaguePlatform league to load user for
    */
-  loadUser(user: string, year: string = new Date().getFullYear().toString()): void {
-    this.leagueService.loadNewUser(user, year);
+  loadUser(user: string, year: string = new Date().getFullYear().toString(), leaguePlatform = LeaguePlatform.SLEEPER): void {
+    this.leagueService.loadNewUser(user, year, leaguePlatform);
     this.leagueService.selectedYear = year;
     this.leagueService.resetLeague();
   }
@@ -145,6 +148,8 @@ export class LeagueSwitchService extends BaseComponent {
     switch (Number(leaguePlatform)) {
       case LeaguePlatform.MFL.valueOf():
         return this.mflService.loadLeagueFromId$(year, leagueId);
+      case LeaguePlatform.FLEAFLICKER.valueOf():
+        return this.fleaflickerService.loadLeagueFromId$(year, leagueId);
       default:
         return this.sleeperApiService.getSleeperLeagueByLeagueId(leagueId);
     }
@@ -163,7 +168,7 @@ export class LeagueSwitchService extends BaseComponent {
       this.addSubscriptions(
         this.playersService.currentPlayerValuesLoaded$.subscribe(() => {
           if (user) {
-            this.loadUser(user, year);
+            this.loadUser(user, year, leaguePlatform);
           }
           this.loadLeagueWithLeagueId(league, year, leaguePlatform);
         })

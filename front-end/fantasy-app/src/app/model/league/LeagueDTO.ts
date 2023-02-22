@@ -2,7 +2,12 @@
 import {LeaguePlatform} from './FantasyPlatformDTO';
 
 export class LeagueDTO {
-  constructor(b: boolean,
+  
+  constructor() {
+
+  }
+
+  setLeague(isSuperflex: boolean,
               name: string,
               league_id: string,
               total_rosters: number,
@@ -13,8 +18,8 @@ export class LeagueDTO {
               metadata: any,
               settings: any,
               scoring_settings: any,
-              leaguePlatform: LeaguePlatform) {
-    this.isSuperflex = b;
+              leaguePlatform: LeaguePlatform) : LeagueDTO {
+    this.isSuperflex = isSuperflex;
     this.name = name;
     this.leagueId = league_id;
     this.totalRosters = total_rosters;
@@ -48,6 +53,7 @@ export class LeagueDTO {
           break;
       }
     }
+    return this;
   }
 
   isSuperflex: boolean = true;

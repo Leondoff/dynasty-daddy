@@ -218,8 +218,19 @@ export class PlayerService {
    */
   getPlayerByPlayerPlatformId(id: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): FantasyPlayer {
     for (const player of this.playerValues) {
-      if (id === (leaguePlatform === LeaguePlatform.SLEEPER ? player.sleeper_id : player.mfl_id)) {
-        return player;
+      switch(leaguePlatform) {
+        case LeaguePlatform.MFL: {
+          if (id === player.mfl_id) return player;
+          break;
+        }
+        case LeaguePlatform.FLEAFLICKER: {
+          if (id === player.ff_id) return player;
+          break;
+        }
+        default: {
+          if (id === player.sleeper_id) return player;
+          break;
+        }
       }
     }
     return null;
@@ -503,6 +514,8 @@ export class PlayerService {
     switch (leaguePlatform) {
       case LeaguePlatform.MFL:
         return player.mfl_id;
+      case LeaguePlatform.FLEAFLICKER:
+        return player.ff_id;
       default:
         return player.sleeper_id;
     }

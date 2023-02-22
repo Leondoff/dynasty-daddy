@@ -198,9 +198,9 @@ export class TransactionsService {
   generateTransactionAggregate(endWeek: number): void {
     if (this.leagueService.selectedLeague.leagueTransactions) {
       this.transactionAggregate = {};
-      for (let rosterId = 1; rosterId <= this.leagueService.selectedLeague.totalRosters; rosterId++) {
+      this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
         this.transactionAggregate[rosterId] = {actions: 0, trades: 0};
-      }
+      });
       for (let i = this.leagueService.selectedLeague.startWeek; i <= endWeek; i++) {
         if (this.leagueService.selectedLeague.leagueTransactions[i]) {
           this.leagueService.selectedLeague.leagueTransactions[i]?.map(transaction => {

@@ -69,8 +69,8 @@ export class StandingsComponent extends BaseComponent implements OnInit {
         );
       }
       // remove realized points for MFL league since data isn't provided
-      if (this.leagueService.selectedLeague.leaguePlatform === LeaguePlatform.MFL) {
-        this.divisionTableCols.pop();
+      if (this.leagueService.selectedLeague.leaguePlatform !== LeaguePlatform.SLEEPER) {
+        this.divisionTableCols = ['teamName', 'record', 'pf', 'pa'];
       }
       const endWeek = this.nflService.getCurrentWeekForSeason(this.leagueService.selectedLeague?.season);
       if (this.matchupService.leagueMedians.length === 0) {

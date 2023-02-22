@@ -1,21 +1,24 @@
-import {Injectable} from '@angular/core';
-import {SleeperApiService} from './api/sleeper/sleeper-api.service';
-import {Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {LeagueWrapper} from '../model/league/LeagueWrapper';
-import {SleeperService} from './api/sleeper/sleeper.service';
-import {MflService} from './api/mfl/mfl.service';
-import {MflApiService} from './api/mfl/mfl-api.service';
-import {LeaguePlayoffMatchUpDTO} from '../model/league/LeaguePlayoffMatchUpDTO';
-import {LeagueTeam} from '../model/league/LeagueTeam';
-import {LeagueRosterDTO} from '../model/league/LeagueRosterDTO';
-import {LeagueRawDraftOrderDTO} from '../model/league/LeagueRawDraftOrderDTO';
-import {LeagueOwnerDTO} from '../model/league/LeagueOwnerDTO';
-import {TeamMetrics} from '../model/league/TeamMetrics';
-import {FantasyPlatformDTO, LeaguePlatform} from '../model/league/FantasyPlatformDTO';
-import {CompletedDraft} from '../model/league/CompletedDraft';
-import {DraftCapital} from '../model/assets/DraftCapital';
-import {LeagueDTO, LeagueScoringFormat} from '../model/league/LeagueDTO';
+import { Injectable } from '@angular/core';
+import { SleeperApiService } from './api/sleeper/sleeper-api.service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { LeagueWrapper } from '../model/league/LeagueWrapper';
+import { SleeperService } from './api/sleeper/sleeper.service';
+import { MflService } from './api/mfl/mfl.service';
+import { MflApiService } from './api/mfl/mfl-api.service';
+import { LeaguePlayoffMatchUpDTO } from '../model/league/LeaguePlayoffMatchUpDTO';
+import { LeagueTeam } from '../model/league/LeagueTeam';
+import { LeagueRosterDTO } from '../model/league/LeagueRosterDTO';
+import { LeagueRawDraftOrderDTO } from '../model/league/LeagueRawDraftOrderDTO';
+import { LeagueOwnerDTO } from '../model/league/LeagueOwnerDTO';
+import { TeamMetrics } from '../model/league/TeamMetrics';
+import { FantasyPlatformDTO, LeaguePlatform } from '../model/league/FantasyPlatformDTO';
+import { CompletedDraft } from '../model/league/CompletedDraft';
+import { DraftCapital } from '../model/assets/DraftCapital';
+import { LeagueDTO, LeagueScoringFormat } from '../model/league/LeagueDTO';
+import { FleaflickerService } from './api/fleaflicker/fleaflicker.service';
+import { LeagueTeamMatchUpDTO } from '../model/league/LeagueTeamMatchUpDTO';
+import { NflService } from './utilities/nfl.service';
 
 @Injectable({
   providedIn: 'root'
@@ -49,9 +52,11 @@ export class LeagueService {
   playoffMatchUps: LeaguePlayoffMatchUpDTO[] = [];
 
   constructor(private sleeperApiService: SleeperApiService,
-              private sleeperService: SleeperService,
-              private mflApiService: MflApiService,
-              private mflService: MflService) {
+    private sleeperService: SleeperService,
+    private mflApiService: MflApiService,
+    private nflService: NflService,
+    private fleaflickerService: FleaflickerService,
+    private mflService: MflService) {
   }
 
   /**
@@ -68,22 +73,29 @@ export class LeagueService {
   loadNewLeague$(selectedLeague: LeagueDTO): Observable<any> {
     this.selectedLeague = selectedLeague;
     this.leagueStatus = 'LOADING';
-    if (this.selectedLeague.leaguePlatform === LeaguePlatform.MFL) {
-      return this.mflService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
-        this.setServiceFromLeagueWrapper(league);
-        this.mflApiService.getMFLPlayers(selectedLeague.season, selectedLeague.leagueId).subscribe((players) => {
-          this.platformPlayersMap = players;
+    switch (this.selectedLeague.leaguePlatform) {
+      case LeaguePlatform.MFL:
+        return this.mflService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
+          this.setServiceFromLeagueWrapper(league);
+          this.mflApiService.getMFLPlayers(selectedLeague.season, selectedLeague.leagueId).subscribe((players) => {
+            this.platformPlayersMap = players;
+            return of(league);
+          });
+        }));
+      case LeaguePlatform.FLEAFLICKER:
+        return this.fleaflickerService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
+          this.setServiceFromLeagueWrapper(league);
+          this.platformPlayersMap = this.fleaflickerService.playerIdMap;
           return of(league);
-        });
-      }));
-    } else {
-      return this.sleeperService.loadLeague$(new LeagueWrapper(this.selectedLeague)).pipe(map((league) => {
-        this.setServiceFromLeagueWrapper(league);
-        this.sleeperApiService.fetchAllSleeperPlayers().subscribe((players) => {
-          this.platformPlayersMap = players;
-          return of(league);
-        });
-      }));
+        }));
+      default:
+        return this.sleeperService.loadLeague$(new LeagueWrapper(this.selectedLeague)).pipe(map((league) => {
+          this.setServiceFromLeagueWrapper(league);
+          this.sleeperApiService.fetchAllSleeperPlayers().subscribe((players) => {
+            this.platformPlayersMap = players;
+            return of(league);
+          });
+        }));
     }
   }
 
@@ -97,7 +109,8 @@ export class LeagueService {
     this.leagueTeamDetails = league.leagueTeamDetails;
     this.completedDrafts = league.completedDrafts;
     this.upcomingDrafts = league.upcomingDrafts;
-    this.playoffMatchUps = league.playoffMatchUps;
+    this.playoffMatchUps = league.selectedLeague.leaguePlatform === LeaguePlatform.SLEEPER ?
+      league.playoffMatchUps : this.generatePlayoffsForLeague(league.selectedLeague.leagueMatchUps, league.leagueTeamDetails, league.selectedLeague.playoffStartWeek, league.selectedLeague.season);
   }
 
   /**
@@ -105,13 +118,29 @@ export class LeagueService {
    * @param username user name
    * @param year string selected season
    */
-  loadNewUser(username: string, year: string): Observable<any> {
+  loadNewUser(username: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): Observable<any> {
     this.selectedYear = year;
     try {
-      this.sleeperService.loadSleeperUser$(username, year).subscribe(leagueUser => {
-        this.leagueUser = leagueUser;
-        return of(leagueUser);
-      });
+      switch(leaguePlatform) {
+        case LeaguePlatform.SLEEPER: {
+          this.sleeperService.loadSleeperUser$(username, year).subscribe(leagueUser => {
+            this.leagueUser = leagueUser;
+            return of(leagueUser);
+          });
+          break;
+        }
+        case LeaguePlatform.FLEAFLICKER: {
+          this.fleaflickerService.loadFleaflickerUser$(username, year).subscribe(leagueUser => {
+            this.leagueUser = leagueUser;
+            return of(leagueUser);
+          });
+          break
+        }
+        default: {
+          console.warn(`Unsupported league platform type ${leaguePlatform}`);
+          return of(null);
+        }
+      }
     } catch (e) {
       return of();
     }
@@ -219,7 +248,7 @@ export class LeagueService {
    * get league scoring format for league or return half ppr if no league is selected
    */
   getLeagueScoringFormat(): string {
-    return  this.selectedLeague?.getLeagueScoringFormat() || 'pts_half_ppr';
+    return this.selectedLeague?.getLeagueScoringFormat() || 'pts_half_ppr';
   }
 
   /**
@@ -227,7 +256,7 @@ export class LeagueService {
    */
   getScoringFormatDisplay(): string {
     if (!this.selectedLeague) return 'Half PPR'
-    switch(this.selectedLeague?.scoringFormat) {
+    switch (this.selectedLeague?.scoringFormat) {
       case LeagueScoringFormat.PPR:
         return 'PPR';
       case LeagueScoringFormat.STANDARD:
@@ -235,5 +264,69 @@ export class LeagueService {
       default:
         return 'Half PPR';
     }
+  }
+
+  /**
+   * Generate playoffs from league matchups for leagues
+   * Platforms: MFL & Flea Flicker
+   * @param leagueMatchUps dict of all weeks matchups
+   * @param teams teams in league
+   * @param playoffStartWeek playoff start week
+   * @param season season string
+   * @returns 
+   */
+  private generatePlayoffsForLeague(leagueMatchUps: {}, teams: LeagueTeam[], playoffStartWeek: number, season: string): LeaguePlayoffMatchUpDTO[] {
+    // process current match ups in playoffs
+    let startRound = 1;
+    const playoffMatchups: LeaguePlayoffMatchUpDTO[] = [];
+    let existingMatchUps = [];
+    let iter = playoffStartWeek;
+    while (leagueMatchUps[iter] && leagueMatchUps[iter].length) {
+      if (existingMatchUps.length > 0) {
+        playoffMatchups.push(...this.formatPlayoffMatchUps(existingMatchUps, startRound - 1, true));
+        existingMatchUps = [];
+      }
+      existingMatchUps = leagueMatchUps[iter];
+      startRound++;
+      iter++;
+    }
+    // TODO test this with active playoffs
+    if (existingMatchUps.length > 0) {
+      // -2 because start round starts at 1 and is in a while loop
+      // for the left over round, format playoffs... use completed week to determine if round is completed or not
+      playoffMatchups.push(...this.formatPlayoffMatchUps(existingMatchUps, startRound - 1, this.nflService.getCompletedWeekForSeason(season) >= playoffStartWeek + startRound - 2 ? true : false));
+    }
+    // generate extra match ups for missing rounds
+    const playoffTeams = teams.slice().sort((a, b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins || b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts).slice(0, 6);
+    if (startRound <= 1) {
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[5].roster.rosterId, playoffTeams[2].roster.rosterId, 0, 1));
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[4].roster.rosterId, playoffTeams[3].roster.rosterId, 1, 1));
+    }
+    if (startRound <= 2) {
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[0].roster.rosterId, null, 2, 2));
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[1].roster.rosterId, null, 3, 2));
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 4, 2));
+    }
+    if (startRound <= 3) {
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 5, 3));
+      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 6, 3));
+    }
+    return playoffMatchups;
+  }
+
+  /**
+   * Format match up into playoff match up object
+   * @param matchUps League matchups array
+   * @param round number for playoff round
+   * @param isCompleted is week completed
+   * @returns 
+   */
+  private formatPlayoffMatchUps(matchUps: LeagueTeamMatchUpDTO[], round: number, isCompleted: boolean): LeaguePlayoffMatchUpDTO[] {
+    const playoffRoundMatchUp: LeaguePlayoffMatchUpDTO[] = [];
+    ([...new Set(matchUps.map(game => game.matchupId))]).forEach(matchupId => {
+      const matchUp = matchUps.filter(game => game.matchupId === matchupId);
+      playoffRoundMatchUp.push(new LeaguePlayoffMatchUpDTO(null).fromLeagueMatchUp(matchUp[0], matchUp[1], round, isCompleted));
+    });
+    return playoffRoundMatchUp;
   }
 }

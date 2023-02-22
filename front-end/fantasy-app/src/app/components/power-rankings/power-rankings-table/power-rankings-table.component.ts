@@ -187,7 +187,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   expandCollapseAll(): void {
     this.dataSource.data = this.powerRankings;
     if (this.powerRankingsService.expandedElement.length !== this.powerRankings.length) {
-      this.powerRankingsService.expandedElement = this.powerRankings.slice().map(t => t.team.owner);
+      this.powerRankingsService.expandedElement = this.powerRankings.map(t => t.team.owner);
     } else {
       this.powerRankingsService.expandedElement = [];
     }
