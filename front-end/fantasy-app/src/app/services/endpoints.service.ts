@@ -1,8 +1,9 @@
-import {Injectable} from '@angular/core';
-import {FantasyPlayerApiConfigService} from './api/fantasy-player-api-config.service';
-import {SleeperApiConfigService} from './api/sleeper/sleeper-api-config.service';
-import {ConfigApiConfigService} from './api/config/config-api-config.service';
-import {MflApiConfigService} from './api/mfl/mfl-api-config.service';
+import { Injectable } from '@angular/core';
+import { FantasyPlayerApiConfigService } from './api/fantasy-player-api-config.service';
+import { SleeperApiConfigService } from './api/sleeper/sleeper-api-config.service';
+import { ConfigApiConfigService } from './api/config/config-api-config.service';
+import { MflApiConfigService } from './api/mfl/mfl-api-config.service';
+import { FleaflickerApiConfigService } from './api/fleaflicker/fleaflicker-api-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +16,10 @@ export class EndpointsService {
   // private baseUrl = 'http://localhost:3000/api';
 
   constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
-              private sleeperApiConfigService: SleeperApiConfigService,
-              private mflAPIConfigService: MflApiConfigService,
-              private configApiConfigService: ConfigApiConfigService) {
+    private sleeperApiConfigService: SleeperApiConfigService,
+    private mflAPIConfigService: MflApiConfigService,
+    private fleaflickerApiConfigService: FleaflickerApiConfigService,
+    private configApiConfigService: ConfigApiConfigService) {
   }
 
   public assignEndpoints(): void {
@@ -50,5 +52,15 @@ export class EndpointsService {
     this.mflAPIConfigService.getMFLRostersEndpoint = this.baseUrl + '/v1/mfl/rosters';
     this.mflAPIConfigService.getMFLFutureDraftPicksEndpoint = this.baseUrl + '/v1/mfl/futureDraftPicks';
 
+    // Fleaflicker Endpoints
+    this.fleaflickerApiConfigService.getFFLeagueEndpoint = this.baseUrl + '/v1/ff/league';
+    this.fleaflickerApiConfigService.getFFLeagueStandingEndpoint = this.baseUrl + '/v1/ff/leagueStandings';
+    this.fleaflickerApiConfigService.getFFRostersEndpoint = this.baseUrl + '/v1/ff/rosters';;
+    this.fleaflickerApiConfigService.getFFScheduleEndpoint = this.baseUrl + '/v1/ff/schedule';
+    this.fleaflickerApiConfigService.getFFTransactionsEndpoint = this.baseUrl + '/v1/ff/transactions';
+    this.fleaflickerApiConfigService.getFFFutureDraftPicksEndpoint = this.baseUrl + '/v1/ff/futureDraftPicks';
+    this.fleaflickerApiConfigService.getFFTradesEndpoint = this.baseUrl + '/v1/ff/trades';
+    this.fleaflickerApiConfigService.getFFDraftResultsEndpoint = this.baseUrl + '/v1/ff/draftResults';
+    this.fleaflickerApiConfigService.getUserLeagueEndpoint = this.baseUrl + '/v1/ff/user';
   }
 }

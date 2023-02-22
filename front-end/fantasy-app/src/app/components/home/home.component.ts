@@ -1,16 +1,17 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {BaseComponent} from '../base-component.abstract';
-import {SleeperApiService} from '../../services/api/sleeper/sleeper-api.service';
-import {LeagueService} from '../../services/league.service';
-import {PlayerService} from '../../services/player.service';
-import {ConfigKeyDictionary, ConfigService} from '../../services/init/config.service';
-import {LeagueSwitchService} from '../services/league-switch.service';
-import {ActivatedRoute} from '@angular/router';
-import {EditLeagueSettingsModalComponent} from '../modals/edit-league-settings-modal/edit-league-settings-modal.component';
-import {MatDialog} from '@angular/material/dialog';
-import {MflService} from '../../services/api/mfl/mfl.service';
-import {MflApiService} from '../../services/api/mfl/mfl-api.service';
-import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base-component.abstract';
+import { SleeperApiService } from '../../services/api/sleeper/sleeper-api.service';
+import { LeagueService } from '../../services/league.service';
+import { PlayerService } from '../../services/player.service';
+import { ConfigKeyDictionary, ConfigService } from '../../services/init/config.service';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { ActivatedRoute } from '@angular/router';
+import { EditLeagueSettingsModalComponent } from '../modals/edit-league-settings-modal/edit-league-settings-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { MflService } from '../../services/api/mfl/mfl.service';
+import { MflApiService } from '../../services/api/mfl/mfl-api.service';
+import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
+import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
 
 @Component({
   selector: 'app-home',
@@ -19,31 +20,49 @@ import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 })
 export class HomeComponent extends BaseComponent implements OnInit, AfterViewInit {
 
+  /** sleeper username input */
   usernameInput: string = '';
 
+  /** sleeper league id input */
   sleeperLeagueIdInput: string = '';
 
+  /** mfl league id input */
   mflLeagueIdInput: string = '';
 
+  /** fleaflicekr league id input */
+  fleaflickerLeagueIdInput: string = '';
+
+  /** selected year from list */
   selectedYear: string;
 
+  /** supported years to select */
   supportedYears: string[] = [];
 
+  /** mat tab group index */
   selectedTab: string = '1';
 
+  /** sleeper login method */
   sleeperLoginMethod: string = 'sleeper_username';
 
+  /** fleaflicker login method */
+  fleaflickerLoginMethod: string = 'fleaflicker_email';
+
+  /** fleaflicker email string */
+  fleaflickerEmail: string = '';
+
+  /** mfl login method */
   mflLoginMethod: string = 'mfl_league_id';
 
   constructor(private sleeperApiService: SleeperApiService,
-              public leagueService: LeagueService,
-              private playersService: PlayerService,
-              public configService: ConfigService,
-              private route: ActivatedRoute,
-              private mflService: MflService,
-              private mflApiService: MflApiService,
-              private dialog: MatDialog,
-              public leagueSwitchService: LeagueSwitchService) {
+    public leagueService: LeagueService,
+    private playersService: PlayerService,
+    public configService: ConfigService,
+    private route: ActivatedRoute,
+    private mflService: MflService,
+    private mflApiService: MflApiService,
+    private dialog: MatDialog,
+    private fleaflickerService: FleaflickerService,
+    public leagueSwitchService: LeagueSwitchService) {
     super();
   }
 
@@ -63,11 +82,12 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         this.leagueSwitchService.loadFromQueryParams(params);
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(_ => {
-        this.selectedYear = this.leagueService.selectedLeague.season;
+        this.selectedYear = this.leagueService?.selectedYear ||
+          this.leagueService?.selectedLeague?.season || this.supportedYears[1];
         this.setUpForms();
       })
     )
-    ;
+      ;
   }
 
   /**
@@ -76,16 +96,20 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    */
   private setUpForms(): void {
     this.leagueSwitchService.selectedLeague = this.leagueService.selectedLeague || null;
-    if (this.leagueService.selectedLeague){
-      this.usernameInput =
-        this.leagueService.leagueUser?.userData?.username == null || this.leagueService.leagueUser?.userData?.username === 'undefined'
-          ? '' : this.leagueService.leagueUser?.userData?.username;
+    if (this.leagueService.selectedLeague) {
       this.selectedTab = this.leagueService.selectedLeague.leaguePlatform.toString();
       switch (this.leagueService.selectedLeague.leaguePlatform) {
         case LeaguePlatform.MFL:
           this.mflLeagueIdInput = this.leagueService.selectedLeague.leagueId;
           break;
+        case LeaguePlatform.FLEAFLICKER:
+          this.fleaflickerLeagueIdInput = this.leagueService.selectedLeague.leagueId;
+          this.fleaflickerEmail = this.leagueService.leagueUser?.userData?.username || '';
+          break;
         default:
+          this.usernameInput =
+          this.leagueService.leagueUser?.userData?.username == null || this.leagueService.leagueUser?.userData?.username === 'undefined'
+            ? '' : this.leagueService.leagueUser?.userData?.username;
           this.sleeperLeagueIdInput = this.leagueService.selectedLeague.leagueId;
       }
     }
@@ -101,6 +125,15 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    */
   fetchSleeperInfo(): void {
     this.leagueService.loadNewUser(this.usernameInput, this.selectedYear);
+    this.leagueService.selectedYear = this.selectedYear;
+    this.leagueService.resetLeague();
+  }
+
+  /**
+ * loads fleaflicker data for user
+ */
+  fetchFleaflickerInfo(): void {
+    this.leagueService.loadNewUser(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
     this.leagueService.selectedYear = this.selectedYear;
     this.leagueService.resetLeague();
   }
@@ -148,6 +181,9 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
       case LeaguePlatform.MFL:
         this.loginWithMFLLeagueId((Number(this.selectedYear) - 1).toString(), this.leagueService.selectedLeague.prevLeagueId);
         break;
+      case LeaguePlatform.FLEAFLICKER:
+        this.loginWithFleaflickerLeagueId((Number(this.selectedYear) - 1).toString(), this.leagueService.selectedLeague.prevLeagueId);
+        break;
       default:
         this.loginWithSleeperLeagueId(this.leagueService.selectedLeague.prevLeagueId)
     }
@@ -194,5 +230,31 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     this.mflApiService.getMFLLeague(year || this.selectedYear, leagueId || this.mflLeagueIdInput).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(this.mflService.fromMFLLeague(leagueData.league, year || this.selectedYear));
     });
+  }
+
+  /**
+ * handles logging in with league id
+ * @param demoId string of demo league id
+ */
+  loginWithFleaflickerLeagueId(year?: string, leagueId?: string): void {
+    this.fleaflickerService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.fleaflickerLeagueIdInput).subscribe(leagueData => {
+      this.leagueSwitchService.loadLeague(leagueData);
+    });
+  }
+
+  /**
+ * get platform display name
+ */
+  getPlatformDisplayName(): string {
+    switch (this.leagueService?.selectedLeague?.leaguePlatform) {
+      case LeaguePlatform.MFL:
+        return 'MyFantasyLeague';
+      case LeaguePlatform.FLEAFLICKER:
+        return 'Fleaflicker';
+      case LeaguePlatform.SLEEPER:
+        return 'Sleeper';
+      default:
+        return 'League';
+    }
   }
 }
