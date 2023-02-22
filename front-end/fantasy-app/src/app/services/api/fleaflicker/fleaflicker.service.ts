@@ -42,7 +42,7 @@ export class FleaflickerService {
         return null;
       }
       const userData = new LeagueUserDTO()
-      userData.username = username; 
+      userData.username = username;
 
       const leagues = []
       response.leagues.forEach(league => {
@@ -85,14 +85,18 @@ export class FleaflickerService {
       fleaflickerRosters = rosters.rosters;
       return of(fleaflickerRosters);
     })));
-    observableList.push(this.fleaflickerApiService.getFFTransactions(leagueId).pipe(map(transactions => {
-      leagueTransactions[1] = this.marshalTransactions(transactions.items);
-      return of(leagueTransactions[1]);
-    })));
-    observableList.push(this.fleaflickerApiService.getFFTrades(season, leagueId).pipe(map(trades => {
-      leagueTransactions[2] = this.marshalTrades(trades.trades);
-      return of(leagueTransactions[2]);
-    })));
+    for (let i = 0; i < 3; i++) {
+      observableList.push(this.fleaflickerApiService.getFFTransactions(leagueId, (i * 30).toString()).pipe(map(transactions => {
+        leagueTransactions[i + 1] = this.marshalTransactions(transactions.items);
+        return of(leagueTransactions[i + 1]);
+      })));
+    }
+    for (let i = 0; i < 3; i++) {
+      observableList.push(this.fleaflickerApiService.getFFTrades(season, leagueId, (i * 10).toString()).pipe(map(trades => {
+        leagueTransactions[4 + i] = this.marshalTrades(trades.trades);
+        return of(leagueTransactions[4 + i]);
+      })));
+    }
     // get future draft picks
     leagueWrapper.selectedLeague.metadata.rosters.forEach(division => {
       division.teams.forEach(team => {
@@ -225,17 +229,18 @@ export class FleaflickerService {
       const timestamp = transactions[i].timeEpochMilli
       do {
         const playerInfo = transactions[i].transaction.player;
-
-        this.mapFleaFlickerIdMap([playerInfo])
-        transactions[i].transaction.type === 'TRANSACTION_DROP' ?
-          trans.drops[playerInfo.proPlayer.id] = currentRosterId :
-          trans.adds[playerInfo.proPlayer.id] = currentRosterId;
-        trans.rosterIds = [currentRosterId]
-        trans.transactionId = transactions[i].timeEpochMilli;
-        trans.status = TransactionStatus.COMPLETED;
-        trans.createdAt = Number(timestamp);
-        trans.type = transactions[i]?.transaction?.type?.toLowerCase() || '';
-        transactionList.push(trans)
+        if (playerInfo && playerInfo.proPlayer) {
+          this.mapFleaFlickerIdMap([playerInfo])
+          transactions[i].transaction.type === 'TRANSACTION_DROP' ?
+            trans.drops[playerInfo.proPlayer.id] = currentRosterId :
+            trans.adds[playerInfo.proPlayer.id] = currentRosterId;
+          trans.rosterIds = [currentRosterId]
+          trans.transactionId = transactions[i].timeEpochMilli;
+          trans.status = TransactionStatus.COMPLETED;
+          trans.createdAt = Number(timestamp);
+          trans.type = transactions[i]?.transaction?.type?.toLowerCase() || '';
+          transactionList.push(trans)
+        }
         i++
       } while (
         i < transactions.length &&
@@ -352,10 +357,12 @@ export class FleaflickerService {
    */
   private mapFleaFlickerIdMap(playerList: any[]): void {
     playerList?.forEach(player => {
-      this.playerIdMap[player.proPlayer.id.toString()] = {
-        full_name: player.proPlayer.nameFull,
-        position: player.proPlayer.position
+      if (player && player.proPlayer) {
+        this.playerIdMap[player.proPlayer.id.toString()] = {
+          full_name: player.proPlayer.nameFull,
+          position: player.proPlayer.position
+        }
       }
-    })
+    });
   }
 }

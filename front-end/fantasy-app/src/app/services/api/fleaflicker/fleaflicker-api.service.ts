@@ -54,9 +54,10 @@ export class FleaflickerApiService {
   /**
    * fetch transactions for season
    * @param leagueId league id
+   * @param offset result offset
    */
-  getFFTransactions(leagueId: string): Observable<any> {
-    return this.http.get<any>(this.fleaflickerApiConfigService.getFFTransactionsEndpoint + '?leagueId=' + leagueId).pipe(map(
+  getFFTransactions(leagueId: string, offset: string): Observable<any> {
+    return this.http.get<any>(this.fleaflickerApiConfigService.getFFTransactionsEndpoint + '?leagueId=' + leagueId + '&offset=' + offset).pipe(map(
       (transactions: any) => {
         return transactions;
       }
@@ -107,9 +108,10 @@ export class FleaflickerApiService {
    * fetch league trades
    * @param year season
    * @param leagueId league id
+   * @param offset number offset to return
    */
-  getFFTrades(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.fleaflickerApiConfigService.getFFTradesEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getFFTrades(year: string, leagueId: string, offset: string): Observable<any> {
+    return this.http.get<any>(this.fleaflickerApiConfigService.getFFTradesEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&offset=' + offset).pipe(map(
       (trades: any) => {
         return trades;
       }
