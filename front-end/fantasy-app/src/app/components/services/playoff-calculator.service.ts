@@ -116,7 +116,7 @@ export class PlayoffCalculatorService {
    * calculates projected record based on points
    */
   private getProjectedRecord(startWeek: number = this.getStartWeek()): void {
-    for (let rosterId = 1; rosterId <= this.leagueService.selectedLeague.totalRosters; rosterId++) {
+    this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
       let totalWins = 0;
       let projectedWeeks = 0;
       let selectedWins = 0;
@@ -191,7 +191,7 @@ export class PlayoffCalculatorService {
         medianWins: winsAtDate.medianWins + selectedMedianWins + Math.round(totalMedianWins / 100),
         medianLoss: lossesAtDate.medianLosses + selectedMedianLosses + projectedWeeks - Math.round(totalMedianWins / 100)
       };
-    }
+    });
   }
 
   /**
@@ -353,7 +353,7 @@ export class PlayoffCalculatorService {
   private simulateRegularSeason(startWeek: number): SimulatedTeamInfo[] {
     const wins = [];
     // simulate regular season
-    for (let rosterId = 1; rosterId <= this.leagueService.selectedLeague.totalRosters; rosterId++) {
+    this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
       let totalWins = 0;
       for (let week = startWeek; week < this.leagueService.selectedLeague.playoffStartWeek; week++) {
         this.matchUpsWithProb[week - this.leagueService.selectedLeague.startWeek]?.map(matchUp => {
@@ -407,7 +407,7 @@ export class PlayoffCalculatorService {
       ) {
         this.teamPlayoffOdds[rosterId].timesTeamWonOut += 1;
       }
-    }
+    });
     return wins;
   }
 
@@ -564,7 +564,6 @@ export class PlayoffCalculatorService {
 
     // how many games per selected rd for array length
     let gamesThisRd = 0;
-
     // calculate current state of playoffs
     this.leagueService.playoffMatchUps.map((matchup) => {
       if (matchup.round === weekDiff && (!teamsEliminated.includes(matchup.team1) || !teamsEliminated.includes(matchup.team2))) {

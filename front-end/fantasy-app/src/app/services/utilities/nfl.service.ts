@@ -67,7 +67,7 @@ export class NflService {
       }
       if ((season.seasonType === 'star' || season.seasonType === 'off')) {
         // if its after april completed week = 0
-        if (new Date().getMonth() > 3) {
+        if (new Date().getMonth() >= 1) {
           this.stateOfNFL.completedWeek = 0;
         } else {
           this.stateOfNFL.completedWeek = 18;

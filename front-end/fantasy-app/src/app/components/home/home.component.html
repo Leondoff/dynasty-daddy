@@ -132,6 +132,85 @@
             </div>
           </div>
         </mat-tab>
+        <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ff_login')?.configValue === 'true'">
+          <ng-template mat-tab-label>
+            <img width="30px" height="30px" src="https://apprecs.org/ios/images/app-icons/256/3a/1259897658.jpg">
+          </ng-template>
+          <div style="overflow: hidden !important;">
+          <br>
+            <div class="margin-bot-20 center-text">
+              <span class="mid-bold-text">FleaFlicker <span class="warning__alert small-text__light">Beta</span></span>
+              <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 2">
+                <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
+              </span>
+            </div>
+          <div>
+            <mat-radio-group [(ngModel)]="fleaflickerLoginMethod" class="mat-dropdown-wide-200">
+              <mat-radio-button value="fleaflicker_email" style="padding-right: 10px">Email</mat-radio-button>
+              <mat-radio-button value="fleaflicker_league_id">League Id</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div *ngIf="fleaflickerLoginMethod === 'fleaflicker_email'">
+            <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+              <mat-label>Fleaflicker Email</mat-label>
+              <input matInput type="text" [(ngModel)]="fleaflickerEmail">
+              <button mat-button *ngIf="fleaflickerEmail" matSuffix mat-icon-button aria-label="Clear" (click)="fleaflickerEmail=''">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+            <div>
+              <mat-form-field appearance="standard" color="accent">
+                <mat-label>Select a year</mat-label>
+                <mat-select [(ngModel)]="selectedYear">
+                  <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div>
+              <button mat-raised-button [disabled]="!fleaflickerEmail || (fleaflickerEmail == leagueService.leagueUser?.userData?.username && selectedYear == leagueService.selectedYear)"
+                      color="accent" (click)="fetchFleaflickerInfo()">Sign In
+              </button>
+            </div>
+            <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 2">
+              <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
+                class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
+              </div>
+              <br>
+              <div class="mat-form-field-center">
+                <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+                  <mat-label>Select a league</mat-label>
+                  <mat-select [(ngModel)]="fleaflickerLeagueIdInput" (selectionChange)="loginWithFleaflickerLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
+                    <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
+                                [value]="league.leagueId">{{league.name}} test</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="fleaflickerLoginMethod=== 'fleaflicker_league_id'">
+            <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+              <mat-label>FleaFlicker League Id</mat-label>
+              <input matInput type="text" [(ngModel)]="fleaflickerLeagueIdInput">
+              <button mat-button *ngIf="fleaflickerLeagueIdInput" matSuffix mat-icon-button aria-label="Clear" (click)="fleaflickerLeagueIdInput=''">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+            <div>
+              <mat-form-field appearance="standard" color="accent">
+                <mat-label>Select a year</mat-label>
+                <mat-select [(ngModel)]="selectedYear">
+                  <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div>
+              <button mat-raised-button [disabled]="!fleaflickerLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
+                      color="accent" (click)="loginWithFleaflickerLeagueId()">Sign In
+              </button>
+            </div>
+          </div>
+          </div>
+        </mat-tab>
       </mat-tab-group>
       <div *ngIf="leagueService.leagueStatus === 'LOADING'" class="center-spinner margin-top-25">
         <mat-spinner [diameter]="50"></mat-spinner>
@@ -141,7 +220,7 @@
           <div *ngIf="leagueService.leagueUser && leagueService.leagueUser?.userData.username !== 'undefined'">Congratulations<span class="warning__alert"> {{leagueService.leagueUser?.userData.username}}</span>!</div> The
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.season}}</span> season of
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.name}}</span> was loaded successfully from
-          <span class="warning__alert">{{leagueSwitchService.selectedLeague.leaguePlatform === 1 ? 'MyFantasyLeague' : 'Sleeper'}}</span>!
+          <span class="warning__alert">{{getPlatformDisplayName()}}</span>!
         </div>
         <div *ngIf="leagueService.selectedLeague">You can navigate to other pages or <span class="link--text__dot__underline" [routerLink]="['./league/rankings']"  gaEvent="nav_power_rankings" gaCategory="page_nav">click here to checkout out your league power rankings.</span></div>
         <div *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'" class="margin-top-15">

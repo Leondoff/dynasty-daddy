@@ -125,6 +125,8 @@ export class PowerRankingsService {
     isMockRankings: boolean = false
   ): Observable<TeamPowerRanking[]> {
     const newPowerRankings: TeamPowerRanking[] = [];
+    const earlyPickThreshold = Math.round(teams.length / 3);
+    const latePickThreshold = Math.round(teams.length * 2 / 3);
     try {
       teams?.map((team) => {
         const roster = [];
@@ -164,30 +166,21 @@ export class PowerRankingsService {
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
           team.futureDraftCapital.map(pick => {
             for (const pickValue of pickValues) {
-              // TODO refactor this
-              if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year) {
-                if (pick.pick < 5 && pickValue.last_name.includes('Early')) {
-                  sfPickTradeValue += pickValue.sf_trade_value;
-                  pickTradeValue += pickValue.trade_value;
-                  sfTradeValueTotal += pickValue.sf_trade_value;
-                  tradeValueTotal += pickValue.trade_value;
-                  picks.push(pickValue);
-                  break;
-                } else if (pick.pick > 8 && pickValue.last_name.includes('Late')) {
-                  sfPickTradeValue += pickValue.sf_trade_value;
-                  pickTradeValue += pickValue.trade_value;
-                  sfTradeValueTotal += pickValue.sf_trade_value;
-                  tradeValueTotal += pickValue.trade_value;
-                  picks.push(pickValue);
-                  break;
-                } else if (pick.pick > 4 && pick.pick < 9 && pickValue.last_name.includes('Mid')) {
-                  sfPickTradeValue += pickValue.sf_trade_value;
-                  pickTradeValue += pickValue.trade_value;
-                  sfTradeValueTotal += pickValue.sf_trade_value;
-                  tradeValueTotal += pickValue.trade_value;
-                  picks.push(pickValue);
-                  break;
-                }
+              let matchFound = false;
+              const pickRanges = { EARLY: 'Early', MID: 'Mid', LATE: 'Late' }
+              if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year
+                && (pick.pick <= earlyPickThreshold && pickValue.last_name.includes(pickRanges.EARLY) ||
+                  pick.pick >= latePickThreshold && pickValue.last_name.includes(pickRanges.LATE) ||
+                  pick.pick > earlyPickThreshold && pick.pick < latePickThreshold && pickValue.last_name.includes(pickRanges.MID))) {
+                matchFound = true;
+              }
+              if (matchFound) {
+                sfPickTradeValue += pickValue.sf_trade_value;
+                pickTradeValue += pickValue.trade_value;
+                sfTradeValueTotal += pickValue.sf_trade_value;
+                tradeValueTotal += pickValue.trade_value;
+                picks.push(pickValue);
+                break;
               }
             }
           }

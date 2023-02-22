@@ -4,6 +4,7 @@ import {LeagueTeam} from '../../model/league/LeagueTeam';
 import {ChartDataSets} from 'chart.js';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {LeagueDTO} from '../../model/league/LeagueDTO';
+import { LeagueService } from 'src/app/services/league.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,8 @@ export class MatchupService {
   /** most points for in week */
   leagueMostPointsFor: {rosterId: number, points: number, oppRosterId: number, oppPoints: number, details: MatchUpUI}[] = [];
 
+  constructor(private leagueService: LeagueService) {}
+
   /**
    * initializes matchup data
    * @param selectedLeague selected League data
@@ -55,9 +58,9 @@ export class MatchupService {
    */
   generateWeeklyRecords(selectedLeague: LeagueDTO, completedWeek: number): Observable<any[]> {
     this.weeklyComparison = [];
-    for (let rosterId = 1; rosterId < selectedLeague.totalRosters + 1; rosterId++) {
+    this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
       this.weeklyComparison.push(this.calculateWeeklyRecordsForTeam(selectedLeague, rosterId, completedWeek));
-    }
+    });
     return of(this.weeklyComparison);
   }
 
@@ -67,9 +70,9 @@ export class MatchupService {
    */
   generateScheduleComparison(selectedLeague: LeagueDTO): Observable<any[]> {
     this.scheduleComparison = [];
-    for (let rosterId = 1; rosterId < selectedLeague.totalRosters + 1; rosterId++) {
+    this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
       this.scheduleComparison.push(new ScheduleComp(rosterId, this.calculateScheduleForTeam(selectedLeague, rosterId)));
-    }
+    });
     return of(this.scheduleComparison);
   }
 
@@ -80,7 +83,7 @@ export class MatchupService {
    */
   private calculateScheduleForTeam(selectedLeague: LeagueDTO, rosterId: number): {} {
     const schedule = {};
-    for (let selectedRosterId = 1; selectedRosterId < selectedLeague.totalRosters + 1; selectedRosterId++) {
+    this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(selectedRosterId => {
       let wins = 0;
       let losses = 0;
       let ties = 0;
@@ -123,7 +126,7 @@ export class MatchupService {
         }
       }
       schedule[selectedRosterId] = [wins, losses, ties];
-    }
+    });
     return schedule;
   }
 
@@ -137,18 +140,18 @@ export class MatchupService {
     for (let week = selectedLeague.startWeek; week < weekNumbers; week++) {
       if (selectedLeague.leagueMatchUps && selectedLeague.leagueMatchUps[week] !== undefined) {
         const weekMatchUps: MatchUpUI[] = [];
-        for (let i = 1; i <= selectedLeague.leagueMatchUps[week].length / 2; i++) {
+        [...new Set( selectedLeague.leagueMatchUps[week].map(game => game.matchupId))].forEach(matchupId => {
           for (const team1 of selectedLeague.leagueMatchUps[week]) {
-            if (team1.matchupId === i) {
+            if (team1.matchupId === matchupId) {
               selectedLeague.leagueMatchUps[week].map(team2 => {
-                if (team2.matchupId === i && team2.rosterId !== team1.rosterId) {
+                if (team2.matchupId === matchupId && team2.rosterId !== team1.rosterId) {
                   return weekMatchUps.push(new MatchUpUI(week, team1, team2));
                 }
               });
               break;
             }
           }
-        }
+        });
         allWeeksMatchUps.push(weekMatchUps);
       }
     }

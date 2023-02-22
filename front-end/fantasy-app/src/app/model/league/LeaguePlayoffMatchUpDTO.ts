@@ -3,7 +3,7 @@ import { LeagueTeamMatchUpDTO } from "./LeagueTeamMatchUpDTO";
 export class LeaguePlayoffMatchUpDTO {
   constructor(game: any) {
     this.round = game?.r;
-    this.matchUpId = game?.m;
+    this.matchupId = game?.m;
     this.team1 = game?.t1;
     this.team2 = game?.t2;
     this.win = game?.w;
@@ -11,7 +11,7 @@ export class LeaguePlayoffMatchUpDTO {
   }
 
   round: number;
-  matchUpId: number;
+  matchupId: number;
   team1: number;
   team2: number;
   win: number;
@@ -19,13 +19,13 @@ export class LeaguePlayoffMatchUpDTO {
 
   fromMFL(game: any, playoffStartWeek: number): LeaguePlayoffMatchUpDTO {
     this.round = Number(game.startWeek) - playoffStartWeek + 1;
-    this.matchUpId = Number(game.id);
+    this.matchupId = Number(game.id);
     return this;
   }
 
   createMockPlayoffMatchUp(team1: number, team2: number, matchUpId: number, round: number): LeaguePlayoffMatchUpDTO {
     this.round = round;
-    this.matchUpId = matchUpId;
+    this.matchupId = matchUpId;
     this.team1 = team1;
     this.team2 = team2;
     return this;
@@ -39,7 +39,7 @@ export class LeaguePlayoffMatchUpDTO {
       this.win = team1MatchUp.points > team2MatchUp.points ? team1MatchUp.rosterId : team2MatchUp.rosterId;
       this.loss = team1MatchUp.points > team2MatchUp.points ? team2MatchUp.rosterId : team1MatchUp.rosterId;
     }
-    this.matchUpId = team1MatchUp.matchupId;
+    this.matchupId = team1MatchUp.matchupId;
     return this;
   }
 }

@@ -116,7 +116,6 @@ export class MflService {
         ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId];
         teams.push(ddTeam);
       });
-      leagueWrapper.playoffMatchUps = this.generatePlayoffsForLeague(leagueMatchUps, teams, leagueWrapper.selectedLeague.playoffStartWeek,  leagueWrapper.selectedLeague.season);
       leagueWrapper.leagueTeamDetails = teams;
       leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
       return leagueWrapper;
@@ -132,7 +131,7 @@ export class MflService {
     const historyList = leagueInfo?.history?.league.length > 1 ? leagueInfo?.history?.league?.sort((a, b) => b.year - a.year) : [];
     const divisions: string[] = [...new Set<string>(leagueInfo?.divisions?.division.map(team => team?.name))] || [];
     const rosterSize = Number(leagueInfo.rosterSize) + (Number(leagueInfo.injuredReserve) || 0) + (Number(leagueInfo.taxiSquad) || 0);
-    const mflLeague = new LeagueDTO(
+    const mflLeague = new LeagueDTO().setLeague(
       leagueInfo.starters.position[0].limit !== '1',
       leagueInfo.name,
       leagueInfo.id,
@@ -153,7 +152,7 @@ export class MflService {
     mflLeague.divisions = divisions.length;
     mflLeague.draftRounds = leagueInfo.draftPlayerPool === 'Rookie' ? 5 : 12;
     mflLeague.medianWins = false; // TODO figure out how that is determined
-    mflLeague.playoffRoundType = 0;
+    mflLeague.playoffRoundType = 1;
     mflLeague.playoffTeams = 6;
     mflLeague.metadata = {
       rosters: leagueInfo.franchises.franchise,
@@ -161,69 +160,6 @@ export class MflService {
       loadRosters: leagueInfo.loadRosters || 'live_draft'
     };
     return mflLeague;
-  }
-
-  /**
-   * handles generating formatted playoff records for league based on match ups
-   * @param leagueMatchUps
-   * @param teams
-   * @param playoffStartWeek
-   * @param season
-   * @returns 
-   */
-  private generatePlayoffsForLeague(leagueMatchUps: {}, teams: LeagueTeam[], playoffStartWeek: number, season: string): LeaguePlayoffMatchUpDTO[] {
-    // process current match ups in playoffs
-    let startRound = 1;
-    const playoffMatchups : LeaguePlayoffMatchUpDTO[] = [];
-    let existingMatchUps = [];
-    let iter = playoffStartWeek;
-    while (leagueMatchUps[iter] && leagueMatchUps[iter].length) {
-      if (existingMatchUps.length > 0) {
-        playoffMatchups.push(...this.formatPlayoffMatchUps(existingMatchUps, startRound-1, true));
-        existingMatchUps = [];
-      }
-      existingMatchUps = leagueMatchUps[iter];
-      startRound++;
-      iter++;
-    }
-    // TODO test this with active playoffs
-    if (existingMatchUps.length > 0) {
-      // -2 because start round starts at 1 and is in a while loop
-      // for the left over round, format playoffs... use completed week to determine if round is completed or not
-      playoffMatchups.push(...this.formatPlayoffMatchUps(existingMatchUps, startRound-1, this.nflService.getCompletedWeekForSeason(season) >= playoffStartWeek + startRound - 2 ? true : false));
-    }
-    // generate extra match ups for missing rounds
-    const playoffTeams = teams.slice().sort((a,b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins || b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts).slice(0, 6);
-    if (startRound <= 1) {
-      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[5].roster.rosterId, playoffTeams[2].roster.rosterId, 0, 1));
-      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[4].roster.rosterId, playoffTeams[3].roster.rosterId, 1, 1));      
-    }
-    if (startRound <= 2) {
-      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[0].roster.rosterId, null, 2, 2));
-      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(playoffTeams[1].roster.rosterId, null, 3, 2));
-      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 4, 2));
-    }
-    if (startRound <= 3) {
-      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 5, 3));
-      playoffMatchups.push(new LeaguePlayoffMatchUpDTO(null).createMockPlayoffMatchUp(null, null, 6, 3));
-    }
-    return playoffMatchups;
-  }
-
-  /**
-   * Formats match ups into playoff match up objects
-   * @param matchUps match ups to format
-   * @param round round of playoffs
-   * @param isCompleted is match up completed or not
-   * @returns 
-   */
-  private formatPlayoffMatchUps(matchUps: LeagueTeamMatchUpDTO[], round: number, isCompleted: boolean): LeaguePlayoffMatchUpDTO[] {
-    const playoffRoundMatchUp : LeaguePlayoffMatchUpDTO[] = [];
-    for (let i = 1; i <= matchUps.length / 2; i++) {
-      const matchUp = matchUps.filter( a => a.matchupId === i);
-      playoffRoundMatchUp.push(new LeaguePlayoffMatchUpDTO(null).fromLeagueMatchUp(matchUp[0], matchUp[1], round, isCompleted));
-    }
-    return playoffRoundMatchUp;
   }
 
   /**

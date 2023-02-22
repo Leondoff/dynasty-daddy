@@ -26,6 +26,11 @@
           <mat-cell *matCellDef="let team">{{roundNumber(team.roster.teamMetrics.fpts)}}</mat-cell>
         </ng-container>
 
+        <ng-container matColumnDef="pa">
+          <mat-header-cell *matHeaderCellDef>Points Against</mat-header-cell>
+          <mat-cell *matCellDef="let team">{{roundNumber(team.roster.teamMetrics.fptsAgainst)}}</mat-cell>
+        </ng-container>
+
         <ng-container matColumnDef="ppf">
           <mat-header-cell *matHeaderCellDef>Potential For</mat-header-cell>
           <mat-cell *matCellDef="let team">{{roundNumber(team.roster.teamMetrics.ppts)}}</mat-cell>

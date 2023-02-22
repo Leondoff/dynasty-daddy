@@ -1,4 +1,5 @@
 /* tslint:disable:variable-name */
+import { LeaguePlatform } from '../league/FantasyPlatformDTO';
 import {LeagueOwnerDTO} from '../league/LeagueOwnerDTO';
 
 export class FantasyPlayer {
@@ -6,6 +7,7 @@ export class FantasyPlayer {
   name_id: string;
   sleeper_id: string;
   mfl_id: string;
+  ff_id: string;
   full_name: string;
   first_name: string;
   last_name: string;
@@ -41,6 +43,17 @@ export class FantasyPlayer {
   drafters_adp: number = null;
 
   constructor() {}
+
+  getPlayerIdForPlatform(platform: LeaguePlatform): string {
+    switch(platform) {
+      case LeaguePlatform.MFL: 
+        return this.mfl_id;
+      case LeaguePlatform.FLEAFLICKER: 
+        return this.ff_id;
+      default:
+        return this.sleeper_id;
+    }
+  }
 }
 
 export class FantasyPlayerDataPoint {

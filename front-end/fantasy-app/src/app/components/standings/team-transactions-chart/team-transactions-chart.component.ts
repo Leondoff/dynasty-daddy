@@ -86,13 +86,13 @@ export class TeamTransactionsChartComponent implements OnInit {
     this.dataLabels = [];
     const trades: number[] = [];
     const waiver: number[] = [];
-    for (let i = 1; i <= this.leagueService.selectedLeague.totalRosters; i++) {
-      if (this.transactionsAggregate[i]) {
-        trades.push(this.transactionsAggregate[i].trades);
-        waiver.push(this.transactionsAggregate[i].actions);
-        this.dataLabels.push(this.leagueService.getTeamByRosterId(i).owner.teamName);
+    this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
+      if (this.transactionsAggregate[rosterId]) {
+        trades.push(this.transactionsAggregate[rosterId].trades);
+        waiver.push(this.transactionsAggregate[rosterId].actions);
+        this.dataLabels.push(this.leagueService.getTeamByRosterId(rosterId).owner.teamName);
       }
-    }
+    });
     this.data.push({label: 'Trades', data: trades, hoverBackgroundColor: []});
     this.data.push({label: 'Waivers', data: waiver, hoverBackgroundColor: []});
     if (this.chart && this.chart.chart) {
