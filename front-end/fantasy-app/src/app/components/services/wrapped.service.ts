@@ -25,12 +25,12 @@ export class WrappedService {
       this.transactionsService.generateTransactionAggregate(this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season));
     }
     let totalTrans = [];
-    for (let i = 1; i <= this.leagueService.selectedLeague.totalRosters; i++) {
+    this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
       let trans = 0;
-      trans += this.transactionsService.transactionAggregate[i]?.actions || 0;
-      trans += this.transactionsService.transactionAggregate[i]?.trades || 0;
+      trans += this.transactionsService.transactionAggregate[rosterId]?.actions || 0;
+      trans += this.transactionsService.transactionAggregate[rosterId]?.trades || 0;
       totalTrans.push(trans);
-    }
+    });
     this.transactionsDict['total'] = totalTrans.reduce((partialSum, a) => partialSum + a, 0);;
     this.transactionsDict['max'] = Math.max(...totalTrans);
     this.transactionsDict['max_id'] = totalTrans.findIndex(e => e === this.transactionsDict['max']) + 1;
@@ -38,8 +38,8 @@ export class WrappedService {
     this.transactionsDict['min_id'] = totalTrans.findIndex(e => e === this.transactionsDict['min']) + 1;
     const trades: TransactionUI[] = [];
     const waivers: TransactionUI[] = [];
-    for (let i = 1; i <= this.leagueService.selectedLeague.totalRosters; i++) {
-      const teamTrans = this.transactionsService.generateTeamTransactionHistory(this.leagueService.getTeamByRosterId(i));
+    this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
+      const teamTrans = this.transactionsService.generateTeamTransactionHistory(this.leagueService.getTeamByRosterId(rosterId));
       teamTrans.forEach(tran => {
         if (tran.type === 'trade') {
           trades.push(tran);
@@ -48,7 +48,7 @@ export class WrappedService {
           waivers.push(tran);
         }
       });
-    }
+    });
     this.transactionsDict['trades'] = trades.sort((a, b) => (b.adds.reduce((p, x) => p + x.value, 0) + b.drops.reduce((p, x) => p + x.value, 0)) - (a.adds.reduce((p, x) => p + x.value, 0) + a.drops.reduce((p, x) => p + x.value, 0))).filter((a, i) => i % 2 === 1);
     this.transactionsDict['waivers'] = waivers.sort((a, b) => Math.abs(b.adds[0].value) - Math.abs(a.adds[0].value));
   }
