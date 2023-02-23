@@ -500,8 +500,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
         if (team.owner.userId === trade.team1UserId) {
           team.roster.players = team.roster.players
             .filter(playerPlatformId => !trade.team1Assets
-              .map(it => leaguePlatform === 1 ? it.mfl_id : it.sleeper_id).includes(playerPlatformId))
-            .concat(trade.team2Assets.filter(it => it.position !== 'PI').map(it => leaguePlatform === 1 ? it.mfl_id : it.sleeper_id));
+              .map(it => this.playerService.getPlayerPlatformId(it, leaguePlatform)).includes(playerPlatformId))
+            .concat(trade.team2Assets.filter(it => it.position !== 'PI').map(it => this.playerService.getPlayerPlatformId(it, leaguePlatform)));
           this.handleMockDraftCapitalChanges(team,
             trade.team1Assets.filter(asset => asset.position === 'PI'),
             trade.team2Assets.filter(asset => asset.position === 'PI'));
@@ -509,8 +509,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
         if (team.owner.userId === trade.team2UserId) {
           team.roster.players = team.roster.players
             .filter(playerPlatformId => !trade.team2Assets
-              .map(it => leaguePlatform === 1 ? it.mfl_id : it.sleeper_id).includes(playerPlatformId))
-            .concat(trade.team1Assets.filter(it => it.position !== 'PI').map(it => leaguePlatform === 1 ? it.mfl_id : it.sleeper_id));
+              .map(it => this.playerService.getPlayerPlatformId(it, leaguePlatform)).includes(playerPlatformId))
+            .concat(trade.team1Assets.filter(it => it.position !== 'PI').map(it => this.playerService.getPlayerPlatformId(it, leaguePlatform)));
           this.handleMockDraftCapitalChanges(team,
             trade.team2Assets.filter(asset => asset.position === 'PI'),
             trade.team1Assets.filter(asset => asset.position === 'PI'));
