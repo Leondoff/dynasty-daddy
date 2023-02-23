@@ -160,21 +160,18 @@ export class PlayerService {
         return of(this.playerStats);
       })));
       let currentWeekInd = this.nflService.stateOfNFL.seasonType !== 'post' ? this.nflService.stateOfNFL.completedWeek : 18;
-      let currentYearInd = Number(this.nflService.stateOfNFL.season);
+      const currentYearInd = this.nflService.getYearForStats();
       for (let weekNum = 1; weekNum < 19; weekNum++) {
-        if (currentWeekInd === 0) {
-          currentYearInd = currentYearInd - 1;
-          currentWeekInd = currentYearInd < 2021 ? 17 : 18;
-        }
+        if (currentWeekInd === 0) currentWeekInd = currentWeekInd < 2021 ? 17 : 18;
         observe.push(this.sleeperApiService.getSleeperStatsForWeek(
-          currentYearInd.toString(),
+          currentYearInd,
           currentWeekInd).pipe(map((weeklyStats) => {
             this.pastSeasonWeeklyStats[weekNum] = weeklyStats;
             return of(weeklyStats);
           })));
 
         observe.push(this.sleeperApiService.getSleeperProjectionsForWeek(
-          currentYearInd.toString(),
+          currentYearInd,
           currentWeekInd).pipe(map((weeklyStats) => {
             this.pastSeasonWeeklyProjections[weekNum] = weeklyStats;
             return of(weeklyStats);
@@ -218,7 +215,7 @@ export class PlayerService {
    */
   getPlayerByPlayerPlatformId(id: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): FantasyPlayer {
     for (const player of this.playerValues) {
-      switch(leaguePlatform) {
+      switch (leaguePlatform) {
         case LeaguePlatform.MFL: {
           if (id === player.mfl_id) return player;
           break;
