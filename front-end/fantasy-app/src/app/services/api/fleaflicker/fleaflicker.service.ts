@@ -238,7 +238,7 @@ export class FleaflickerService {
           trans.transactionId = transactions[i].timeEpochMilli;
           trans.status = TransactionStatus.COMPLETED;
           trans.createdAt = Number(timestamp);
-          trans.type = transactions[i]?.transaction?.type?.toLowerCase() || '';
+          trans.type = "waiver";
           transactionList.push(trans)
         }
         i++
