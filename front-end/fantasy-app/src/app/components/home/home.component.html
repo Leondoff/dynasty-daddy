@@ -139,7 +139,7 @@
           <div style="overflow: hidden !important;">
           <br>
             <div class="margin-bot-20 center-text">
-              <span class="mid-bold-text">FleaFlicker <span class="warning__alert small-text__light">Beta</span></span>
+              <span class="mid-bold-text">Fleaflicker <span class="warning__alert small-text__light">Beta</span></span>
               <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 2">
                 <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
               </span>
@@ -189,7 +189,7 @@
           </div>
           <div *ngIf="fleaflickerLoginMethod=== 'fleaflicker_league_id'">
             <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
-              <mat-label>FleaFlicker League Id</mat-label>
+              <mat-label>Fleaflicker League Id</mat-label>
               <input matInput type="text" [(ngModel)]="fleaflickerLeagueIdInput">
               <button mat-button *ngIf="fleaflickerLeagueIdInput" matSuffix mat-icon-button aria-label="Clear" (click)="fleaflickerLeagueIdInput=''">
                 <mat-icon>close</mat-icon>
