@@ -29,12 +29,14 @@ export class PowerRankingsService {
     this.playerService.playerValuesUpdated$
       .pipe(takeUntil(this._onDestroy))
       .subscribe(() => {
-        this.reset();
-        this.mapPowerRankings(
-          this.leagueService.leagueTeamDetails,
-          this.playerService.playerValues,
-          this.leagueService.selectedLeague.leaguePlatform
-        );
+        if (this.leagueService.isLeagueLoaded() && this.leagueService.selectedLeague) {
+          this.reset();
+          this.mapPowerRankings(
+            this.leagueService.leagueTeamDetails,
+            this.playerService.playerValues,
+            this.leagueService?.selectedLeague?.leaguePlatform
+          );
+        }
       });
   }
 

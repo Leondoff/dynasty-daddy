@@ -145,7 +145,7 @@
             </span>
           </td>
           <td class="trade-info-col">
-            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{(this.leagueService?.selectedLeague?.isSuperflex || true) ? player.sf_trade_value : player.trade_value}} • {{player.team}} • {{player.age}} y.o</span>
+            <span *ngIf="player.position != 'PI'" class="small-text__light">{{player.position}}{{(this.leagueService?.selectedLeague?.isSuperflex || true) ? player.sf_position_rank : player.position_rank}} • {{player.team}} • {{player.age}} y.o</span>
           </td>
           <td class="mid-bold-text trade-value-col">
             {{isSuperFlex ? player.sf_trade_value : player.trade_value}}
