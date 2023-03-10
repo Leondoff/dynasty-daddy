@@ -27,11 +27,11 @@
     </mat-card>
     <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="draft-metric-box">
       <mat-card-subtitle>Best Draft</mat-card-subtitle>
-      <div>{{bestTeamDraft?.team?.owner?.ownerName}} <span [ngClass]="{'urgent__alert': bestTeamDraft.valueAdded < 0, 'success__alert': bestTeamDraft.valueAdded > 0}">{{bestTeamDraft.valueAdded}}</span></div>
+      <div>{{bestTeamDraft?.team?.owner?.ownerName}} <span [ngClass]="{'urgent__alert': bestTeamDraft?.valueAdded < 0, 'success__alert': bestTeamDraft?.valueAdded > 0}">{{bestTeamDraft?.valueAdded}}</span></div>
     </mat-card>
     <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="draft-metric-box">
       <mat-card-subtitle>Worst Draft</mat-card-subtitle>
-      <div>{{worstTeamDraft?.team?.owner?.ownerName}} <span [ngClass]="{'urgent__alert': worstTeamDraft.valueAdded < 0, 'success__alert': worstTeamDraft.valueAdded > 0}">{{worstTeamDraft.valueAdded}}</span></div>
+      <div>{{worstTeamDraft?.team?.owner?.ownerName}} <span [ngClass]="{'urgent__alert': worstTeamDraft?.valueAdded < 0, 'success__alert': worstTeamDraft?.valueAdded > 0}">{{worstTeamDraft?.valueAdded}}</span></div>
     </mat-card>
   </div>
   <div>
