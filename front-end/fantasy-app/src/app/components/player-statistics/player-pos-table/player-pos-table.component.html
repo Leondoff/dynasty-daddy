@@ -8,7 +8,7 @@
         <ng-container matColumnDef="full_name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.first_name.substr(0, 1) + '. ' + element.last_name}} <span
-            *ngIf="(element.experience === 0 && element.position !== 'PI')" matBadge="R" matBadgeOverlap="false"></span>
+            *ngIf="(element.experience === 0 && element.position !== 'PI')" matBadge="R" matBadgeOverlap="false" matBadgeColor="accent"></span>
           </mat-cell>
         </ng-container>
 

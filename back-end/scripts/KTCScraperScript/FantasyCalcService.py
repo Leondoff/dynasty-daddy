@@ -1,14 +1,27 @@
 import requests
 import PlayerService
+from Constants import playerExceptionsMap
 
-# hard coded fantasy calc name id exceptions.
-# if they don't align or have different names
-# on either site then we override it
-playerExceptionsMap = {
-    'gabedaviswr': 'gabrieldaviswr',
-    'joshuapalmerwr': 'joshpalmerwr',
-    'jeffwilsonrb': 'jefferywilsonrb'
-}
+# format pick to be a string
+# this is needed to align with name id format
+def formatFantasyCalcCurrentYearPick(pick):
+    if 'Pick 3' in pick['player']['name']:
+        return [pick['player']['name'][0 : 4] + 'early' + PlayerService.formatPickNumber(pick['player']['name'][11]) + 'pi']
+    elif 'Pick 6' in pick['player']['name']:
+        return [pick['player']['name'][0 : 4] + 'mid' + PlayerService.formatPickNumber(pick['player']['name'][11]) + 'pi']
+    elif 'Pick 10' in pick['player']['name']:
+        return [pick['player']['name'][0 : 4] + 'late' + PlayerService.formatPickNumber(pick['player']['name'][11]) + 'pi']
+    else:
+        return ['none']
+        
+# format pick to be name id for future draft capital
+def formatFantasyCalcFutureYearPick(pick):
+    pickNameIds = []
+    pickRound = PlayerService.formatPickNumber(pick['player']['name'][-1])
+    for pickType in ['early', 'mid', 'late']:
+        pickNameIds.append(pick['player']['name'][0 : 4] + pickType + pickRound + 'pi')
+    return pickNameIds
+
 
 # format api response to dict
 # Dict format will be {value: number, rank: number}
@@ -17,12 +30,11 @@ def formatFantasyCalcDict(response):
     for player in response.json():
         # special formatting for picks
         if player['player']['position'] == 'PICK':
-            pickNameIds = []
-            pickRound = PlayerService.formatPickNumber(player['player']['name'][-1])
-            for pickType in ['early', 'mid', 'late']:
-                 pickNameIds.append(player['player']['name'][0 : 4] + pickType + pickRound + 'pi')
-            for pick in pickNameIds:
-                fantasyCalcDict[pick] = {'value': player['value'], 'rank': player['positionRank'], 'id': player['player']['id']}
+            pickNameIds = formatFantasyCalcCurrentYearPick(player) if 'Pick' in player['player']['name'] else formatFantasyCalcFutureYearPick(player)
+            if pickNameIds[0] != 'none':
+                for pick in pickNameIds:
+                    if len(pickNameIds) > 1 and pick not in fantasyCalcDict or len(pickNameIds) == 1:
+                        fantasyCalcDict[pick] =  {'value': player['value'], 'rank': player['positionRank'], 'id': player['player']['id']}
         else:
             playerNameId = PlayerService.cleanPlayerIdString(player['player']['name'] + player['player']['position'])
             if playerNameId in playerExceptionsMap:
