@@ -57,11 +57,11 @@ export class MflService {
     let playoffMatchUps = [];
     let completedDraft = null;
     observableList.push(this.mflApiService.getMFLTransactions(year, leagueId).pipe(map((leagueTrans) => {
-      leagueTransactions[1] = this.marshallLeagueTransactions(leagueTrans.transactions.transaction, leagueWrapper.selectedLeague.season);
+      leagueTransactions[1] = this.marshallLeagueTransactions(leagueTrans?.transactions?.transaction, leagueWrapper.selectedLeague.season);
       return of(leagueTransactions);
     })));
     observableList.push(this.mflApiService.getMFLSchedules(year, leagueId).pipe(map((leagueSchedule) => {
-      leagueMatchUps = this.marshallLeagueMatchUps(leagueSchedule.schedule.weeklySchedule);
+      leagueMatchUps = this.marshallLeagueMatchUps(leagueSchedule?.schedule?.weeklySchedule);
       return of(leagueMatchUps);
     })));
     observableList.push(this.mflApiService.getMFLRosters(year, leagueId).pipe(map(rosters => {
@@ -75,7 +75,7 @@ export class MflService {
     // only load future draft capital if dynasty league
     if (leagueWrapper.selectedLeague.type === LeagueType.DYNASTY) {
       observableList.push(this.mflApiService.getMFLFutureDraftPicks(year, leagueId).pipe(map(draftPicks => {
-        teamDraftCapital = this.marshallFutureDraftCapital(draftPicks.futureDraftPicks.franchise);
+        teamDraftCapital = this.marshallFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise);
         return of(leagueRosters);
       })));
     }
@@ -110,10 +110,10 @@ export class MflService {
           roster?.filter(player => player.status === 'TAXI_SQUAD').map(player => player.id),
           null
         );
-        ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId];
-        // index in the division array so we want 0 to be default
+        ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId] || new TeamMetrics(null);
+        // index in the division array so we want 0 to be default 
         ddTeam.roster.teamMetrics.division = team.division ? Number(team.division) + 1 : 0;
-        ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId];
+        ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId] || [];
         teams.push(ddTeam);
       });
       leagueWrapper.leagueTeamDetails = teams;
@@ -130,7 +130,7 @@ export class MflService {
   fromMFLLeague(leagueInfo: any, year: string = null): LeagueDTO {
     const historyList = leagueInfo?.history?.league.length > 1 ? leagueInfo?.history?.league?.sort((a, b) => b.year - a.year) : [];
     const divisions: string[] = [...new Set<string>(leagueInfo?.divisions?.division.map(team => team?.name))] || [];
-    const rosterSize = Number(leagueInfo.rosterSize) + (Number(leagueInfo.injuredReserve) || 0) + (Number(leagueInfo.taxiSquad) || 0);
+    const rosterSize = (Number(leagueInfo?.rosterSize) || 30) + (Number(leagueInfo?.injuredReserve) || 0) + (Number(leagueInfo?.taxiSquad) || 0);
     const mflLeague = new LeagueDTO().setLeague(
       leagueInfo.starters.position[0].limit !== '1',
       leagueInfo.name,
@@ -218,7 +218,7 @@ export class MflService {
    */
   private marshallLeagueTeamMetrics(teamMetrics: any): {} {
     const metricDict = {};
-    teamMetrics?.leagueStandings?.franchise.forEach(team => {
+      teamMetrics?.leagueStandings?.franchise.forEach(team => {
       metricDict[team.id] = (new TeamMetrics(null)).fromMFL(team);
     });
     return metricDict;
