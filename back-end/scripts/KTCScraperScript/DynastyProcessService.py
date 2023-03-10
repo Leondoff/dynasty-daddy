@@ -1,15 +1,7 @@
 import requests
 import csv
 import PlayerService
-
-# hard coded fantasy calc name id exceptions.
-# if they don't align or have different names
-# on either site then we override it
-playerExceptionsMap = {
-    'gabedaviswr': 'gabrieldaviswr',
-    'joshuapalmerwr': 'joshpalmerwr',
-    'jeffwilsonrb': 'jefferywilsonrb'
-}
+from Constants import playerExceptionsMap
 
 # format pick to be a string
 # this is needed to align with name id format

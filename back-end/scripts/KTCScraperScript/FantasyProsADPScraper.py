@@ -2,12 +2,7 @@ import os
 from sleeper_wrapper import Players
 from BeautifulSoupService import setUpSoup
 from PlayerService import cleanPlayerIdString
-
-nameIdMap = {"kenwalkerrb": "kennethwalkerrb",
-             "joshuapalmerwr": "joshpalmerwr",
-             "mitchtrubiskyqb": "mitchelltrubiskyqb",
-             "jeffwilsonrb": "jefferywilsonrb",
-             "scottymillerwr": "scottmillerwr"}
+from Constants import playerExceptionsMap
 
 class PlayerADP:
     def __init__(self, nameId, fantasyProADP, bb10ADP, rtsportsADP, underdogADP, draftersADP, avgADP):
@@ -27,8 +22,8 @@ class PlayerADP:
 # process name id and handle edge cases
 def processNameId(playername, pos):
     nameId = cleanPlayerIdString(playername + pos)
-    if nameId in nameIdMap:
-        return nameIdMap.get(nameId)
+    if nameId in playerExceptionsMap:
+        return playerExceptionsMap.get(nameId)
     return nameId
 
 # get average of List

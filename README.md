@@ -12,6 +12,7 @@ The goal is to provide users with a frictionless way to see player value, team v
 <p float="left">
 <img src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw" alt="Sleeper" title="Sleeper" width="50px">
 <img src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif" alt="MyFantasyLeague" title="MyFantasyLeague" width="50px"/>
+<img src="https://apprecs.org/ios/images/app-icons/256/3a/1259897658.jpg" alt="Fleaflicker" title="Fleaflicker" width="50px"/>
 </p>
 
 ## Architecture

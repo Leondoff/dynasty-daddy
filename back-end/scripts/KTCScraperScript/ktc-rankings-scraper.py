@@ -37,6 +37,14 @@ def getSleeperData():
             if value['last_name'] == 'Pacheco':
                 sleepervalue = cleanPlayerIdString(str('isiah' + value['last_name'] + str(value['position'])).lower())
                 temp[sleepervalue] = playerId
+            # Nathaniel Dell
+            if value['last_name'] == 'Dell' and value['first_name'] == 'Nathaniel':
+                sleepervalue = cleanPlayerIdString(str('tank' + value['last_name'] + str(value['position'])).lower())
+                temp[sleepervalue] = playerId
+            # Camerun Peoples
+            if value['last_name'] == 'Peoples' and value['first_name'] == 'Camerun':
+                sleepervalue = cleanPlayerIdString(str('Cam' + value['last_name'] + str(value['position'])).lower())
+                temp[sleepervalue] = playerId
     return temp
 
 
