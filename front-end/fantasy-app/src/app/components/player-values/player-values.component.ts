@@ -44,6 +44,9 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
       this.playersLoaded = true;
       this.playerValueService.filteredPlayers = this.playerService.cleanOldPlayerData().slice();
     }),
+    this.leagueSwitchService.leagueChanged$.subscribe(league => {
+      this.playerValueService.applyFilters();
+    }),
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
       })

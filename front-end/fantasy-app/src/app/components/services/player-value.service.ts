@@ -57,7 +57,7 @@ export class PlayerValueService {
    */
     private handleFilteringPlayerTable(): FantasyPlayer[] {
         let players = this.playerService.cleanOldPlayerData();
-        if (this.leagueService?.selectedLeague?.type !== LeagueType.DYNASTY) {
+        if (this.leagueService?.selectedLeague && this.leagueService?.selectedLeague?.type !== LeagueType.DYNASTY) {
             players = players.filter(player => player.position !== 'PI');
             this.filterPosGroup[4] = false;
         }
