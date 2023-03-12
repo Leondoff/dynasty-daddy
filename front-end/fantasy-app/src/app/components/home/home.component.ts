@@ -141,7 +141,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
 
   /**
    * generate selectable years
-   * TODO dynamic checking of available years for user??
    */
   generateYears(): string[] {
     const years = [];

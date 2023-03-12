@@ -21,7 +21,7 @@
     <!-- Age Column -->
     <ng-container matColumnDef="age">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Age</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{(element.age == -1 || !element.age) ? '??' : element.age + ' y.o.'}}
+      <mat-cell *matCellDef="let element"> {{(element.age == -1 || !element.age) ? '--' : element.age + ' y.o.'}}
       </mat-cell>
     </ng-container>
 

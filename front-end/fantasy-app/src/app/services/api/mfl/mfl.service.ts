@@ -74,7 +74,9 @@ export class MflService {
     })));
     // only load future draft capital if dynasty league
     if (leagueWrapper.selectedLeague.type === LeagueType.DYNASTY) {
-      observableList.push(this.mflApiService.getMFLFutureDraftPicks(year, leagueId).pipe(map(draftPicks => {
+      // get future pick year since it will filter out current year picks
+      const pickYear = year === new Date().getFullYear().toString() ? this.nflService.getYearForStats() : year
+      observableList.push(this.mflApiService.getMFLFutureDraftPicks(pickYear, leagueId).pipe(map(draftPicks => {
         teamDraftCapital = this.marshallFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise);
         return of(leagueRosters);
       })));
@@ -173,7 +175,7 @@ export class MflService {
       case 'keeper':
         return LeagueType.KEEPER;
       case undefined:
-        return maxKeeper === undefined || Number(maxKeeper) === 0 ? LeagueType.REDRAFT : LeagueType.DYNASTY;
+        return Number(maxKeeper) === 0 ? LeagueType.REDRAFT : LeagueType.DYNASTY;
       default:
         return LeagueType.DYNASTY;
     }

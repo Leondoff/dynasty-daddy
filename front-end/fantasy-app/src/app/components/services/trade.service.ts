@@ -182,7 +182,7 @@ export class TradeService {
     // find user id of weaker side of trade
     const userIdFilter = tradePackage.getWhichSideIsFavored() === 1 ? tradePackage.team2UserId : tradePackage.team1UserId;
     // filter list by user id then filter by value last filter by if player is in current trade
-    let sortedList = this.filterPlayersList(userIdFilter)
+    let sortedList = this.filterPlayersList(userIdFilter, false)
       .filter(player => (isSuperFlex ? player.sf_trade_value : player.trade_value) <= maxValue)
       .filter(player => !tradePackage?.team1Assets.includes(player) && !tradePackage?.team2Assets.includes(player))
       .filter(player => !tradePackage.excludePosGroup.includes(player.position));
@@ -198,9 +198,10 @@ export class TradeService {
    * Filters list of all players by team.
    * Used for filtering which players show up in searches
    * @param userId string
+   * @param includeAllPicks bool include early mid and late picks
    * @private
    */
-  filterPlayersList(userId: string = null): FantasyPlayer[] {
+  filterPlayersList(userId: string = null, includeAllPicks: boolean = true): FantasyPlayer[] {
     let playerList = this.playerService.playerValues
     // for non dynasty filter out picks
     if (this.leagueService.selectedLeague && this.leagueService.selectedLeague.type !== 2) {
@@ -217,6 +218,10 @@ export class TradeService {
           const pickPlayer = this.playerService.getPlayerByNameId(pick);
           if (pickPlayer) {
             teamPlayerList.push(pickPlayer);
+            if(includeAllPicks && pick.includes("mid")) {
+              teamPlayerList.push(this.playerService.getPlayerByNameId(pick.replace("mid", "early")));
+              teamPlayerList.push(this.playerService.getPlayerByNameId(pick.replace("mid", "late")));
+            }
           }
         });
       }
