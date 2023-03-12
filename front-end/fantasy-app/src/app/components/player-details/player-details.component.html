@@ -22,7 +22,7 @@
         <span
           style="padding-right: 15px; vertical-align: top;">{{configService.isMobile ? selectedPlayer.team : playerService.getFullTeamNameFromACC(selectedPlayer.team)}} {{selectedPlayer.position}}</span>
         <mat-icon class="icon--break">circle</mat-icon>
-        <span style="vertical-align: top;">{{selectedPlayer.age != -1 ? selectedPlayer.age : '??'}} y.o.</span>
+        <span style="vertical-align: top;">{{selectedPlayer.age != -1 ? selectedPlayer.age + ' y.o.' : '--'}}</span>
       </div>
       <div *ngIf="leagueService.selectedLeague" class="margin-top-10">
         <div *ngIf="leagueService.isLeagueLoaded() && selectedPlayer.owner">
