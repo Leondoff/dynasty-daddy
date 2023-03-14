@@ -14,6 +14,8 @@ export class FantasyPlayerApiConfigService {
 
   private _getPlayerValuesForMarket = '';
 
+  private _getPlayerDetailsEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
@@ -38,12 +40,19 @@ export class FantasyPlayerApiConfigService {
     this._getPrevPlayerValuesEndpoint = value;
   }
 
-
-  get getHistoricalPlayerValues(): string {
+  get getHistoricalPlayerValuesEndpoint(): string {
     return this._getHistoricalPlayerValues;
   }
 
-  set getHistoricalPlayerValues(value: string) {
+  set getHistoricalPlayerValuesEndpoint(value: string) {
     this._getHistoricalPlayerValues = value;
+  }
+
+  get getPlayerDetailsEndpoint(): string {
+    return this._getPlayerDetailsEndpoint;
+  }
+
+  set getPlayerDetailsEndpoint(value: string) {
+    this._getPlayerDetailsEndpoint = value;
   }
 }

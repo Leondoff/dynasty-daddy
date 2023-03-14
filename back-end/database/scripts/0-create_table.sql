@@ -106,6 +106,25 @@ RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+-- create player metadata table
+create table player_metadata
+(
+    name_id varchar(30) primary key not null unique,
+    profile_json jsonb,
+    updated_at                       TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
+    created_at                       TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW()
+);
+
+create unique index player_metadata_id_uindex
+    on player_metadata (name_id);
+    
+   -- add trigger to player metadata table
+CREATE TRIGGER player_metadata_updated_at
+    BEFORE UPDATE
+    ON player_metadata
+    FOR EACH ROW
+    EXECUTE PROCEDURE trigger_get_current_timestamp();
+
 -- add trigger to player adp table
 CREATE TRIGGER player_adp_updated_at
     BEFORE UPDATE

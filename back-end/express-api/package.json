@@ -1,6 +1,6 @@
 {
   "name": "dynasty-daddy-api",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "private": true,
   "scripts": {
     "prestart": "babel ./src --out-dir build",
@@ -20,19 +20,19 @@
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "express": "~4.18.2",
-    "http-errors": "~1.6.3",
+    "http-errors": "~2.0.0",
     "morgan": "~1.9.1",
     "pg": "^8.9.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.20.7",
+    "@babel/cli": "^7.21.0",
     "@babel/core": "^7.20.12",
     "@babel/node": "^7.20.7",
     "@babel/plugin-transform-runtime": "^7.19.6",
     "@babel/preset-env": "^7.20.2",
     "@babel/register": "^7.18.9",
     "@babel/runtime": "^7.20.13",
-    "chai": "^4.2.0",
+    "chai": "^4.3.7",
     "coveralls": "^3.0.9",
     "eslint": "^8.34.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -40,9 +40,9 @@
     "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
     "nyc": "^15.0.0",
-    "prettier": "^1.19.1",
+    "prettier": "^2.8.4",
     "sinon": "^9.0.1",
     "sinon-chai": "^3.5.0",
-    "supertest": "^4.0.2"
+    "supertest": "^6.3.3"
   }
 }

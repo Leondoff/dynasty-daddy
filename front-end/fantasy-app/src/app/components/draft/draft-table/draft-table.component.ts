@@ -85,6 +85,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   initializeMockDraft(): void {
     this.pageLength = this.leagueService.selectedLeague.totalRosters;
+    this.mockDraftService.teamPicks.sort((a,b) => a.pick - b.pick);
     this.dataSource = new MatTableDataSource(this.mockDraftService.teamPicks);
     this.dataSource.paginator = this.paginator;
     this.filteredDraftPlayers.next(this.mockDraftService.selectablePlayers.slice(0, 10));
