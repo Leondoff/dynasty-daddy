@@ -1,47 +1,63 @@
 import express from 'express';
-import {getCurrentPlayerValues, getHistoricalPlayerValueById, getPrevPlayerValues, indexPage, getPlayerValueForMarket} from '../controllers';
-import {getConfigValues} from '../controllers/config';
 import {
-  getMFlDraftResults,
-  getMFlFutureDraftPicks,
-  getMFlLeague,
-  getMFlLeagueStandings,
-  getMFlPlayers, getMFlPlayoffBrackets, getMFlRosters, getMFlSchedule,
-  getMFlTransactions
-} from '../controllers/mfl_wrapper';
-import {
-  getFFDraft,
-  getFFLeague, getFFLeagueTransactions, getFFRosters, getFFSchedule, getFFStandings, getFFTeamDraftPicks, getFFTrades, getUserLeagues
-} from '../controllers/fleaflicker_wrapper';
+  indexPage,
+  GetCurrentPlayerValuesEndpoint,
+  GetPlayerValueForMarketEndpoint,
+  GetPrevPlayerValuesByDaysEndpoint,
+  GetHistoricalPlayerValueByIdEndpoint,
+  GetMFlDraftResultsEndpoint,
+  GetMFlFutureDraftPicksEndpoint,
+  GetMFlLeagueEndpoint,
+  GetMFlLeagueStandingsEndpoint,
+  GetMFlPlayersEndpoint,
+  GetMFlPlayoffBracketsEndpoint,
+  GetMFlRostersEndpoint,
+  GetMFlScheduleEndpoint,
+  GetMFlTransactionsEndpoint,
+  GetFFDraftEndpoint,
+  GetFFLeagueEndpoint,
+  GetFFLeagueTransactionsEndpoint,
+  GetFFRostersEndpoint,
+  GetFFScheduleEndpoint,
+  GetFFStandingsEndpoint,
+  GetFFTeamDraftPicksEndpoint,
+  GetFFTradesEndpoint,
+  GetUserLeaguesEndpoint,
+  GetConfigValuesEndpoint,
+  GetPlayerDetailsEndpoint
+} from '../controllers';
 
 const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
-indexRouter.get('/player/all/today', getCurrentPlayerValues);
-indexRouter.get('/player/all/market/:market', getPlayerValueForMarket)
-indexRouter.get('/player/all/prev/:intervalDays', getPrevPlayerValues);
-indexRouter.get('/player/:id', getHistoricalPlayerValueById);
-indexRouter.get('/config/all', getConfigValues);
 
-// MFL wrapper
-indexRouter.get('/mfl/league', getMFlLeague);
-indexRouter.get('/mfl/players', getMFlPlayers);
-indexRouter.get('/mfl/transactions', getMFlTransactions);
-indexRouter.get('/mfl/futureDraftPicks', getMFlFutureDraftPicks);
-indexRouter.get('/mfl/leagueStandings', getMFlLeagueStandings);
-indexRouter.get('/mfl/rosters', getMFlRosters);
-indexRouter.get('/mfl/draftResults', getMFlDraftResults);
-indexRouter.get('/mfl/playoffBrackets', getMFlPlayoffBrackets);
-indexRouter.get('/mfl/schedule', getMFlSchedule);
+// Dynasty Daddy Endpoints
+indexRouter.get('/player/all/today', GetCurrentPlayerValuesEndpoint);
+indexRouter.get('/player/all/market/:market', GetPlayerValueForMarketEndpoint);
+indexRouter.get('/player/all/prev/:intervalDays', GetPrevPlayerValuesByDaysEndpoint);
+indexRouter.get('/player/:id', GetHistoricalPlayerValueByIdEndpoint);
+indexRouter.get('/player/details/:id', GetPlayerDetailsEndpoint);
+indexRouter.get('/config/all', GetConfigValuesEndpoint);
 
-// Fleaflicker wrapper
-indexRouter.get('/ff/league', getFFLeague);
-indexRouter.get('/ff/rosters', getFFRosters);
-indexRouter.get('/ff/transactions', getFFLeagueTransactions);
-indexRouter.get('/ff/schedule', getFFSchedule);
-indexRouter.get('/ff/leagueStandings', getFFStandings);
-indexRouter.get('/ff/draftResults', getFFDraft);
-indexRouter.get('/ff/futureDraftPicks', getFFTeamDraftPicks);
-indexRouter.get('/ff/trades', getFFTrades);
-indexRouter.get('/ff/user', getUserLeagues);
+// MFL Wrapper Endpoints
+indexRouter.get('/mfl/league', GetMFlLeagueEndpoint);
+indexRouter.get('/mfl/players', GetMFlPlayersEndpoint);
+indexRouter.get('/mfl/transactions', GetMFlTransactionsEndpoint);
+indexRouter.get('/mfl/futureDraftPicks', GetMFlFutureDraftPicksEndpoint);
+indexRouter.get('/mfl/leagueStandings', GetMFlLeagueStandingsEndpoint);
+indexRouter.get('/mfl/rosters', GetMFlRostersEndpoint);
+indexRouter.get('/mfl/draftResults', GetMFlDraftResultsEndpoint);
+indexRouter.get('/mfl/playoffBrackets', GetMFlPlayoffBracketsEndpoint);
+indexRouter.get('/mfl/schedule', GetMFlScheduleEndpoint);
+
+// Fleaflicker Wrapper Endpoints
+indexRouter.get('/ff/league', GetFFLeagueEndpoint);
+indexRouter.get('/ff/rosters', GetFFRostersEndpoint);
+indexRouter.get('/ff/transactions', GetFFLeagueTransactionsEndpoint);
+indexRouter.get('/ff/schedule', GetFFScheduleEndpoint);
+indexRouter.get('/ff/leagueStandings', GetFFStandingsEndpoint);
+indexRouter.get('/ff/draftResults', GetFFDraftEndpoint);
+indexRouter.get('/ff/futureDraftPicks', GetFFTeamDraftPicksEndpoint);
+indexRouter.get('/ff/trades', GetFFTradesEndpoint);
+indexRouter.get('/ff/user', GetUserLeaguesEndpoint);
 
 export default indexRouter;

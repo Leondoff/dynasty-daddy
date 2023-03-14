@@ -232,7 +232,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     }
     // filter the players
     filterSubscription.next(
-      this.tradeTool.filterPlayersList(userId)
+      this.tradeTool.filterPlayersList(userId, true)
         .filter(player => ((player.full_name.toLowerCase().indexOf(search) > -1
           || player.owner?.ownerName.toLowerCase().indexOf(search) > -1
           || player.position.toLowerCase().indexOf(search) > -1))).slice(0, 10));
