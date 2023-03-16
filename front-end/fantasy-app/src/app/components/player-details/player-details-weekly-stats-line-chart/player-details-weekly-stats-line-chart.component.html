@@ -59,40 +59,64 @@
 </div>
 
 <div class="center-text mid-bold-text margin-top-50">
-  {{selectedPlayer.full_name}}'s ADP & Positional Comparisons
+  {{selectedPlayer.full_name}}'s ADP & Contract Overview 
 </div>
 
-<div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
+<div fxLayout="row wrap" fxLayoutAlign="center">
   <div fxFlex="33%" fxFlex.xs="100%" fxFlex.sm="80%" class="item">
-    <mat-card style="min-height: 260px">
+    <mat-card style="min-height: 260px; margin-top: 28px;">
       <div class="mid-bold-text center-text margin-bot-10">Expert Positional ADPs</div>
       <div class="insight__row">
         <div class="text__light">Fantasy Pros</div>
-        <div class="mid-bold-text">{{selectedPlayer.fantasypro_adp || '--'}}</div>
+        <div class="mid-bold-text">{{selectedPlayer.fantasypro_adp || '-'}}</div>
       </div>
       <div class="insight__row">
         <div class="text__light">BestBall10s</div>
-        <div class="mid-bold-text">{{selectedPlayer.bb10_adp || '--'}}</div>
+        <div class="mid-bold-text">{{selectedPlayer.bb10_adp || '-'}}</div>
       </div>
       <div class="insight__row">
         <div class="text__light">Real Time Fantasy Sports</div>
-        <div class="mid-bold-text">{{selectedPlayer.rtsports_adp || '--'}}</div>
+        <div class="mid-bold-text">{{selectedPlayer.rtsports_adp || '-'}}</div>
       </div>
       <div class="insight__row">
         <div class="text__light">Underdog Fantasy</div>
-        <div class="mid-bold-text">{{selectedPlayer.underdog_adp || '--'}}</div>
+        <div class="mid-bold-text">{{selectedPlayer.underdog_adp || '-'}}</div>
       </div>
       <div class="insight__row">
         <div class="text__light">Drafters Fantasy Sports</div>
-        <div class="mid-bold-text">{{selectedPlayer.drafters_adp || '--'}}</div>
+        <div class="mid-bold-text">{{selectedPlayer.drafters_adp || '-'}}</div>
       </div>
       <div class="insight__row">
         <div class="mid-bold-text">Average Position ADP</div>
-        <div class="mid-bold-text">{{selectedPlayer.avg_adp || '--'}}</div>
+        <div class="mid-bold-text">{{selectedPlayer.avg_adp || '-'}}</div>
+      </div>
+    </mat-card>
+    <mat-card style="min-height: 220px" class="margin-top-25">
+      <div class="mid-bold-text center-text">Current Contract</div>
+      <div class="insight__row">
+        <div class="text__light">Contract Expiration</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.free_agent || '-'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">Fully Guaranteed</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.guaranteed_fully || '-'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">Total Guaranteed</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.guaranteed_free || '-'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">Per Year Salary</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.per_year || '-'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="mid-bold-text">Total</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.total || '-'}}</div>
       </div>
     </mat-card>
   </div>
   <div fxFlex="33%" fxFlex.xs="100%" fxFlex.sm="80%" class="item"  *ngIf="selectedPlayer.avg_adp">
+    <div class="mid-bold-text margin-bot-10 center-text">Adjacent ADP Players</div>
     <mat-table [dataSource]="adjacentADP" class="mat-elevation-z8">
       <ng-container matColumnDef="rank">
         <mat-header-cell *matHeaderCellDef>Average</mat-header-cell>

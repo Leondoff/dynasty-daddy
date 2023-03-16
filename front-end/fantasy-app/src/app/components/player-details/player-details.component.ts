@@ -17,7 +17,7 @@ import { LeagueSwitchService } from '../services/league-switch.service';
 })
 export class PlayerDetailsComponent extends BaseComponent implements OnInit {
 
-  /** did players load */
+  /** did players load */ 
   playersLoaded: boolean;
 
   /** selected player */
@@ -28,6 +28,12 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
 
   /** historical player value data */
   historicalTradeValue: FantasyPlayerDataPoint[];
+
+  /** player profile json blob */
+  playerProfile: any
+
+  /** Player Profile updated date */
+  profileUpdatedDate: string = '';
 
   constructor(public playerService: PlayerService,
     private fantasyPlayerApiService: FantasyPlayerApiService,
@@ -55,8 +61,10 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
       this.playersLoaded = true;
       this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
     }),
-      this.fantasyPlayerApiService.getHistoricalPlayerValueById(nameId).subscribe((data) => {
-        this.historicalTradeValue = data;
+      this.fantasyPlayerApiService.getPlayerDetailsByNameId(nameId).subscribe((data) => {
+        this.historicalTradeValue = data.historicalData;
+        this.playerProfile = data.profile[0]
+        this.profileUpdatedDate = data.profile[0]?.last_updated?.substring(0,10);
       }
       ),
       this.route.queryParams.subscribe(params => {
@@ -121,6 +129,13 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
       this.playerService.pastSeasonWeeklyProjections[16] &&
       this.playerService.pastSeasonWeeklyProjections[17] &&
       this.playerService.pastSeasonWeeklyProjections[18];
+  }
+
+  /**
+   * is player athletic profile loaded
+   */
+  isPlayerProfileLoaded(): boolean {
+    return this.playerProfile && JSON.stringify(this.playerProfile.profile_json?.profile) !== '{}'
   }
 
   /**

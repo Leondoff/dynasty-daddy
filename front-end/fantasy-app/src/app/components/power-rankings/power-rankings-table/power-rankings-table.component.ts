@@ -98,7 +98,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     this.playerCache = {};
 
     // sort rosters by selected metric
-    this.powerRankingsService.powerRankings = this.powerRankingsService.sortRosterByValue(
+    this.powerRankingsService.powerRankings = this.powerRankingsService.sortTeamPowerRankingGroups(
       this.powerRankingsService.powerRankings,
       this.isSuperFlex
     )
