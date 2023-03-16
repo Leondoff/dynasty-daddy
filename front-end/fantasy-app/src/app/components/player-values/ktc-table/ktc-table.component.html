@@ -1,3 +1,4 @@
+<div [ngClass]="{'ktc-table-container-wrapper': configService.isMobile}">
 <div class="margin-top-10 mat-elevation-z8" [hidden]="playerValueService.filteredPlayers.length === 0">
   <mat-table [dataSource]="dataSource" matSort>
 
@@ -53,7 +54,7 @@
 
     <!-- Value Column -->
     <ng-container matColumnDef="trade_value">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>Trade Value</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{configService.isMobile ? 'Value' : 'Trade Value'}}</mat-header-cell>
       <mat-cell *matCellDef="let element"
         [ngClass]="{'warning__alert': playerInfoCache[element.name_id]?.isLow, 'success__alert': playerInfoCache[element.name_id]?.isHigh}">
         {{playerInfoCache[element.name_id]?.value}} </mat-cell>
@@ -110,3 +111,4 @@
   <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
 </div>
 <div class="mid-bold-text center-text warning__alert margin-top-50" [hidden]="playerValueService.filteredPlayers.length > 0">No results found. Try a different search.</div>
+</div>

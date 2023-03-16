@@ -14,7 +14,7 @@
   justify-content: start;
 }
 
-.mat-column-projectedPlayer{
+.mat-column-projectedPlayer {
   max-width: 250px;
   text-align: right;
   justify-content: flex-end;

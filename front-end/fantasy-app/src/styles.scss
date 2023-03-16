@@ -767,7 +767,9 @@ hr.dark {
   margin: 0px auto;
   max-width: 1000px;
   white-space: nowrap;
-  overflow: hidden;
+  overflow-y: hidden;
+  padding: 3px 8px 8px;
+  overflow-x: auto;
 }
 
 .pos-table-container {
