@@ -118,7 +118,7 @@
         <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
           <div [@detailExpand]="checkExpanded(element) ? 'expanded' : 'collapsed'">
             <div *ngIf="checkExpanded(element)" class="power-ranking-element-detail">
-              <div class="grid-20">
+              <div [ngClass]="{'grid-30': configService.isMobile, 'grid-20': !configService.isMobile}">
                 <div *ngIf="!configService.isMobile"><span class="text__light">Team</span>
                   <div class="mid-bold-text link--text__no__underline" [routerLink]="['../team', element.team.owner?.ownerName]" innerHTML="{{ element.team.owner?.teamName | highlight : searchVal}}" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">{{element.team.owner?.teamName}}</div>
                 </div>
@@ -149,9 +149,12 @@
                     class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].tier}}</span>
                   </div>
                 </div>
-                <div class="margin-top-25">
+                <div class="margin-top-10">
                   <button mat-icon-button matTooltip="Copy Starters Roster" matTooltipPosition="above" (click)="copyStartersFromTeam(element)"><mat-icon>content_copy</mat-icon></button>
                   <button mat-icon-button matTooltip="Copy Whole Roster" matTooltipPosition="above" (click)="copyWholeFromTeam(element)"><mat-icon>copy_all</mat-icon></button>
+                </div>
+                <div *ngIf="configService.isMobile" class="margin-top-15">
+                  <button style="margin: unset !important;" mat-stroked-button [routerLink]="['../team', element.team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">View Team Page</button>
                 </div>
               </div>
               <div *ngFor="let positionGroup of element.roster;" class="grid-16">
@@ -171,7 +174,7 @@
                   <span *ngIf="powerRankingsService.rankingMarket === 3" [ngClass]="{'success__alert': player.avg_adp < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (leagueService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '--'}}</span>
                 </div>
               </div>
-              <div class="grid-16" *ngIf="leagueService.selectedLeague.type == 2">
+              <div class="grid-20" *ngIf="leagueService.selectedLeague.type == 2">
                 <div>
               <span><span class="small-text__light">Draft Capital: </span><span
                 class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].value}}</span></span>

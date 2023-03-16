@@ -1,0 +1,92 @@
+<div fxLayout="row wrap" fxLayoutAlign="center">
+  <div fxFlex="80%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" style="display: block">
+    <div style="display: block; height: 400px" class="margin-top-25 margin-bot-10">
+      <canvas baseChart [labels]="radarChartLabels" [datasets]="radarDataSet" [options]="radarChartOptions"
+        [legend]="false" [chartType]="radarChartType">
+      </canvas>
+    </div>
+    <div style="min-height: 300px" *ngIf="radarDataSet.length == 0" class="center-spinner">
+      {{radarDataSet.length}}
+      <mat-spinner></mat-spinner>
+    </div>
+  </div>
+  <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="ras-metric-box" *ngIf="playerProfile?.profile_json?.ras?.ras && playerProfile?.profile_json?.ras?.ras != 0">
+    <mat-card-subtitle>RAS Score</mat-card-subtitle>
+    <div class="mid-bold-text">{{playerProfile?.profile_json?.ras?.ras}}</div>
+  </mat-card>
+  <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="ras-metric-box" *ngIf="playerProfile?.profile_json?.ras?.alltime_ras && playerProfile?.profile_json?.ras?.alltime_ras != 0">
+    <mat-card-subtitle>All-Time RAS Score</mat-card-subtitle>
+    <div class="mid-bold-text">{{playerProfile?.profile_json?.ras?.alltime_ras}}</div>
+  </mat-card>
+</div>
+<div fxLayout="row wrap" fxLayoutAlign="center">
+  <div fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="45%" class="item">
+    <mat-card style="min-height: 365px">
+      <div class="mid-bold-text center-text margin-bot-10">General Information</div>
+      <div class="metric__row">
+        <div class="text__light">Age</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.profile?.Age || '-'}}</div>
+      </div>
+      <div class="metric__row">
+        <div class="text__light">Height</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.profile?.Height || '-'}}</div>
+      </div>
+      <div class="metric__row">
+        <div class="text__light">Weight</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.profile?.Weight || '-'}}</div>
+      </div>
+      <div class="metric__row">
+        <div class="text__light">College</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.profile?.College || '-'}}</div>
+      </div>
+      <div class="metric__row">
+        <div class="text__light">Hand Size</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.profile?.["Hand Size"] || '-'}}</div>
+      </div>
+      <div class="metric__row">
+        <div class="text__light">Arm Length</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.profile?.["Arm Length"] || '-'}}</div>
+      </div>
+      <div class="metric__row">
+        <div class="text__light">BMI</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.profile?.["BMI"] || '-'}}</div>
+      </div>
+      <div class="metric__row">
+        <div class="text__light">Draft Pick</div>
+        <div class="mid-bold-text">{{playerProfile?.profile_json?.profile?.["Draft Pick"] || '-'}}</div>
+      </div>
+    </mat-card>
+  </div>
+  <div fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="45%" class="item"
+    *ngIf="playerProfile?.profile_json?.profile?.workout_metrics">
+    <mat-card style="min-height: 365px">
+      <div class="mid-bold-text center-text margin-bot-10">Workout Metrics</div>
+      <div *ngFor="let metric of playerProfile?.profile_json?.profile?.workout_metrics">
+        <div class="metric__row">
+          <div class="text__light">{{metric.display}}</div>
+          <div class="mid-bold-text">{{metric.value || '-'}}</div>
+        </div>
+        <div class="sub__metric__row">
+          <div class="small-text__light">Percentile</div>
+          <div class="small-text__light">{{metric.percentile || '-'}}</div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+  <div fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="45%" class="item"
+    *ngIf="playerProfile?.profile_json?.profile?.college_metrics">
+    <mat-card style="min-height: 365px">
+      <div class="mid-bold-text center-text margin-bot-10">College Metrics</div>
+      <div *ngFor="let metric of playerProfile?.profile_json?.profile?.college_metrics">
+        <div class="metric__row">
+          <div class="text__light">{{metric.display}}</div>
+          <div class="mid-bold-text">{{metric.value || '-'}}</div>
+        </div>
+        <div class="sub__metric__row">
+          <div class="small-text__light">Percentile</div>
+          <div class="small-text__light">{{metric.percentile || '-'}}</div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

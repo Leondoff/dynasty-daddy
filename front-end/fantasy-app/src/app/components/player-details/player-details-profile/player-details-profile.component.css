@@ -1,0 +1,70 @@
+.content {
+  width: 200px;
+}
+
+.item {
+  margin: 14px;
+  min-width: 300px;
+}
+
+.mat-column-name {
+  min-width: 150px;
+}
+
+.mat-column-rank {
+  max-width: 64px;
+}
+
+.mat-column-value {
+  text-align: right;
+  justify-content: flex-end;
+  padding-right: 15px;
+}
+
+.mat-column-rank,
+.mat-column-name {
+  text-align: left;
+  justify-content: flex-start;
+  padding-left: 15px;
+}
+
+.metric__row {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric__row div:last-child {
+  text-align: right;
+}
+
+.metric__row div {
+  flex: 1 1 auto;
+}
+
+.sub__metric__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sub__metric__row div:last-child {
+  text-align: right;
+}
+
+.sub__metric__row div {
+  flex: 1 1 auto;
+}
+
+.open-window-button {
+  font-size: 18px;
+  cursor: pointer;
+  height: unset !important;
+  vertical-align: sub;
+  margin-left: 5px;
+}
+
+.ras-metric-box{
+  margin: 16px;
+}
