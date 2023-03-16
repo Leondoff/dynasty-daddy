@@ -74,13 +74,13 @@
   </div>
 
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
-    <mat-tab label="Current Outlook">
+    <mat-tab label="{{configService.isMobile ? 'Outlook' : 'Current Outlook'}}">
       <div class="mid-bold-text margin-top-10 center-text">Past 18 Week Summary</div>
       <div class="margin-top-10 center-text">Below is the past 18 weeks of points and projections based on Sleeper's <span class="info__alert">{{leagueService.getScoringFormatDisplay()}}</span> scoring.
       </div>
-      <app-player-details-weekly-stats-line-chart  [selectedPlayerInsights]="selectedPlayerInsights" [selectedPlayer]="selectedPlayer" [selectedMarket]="playerService.selectedMarket"></app-player-details-weekly-stats-line-chart>
+      <app-player-details-weekly-stats-line-chart  [selectedPlayerInsights]="selectedPlayerInsights" [selectedPlayer]="selectedPlayer" [selectedMarket]="playerService.selectedMarket" [playerProfile]="playerProfile"></app-player-details-weekly-stats-line-chart>
     </mat-tab>
-    <mat-tab label="Future Insights">
+    <mat-tab label="{{configService.isMobile ? 'Insights' : 'Future Insights'}}">
       <div class="mid-bold-text margin-top-10 center-text">Player Insights</div>
       <div class="margin-top-10 center-text">A collection of metrics and insights on {{selectedPlayer.full_name}}.
       </div>
@@ -89,8 +89,14 @@
       </div>
       <app-player-details-insights [selectedPlayer]="selectedPlayer" [selectedPlayerValues]="historicalTradeValue" [selectedMarket]="playerService.selectedMarket"></app-player-details-insights>
     </mat-tab>
-    <mat-tab label="Game logs">
+    <mat-tab label="{{configService.isMobile ? 'Logs' : 'Game Logs'}}">
       <app-player-details-weekly-box-scores-table *ngIf="isPlayerStatsGenerated()" [selectedPlayer]="selectedPlayer"></app-player-details-weekly-box-scores-table>
+    </mat-tab>
+    <mat-tab label="{{configService.isMobile ? 'Profile' : 'Athletic Profile'}}">
+      <div class="mid-bold-text margin-top-10 center-text">Athletic Profile</div>
+      <div class="margin-top-10 center-text">Advanced athelic metrics for {{selectedPlayer.full_name}}'s draft profile. Last updated on: <span class="info__alert">{{profileUpdatedDate}}</span>.</div>
+      <app-player-details-profile [selectedPlayer]="selectedPlayer" [playerProfile]="playerProfile" *ngIf="isPlayerProfileLoaded()"></app-player-details-profile>
+      <div *ngIf="!isPlayerProfileLoaded()" class="warning__alert margin-top-50 center-text mid-bold-text">Unable to find any player profile data.</div>
     </mat-tab>
   </mat-tab-group>
 </div>

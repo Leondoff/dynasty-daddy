@@ -95,7 +95,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload', enableTracing: true})
+    RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload', enableTracing: true, scrollPositionRestoration: 'enabled'})
   ],
   exports: [
     RouterModule

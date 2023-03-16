@@ -79,7 +79,7 @@ export class DraftService {
               this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * 12) + pick.pick,
                 this.createPickString(pick.round, ((pick.round - 1) * 12) + pick.pick),
                 team.owner?.ownerName,
-                team.owner?.teamName,
+                team.owner?.teamName, 
                 team.roster.rosterId,
                 pick.originalRosterId));
             }

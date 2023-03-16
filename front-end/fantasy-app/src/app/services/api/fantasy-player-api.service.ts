@@ -122,8 +122,8 @@ export class FantasyPlayerApiService {
    * get historical player value over time by id
    * @param nameId player name id
    */
-  getPlayerDetailsByNameId(nameId: string): Observable<{historicalValues: FantasyPlayerDataPoint[], profile: any}> {
-    return this.http.get<{historicalValues: FantasyPlayerDataPoint[], profile: any}>(this.fantasyPlayerApiConfigService.getPlayerDetailsEndpoint + nameId)
-      .pipe(tap((player: {historicalValues: FantasyPlayerDataPoint[], profile: any}) => player));
+  getPlayerDetailsByNameId(nameId: string): Observable<{historicalData: FantasyPlayerDataPoint[], profile: any}> {
+    return this.http.get<{historicalData: FantasyPlayerDataPoint[], profile: any}>(this.fantasyPlayerApiConfigService.getPlayerDetailsEndpoint + nameId)
+      .pipe(tap((player: {historicalData: FantasyPlayerDataPoint[], profile: any}) => player));
   }
 }

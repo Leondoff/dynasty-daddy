@@ -54,7 +54,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   /** Team needs cache for table */
-  teamNeeds = {};
+  teamCache = {};
 
   /** mat datasource */
   dataSource: MatTableDataSource<TeamMockDraftPick> = new MatTableDataSource<TeamMockDraftPick>();
@@ -85,6 +85,13 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   initializeMockDraft(): void {
     this.pageLength = this.leagueService.selectedLeague.totalRosters;
+    this.leagueService.leagueTeamDetails.forEach(team => {
+      this.teamCache[team.roster.rosterId] = {
+        teamNeeds: this.powerRankingsService.getTeamNeedsFromRosterId(team.roster.rosterId).join(' · '),
+        avatar: team?.owner?.avatar,
+        name: team?.owner?.teamName
+      }
+    });
     this.mockDraftService.teamPicks.sort((a,b) => a.pick - b.pick);
     this.dataSource = new MatTableDataSource(this.mockDraftService.teamPicks);
     this.dataSource.paginator = this.paginator;
@@ -94,9 +101,6 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnChanges(): void {
     this.initializeMockDraft();
-    this.leagueService.leagueTeamDetails.forEach(team => {
-      this.teamNeeds[team.roster.rosterId] = this.powerRankingsService.getTeamNeedsFromRosterId(team.roster.rosterId).join(' · ');
-    });
   }
 
   /**
