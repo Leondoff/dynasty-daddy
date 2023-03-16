@@ -30,6 +30,9 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
   @Input()
   selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
+  @Input()
+  playerProfile: any;
+
   /** total points aggregate */
   totalPoints = 0;
 

@@ -76,12 +76,14 @@ def fetchPlayerProfilerData(player):
         metrics = workoutMetrics.find_all('div')[1]
         metricTitles = []
         for div in workoutMetrics.find_all('div'):
-            if len(div) is 1:
+            if len(div) is 1 and 'Pro Day' not in div.text.strip():
                 metricTitles.append(div.text.strip())
         workoutMetrics = []
         ind = 0
         for value in metrics.find_all('div', {'class': 'pt-1 text-center space-y-2'}):
             valueList = value.text.strip().split("\n")
+            while len(valueList) > 2:
+                valueList = valueList[:len(valueList) - 2]
             workoutMetrics.append({
                 "display": metricTitles[ind],
                 "value": valueList[0],
@@ -203,4 +205,4 @@ def PersistMetadataRecordsForPlayer(nameIdDict):
 
 # PersistAllMetadataRecords()
 # Individual player example
-# PersistMetadataRecordsForPlayer({'justinjeffersonwr': 'justin jefferson'})
+# PersistMetadataRecordsForPlayer({'lamarjacksonqb': 'lamar jackson'})

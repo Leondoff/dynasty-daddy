@@ -101,6 +101,7 @@ import { PlayerQueryBuilderComponent } from './components/sub-components/player-
 import { FilterPlayerValuesModalComponent } from './components/modals/filter-player-values-modal/filter-player-values-modal.component';
 import { FantasyMarketDropdown } from './components/sub-components/fantasy-market-dropdown/fantasy-market-dropdown.component';
 import { CommonModule } from '@angular/common';
+import { PlayerDetailsProfileComponent } from './components/player-details/player-details-profile/player-details-profile.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -144,6 +145,7 @@ let UniversalDeviceDetectorService;
     FooterComponent,
     AboutComponent,
     PlayerDetailsInsightsComponent,
+    PlayerDetailsProfileComponent,
     PlayerStatisticsComponent,
     PlayerPosTableComponent,
     PlayerPosScatterChartComponent,

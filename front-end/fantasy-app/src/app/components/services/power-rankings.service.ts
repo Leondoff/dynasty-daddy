@@ -203,7 +203,7 @@ export class PowerRankingsService {
    * @param teams
    * @param isSuperflex
    */
-  sortRosterByValue(teams: TeamPowerRanking[], isSuperflex: boolean): TeamPowerRanking[] {
+  sortTeamPowerRankingGroups(teams: TeamPowerRanking[], isSuperflex: boolean): TeamPowerRanking[] {
     teams.map(team => {
       for (const group of team.roster) {
         group.players.sort((a, b) => {
@@ -211,7 +211,8 @@ export class PowerRankingsService {
         });
       }
       team.picks.players.sort((a, b) => {
-        return isSuperflex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value;
+        return Number(a.first_name) - Number(b.first_name) 
+        || (isSuperflex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value);
       });
     });
     return teams;
@@ -225,7 +226,7 @@ export class PowerRankingsService {
    */
   rankTeams(teams: TeamPowerRanking[], isSuperflex: boolean, isMockRankings: boolean = false): void {
     // Sort position groups and picks desc
-    teams = this.sortRosterByValue(teams, isSuperflex);
+    teams = this.sortTeamPowerRankingGroups(teams, isSuperflex);
     // Rank position groups
     this.positionGroups.forEach((value, index) => {
       this.rankingMetricsOptions.slice(0, 3).forEach((metric) => {
