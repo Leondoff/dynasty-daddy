@@ -48,6 +48,7 @@
           (change)="playerValueService.applyFilters()">Picks</mat-checkbox>
       </span>
       <span *ngIf="!configService.isMobile" class="container_spacer"></span>
+      <div *ngIf="configService.isMobile" class="margin-top-10 margin-bot-10"></div>
       <span [ngClass]="{'button-right': !configService.isMobile}">
         <mat-slide-toggle *ngIf="leagueService.leagueStatus !== 'NONE'" color="accent" [(ngModel)]="playerValueService.showFreeAgents"
           (change)="playerValueService.applyFilters()" class="player-value-checkbox-margin">

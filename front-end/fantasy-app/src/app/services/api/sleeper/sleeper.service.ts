@@ -21,7 +21,7 @@ export class SleeperService {
 
   /** default sleeper icon for orphan teams */
   sleeperIcon: string = '15d7cf259bc30eab8f6120f45f652fb6';
-  
+
   /** sleeper url for their avatars */
   sleeperAvatarBaseURL: string = 'https://sleepercdn.com/avatars/thumbs/';
 
@@ -139,7 +139,15 @@ export class SleeperService {
           return this.sleeperApiService.getSleeperDraftbyLeagueId(league.selectedLeague.leagueId)
             .pipe(mergeMap((draftIds: string[]) => {
               draftIds.map((draftId: string) => {
-                return this.loadDrafts$(draftId, league).subscribe();
+                return this.loadDrafts$(draftId, league).subscribe(league => {
+                  league.leagueTeamDetails.forEach(team => {
+                    team.upcomingDraftOrder.forEach(pick => {
+                      const ind = team.futureDraftCapital.findIndex(p => p.pick === 6 && p.round === pick.round && p.year === pick.year);
+                      team.futureDraftCapital[ind].pick = pick.pick;
+                      pick.originalRosterId = team.futureDraftCapital[ind].originalRosterId;
+                    });
+                  });
+                });
               }
               );
               return this.generateFutureDraftCapital$(league);
@@ -157,6 +165,15 @@ export class SleeperService {
       if (draft.status === 'pre_draft' && draft.draftOrder) {
         return this.sleeperApiService.getSleeperTradedPicksByDraftId(draft.draftId)
           .pipe(mergeMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
+            // map pick order for ophaned teams
+            if (Object.keys(draft.draftOrder).length != league.leagueTeamDetails.length) {
+              league.leagueTeamDetails.forEach(team => {
+                if (!draft.draftOrder[team.owner?.userId]) {
+                  draft.draftOrder[team.owner?.userId] = Number(Object.keys(draft.slotToRosterId)
+                  .find(key => draft.slotToRosterId[key] === Number(team.owner?.userId)));;
+                }
+              });
+            }
             league.leagueTeamDetails.map((team: LeagueTeam) => {
               const draftPicks: DraftCapital[] = [];
               const slot = draft.draftOrder[team.owner?.userId];

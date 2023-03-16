@@ -447,7 +447,7 @@ export class PlayerService {
         valuePerPointRatio: Math.round(valuePointRatio * 100) / 100
       };
     } catch (e: any) {
-      console.error('Could not generate player insight. ', e);
+      console.warn('Could not generate player insight. ', e);
     }
   }
 
