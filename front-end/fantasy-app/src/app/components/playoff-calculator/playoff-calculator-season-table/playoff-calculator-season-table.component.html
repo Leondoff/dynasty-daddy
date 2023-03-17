@@ -24,7 +24,7 @@
 
     <ng-container matColumnDef="teamDivision">
       <mat-header-cell *matHeaderCellDef>Team Division</mat-header-cell>
-      <mat-cell *matCellDef="let team">{{leagueService.selectedLeague.divisionNames[playoffCalculatorService.getDivisionByRosterId(team.team.roster.rosterId)?.divisionId - 1] || '---'}}</mat-cell>
+      <mat-cell *matCellDef="let team">{{leagueService.selectedLeague.divisionNames[playoffCalculatorService.getDivisionByRosterId(team.team.roster.rosterId)?.divisionId - 1] || '-'}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="record">
