@@ -14,6 +14,6 @@ export class DisplayService {
    * @param tier string
    */
   getTierFromNumber(tier: number): string {
-    return TeamRankingTier[tier]?.replace(/_/g, ' ') || '--';
+    return TeamRankingTier[tier]?.replace(/_/g, ' ') || '-';
   }
 }

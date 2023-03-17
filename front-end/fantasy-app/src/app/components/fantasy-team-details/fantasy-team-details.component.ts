@@ -133,7 +133,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
       const playerGroup = pos === 'OV' ? this.roster.slice() : this.roster.slice().filter(it => it.position === pos)
       aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.leagueService?.selectedLeague?.isSuperflex ? player.sf_trade_value : player.trade_value), 0);
       const lastMonth = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value), 0)
-      aggMap[pos + '_change'] = lastMonth > 0 ? Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100) : '--';
+      aggMap[pos + '_change'] = lastMonth > 0 ? Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100) : '-';
     }
     return aggMap;
   }
@@ -186,11 +186,11 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   setSeasonInsights(): {} {
     const newInsights = {};
     const completedWeek = this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague?.season);
-    newInsights['games_played'] = (completedWeek - this.leagueService.selectedLeague?.startWeek + 1) || '--';
-    newInsights['avg_points'] = this.getAveragePoints(newInsights['games_played']) || '--';
-    newInsights['points_for'] = this.selectedTeam?.roster.teamMetrics?.fpts || '--';
-    newInsights['points_against'] = this.selectedTeam?.roster.teamMetrics?.fptsAgainst || '--';
-    newInsights['points_pot'] = this.selectedTeam?.roster.teamMetrics?.ppts || '--';
+    newInsights['games_played'] = (completedWeek - this.leagueService.selectedLeague?.startWeek + 1) || '-';
+    newInsights['avg_points'] = this.getAveragePoints(newInsights['games_played']) || '-';
+    newInsights['points_for'] = this.selectedTeam?.roster.teamMetrics?.fpts || '-';
+    newInsights['points_against'] = this.selectedTeam?.roster.teamMetrics?.fptsAgainst || '-';
+    newInsights['points_pot'] = this.selectedTeam?.roster.teamMetrics?.ppts || '-';
     const teamRosterId = this.selectedTeam?.roster?.rosterId;
     const pointsByWeek: number[] = [];
     for (let i = 0; i < completedWeek; i++) {
@@ -202,10 +202,10 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
         pointsByWeek.push(matchUp.team2Points);
       }
     }
-    newInsights['high'] = pointsByWeek.length > 0 ? Math.max(...pointsByWeek) : '--';
-    newInsights['low'] = pointsByWeek.length > 0 ? Math.min(...pointsByWeek) : '--';
-    newInsights['variance'] = pointsByWeek.length > 0 ? Math.round(variance(pointsByWeek) * 100) / 100 : '--';
-    newInsights['std'] = pointsByWeek.length > 0 ? Math.round(standardDeviation(pointsByWeek) * 100) / 100 : '--';
+    newInsights['high'] = pointsByWeek.length > 0 ? Math.max(...pointsByWeek) : '-';
+    newInsights['low'] = pointsByWeek.length > 0 ? Math.min(...pointsByWeek) : '-';
+    newInsights['variance'] = pointsByWeek.length > 0 ? Math.round(variance(pointsByWeek) * 100) / 100 : '-';
+    newInsights['std'] = pointsByWeek.length > 0 ? Math.round(standardDeviation(pointsByWeek) * 100) / 100 : '-';
     return newInsights;
   }
 

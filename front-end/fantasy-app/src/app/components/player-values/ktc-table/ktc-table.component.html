@@ -8,7 +8,6 @@
       <mat-cell *matCellDef="let element"> {{configService.isMobile ? element.first_name.substr(0, 1) + '. ' +
         element.last_name : element.full_name}} <span *ngIf="(element.experience === 0 && element.position !== 'PI')"
           matBadge="R" matBadgeOverlap="false" matBadgeColor="accent"></span>
-        <!--          <span class="small-text__light">{{element.team}}</span>-->
       </mat-cell>
     </ng-container>
 
@@ -16,13 +15,13 @@
     <ng-container matColumnDef="position">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{configService.isMobile ? 'Pos' :
         'Position'}}</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.position == 'PI' ? 'PICK' : element.position}} {{playerInfoCache[element.name_id]?.rank || '--'}}</mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.position == 'PI' ? 'PICK' : element.position + ' ' + playerInfoCache[element.name_id]?.rank || '-'}}</mat-cell>
     </ng-container>
 
     <!-- Age Column -->
     <ng-container matColumnDef="age">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Age</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{(element.age == -1 || !element.age) ? '--' : element.age + ' y.o.'}}
+      <mat-cell *matCellDef="let element"> {{(element.age == -1 || !element.age) ? '-' : element.age + ' y.o.'}}
       </mat-cell>
     </ng-container>
 
@@ -43,13 +42,13 @@
     <!-- Fantasy Points -->
     <ng-container matColumnDef="halfppr">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{playerService.playerStatsYear}} Points</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{playerInfoCache[element.name_id]?.points || '---'}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{playerInfoCache[element.name_id]?.points || '-'}}</mat-cell>
     </ng-container>
 
     <!-- Avg ADP Column -->
     <ng-container matColumnDef="avg_adp">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Pos ADP</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.avg_adp || '---'}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.avg_adp || '-'}}</mat-cell>
     </ng-container>
 
     <!-- Value Column -->
@@ -95,7 +94,7 @@
     <ng-container *ngIf="selectedLeague" matColumnDef="owner">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Owner</mat-header-cell>
       <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">
-        <div *ngIf="leagueService.isLeagueLoaded()">{{element.owner?.ownerName || '---'}}</div>
+        <div *ngIf="leagueService.isLeagueLoaded()">{{element.owner?.ownerName || '-'}}</div>
         <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent"
           style="max-width: 200px"></mat-progress-bar>
       </mat-cell>

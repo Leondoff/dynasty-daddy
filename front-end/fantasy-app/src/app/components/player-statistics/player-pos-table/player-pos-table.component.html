@@ -14,7 +14,7 @@
 
         <ng-container matColumnDef="points">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Points</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.getPlayerPointsByFormat(element.sleeper_id, leagueService.getLeagueScoringFormat()) || '---'}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{playerService.getPlayerPointsByFormat(element.sleeper_id, leagueService.getLeagueScoringFormat()) || '-'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="pass_att">
@@ -135,7 +135,7 @@
 
         <ng-container *ngIf="leagueService.selectedLeague" matColumnDef="owner">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Owner</mat-header-cell>
-          <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">{{element.owner?.ownerName || '---'}}</mat-cell>
+          <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">{{element.owner?.ownerName || '-'}}</mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

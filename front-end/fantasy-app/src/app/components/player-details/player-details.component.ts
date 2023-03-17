@@ -85,7 +85,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
         last5Weeks += weekStats[this.selectedPlayer.sleeper_id]?.[scoringFormat] || 0;
       }
     }
-    return Math.round(last5Weeks / 5 * 100) / 100 || '---';
+    return Math.round(last5Weeks / 5 * 100) / 100 || '-';
   }
 
   /**
