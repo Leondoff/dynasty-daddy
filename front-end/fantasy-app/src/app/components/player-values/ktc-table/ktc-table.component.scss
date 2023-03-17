@@ -2,16 +2,16 @@
 
 @import "../../../../styles.scss";
 
-.mat-column-position,
 .mat-column-avg_adp,
 .mat-column-age,
 .mat-column-change,
 .mat-column-actions {
-  max-width: 82px;
+  min-width: 82px;
 }
 
+.mat-column-position,
 .mat-column-injury {
-  max-width: 60px;
+  min-width: 60px;
 }
 
 .mat-column-full_name {
@@ -58,4 +58,9 @@
 
 .ktc-table-element-row:active {
   background: mat.get-color-from-palette($mat-accent, main);
+}
+
+.ktc-table-container-wrapper {
+  overflow-x: auto;
+  width: 100vw;
 }
