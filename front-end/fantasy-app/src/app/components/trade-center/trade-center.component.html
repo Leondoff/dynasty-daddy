@@ -230,13 +230,13 @@
         <div class="center-text mid-bold-text" style="margin-bottom: 5px">Team Position Ranks</div>
         <table style="border-collapse: separate; border-spacing: 0 10px;">
           <tr>
-            <td style="width: 50%">{{team2Rankings?.team.owner.ownerName || '--' | truncate:20}}</td>
+            <td style="width: 50%">{{team2Rankings?.team.owner.ownerName || '-' | truncate:20}}</td>
             <td style="width: 4%" class="center-text text__light">NAME</td>
-            <td style="width: 50%; text-align: right;">{{team1Rankings?.team.owner.ownerName || '--' | truncate:20}}</td>
+            <td style="width: 50%; text-align: right;">{{team1Rankings?.team.owner.ownerName || '-' | truncate:20}}</td>
           </tr>
           <tr>
             <td style="width: 48%" >
-              <span>{{team2Rankings ? displayService.getTierFromNumber(team2MockRankings?.tier || team2Rankings?.tier) : '--'}}</span>
+              <span>{{team2Rankings ? displayService.getTierFromNumber(team2MockRankings?.tier || team2Rankings?.tier) : '-'}}</span>
               <span style="padding-left: 5px;" *ngIf="getPowerRankingsDifference(2, 6) && getPowerRankingsDifference(2, 6) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 6) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 6) < 0}">
                 <span *ngIf="getPowerRankingsDifference(2, 6) < 0"><mat-icon class="trade-arrow-icon__small">trending_down</mat-icon></span><span *ngIf="getPowerRankingsDifference(2, 6) > 0"><mat-icon class="trade-arrow-icon__small">trending_up</mat-icon></span>
             </span>
@@ -246,12 +246,12 @@
               <span style="padding-right: 5px;" *ngIf="getPowerRankingsDifference(1, 6) && getPowerRankingsDifference(1, 6) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 6) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 6) < 0}">
                 <span *ngIf="getPowerRankingsDifference(1, 6) < 0"><mat-icon class="trade-arrow-icon__small">trending_down</mat-icon></span><span *ngIf="getPowerRankingsDifference(1, 6) > 0"><mat-icon class="trade-arrow-icon__small">trending_up</mat-icon></span>
             </span>
-              <span>{{team1Rankings ? displayService.getTierFromNumber(team1MockRankings?.tier || team1Rankings?.tier) : '--'}}</span>
+              <span>{{team1Rankings ? displayService.getTierFromNumber(team1MockRankings?.tier || team1Rankings?.tier) : '-'}}</span>
             </td>
           </tr>
           <tr>
             <td style="width: 48%" >
-            <span>{{team2MockRankings?.roster[0].rank || team2Rankings?.roster[0].rank || '--'}}</span>
+            <span>{{team2MockRankings?.roster[0].rank || team2Rankings?.roster[0].rank || '-'}}</span>
             <span style="padding-left: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(2, 0) && getPowerRankingsDifference(2, 0) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 0) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 0) < 0}">
                 <span *ngIf="getPowerRankingsDifference(2, 0) > 0">+</span>{{getPowerRankingsDifference(2, 0)}}
             </span>
@@ -261,11 +261,11 @@
             <span style="padding-right: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(1, 0) && getPowerRankingsDifference(1, 0) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 0) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 0) < 0}">
                 <span *ngIf="getPowerRankingsDifference(1, 0) > 0">+</span>{{getPowerRankingsDifference(1, 0)}}
             </span>
-              <span>{{team1MockRankings?.roster[0].rank || team1Rankings?.roster[0].rank || '--'}}</span>
+              <span>{{team1MockRankings?.roster[0].rank || team1Rankings?.roster[0].rank || '-'}}</span>
             </td>          </tr>
           <tr>
             <td style="width: 48%" >
-            <span>{{team2MockRankings?.roster[1].rank || team2Rankings?.roster[1].rank || '--'}}</span>
+            <span>{{team2MockRankings?.roster[1].rank || team2Rankings?.roster[1].rank || '-'}}</span>
             <span style="padding-left: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(2, 1) && getPowerRankingsDifference(2, 1) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 1) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 1) < 0}">
                 <span *ngIf="getPowerRankingsDifference(2, 1) > 0">+</span>{{getPowerRankingsDifference(2, 1)}}
             </span>
@@ -275,12 +275,12 @@
             <span style="padding-right: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(1, 1) && getPowerRankingsDifference(1, 1) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 1) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 1) < 0}">
                 <span *ngIf="getPowerRankingsDifference(1, 1) > 0">+</span>{{getPowerRankingsDifference(1, 1)}}
             </span>
-              <span>{{team1MockRankings?.roster[1].rank || team1Rankings?.roster[1].rank || '--'}}</span>
+              <span>{{team1MockRankings?.roster[1].rank || team1Rankings?.roster[1].rank || '-'}}</span>
             </td>
           </tr>
           <tr>
             <td style="width: 48%" >
-              <span>{{team2MockRankings?.roster[2].rank || team2Rankings?.roster[2].rank || '--'}}</span>
+              <span>{{team2MockRankings?.roster[2].rank || team2Rankings?.roster[2].rank || '-'}}</span>
               <span style="padding-left: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(2, 2) && getPowerRankingsDifference(2, 2) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 2) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 2) < 0}">
                 <span *ngIf="getPowerRankingsDifference(2, 2) > 0">+</span>{{getPowerRankingsDifference(2, 2)}}
               </span>
@@ -290,12 +290,12 @@
             <span style="padding-right: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(1, 2) && getPowerRankingsDifference(1, 2) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 2) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 2) < 0}">
                 <span *ngIf="getPowerRankingsDifference(1, 2) > 0">+</span>{{getPowerRankingsDifference(1, 2)}}
             </span>
-              <span>{{team1MockRankings?.roster[2].rank || team1Rankings?.roster[2].rank || '--'}}</span>
+              <span>{{team1MockRankings?.roster[2].rank || team1Rankings?.roster[2].rank || '-'}}</span>
             </td>
           </tr>
           <tr>
             <td style="width: 48%" >
-            <span>{{team2MockRankings?.roster[3].rank || team2Rankings?.roster[3].rank || '--'}}</span>
+            <span>{{team2MockRankings?.roster[3].rank || team2Rankings?.roster[3].rank || '-'}}</span>
             <span style="padding-left: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(2, 3) && getPowerRankingsDifference(2, 3) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 3) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 3) < 0}">
                 <span *ngIf="getPowerRankingsDifference(2, 3) > 0">+</span>{{getPowerRankingsDifference(2, 3)}}
             </span>
@@ -305,12 +305,12 @@
             <span style="padding-right: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(1, 3) && getPowerRankingsDifference(1, 3) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 3) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 3) < 0}">
                 <span *ngIf="getPowerRankingsDifference(1, 3) > 0">+</span>{{getPowerRankingsDifference(1, 3)}}
             </span>
-              <span>{{team1MockRankings?.roster[3].rank || team1Rankings?.roster[3].rank || '--'}}</span>
+              <span>{{team1MockRankings?.roster[3].rank || team1Rankings?.roster[3].rank || '-'}}</span>
             </td>
           </tr>
           <tr>
             <td style="width: 48%" >
-            <span>{{team2MockRankings?.picks.rank || team2Rankings?.picks.rank || '--'}}</span>
+            <span>{{team2MockRankings?.picks.rank || team2Rankings?.picks.rank || '-'}}</span>
             <span style="padding-left: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(2, 5) && getPowerRankingsDifference(2, 5) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 5) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(2, 5) < 0}">
                 <span *ngIf="getPowerRankingsDifference(2, 5) > 0">+</span>{{getPowerRankingsDifference(2, 5)}}
             </span>
@@ -320,7 +320,7 @@
             <span style="padding-right: 5px; font-style: italic;" *ngIf="getPowerRankingsDifference(1, 5) && getPowerRankingsDifference(1, 5) !== 0" [ngClass]="{'success__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 5) > 0, 'warning__alert': team1MockRankings && team2MockRankings && getPowerRankingsDifference(1, 5) < 0}">
                 <span *ngIf="getPowerRankingsDifference(1, 5) > 0">+</span>{{getPowerRankingsDifference(1, 5)}}
             </span>
-              <span>{{team1MockRankings?.picks.rank || team1Rankings?.picks.rank || '--'}}</span>
+              <span>{{team1MockRankings?.picks.rank || team1Rankings?.picks.rank || '-'}}</span>
             </td>
           </tr>
         </table>

@@ -22,7 +22,7 @@
         <span
           style="padding-right: 15px; vertical-align: top;">{{configService.isMobile ? selectedPlayer.team : playerService.getFullTeamNameFromACC(selectedPlayer.team)}} {{selectedPlayer.position}}</span>
         <mat-icon class="icon--break">circle</mat-icon>
-        <span style="vertical-align: top;">{{selectedPlayer.age != -1 ? selectedPlayer.age + ' y.o.' : '--'}}</span>
+        <span style="vertical-align: top;">{{selectedPlayer.age != -1 ? selectedPlayer.age + ' y.o.' : '-'}}</span>
       </div>
       <div *ngIf="leagueService.selectedLeague" class="margin-top-10">
         <div *ngIf="leagueService.isLeagueLoaded() && selectedPlayer.owner">
@@ -47,7 +47,7 @@
         </div>
         <div class="standings-col vertical-break__right__dark" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">{{playerService.playerStatsYear}} Points</div>
-          <div class="mid-bold-text">{{playerService.getPlayerPointsByFormat(selectedPlayer.sleeper_id, (selectedLeague?.getLeagueScoringFormat() || 'pts_half_ppr')) || '--'}}</div>
+          <div class="mid-bold-text">{{playerService.getPlayerPointsByFormat(selectedPlayer.sleeper_id, (selectedLeague?.getLeagueScoringFormat() || 'pts_half_ppr')) || '-'}}</div>
         </div>
         <div class="standings-col" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Last 5 Weeks Average</div>

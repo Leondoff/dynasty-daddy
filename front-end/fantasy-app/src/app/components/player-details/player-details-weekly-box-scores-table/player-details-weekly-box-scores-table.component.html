@@ -28,7 +28,7 @@
 
     <ng-container matColumnDef="points">
       <mat-header-cell *matHeaderCellDef>Fantasy Points</mat-header-cell>
-      <mat-cell *matCellDef="let gamelog">{{getGameLogPoints(gamelog) || '---'}}</mat-cell>
+      <mat-cell *matCellDef="let gamelog">{{getGameLogPoints(gamelog) || '-'}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="off_snp">

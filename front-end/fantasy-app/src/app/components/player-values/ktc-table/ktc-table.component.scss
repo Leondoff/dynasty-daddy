@@ -2,6 +2,7 @@
 
 @import "../../../../styles.scss";
 
+.mat-column-position,
 .mat-column-avg_adp,
 .mat-column-age,
 .mat-column-change,
@@ -9,7 +10,6 @@
   max-width: 82px;
 }
 
-.mat-column-position,
 .mat-column-injury {
   max-width: 60px;
 }
@@ -18,7 +18,6 @@
   min-width: 150px;
 }
 
-.mat-column-position,
 .mat-column-full_name,
 .mat-column-owner {
   text-overflow: clip;

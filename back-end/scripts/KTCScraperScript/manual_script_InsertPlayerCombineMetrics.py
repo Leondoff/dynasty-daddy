@@ -59,7 +59,7 @@ def fetchPlayerContractData(url, pos):
 
 # fetch player metrics from player profiler
 def fetchPlayerProfilerData(player):
-    baseUrl = 'https://www.playerprofiler.com/nfl/' + player.replace(" ", "-").lower()
+    baseUrl = 'https://www.playerprofiler.com/nfl/' + player.replace(".", "").replace(" ", "-").lower()
     
     # Scrape basic metrics from player profiler
     soup = setUpSoup(baseUrl)
@@ -205,4 +205,4 @@ def PersistMetadataRecordsForPlayer(nameIdDict):
 
 # PersistAllMetadataRecords()
 # Individual player example
-# PersistMetadataRecordsForPlayer({'lamarjacksonqb': 'lamar jackson'})
+PersistMetadataRecordsForPlayer({'djmoorewr': 'dj moore'})
