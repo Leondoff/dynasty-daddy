@@ -15,7 +15,7 @@
     <ng-container matColumnDef="position">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{configService.isMobile ? 'Pos' :
         'Position'}}</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.position == 'PI' ? 'PICK' : element.position + ' ' + playerInfoCache[element.name_id]?.rank || '-'}}</mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.position == 'PI' ? 'PICK' : element.position + ' ' + (playerInfoCache[element.name_id]?.rank || '-')}}</mat-cell>
     </ng-container>
 
     <!-- Age Column -->
