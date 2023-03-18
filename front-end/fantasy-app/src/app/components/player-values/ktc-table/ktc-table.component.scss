@@ -7,11 +7,11 @@
 .mat-column-age,
 .mat-column-change,
 .mat-column-actions {
-  max-width: 82px;
+  min-width: 82px;
 }
 
 .mat-column-injury {
-  max-width: 60px;
+  min-width: 60px;
 }
 
 .mat-column-full_name {
