@@ -8,7 +8,6 @@
       <mat-cell *matCellDef="let element"> {{configService.isMobile ? element.first_name.substr(0, 1) + '. ' +
         element.last_name : element.full_name}} <span *ngIf="(element.experience === 0 && element.position !== 'PI')"
           matBadge="R" matBadgeOverlap="false" matBadgeColor="accent"></span>
-        <!--          <span class="small-text__light">{{element.team}}</span>-->
       </mat-cell>
     </ng-container>
 

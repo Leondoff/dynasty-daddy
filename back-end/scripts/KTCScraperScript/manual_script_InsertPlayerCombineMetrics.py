@@ -12,7 +12,16 @@ WR_CONTRACT_LINK = "https://overthecap.com/position/wide-receiver"
 TE_CONTRACT_LINK = "https://overthecap.com/position/tight-end"
 
 PLAYER_PROFILER_EXCEPTIONS = {
-    "Kenneth Walker III": "kenneth-walker-2"
+    "kennethwalkerrb": "kenneth-walker-2",
+    "tankdellwr": "nathaniel-dell",
+    "robbieandersonwr": "robby-anderson",
+    "kennethgainwellrb": "kenny-gainwell",
+    "jaelondardenwr": "jaedon-darden",
+    "campeoplesrb": "camerun-peoples",
+    "chigoziemokonkwote": "chig-okonkwo",
+    "trestanebnerrb": "treston-ebner",
+    "nickwestbrookikhinewr": "nick-westbrook",
+    "mattlacossete":"matt-lacrosse"
 }
 
 # reads ras scores from csv and creates name_id dictionary
@@ -59,7 +68,7 @@ def fetchPlayerContractData(url, pos):
 
 # fetch player metrics from player profiler
 def fetchPlayerProfilerData(player):
-    baseUrl = 'https://www.playerprofiler.com/nfl/' + player.replace(".", "").replace(" ", "-").lower()
+    baseUrl = 'https://www.playerprofiler.com/nfl/' + player.replace(".", "").replace(" ", "-").lower().replace("-jr", "")
     
     # Scrape basic metrics from player profiler
     soup = setUpSoup(baseUrl)
@@ -177,8 +186,8 @@ def processMetadataRecords(conn, nameIdDict):
     ind = 0
     for nameId, fullName in nameIdDict.items():
         playerName = fullName
-        if fullName in PLAYER_PROFILER_EXCEPTIONS:
-            playerName = PLAYER_PROFILER_EXCEPTIONS[fullName]
+        if nameId in PLAYER_PROFILER_EXCEPTIONS:
+            playerName = PLAYER_PROFILER_EXCEPTIONS[nameId]
         playerMetadataDict[nameId] = {
             "ras": rasScoresDict[nameId] if nameId in rasScoresDict else None,
             "contract": contractDict[nameId] if nameId in contractDict else None,
@@ -205,4 +214,4 @@ def PersistMetadataRecordsForPlayer(nameIdDict):
 
 # PersistAllMetadataRecords()
 # Individual player example
-PersistMetadataRecordsForPlayer({'djmoorewr': 'dj moore'})
+# PersistMetadataRecordsForPlayer({'djmoorewr': 'dj moore'})

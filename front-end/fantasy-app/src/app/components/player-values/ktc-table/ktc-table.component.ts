@@ -74,7 +74,7 @@ export class KtcTableComponent extends BaseComponent implements OnInit, OnChange
    */
   refreshTableDetails(): void {
     if (this.leagueService.selectedLeague != null) {
-      this.displayedColumns = this.configService.isMobile ? ['full_name', 'owner', 'trade_value', 'actions'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
+      this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'owner', 'trade_value', 'actions'] : ['full_name', 'position', 'age', 'injury', 'owner', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
     } else {
       this.displayedColumns = this.configService.isMobile ? ['full_name', 'position', 'trade_value', 'actions'] : ['full_name', 'position', 'age', 'injury', 'halfppr', 'avg_adp', 'trade_value', 'change', 'actions'];
     }
