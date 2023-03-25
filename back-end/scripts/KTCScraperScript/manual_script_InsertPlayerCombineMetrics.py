@@ -3,7 +3,6 @@ import PlayerService
 import psycopg2
 from Constants import playerExceptionsMap
 from BeautifulSoupService import setUpSoup
-import time
 import json
 
 QB_CONTRACT_LINK = "https://overthecap.com/position/quarterback"
@@ -137,25 +136,20 @@ def fetchPlayersInDynastyDaddy(conn):
     return nameIdDict
 
 # persist metadata dict
-def persistMetadataDictToDynastyDaddy(conn, metadataDict):
+def persistJsonToDB(conn, metadataDict, query):
     print('Persisting player metadata...')
     
     # Creating a cursor object using the cursor() method
     cursor = conn.cursor()
     for nameId, profile in metadataDict.items():
         profileJson = json.dumps(profile, indent = 4) 
-        playerMetadataStatement = '''INSERT INTO player_metadata (name_id, profile_json) VALUES (%s, %s)
-            ON CONFLICT (name_id) DO UPDATE
-            SET
-            name_id = %s,
-            profile_json = %s; '''
-        cursor.execute(playerMetadataStatement, (nameId, profileJson, nameId, profileJson))
+        cursor.execute(query, (nameId, profileJson, nameId, profileJson))
     
     conn.commit()
     print('Finished persisting player metadata')
 
 # get connection to database
-def getConnectionToDatabase():
+def getConnectionToDB():
     # Connect to local test database
     conn = psycopg2.connect(
         database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
@@ -166,20 +160,10 @@ def getConnectionToDatabase():
     return conn
 
 # helper function that handles all logic for player metadata
-def processMetadataRecords(conn, nameIdDict):
+def processProfileData(conn, nameIdDict):
     
     # result dict
     playerMetadataDict = {}
-
-    # get ras scores dictionary
-    rasScoresDict = fetchRASScoreDict()
-
-    # get contract dictionary
-    qbContractsDict = fetchPlayerContractData(QB_CONTRACT_LINK, 'QB')
-    rbContractsDict = fetchPlayerContractData(RB_CONTRACT_LINK, 'RB')
-    wrContractsDict = fetchPlayerContractData(WR_CONTRACT_LINK, 'WR')
-    teContractsDict = fetchPlayerContractData(TE_CONTRACT_LINK, 'TE')
-    contractDict = {**qbContractsDict, **rbContractsDict, **wrContractsDict, **teContractsDict}
 
     print('Set up complete! Processing ' + str(len(nameIdDict)) + ' players...')
 
@@ -188,30 +172,94 @@ def processMetadataRecords(conn, nameIdDict):
         playerName = fullName
         if nameId in PLAYER_PROFILER_EXCEPTIONS:
             playerName = PLAYER_PROFILER_EXCEPTIONS[nameId]
-        playerMetadataDict[nameId] = {
-            "ras": rasScoresDict[nameId] if nameId in rasScoresDict else None,
-            "contract": contractDict[nameId] if nameId in contractDict else None,
-            "profile": fetchPlayerProfilerData(playerName)
-        }
+        playerMetadataDict[nameId] = fetchPlayerProfilerData(playerName)
+        
         ind = ind + 1
-        print('(' + str(ind) + '/' + str(len(nameIdDict)) + ') ' + fullName + ' processed')
+        print('(' + str(ind) + '/' + str(len(nameIdDict)) + ') ' + fullName + ' profile processed')
+    
+    query = '''INSERT INTO player_metadata (name_id, profile_json) VALUES (%s, %s)
+        ON CONFLICT (name_id) DO UPDATE
+        SET
+        name_id = %s,
+        profile_json = %s; '''
 
-    persistMetadataDictToDynastyDaddy(conn, playerMetadataDict)
+    persistJsonToDB(conn, playerMetadataDict, query)
+    
+def processContractData(conn, nameIdDict):
+    
+    # result dict
+    playerMetadataDict = {}
+    
+    # get contract dictionary
+    qbContractsDict = fetchPlayerContractData(QB_CONTRACT_LINK, 'QB')
+    rbContractsDict = fetchPlayerContractData(RB_CONTRACT_LINK, 'RB')
+    wrContractsDict = fetchPlayerContractData(WR_CONTRACT_LINK, 'WR')
+    teContractsDict = fetchPlayerContractData(TE_CONTRACT_LINK, 'TE')
+    contractDict = {**qbContractsDict, **rbContractsDict, **wrContractsDict, **teContractsDict}
+    
+    ind = 0
+    for nameId, fullName in nameIdDict.items():
+        playerMetadataDict[nameId] = contractDict[nameId] if nameId in contractDict else None
+        ind = ind + 1
+        print('(' + str(ind) + '/' + str(len(nameIdDict)) + ') ' + fullName + ' contract processed')
+    
+    query = '''INSERT INTO player_metadata (name_id, contract_json) VALUES (%s, %s)
+            ON CONFLICT (name_id) DO UPDATE
+            SET
+            name_id = %s,
+            contract_json = %s; '''
+    persistJsonToDB(conn, playerMetadataDict, query)
+    
+def processRasData(conn, nameIdDict):
+    
+    # result dict
+    playerMetadataDict = {}
+    
+    # get ras scores dictionary
+    rasScoresDict = fetchRASScoreDict()
+
+    ind = 0
+    for nameId, fullName in nameIdDict.items():
+        playerMetadataDict[nameId] = rasScoresDict[nameId] if nameId in rasScoresDict else None
+        ind = ind + 1
+        print('(' + str(ind) + '/' + str(len(nameIdDict)) + ') ' + fullName + ' ras processed')
+    
+    query = '''INSERT INTO player_metadata (name_id, ras_json) VALUES (%s, %s)
+            ON CONFLICT (name_id) DO UPDATE
+            SET
+            name_id = %s,
+            ras_json = %s; '''
+    persistJsonToDB(conn, playerMetadataDict, query)
+
+# Route what metadata to update
+def routeMetadataToUpdate(conn, metadataCol, nameIdDict):
+    if metadataCol is 'contract':
+        processContractData(conn, nameIdDict)
+    elif metadataCol is 'ras':
+        processRasData(conn, nameIdDict)
+    elif metadataCol is 'profile':
+        processProfileData(conn, nameIdDict)
+    else:
+        processContractData(conn, nameIdDict)
+        processRasData(conn, nameIdDict)
+        processProfileData(conn, nameIdDict)
 
 # Persist All Metadata records for players
-def PersistAllMetadataRecords():
-    conn = getConnectionToDatabase()
+def UpdatePlayerMetadata(metadataCol):
+    conn = getConnectionToDB()
 
     nameIdDict = fetchPlayersInDynastyDaddy(conn)
     
-    processMetadataRecords(conn, nameIdDict)
+    routeMetadataToUpdate(conn, metadataCol, nameIdDict)  
 
 # persist metadata record for custon nameIdDict
-def PersistMetadataRecordsForPlayer(nameIdDict):
-    conn = getConnectionToDatabase()
+def UpdatePlayerMetadataByDict(metadataCol, nameIdDict):
+    conn = getConnectionToDB()
     
-    processMetadataRecords(conn, nameIdDict)
+    processProfileData(conn, nameIdDict)
+    
+    routeMetadataToUpdate(conn, metadataCol, nameIdDict)
 
-# PersistAllMetadataRecords()
-# Individual player example
-# PersistMetadataRecordsForPlayer({'djmoorewr': 'dj moore'})
+# UpdatePlayerMetadata('contract')
+# # Individual player example
+# UpdatePlayerMetadataByDict('profile', {'djmoorewr': 'dj moore'})

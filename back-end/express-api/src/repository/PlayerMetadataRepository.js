@@ -7,7 +7,7 @@ const playersModel = new Model('player_metadata');
  * @param id name id of player
  */
 export const GetPlayerMetadataByNameId = async (id) => {
-  const data = await playersModel.selectQuery('select profile_json, \n'
+  const data = await playersModel.selectQuery('select jsonb_build_object(\'profile\', profile_json, \'contract\', contract_json, \'ras\', ras_json) as profile_json, \n'
     + '  updated_at as last_updated  \n'
     + '  from player_metadata pm     \n'
     + `  WHERE name_id = '${id}'`);

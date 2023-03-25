@@ -111,6 +111,8 @@ create table player_metadata
 (
     name_id varchar(30) primary key not null unique,
     profile_json jsonb,
+    contract_json jsonb,
+    ras_json jsonb,
     updated_at                       TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
     created_at                       TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW()
 );

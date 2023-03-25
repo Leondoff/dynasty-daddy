@@ -84,7 +84,10 @@ export const GetPlayerDetailsEndpoint = async (req, res) => {
     const { id } = req.params;
     const valueData = await GetHistoricalPlayerValuesDatapoint(id, 'false');
     const metadata = await GetPlayerMetadataByNameId(id);
-    res.status(200).json({ historicalData: valueData.rows, profile: metadata.rows });
+    res.status(200).json({
+      historicalData: valueData.rows,
+      profile: metadata.rows
+    });
   } catch (err) {
     res.status(500).json(err.stack);
   }
