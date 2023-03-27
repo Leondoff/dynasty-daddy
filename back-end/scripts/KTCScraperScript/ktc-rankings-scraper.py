@@ -53,7 +53,7 @@ class Player:
     def __init__(self, id, name, first_name, last_name, team, position, sfPositionRank, positionRank, age, experience,
                  sf_value, value, sleeperId=None, college=None, injury_status=None, weight=None, height=None,
                  jersey_number=-1, active=None, mflId=None, fc_sf_value=None, fc_value=None, fc_position_rank=None,
-                 fc_sf_position_rank=None, dp_sf_value=None, dp_value=None, dp_position_rank=None, dp_sf_position_rank=None
+                 fc_sf_position_rank=None, dp_sf_value=None, dp_value=None, dp_sf_position_rank=None, dp_position_rank=None
                  ):
         self.id = id
         self.name = name
