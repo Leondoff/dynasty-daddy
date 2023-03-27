@@ -266,9 +266,11 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
    */
   private setDefaultSelectedMetrics(): { display: string, name: string, isDisabled: boolean }[] {
     let defaultMetrics = [];
+    const playoffRounds = this.leagueService.getPlayoffRoundsCount();
     this.updateDisabledSelectedMetrics();
     if (this.selectedWeek >= this.leagueService.selectedLeague.playoffStartWeek) {
-      defaultMetrics = this.buildMetricsListOnValues(['makePlayoffs', 'makeConfChamp', 'makeChampionship', 'winChampionship']);
+      const playoffRoundMetrics = ['makeConfChamp', 'makeChampionship', 'winChampionship'];
+      defaultMetrics = this.buildMetricsListOnValues(['makePlayoffs'].concat(playoffRoundMetrics.slice(3 - playoffRounds, 3)));
     } else {
       defaultMetrics = this.buildMetricsListOnValues(['record', 'makePlayoffs', 'winDivision', 'getBye', 'winChampionship']);
       if (this.leagueService.selectedLeague.playoffTeams % 4 === 0) {

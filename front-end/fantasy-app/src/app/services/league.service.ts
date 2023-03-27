@@ -329,4 +329,15 @@ export class LeagueService {
     });
     return playoffRoundMatchUp;
   }
+
+  /**
+   * Returns the number of playoff rounds for the league
+   * @param numTeams teams in the playoffs
+   * @returns 
+   */
+  getPlayoffRoundsCount(numTeams: number = this.selectedLeague.playoffTeams) {
+    const numRounds = Math.floor(Math.log2(numTeams));
+    const hasExtraRound = numTeams > Math.pow(2, numRounds);
+    return numRounds + (hasExtraRound ? 1 : 0);
+  }
 }
