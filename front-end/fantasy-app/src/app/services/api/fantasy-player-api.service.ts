@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../../model/assets/FantasyPlayer';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FantasyPlayerApiConfigService } from './fantasy-player-api-config.service';
 import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
@@ -22,6 +22,11 @@ export class FantasyPlayerApiService {
    * @private
    */
   private prevPlayerList: FantasyPlayerDataPoint[];
+
+  /**
+   * cache portfolio data
+   */
+  private fantasyPortfolioCache = {};
 
   /**
    * cache player values that have been loaded
@@ -122,8 +127,33 @@ export class FantasyPlayerApiService {
    * get historical player value over time by id
    * @param nameId player name id
    */
-  getPlayerDetailsByNameId(nameId: string): Observable<{historicalData: FantasyPlayerDataPoint[], profile: any}> {
-    return this.http.get<{historicalData: FantasyPlayerDataPoint[], profile: any}>(this.fantasyPlayerApiConfigService.getPlayerDetailsEndpoint + nameId)
-      .pipe(tap((player: {historicalData: FantasyPlayerDataPoint[], profile: any}) => player));
+  getPlayerDetailsByNameId(nameId: string): Observable<{ historicalData: FantasyPlayerDataPoint[], profile: any }> {
+    return this.http.get<{ historicalData: FantasyPlayerDataPoint[], profile: any }>(this.fantasyPlayerApiConfigService.getPlayerDetailsEndpoint + nameId)
+      .pipe(tap((player: { historicalData: FantasyPlayerDataPoint[], profile: any }) => player));
+  }
+
+  /**
+    * get fantasy portfolio player values over time (cache layer)
+    * @param intervalDays number of days in the past to fetch
+    * @param portfolioList list of name id strings
+    */
+  getFantasyPortfolio(intervalDays: number, portfolioList: Array<string>): Observable<{}> {
+    return JSON.stringify(this.fantasyPortfolioCache) !== '{}' ? of(this.fantasyPortfolioCache) : this.refreshFantasyPortfolio(intervalDays, portfolioList);
+  }
+
+  /**
+   * get fantasy portfolio player values over time
+   * @param intervalDays number of days in the past to fetch
+   * @param portfolioList list of name id strings
+   */
+  private refreshFantasyPortfolio(intervalDays: number, portfolioList: Array<string>): Observable<{}> {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this.http.post(this.fantasyPlayerApiConfigService.getFantasyPortfolioEndpoint, { intervalDays, portfolioList }, { headers: headers })
+      .pipe(map((portfolio: any) => {
+        portfolio.forEach(p => {
+          this.fantasyPortfolioCache[p.name_id] = p.player_data;
+        });
+        return this.fantasyPortfolioCache;
+      }));
   }
 }

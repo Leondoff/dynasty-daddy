@@ -1,0 +1,10 @@
+.portfolio-chart {
+    height: 400px;
+    min-width: 600px;
+}
+
+.portfolio-chart-wrapper {
+    width: 300px;
+    overflow-x: scroll;
+    margin: unset;
+}

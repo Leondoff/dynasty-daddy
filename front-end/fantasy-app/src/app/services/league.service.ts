@@ -117,8 +117,10 @@ export class LeagueService {
    * loads new user data from sleeper username
    * @param username user name
    * @param year string selected season
+   * @param leaguePlatform League platform
+   * @param password mfl password
    */
-  loadNewUser(username: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): Observable<any> {
+  loadNewUser$(username: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER, password: string = ''): Observable<any> {
     this.selectedYear = year;
     try {
       switch(leaguePlatform) {
@@ -131,6 +133,13 @@ export class LeagueService {
         }
         case LeaguePlatform.FLEAFLICKER: {
           this.fleaflickerService.loadFleaflickerUser$(username, year).subscribe(leagueUser => {
+            this.leagueUser = leagueUser;
+            return of(leagueUser);
+          });
+          break
+        }
+        case LeaguePlatform.MFL: {
+          this.mflService.loadMFLUser$(username, password).subscribe(leagueUser => {
             this.leagueUser = leagueUser;
             return of(leagueUser);
           });
@@ -339,5 +348,31 @@ export class LeagueService {
     const numRounds = Math.floor(Math.log2(numTeams));
     const hasExtraRound = numTeams > Math.pow(2, numRounds);
     return numRounds + (hasExtraRound ? 1 : 0);
+  }
+
+  /**
+   * open window to users league from dynasty daddy
+   * @param LeagueId optional id to navigate to
+   * @param platform optional platform id to use
+   * @param year optional year to load
+   */
+  openLeague(leagueId: string = null, platform: LeaguePlatform = null, year: string = null): void {
+    const leagueYear = year || this.selectedLeague.season;
+    const selectedLeagueId = leagueId || this.selectedLeague.leagueId;
+    const selectedPlatform = platform || this.selectedLeague.leaguePlatform;
+    switch (selectedPlatform) {
+      case LeaguePlatform.MFL:
+        window.open('https://www46.myfantasyleague.com/' + leagueYear + '/home/'
+          + selectedLeagueId + '#0', '_blank');
+        break;
+      case LeaguePlatform.SLEEPER:
+        window.open('https://sleeper.com/leagues/' + selectedLeagueId + '/team', '_blank');
+        break;
+      case LeaguePlatform.FLEAFLICKER:
+        window.open('https://www.fleaflicker.com/nfl/leagues/' + selectedLeagueId, '_blank');
+        break;
+      default:
+        console.error('Unsupported League Platform', selectedPlatform);
+    }
   }
 }
