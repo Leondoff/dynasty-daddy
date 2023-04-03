@@ -22,21 +22,5 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
-  openLeague(): void {
-    switch (this.leagueService.selectedLeague.leaguePlatform) {
-      case LeaguePlatform.MFL:
-        window.open('https://www46.myfantasyleague.com/' + this.leagueService.selectedLeague.season + '/home/'
-          + this.leagueService.selectedLeague.leagueId + '#0', '_blank');
-        break;
-      case LeaguePlatform.SLEEPER:
-        window.open('https://sleeper.com/leagues/' + this.leagueService.selectedLeague.leagueId + '/team', '_blank');
-        break;
-      case LeaguePlatform.FLEAFLICKER:
-        window.open('https://www.fleaflicker.com/nfl/leagues/' + this.leagueService.selectedLeague.leagueId, '_blank');
-        break;
-      default:
-        console.error('Unsupported League Platform', this.leagueService.selectedLeague.leaguePlatform);
-    }
-  }
+  
 }

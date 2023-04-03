@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
 import { SleeperApiService } from './sleeper-api.service';
 import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
 import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
@@ -158,6 +158,29 @@ export class SleeperService {
     );
   }
 
+  /**
+ * Fetch all leagues for user and load rosters
+ * This is used for the portfolio functionality
+ * @param username string
+ * @param year string
+ * @returns 
+ */
+  fetchAllLeaguesForUser$(username: string, year: string): Observable<FantasyPlatformDTO> {
+    return this.loadSleeperUser$(username, year).pipe(
+      mergeMap(leagueUser => {
+        const observableList = leagueUser.leagues.map(league => {
+          return this.sleeperApiService.getSleeperRostersByLeagueId(league.leagueId).pipe(
+            switchMap(rosters => {
+              const team = rosters.find(it => it.ownerId === leagueUser?.userData?.user_id);
+              league.metadata['roster'] = team.players.concat(...team.reserve, ...team.taxi)
+              return of(league);
+            })
+          );
+        })
+        return forkJoin(observableList).pipe(map(() => leagueUser));
+      })
+    );
+  }
 
   // TODO clean up mock draft code... create separate object or use draft capital from team details
   private loadDrafts$(draftId: string, league: LeagueWrapper): Observable<LeagueWrapper> {
@@ -170,7 +193,7 @@ export class SleeperService {
               league.leagueTeamDetails.forEach(team => {
                 if (!draft.draftOrder[team.owner?.userId]) {
                   draft.draftOrder[team.owner?.userId] = Number(Object.keys(draft.slotToRosterId)
-                  .find(key => draft.slotToRosterId[key] === Number(team.owner?.userId)));;
+                    .find(key => draft.slotToRosterId[key] === Number(team.owner?.userId)));;
                 }
               });
             }

@@ -1,0 +1,75 @@
+@use '@angular/material' as mat;
+
+@import "../../../../styles.scss";
+
+table {
+  width: 100%;
+  min-width: 600px;
+}
+
+tr.portfolio-detail-row {
+  height: 0;
+}
+
+tr.portfolio-element-row:not(.portfolio-expanded-row):hover {
+  background: $dark-bg-lighter-30;
+}
+
+tr.portfolio-element-row:not(.portfolio-expanded-row):active {
+  background: mat.get-color-from-palette($mat-accent, main);
+}
+
+.portfolio-element-row td {
+  border-bottom-width: 0;
+}
+
+.portfolio-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.mat-column-exposure,
+.mat-column-expand,
+.mat-column-player,
+.mat-column-pos,
+.mat-column-team,
+.mat-column-shares,
+.mat-column-totalValue,
+.mat-column-monthGain,
+.mat-column-price {
+  text-align: left;
+  justify-content: left;
+}
+
+.mat-column-exposure,
+.mat-column-shares,
+.mat-column-totalValue,
+.mat-column-monthGain,
+.mat-column-price,
+.mat-column-pos,
+.mat-column-team {
+  max-width: 42px;
+}
+
+.mat-column-player {
+  max-width: 120px;
+}
+
+.mat-column-expand {
+  width: 16px;
+  cursor: pointer;
+}
+
+.sub-table-league {
+  width: 20%;
+  text-align: left;
+}
+
+.sub-table-detail {
+  width: 8%;
+  text-align: left;
+}
+
+.portfolio-table-mobile {
+  margin-right: 60px;
+}

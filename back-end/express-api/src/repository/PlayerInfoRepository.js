@@ -115,3 +115,23 @@ export const GetPlayerValuesForMarket = async (market) => {
       return null;
   }
 };
+
+/**
+ * Fetch values for a specific day in the past
+ * @param {*} intervalDays number of days in the past
+ */
+// eslint-disable-next-line max-len
+export const GetFantasyPortfolioForInterval = async (intervalDays, playerList) => {
+  const data = await playersModel.selectQuery(
+    'SELECT name_id, jsonb_agg(\n'
+      + 'json_build_object(\'date\', created_at::date, \'sf_trade_value\', sf_trade_value, \'trade_value\', trade_value,\n'
+      + ' \'fc_sf_trade_value\', fc_sf_trade_value, \'fc_trade_value\', fc_trade_value, \'dp_sf_trade_value\', dp_sf_trade_value,\n'
+      + ' \'dp_trade_value\', dp_trade_value) order by created_at::date \n'
+      + ' ) AS player_data\n'
+      + ' FROM player_values\n'
+      + ` WHERE name_id IN ${playerList} \n`
+      + ` and created_at::date >= current_date - interval '${intervalDays} days'\n`
+      + ' GROUP BY name_id'
+  );
+  return data;
+};

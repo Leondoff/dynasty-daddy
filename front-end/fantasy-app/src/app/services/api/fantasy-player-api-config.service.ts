@@ -16,6 +16,8 @@ export class FantasyPlayerApiConfigService {
 
   private _getPlayerDetailsEndpoint = '';
 
+  private _getFantasyPortfolioEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
@@ -54,5 +56,13 @@ export class FantasyPlayerApiConfigService {
 
   set getPlayerDetailsEndpoint(value: string) {
     this._getPlayerDetailsEndpoint = value;
+  }
+
+  get getFantasyPortfolioEndpoint(): string {
+    return this._getFantasyPortfolioEndpoint;
+  }
+
+  set getFantasyPortfolioEndpoint(value: string) {
+    this._getFantasyPortfolioEndpoint = value;
   }
 }

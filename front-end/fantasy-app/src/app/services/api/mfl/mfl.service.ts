@@ -1,23 +1,23 @@
-import {Injectable} from '@angular/core';
-import {forkJoin, Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {LeagueWrapper} from '../../../model/league/LeagueWrapper';
-import {MflApiService} from './mfl-api.service';
-import {LeagueOwnerDTO} from '../../../model/league/LeagueOwnerDTO';
-import {LeagueTeam} from '../../../model/league/LeagueTeam';
-import {LeagueCompletedPickDTO} from '../../../model/league/LeagueCompletedPickDTO';
-import {LeagueRosterDTO} from '../../../model/league/LeagueRosterDTO';
-import {LeaguePlayoffMatchUpDTO} from '../../../model/league/LeaguePlayoffMatchUpDTO';
-import {LeagueTeamMatchUpDTO} from '../../../model/league/LeagueTeamMatchUpDTO';
-import {LeagueRawDraftOrderDTO} from '../../../model/league/LeagueRawDraftOrderDTO';
-import {TeamMetrics} from '../../../model/league/TeamMetrics';
-import {LeagueTeamTransactionDTO, TransactionStatus} from '../../../model/league/LeagueTeamTransactionDTO';
-import {LeagueRawTradePicksDTO} from '../../../model/league/LeagueRawTradePicksDTO';
-import {LeagueDTO, LeagueType} from '../../../model/league/LeagueDTO';
-import {LeaguePlatform} from '../../../model/league/FantasyPlatformDTO';
-import {CompletedDraft} from '../../../model/league/CompletedDraft';
-import {DraftCapital} from '../../../model/assets/DraftCapital';
+import { Injectable } from '@angular/core';
+import { forkJoin, Observable, of } from 'rxjs';
+import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
+import { MflApiService } from './mfl-api.service';
+import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
+import { LeagueTeam } from '../../../model/league/LeagueTeam';
+import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
+import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
+import { LeagueRawDraftOrderDTO } from '../../../model/league/LeagueRawDraftOrderDTO';
+import { TeamMetrics } from '../../../model/league/TeamMetrics';
+import { LeagueTeamTransactionDTO, TransactionStatus } from '../../../model/league/LeagueTeamTransactionDTO';
+import { LeagueRawTradePicksDTO } from '../../../model/league/LeagueRawTradePicksDTO';
+import { LeagueDTO, LeagueType } from '../../../model/league/LeagueDTO';
+import { FantasyPlatformDTO, LeaguePlatform } from '../../../model/league/FantasyPlatformDTO';
+import { CompletedDraft } from '../../../model/league/CompletedDraft';
+import { DraftCapital } from '../../../model/assets/DraftCapital';
 import { NflService } from '../../utilities/nfl.service';
+import { LeagueUserDTO } from 'src/app/model/league/LeagueUserDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -138,7 +138,7 @@ export class MflService {
       leagueInfo.name,
       leagueInfo.id,
       Number(leagueInfo.franchises.count),
-      this.generateRosterPositions(leagueInfo.starters, rosterSize),
+      this.generateRosterPositions(leagueInfo?.starters, rosterSize),
       leagueInfo.id || null,
       historyList[0]?.year === new Date().getFullYear().toString() ? 'in_progress' : 'completed',
       year || historyList[0]?.year || null,
@@ -162,6 +162,65 @@ export class MflService {
       loadRosters: leagueInfo.loadRosters || 'live_draft'
     };
     return mflLeague;
+  }
+
+  /**
+   * Fetch all leagues for a specific user
+   * @param username mfl username 
+   * @param password mfl password
+   * @param year year for season
+   * @returns 
+   */
+  fetchAllLeaguesForUser$(username: string, password: string, year: string): Observable<FantasyPlatformDTO> {
+    return this.loadMFLUser$(username, password).pipe(
+      mergeMap(leagueUser => {
+        const observableList = leagueUser.leagues?.map(league => {
+          return this.loadLeagueFromId$(year, league.leagueId).pipe(mergeMap(leagueInfo => {
+            return this.mflApiService.getMFLRosters(year, league.leagueId).pipe(
+              switchMap(rosters => {
+                const roster = rosters.rosters.franchise.find(it => this.formatRosterId(it.id) === league?.metadata?.teamId)?.player;
+                league.metadata['roster'] = roster?.map(player => player.id);
+                league.isSuperflex = leagueInfo.isSuperflex;
+                league.rosterPositions = leagueInfo.rosterPositions;
+                league.totalRosters = leagueInfo.totalRosters;
+                league.scoringFormat = leagueInfo.scoringFormat;
+                league.type = leagueInfo.type;
+                return of(league);
+              })
+            );
+          }));
+        })
+        return forkJoin(observableList).pipe(map(() => leagueUser));
+      })
+    );
+  }
+
+  /**
+  * Load MFL users
+  * @param username username string
+  * @param password password for user
+  * @returns 
+  */
+  loadMFLUser$(username: string, password: string): Observable<FantasyPlatformDTO> {
+    return this.mflApiService.getMFLLeaguesForUser(username, password).pipe(map(response => {
+      if (response == null) {
+        console.warn('User data could not be found. Try again!');
+        return null;
+      }
+      const userData = new LeagueUserDTO()
+      userData.username = username;
+
+      const leagues = []
+      response?.forEach(league => {
+        const newLeague = new LeagueDTO()
+        newLeague.leagueId = league.league_id;
+        newLeague.name = league?.name;
+        newLeague.leaguePlatform = LeaguePlatform.MFL;
+        newLeague.metadata['teamId'] = this.formatRosterId(league?.franchise_id);
+        leagues.push(newLeague);
+      })
+      return { leagues, userData, leaguePlatform: LeaguePlatform.MFL }
+    }));
   }
 
   /**
@@ -220,7 +279,7 @@ export class MflService {
    */
   private marshallLeagueTeamMetrics(teamMetrics: any): {} {
     const metricDict = {};
-      teamMetrics?.leagueStandings?.franchise.forEach(team => {
+    teamMetrics?.leagueStandings?.franchise.forEach(team => {
       metricDict[team.id] = (new TeamMetrics(null)).fromMFL(team);
     });
     return metricDict;
@@ -283,7 +342,7 @@ export class MflService {
           teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[0], matchUpId));
           teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[1], matchUpId));
         }
-    }
+      }
       matchUpsDict[week] = teamMatchUps;
     });
     return matchUpsDict;

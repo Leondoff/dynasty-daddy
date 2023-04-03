@@ -2,6 +2,7 @@ import {
   GetCurrentPlayerValues,
   GetHistoricalPlayerValuesDatapoint,
   GetHistoricalPlayerValuesDatapointByDays,
+  GetFantasyPortfolioForInterval,
   GetPlayerValuesForMarket
 } from '../repository/PlayerInfoRepository';
 import { GetPlayerMetadataByNameId } from '../repository/PlayerMetadataRepository';
@@ -88,6 +89,24 @@ export const GetPlayerDetailsEndpoint = async (req, res) => {
       historicalData: valueData.rows,
       profile: metadata.rows
     });
+  } catch (err) {
+    res.status(500).json(err.stack);
+  }
+};
+
+/**
+ * fetch the user fantasy portfolio over time based on days and player list
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
+export const GetPlayerPortfolioEndpoint = async (req, res) => {
+  try {
+    const { intervalDays, portfolioList } = req.body;
+    // eslint-disable-next-line prefer-template, implicit-arrow-linebreak
+    const sqlList = '(' + portfolioList.map(str => `'${str}'`).join(', ') + ')';
+    const valueData = await GetFantasyPortfolioForInterval(intervalDays, sqlList);
+    res.status(200).json(valueData.rows);
   } catch (err) {
     res.status(500).json(err.stack);
   }
