@@ -16,23 +16,11 @@ import { PortfolioService } from '../../services/portfolio.service';
 })
 export class LeagueLoginModalComponent implements OnInit {
 
-    /** sleeper username input */
-    usernameInput: string = '';
-
     /** mat tab group index */
     selectedTab: string = '0';
 
-    /** fleaflicker email string */
-    fleaflickerEmail: string = '';
-
     /** selected year for fetching current portfolio */
     selectedYear: string;
-
-    /** mfl username */
-    mflUsername: string = '';
-
-    /** mfl password */
-    mflPassword: string = '';
 
     constructor(private dialog: MatDialog,
         public portfolioService: PortfolioService,
@@ -59,21 +47,21 @@ export class LeagueLoginModalComponent implements OnInit {
         }
         switch (platform) {
             case LeaguePlatform.SLEEPER: {
-                this.sleeperService.fetchAllLeaguesForUser$(this.usernameInput, this.selectedYear).subscribe(leagueUser => {
+                this.sleeperService.fetchAllLeaguesForUser$(this.portfolioService.sleeperUsername, this.selectedYear).subscribe(leagueUser => {
                     this.portfolioService.portfolio.leagues[LeaguePlatform.SLEEPER] = leagueUser;
                     this.portfolioService.setPlatformIdMaps(LeaguePlatform.SLEEPER);
                 });
                 break;
             }
             case LeaguePlatform.FLEAFLICKER: {
-                this.fleaflickerService.fetchAllLeaguesForUser$(this.fleaflickerEmail, this.selectedYear).subscribe(leagueUser => {
+                this.fleaflickerService.fetchAllLeaguesForUser$(this.portfolioService.fleaflickerEmail, this.selectedYear).subscribe(leagueUser => {
                     this.portfolioService.portfolio.leagues[LeaguePlatform.FLEAFLICKER] = leagueUser;
                     this.portfolioService.setPlatformIdMaps(LeaguePlatform.FLEAFLICKER);
                 });
                 break;
             }
             case LeaguePlatform.MFL: {
-                this.mflService.fetchAllLeaguesForUser$(this.mflUsername, this.mflPassword, this.selectedYear).subscribe(leagueUser => {
+                this.mflService.fetchAllLeaguesForUser$(this.portfolioService.mflUsername, this.portfolioService.mflPassword, this.selectedYear).subscribe(leagueUser => {
                     this.portfolioService.portfolio.leagues[LeaguePlatform.MFL] = leagueUser;
                     if (leagueUser?.leagues.length > 0) {
                         this.portfolioService.setPlatformIdMaps(LeaguePlatform.MFL, leagueUser?.leagues[0]?.leagueId, this.selectedYear);

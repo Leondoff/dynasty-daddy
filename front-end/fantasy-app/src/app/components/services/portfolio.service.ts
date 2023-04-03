@@ -50,6 +50,18 @@ export class PortfolioService {
   /** count of leagues applies, used for exposure */
   leagueCount: number = 0;
 
+  /** mfl username */
+  mflUsername: string = '';
+
+  /** mfl password */
+  mflPassword: string = '';
+
+  /** sleeper username input */
+  sleeperUsername: string = '';
+
+  /** fleaflicker email string */
+  fleaflickerEmail: string = '';
+
   constructor(
     private fantasyPlayerApiService: FantasyPlayerApiService,
     private sleeperApiService: SleeperApiService,
