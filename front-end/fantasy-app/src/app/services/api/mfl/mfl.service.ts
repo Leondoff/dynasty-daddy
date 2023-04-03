@@ -381,6 +381,7 @@ export class MflService {
         transaction = this.processTransactionInTrade(transaction, trans.franchise2_gave_up.split(','), rosterId2, rosterId, season);
         transaction = this.processTransactionInTrade(transaction, trans.franchise1_gave_up.split(','), rosterId, rosterId2, season);
         transaction.rosterIds = [rosterId, rosterId2];
+        console.log(transaction)
       } else {
         if (trans.transaction) {
           const players = trans?.transaction?.split('|');

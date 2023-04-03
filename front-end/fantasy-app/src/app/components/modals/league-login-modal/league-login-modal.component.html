@@ -67,7 +67,7 @@
                 </div>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
                     <span style="padding-right: 15px;">
-                        <button mat-raised-button [disabled]="!portfolioService.fleaflickerEmail" color="accent"
+                        <button mat-raised-button [disabled]="!portfolioService.mflPassword || !portfolioService.mflUsername" color="accent"
                             (click)="connectToLeague(1)">Connect
                         </button>
                     </span>
