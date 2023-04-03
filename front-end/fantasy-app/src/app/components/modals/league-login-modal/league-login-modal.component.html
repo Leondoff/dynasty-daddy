@@ -20,7 +20,7 @@
                 </mat-form-field>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
                     <span style="padding-right: 15px;">
-                        <button mat-raised-button [disabled]="!fleaflickerEmail" color="accent"
+                        <button mat-raised-button [disabled]="!usernameInput" color="accent"
                             (click)="connectToLeague(0)">Connect
                         </button>
                     </span>
