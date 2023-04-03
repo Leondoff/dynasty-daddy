@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { map, mergeMap, concatMap, delay, catchError, retry } from 'rxjs/operators';
 import { SleeperApiService } from './sleeper-api.service';
 import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
 import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
@@ -170,14 +170,19 @@ export class SleeperService {
       mergeMap(leagueUser => {
         const observableList = leagueUser.leagues.map(league => {
           return this.sleeperApiService.getSleeperRostersByLeagueId(league.leagueId).pipe(
-            switchMap(rosters => {
+            retry(2), // Retry failed requests up to 2 times
+            catchError(error => {
+              console.error('Failed to fetch data:', error);
+              return of([]); // Return an empty object instead of throwing the error
+            }),
+            concatMap(rosters=> {
               const team = rosters.find(it => it.ownerId === leagueUser?.userData?.user_id);
-              league.metadata['roster'] = team.players.concat(...team.reserve, ...team.taxi)
+              league.metadata['roster'] = team?.players?.concat(...team.reserve, ...team.taxi) || [];
               return of(league);
             })
           );
         })
-        return forkJoin(observableList).pipe(map(() => leagueUser));
+        return forkJoin(observableList).pipe(concatMap(() => of(leagueUser).pipe(delay(1000))));
       })
     );
   }
