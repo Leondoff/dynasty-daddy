@@ -1,0 +1,124 @@
+<div class="center-text margin-bot-20 mid-bold-text">
+    Manage Portfolio Leagues
+    <button mat-icon-button class="button-right" (click)="closeDialog()"><mat-icon>close</mat-icon></button>
+</div>
+<div>
+    <mat-tab-group mat-align-tabs="center" class="margin-top-25" selectedIndex="{{selectedTab}}">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <img width="30px" height="30px"
+                    src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw">
+            </ng-template>
+            <div class="center-text">
+                <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+                    <mat-label>Sleeper Username</mat-label>
+                    <input matInput type="text" [(ngModel)]="usernameInput">
+                    <button mat-button *ngIf="usernameInput" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="usernameInput=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <div *ngIf="portfolioService.connectAccountStatus == 1">
+                    <span style="padding-right: 15px;">
+                        <button mat-raised-button [disabled]="!usernameInput" color="accent"
+                            (click)="connectToLeague(0)">Connect
+                        </button>
+                    </span>
+                    <span style="padding-left: 15px;">
+                        <button mat-raised-button
+                            [disabled]="!portfolioService.portfolio || !portfolioService.portfolio?.leagues[0]"
+                            color="warn" (click)="disconnectUser(0)">Disconnect
+                        </button>
+                    </span>
+                </div>
+                <div class="center-spinner" *ngIf="portfolioService.connectAccountStatus == 0">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <div class="margin-top-25 small-text__light">
+                    We do not store any personal data, it is only passed to the fantasy platform.
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <img width="30px" height="30px"
+                    src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif">
+            </ng-template>
+            <div class="center-text">
+                <div>
+                    <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+                        <mat-label>MFL Username</mat-label>
+                        <input matInput type="text" [(ngModel)]="mflUsername">
+                        <button mat-button *ngIf="mflUsername" matSuffix mat-icon-button aria-label="Clear"
+                            (click)="mflUsername=''">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field class="mat-dropdown-wide-200" color="accent">
+                        <mat-label>MFL Password</mat-label>
+                        <input matInput type="password" [(ngModel)]="mflPassword">
+                        <button mat-button *ngIf="mflPassword" matSuffix mat-icon-button aria-label="Clear"
+                            (click)="mflPassword=''">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+                <div *ngIf="portfolioService.connectAccountStatus == 1">
+                    <span style="padding-right: 15px;">
+                        <button mat-raised-button [disabled]="!fleaflickerEmail" color="accent"
+                            (click)="connectToLeague(1)">Connect
+                        </button>
+                    </span>
+                    <span style="padding-left: 15px;">
+                        <button mat-raised-button
+                            [disabled]="!portfolioService.portfolio || !portfolioService.portfolio?.leagues[1]"
+                            color="warn" (click)="disconnectUser(1)">Disconnect
+                        </button>
+                    </span>
+                </div>
+                <div class="center-spinner" *ngIf="portfolioService.connectAccountStatus == 0">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <div class="margin-top-25 small-text__light">
+                    We do not store any personal data, it is only passed to the fantasy platform.
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <img width="30px" height="30px" src="https://apprecs.org/ios/images/app-icons/256/3a/1259897658.jpg">
+            </ng-template>
+            <div class="center-text">
+                <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+                    <mat-label>Fleaflicker Email</mat-label>
+                    <input matInput type="text" [(ngModel)]="fleaflickerEmail">
+                    <button mat-button *ngIf="fleaflickerEmail" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="fleaflickerEmail=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <div *ngIf="portfolioService.connectAccountStatus == 1">
+                    <span style="padding-right: 15px;">
+                        <button mat-raised-button [disabled]="!fleaflickerEmail" color="accent"
+                            (click)="connectToLeague(2)">Connect
+                        </button>
+                    </span>
+                    <span style="padding-left: 15px;">
+                        <button mat-raised-button
+                            [disabled]="!portfolioService.portfolio || !portfolioService.portfolio?.leagues[2]"
+                            color="warn" (click)="disconnectUser(2)">Disconnect
+                        </button>
+                    </span>
+                </div>
+                <div class="center-spinner" *ngIf="portfolioService.connectAccountStatus == 0">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <div class="margin-top-25 small-text__light">
+                    We do not store any personal data, it is only passed to the fantasy platform.
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

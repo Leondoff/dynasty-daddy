@@ -24,7 +24,9 @@ import {
   GetFFTradesEndpoint,
   GetUserLeaguesEndpoint,
   GetConfigValuesEndpoint,
-  GetPlayerDetailsEndpoint
+  GetPlayerDetailsEndpoint,
+  GetPlayerPortfolioEndpoint,
+  GetMFLLeaguesForUserEndpoint,
 } from '../controllers';
 
 const indexRouter = express.Router();
@@ -36,6 +38,7 @@ indexRouter.get('/player/all/market/:market', GetPlayerValueForMarketEndpoint);
 indexRouter.get('/player/all/prev/:intervalDays', GetPrevPlayerValuesByDaysEndpoint);
 indexRouter.get('/player/:id', GetHistoricalPlayerValueByIdEndpoint);
 indexRouter.get('/player/details/:id', GetPlayerDetailsEndpoint);
+indexRouter.post('/portfolio', GetPlayerPortfolioEndpoint);
 indexRouter.get('/config/all', GetConfigValuesEndpoint);
 
 // MFL Wrapper Endpoints
@@ -48,6 +51,7 @@ indexRouter.get('/mfl/rosters', GetMFlRostersEndpoint);
 indexRouter.get('/mfl/draftResults', GetMFlDraftResultsEndpoint);
 indexRouter.get('/mfl/playoffBrackets', GetMFlPlayoffBracketsEndpoint);
 indexRouter.get('/mfl/schedule', GetMFlScheduleEndpoint);
+indexRouter.post('/mfl/leagues', GetMFLLeaguesForUserEndpoint);
 
 // Fleaflicker Wrapper Endpoints
 indexRouter.get('/ff/league', GetFFLeagueEndpoint);

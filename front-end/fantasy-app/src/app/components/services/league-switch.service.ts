@@ -115,7 +115,7 @@ export class LeagueSwitchService extends BaseComponent {
    * @param leaguePlatform league to load user for
    */
   loadUser(user: string, year: string = new Date().getFullYear().toString(), leaguePlatform = LeaguePlatform.SLEEPER): void {
-    this.leagueService.loadNewUser(user, year, leaguePlatform);
+    this.leagueService.loadNewUser$(user, year, leaguePlatform);
     this.leagueService.selectedYear = year;
     this.leagueService.resetLeague();
   }

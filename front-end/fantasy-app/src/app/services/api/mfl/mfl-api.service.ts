@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {MflApiConfigService} from './mfl-api-config.service';
-import {map} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { MflApiConfigService } from './mfl-api-config.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -78,6 +78,19 @@ export class MflApiService {
   }
 
   /**
+   * fetch mfl leagues for user
+   * @param username mfl username
+   * @param password mfl password
+   */
+  getMFLLeaguesForUser(username: string, password: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLLeaguesForUser, { username, password }).pipe(map(
+      (userLeagues: any) => {
+        return userLeagues;
+      }
+    ));
+  }
+
+  /**
    * fetch future draft picks
    * @param year season
    * @param leagueId league id
@@ -114,7 +127,7 @@ export class MflApiService {
         const playerMap = {};
         players.players.player.forEach(p => {
           const nameArr = p.name.split(', ');
-          playerMap[p.id] = { position: p.position, full_name: nameArr[1] + ' ' + nameArr[0]};
+          playerMap[p.id] = { position: p.position, full_name: nameArr[1] + ' ' + nameArr[0] };
         });
         return playerMap;
       }
