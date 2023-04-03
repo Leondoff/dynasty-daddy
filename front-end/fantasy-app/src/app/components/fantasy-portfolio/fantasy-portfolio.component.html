@@ -1,0 +1,84 @@
+<div class="margin-top-10 large-bold-header-text center-text">Fantasy Portfolio</div>
+<div class="center-text margin-top-10">
+  Measure your player rostership and exposure across multiple leagues to diversify risk.
+</div>
+
+<div class="portfolio-container">
+  <div>
+    <div [ngClass]="{'button-left': !configService.isMobile, 'margin-top-15 reload-mobile-margin': configService.isMobile}">
+      <button mat-raised-button
+        [ngClass]="{'pulse-button': selectedLeagues.value != portfolioService.appliedLeagues && selectedLeagues?.value?.length > 0}"
+        color="accent" (click)="refreshPortfolio()" [disabled]="selectedLeagues.value == portfolioService.appliedLeagues || selectedLeagues?.value?.length == 0">
+        {{portfolioService.appliedLeagues.length == 0 ? 'Get' : 'Reload' }} Portfolio</button>
+    </div>
+    <span class="container_spacer" *ngIf="!configService.isMobile"></span>
+    <div [ngClass]="{'button-right': !configService.isMobile}">
+      <mat-form-field appearance="standard" color="accent" style="padding-right: 10px" [ngClass]="{'leagues-mobile-width': configService.isMobile}">
+        <mat-label>Leagues</mat-label>
+        <mat-select [formControl]="selectedLeagues" multiple [disabled]="selectedLeagues?.value?.length == 0">
+          <mat-select-trigger>
+            {{!configService.isMobile ? selectedLeagues?.value?.length : ''}} Leagues
+          </mat-select-trigger>
+          <mat-option *ngFor="let option of selectableLeagues" [value]="option">{{option?.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-stroked-button (click)="openLeagueLoginModal()"><mat-icon class="generic-icon">add</mat-icon> Connect
+        Account</button>
+      </div>
+  </div>
+
+  <div class="margin-top-50" *ngIf="portfolioStatus == 1">
+    <div *ngIf="playerPortfolioWithValue.length > 0">
+      <app-fantasy-portfolio-chart [playerPortfolioWithValue]="playerPortfolioWithValue"></app-fantasy-portfolio-chart>
+    </div>
+  </div>
+
+  <div class="margin-bot-10"
+    *ngIf="playerPortfolioWithValue.length > 0 && portfolioStatus == 1">
+    <span [ngClass]="{'button-left': !configService.isMobile}">
+      <mat-form-field class="mat-dropdown-wide-300" [ngClass]="{'player-value-checkbox-margin': !configService.isMobile}" color="accent" style="border-top: unset !important;">
+        <mat-label>Search Player</mat-label>
+        <input matInput type="text" (keyup)="setUpPortfolio()" [(ngModel)]="searchVal">
+        <button mat-button *ngIf="searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearchVal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </span>
+    <span class="container-spacer" *ngIf="!configService.isMobile"></span>
+    <span [ngClass]="{'button-right': !configService.isMobile, 'button-left': configService.isMobile}" class="margin-top-10">
+      <mat-checkbox
+        [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+        color="accent" [(ngModel)]="posFilter[0]" (change)="setUpPortfolio()">QB</mat-checkbox>
+      <mat-checkbox
+        [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+        color="accent" [(ngModel)]="posFilter[1]" (change)="setUpPortfolio()">RB</mat-checkbox>
+      <mat-checkbox
+        [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+        color="accent" [(ngModel)]="posFilter[2]" (change)="setUpPortfolio()">WR</mat-checkbox>
+      <mat-checkbox
+        [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+        color="accent" [(ngModel)]="posFilter[3]" (change)="setUpPortfolio()">TE</mat-checkbox>
+      <mat-checkbox
+        [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
+        color="accent" [(ngModel)]="posFilter[4]" (change)="setUpPortfolio()">Other</mat-checkbox>
+    </span>
+  </div>
+  <div *ngIf="playerPortfolioWithValue.length > 0 && portfolioStatus == 1">
+    <div *ngIf="filteredPortfolio.length > 0">
+      <app-fantasy-portfolio-table [playersWithValue]="filteredPortfolio"></app-fantasy-portfolio-table>
+    </div>
+    <div class="center-text margin-top-50 large-bold-header-text warning__alert"
+      *ngIf="filteredPortfolio.length == 0">
+      No players found with applied filters
+    </div>
+  </div>
+
+  <div class="center-text margin-top-50 large-bold-header-text warning__alert"
+    *ngIf="playerPortfolioWithValue.length == 0 && portfolioStatus == 1 && leagueService.leagueStatus === 'DONE'">
+    No accounts linked
+  </div>
+</div>
+
+<div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING' || portfolioStatus == 0">
+  <mat-spinner></mat-spinner>
+</div>

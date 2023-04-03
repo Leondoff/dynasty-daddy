@@ -14,9 +14,8 @@ import {PlayerStatisticsComponent} from './components/player-statistics/player-s
 import {TradeCenterComponent} from './components/trade-center/trade-center.component';
 import {TradeFinderComponent} from './components/trade-finder/trade-finder.component';
 import { WrappedComponent } from './components/wrapped/wrapped.component';
-import { combinations } from 'simple-statistics';
-import { AppComponent } from './app.component';
 import { StandardPageComponent } from './components/standard-page/standard-page.component';
+import { FantasyPortfolioComponent } from './components/fantasy-portfolio/fantasy-portfolio.component';
 
 const routes: Routes = [
   {
@@ -64,6 +63,10 @@ const routes: Routes = [
     {
       path: 'league/draft',
       component: DraftComponent
+    },
+    {
+      path: 'league/portfolio',
+      component: FantasyPortfolioComponent
     },
     {
       path: 'home',

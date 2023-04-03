@@ -102,6 +102,10 @@ import { FilterPlayerValuesModalComponent } from './components/modals/filter-pla
 import { FantasyMarketDropdown } from './components/sub-components/fantasy-market-dropdown/fantasy-market-dropdown.component';
 import { CommonModule } from '@angular/common';
 import { PlayerDetailsProfileComponent } from './components/player-details/player-details-profile/player-details-profile.component';
+import { FantasyPortfolioComponent } from './components/fantasy-portfolio/fantasy-portfolio.component';
+import { FantasyPortfolioTableComponent } from './components/fantasy-portfolio/fantasy-portfolio-table/fantasy-portfolio-table.component';
+import { FantasyPortfolioChartComponent } from './components/fantasy-portfolio/fantasy-portfolio-chart/fantasy-portfolio-chart.component';
+import { LeagueLoginModalComponent } from './components/modals/league-login-modal/league-login-modal.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -175,6 +179,10 @@ let UniversalDeviceDetectorService;
     FantasyTeamRankingsRadarChart,
     LoginErrorComponenet,
     PlayerQueryBuilderComponent,
+    FantasyPortfolioComponent,
+    FantasyPortfolioTableComponent,
+    FantasyPortfolioChartComponent,
+    LeagueLoginModalComponent,
     TruncatePipe,
   ],
   imports: [

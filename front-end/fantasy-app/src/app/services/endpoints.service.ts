@@ -11,9 +11,9 @@ import { FleaflickerApiConfigService } from './api/fleaflicker/fleaflicker-api-c
 export class EndpointsService {
 
   // TODO add cloud base url for api
-  private baseUrl = 'https://dynasty-daddy.com/api';
+  // private baseUrl = 'https://dynasty-daddy.com/api';
   // uncomment for dev environment
-  // private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = 'http://localhost:3000/api';
 
   constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
     private sleeperApiConfigService: SleeperApiConfigService,
@@ -33,6 +33,7 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.getPrevPlayerValuesEndpoint = this.baseUrl + '/v1/player/all/prev/';
     this.fantasyPlayerApiConfigService.getHistoricalPlayerValuesEndpoint = this.baseUrl + '/v1/player/';
     this.fantasyPlayerApiConfigService.getPlayerDetailsEndpoint = this.baseUrl + '/v1/player/details/';
+    this.fantasyPlayerApiConfigService.getFantasyPortfolioEndpoint = this.baseUrl + '/v1/portfolio';
 
     // Sleeper Endpoints
     this.sleeperApiConfigService.getSleeperUsernameEndpoint = 'https://api.sleeper.app/v1/user/';
@@ -49,6 +50,7 @@ export class EndpointsService {
     this.mflAPIConfigService.getMFLScheduleEndpoint = this.baseUrl + '/v1/mfl/schedule';
     this.mflAPIConfigService.getMFLTransactionsEndpoint = this.baseUrl + '/v1/mfl/transactions';
     this.mflAPIConfigService.getMFLDraftResultsEndpoint = this.baseUrl + '/v1/mfl/draftResults';
+    this.mflAPIConfigService.getMFLLeaguesForUser = this.baseUrl + '/v1/mfl/leagues';
     this.mflAPIConfigService.getMFLLeagueStandingEndpoint = this.baseUrl + '/v1/mfl/leagueStandings';
     this.mflAPIConfigService.getMFLRostersEndpoint = this.baseUrl + '/v1/mfl/rosters';
     this.mflAPIConfigService.getMFLFutureDraftPicksEndpoint = this.baseUrl + '/v1/mfl/futureDraftPicks';

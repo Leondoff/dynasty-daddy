@@ -29,6 +29,12 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   /** mfl league id input */
   mflLeagueIdInput: string = '';
 
+  /** mfl username input */
+  mflUsernameInput: string = '';
+
+  /** mfl password input */
+  mflPasswordInput: string = '';
+
   /** fleaflicekr league id input */
   fleaflickerLeagueIdInput: string = '';
 
@@ -39,7 +45,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   supportedYears: string[] = [];
 
   /** mat tab group index */
-  selectedTab: string = '1';
+  selectedTab: string = '0';
 
   /** sleeper login method */
   sleeperLoginMethod: string = 'sleeper_username';
@@ -51,7 +57,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   fleaflickerEmail: string = '';
 
   /** mfl login method */
-  mflLoginMethod: string = 'mfl_league_id';
+  mflLoginMethod: string = 'mfl_username';
 
   constructor(private sleeperApiService: SleeperApiService,
     public leagueService: LeagueService,
@@ -86,8 +92,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
           this.leagueService?.selectedLeague?.season || this.supportedYears[1];
         this.setUpForms();
       })
-    )
-      ;
+    );
   }
 
   /**
@@ -108,8 +113,8 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
           break;
         default:
           this.usernameInput =
-          this.leagueService.leagueUser?.userData?.username == null || this.leagueService.leagueUser?.userData?.username === 'undefined'
-            ? '' : this.leagueService.leagueUser?.userData?.username;
+            this.leagueService.leagueUser?.userData?.username == null || this.leagueService.leagueUser?.userData?.username === 'undefined'
+              ? '' : this.leagueService.leagueUser?.userData?.username;
           this.sleeperLeagueIdInput = this.leagueService.selectedLeague.leagueId;
       }
     }
@@ -124,7 +129,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * loads sleeper data for user
    */
   fetchSleeperInfo(): void {
-    this.leagueService.loadNewUser(this.usernameInput, this.selectedYear);
+    this.leagueService.loadNewUser$(this.usernameInput, this.selectedYear);
     this.leagueService.selectedYear = this.selectedYear;
     this.leagueService.resetLeague();
   }
@@ -134,7 +139,17 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
  */
   fetchFleaflickerInfo(): void {
     this.fleaflickerLeagueIdInput = '';
-    this.leagueService.loadNewUser(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
+    this.leagueService.loadNewUser$(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
+    this.leagueService.selectedYear = this.selectedYear;
+    this.leagueService.resetLeague();
+  }
+
+  /**
+   * loads MFL data for user
+   */
+  fetchMFLInfo(): void {
+    this.mflLeagueIdInput = '';
+    this.leagueService.loadNewUser$(this.mflUsernameInput, this.selectedYear, LeaguePlatform.MFL, this.mflPasswordInput);
     this.leagueService.selectedYear = this.selectedYear;
     this.leagueService.resetLeague();
   }
@@ -226,7 +241,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * handles logging in with mfl league id
    */
   loginWithMFLLeagueId(year?: string, leagueId?: string): void {
-    this.leagueService.leagueUser = null;
     this.mflApiService.getMFLLeague(year || this.selectedYear, leagueId || this.mflLeagueIdInput).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(this.mflService.fromMFLLeague(leagueData.league, year || this.selectedYear));
     });
