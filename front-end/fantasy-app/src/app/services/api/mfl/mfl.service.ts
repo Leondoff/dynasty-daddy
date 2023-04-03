@@ -6,7 +6,7 @@ import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
 import { LeagueTeam } from '../../../model/league/LeagueTeam';
 import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
 import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { map, mergeMap, concatMap, retry, catchError, delay } from 'rxjs/operators';
 import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
 import { LeagueRawDraftOrderDTO } from '../../../model/league/LeagueRawDraftOrderDTO';
 import { TeamMetrics } from '../../../model/league/TeamMetrics';
@@ -175,9 +175,14 @@ export class MflService {
     return this.loadMFLUser$(username, password).pipe(
       mergeMap(leagueUser => {
         const observableList = leagueUser.leagues?.map(league => {
-          return this.loadLeagueFromId$(year, league.leagueId).pipe(mergeMap(leagueInfo => {
+          return this.loadLeagueFromId$(year, league.leagueId).pipe(concatMap(leagueInfo => {
             return this.mflApiService.getMFLRosters(year, league.leagueId).pipe(
-              switchMap(rosters => {
+              retry(2),
+              catchError(error => {
+                console.error('Failed to fetch data:', error);
+                return of([]);
+              }),
+              concatMap(rosters => {
                 const roster = rosters.rosters.franchise.find(it => this.formatRosterId(it.id) === league?.metadata?.teamId)?.player;
                 league.metadata['roster'] = roster?.map(player => player.id);
                 league.isSuperflex = leagueInfo.isSuperflex;
@@ -185,12 +190,12 @@ export class MflService {
                 league.totalRosters = leagueInfo.totalRosters;
                 league.scoringFormat = leagueInfo.scoringFormat;
                 league.type = leagueInfo.type;
-                return of(league);
+                return of(league).pipe(delay(2000));
               })
             );
           }));
         })
-        return forkJoin(observableList).pipe(map(() => leagueUser));
+        return forkJoin(observableList).pipe(concatMap(() => of(leagueUser).pipe(delay(1000))));
       })
     );
   }

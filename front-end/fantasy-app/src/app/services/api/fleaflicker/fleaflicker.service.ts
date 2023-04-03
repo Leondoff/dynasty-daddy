@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { map, mergeMap, concatMap, delay, retry, catchError } from 'rxjs/operators';
 import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
 import { FleaflickerApiService } from './fleaflicker-api.service';
 import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
@@ -168,10 +168,15 @@ export class FleaflickerService {
   fetchAllLeaguesForUser$(email: string, year: string): Observable<FantasyPlatformDTO> {
     return this.loadFleaflickerUser$(email, year).pipe(
       mergeMap(leagueUser => {
-        const observableList = leagueUser.leagues.map(league => {
-          return this.loadLeagueFromId$(year, league.leagueId).pipe(mergeMap(leagueInfo => {
+        const observableList = leagueUser.leagues.map(league  => {
+          return this.loadLeagueFromId$(year, league.leagueId).pipe(concatMap(leagueInfo => {
             return this.fleaflickerApiService.getFFRosters(year, league.leagueId).pipe(
-              switchMap(rosters => {
+              retry(2),
+              catchError(error => {
+                console.error('Failed to fetch data:', error);
+                return of([]);
+              }),
+              concatMap(rosters => {
                 const roster = rosters.rosters.find(it => it.team.id === league?.metadata?.teamId)?.players;
                 this.mapFleaFlickerIdMap(roster);
                 league.metadata['roster'] = roster?.map(player => player.proPlayer.id.toString());
@@ -180,12 +185,12 @@ export class FleaflickerService {
                 league.totalRosters = leagueInfo.totalRosters;
                 league.scoringFormat = leagueInfo.scoringFormat;
                 league.type = leagueInfo.type;
-                return of(league);
+                return of(league).pipe(delay(1000));
               })
             );
           }));
         })
-        return forkJoin(observableList).pipe(map(() => leagueUser));
+        return forkJoin(observableList).pipe(concatMap(() => of(leagueUser).pipe(delay(1000))));
       })
     );
   }
