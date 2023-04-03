@@ -1,0 +1,27 @@
+<div style="display: block;" [ngClass]="{'portfolio-chart-wrapper': configService.isMobile}">
+    <div class="portfolio-chart" *ngIf="lineChartData?.length > 0">
+        <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+            [legend]="lineChartLegend" [chartType]="lineChartType" [plugins]="lineChartPlugins">
+        </canvas>
+    </div>
+</div>
+
+<div>
+    <mat-button-toggle-group [(ngModel)]="selectedDateFilter" (change)="updateChart()" style="overflow: auto;"
+        class="button-left" [ngClass]="{'margin-bot-10': configService.isMobile}">
+        <mat-button-toggle value="6month">6 Months</mat-button-toggle>
+        <mat-button-toggle value="3month">3 Months</mat-button-toggle>
+        <mat-button-toggle value="1month">1 Month</mat-button-toggle>
+    </mat-button-toggle-group>
+    <span class="container_spacer" *ngIf="!configService.isMobile">
+    </span>
+    <span  *ngIf="!configService.isMobile" class='button-right'>
+        <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket"
+            (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
+    </span>
+</div>
+
+<div class="margin-top-15" *ngIf="configService.isMobile">
+    <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket"
+    (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
+</div>

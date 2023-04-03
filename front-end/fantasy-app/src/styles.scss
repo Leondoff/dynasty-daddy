@@ -790,6 +790,16 @@ hr.dark {
   margin: 0px auto;
 }
 
+.portfolio-container {
+  display: flex;
+  flex-direction: column;
+  padding: 3px 8px 8px;
+  min-width: 400px;
+  max-width: 1200px;
+  justify-content: center;
+  margin: 0px auto;
+}
+
 .playoff-calc-table-container {
   display: flex;
   flex-direction: column;
@@ -953,6 +963,24 @@ tr.table-detail-row {
 
 .mat-tab-body-content {
   overflow-y: hidden !important;
+}
+
+// button stylings
+/* Declare border pulse animation */
+@keyframes borderPulse {
+  0% {
+      box-shadow: inset 0px 0px 0px 5px rgba(255, 255, 255, .4), 0px 0px 0px 0px rgba(255, 255, 255, 1);
+  }
+
+  100% {
+      box-shadow: inset 0px 0px 0px 3px rgba(117, 117, 255, .2), 0px 0px 0px 10px rgba(255, 255, 255, 0);
+  }
+}
+
+
+/* Initiate Auto-Pulse animations */
+button.pulse-button {
+  animation: borderPulse 1000ms infinite ease-out, colorShift 10000ms infinite ease-in;
 }
 
 // Wrapped styling

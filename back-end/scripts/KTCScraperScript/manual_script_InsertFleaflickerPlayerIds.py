@@ -1,7 +1,7 @@
 import csv
 import PlayerService
 import psycopg2
-
+from Constants import playerExceptionsMap
 
 def fetchFromFleaFlickerCsv():
     with open('C:\\Users\\Jeremy\\Desktop\\People.csv', 'r') as file:
@@ -20,6 +20,8 @@ def fetchFromFleaFlickerCsv():
 
         for row in csvreader:
             playerId = PlayerService.cleanPlayerIdString(row[3] + row[4])
+            if playerId in playerExceptionsMap:
+                playerId = playerExceptionsMap[playerNameId]
             fleaflicker_id = row[2]
             playerIdsStatement = ''' UPDATE player_ids
                         SET

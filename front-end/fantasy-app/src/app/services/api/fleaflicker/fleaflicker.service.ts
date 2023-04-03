@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
 import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
 import { FleaflickerApiService } from './fleaflicker-api.service';
 import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
@@ -50,6 +50,7 @@ export class FleaflickerService {
         newLeague.leagueId = league.id
         newLeague.name = league?.name;
         newLeague.leaguePlatform = LeaguePlatform.FLEAFLICKER;
+        newLeague.metadata['teamId'] = league?.ownedTeam?.id;
         leagues.push(newLeague);
       })
       return { leagues, userData, leaguePlatform: LeaguePlatform.FLEAFLICKER }
@@ -155,6 +156,38 @@ export class FleaflickerService {
       leagueWrapper.selectedLeague.playoffTeams = 6; // TODO how to determine this
       return leagueWrapper;
     }));
+  }
+
+  /**
+   * Fetch all leagues for user and load rosters
+   * This is used for the portfolio functionality
+   * @param email string
+   * @param year string
+   * @returns 
+   */
+  fetchAllLeaguesForUser$(email: string, year: string): Observable<FantasyPlatformDTO> {
+    return this.loadFleaflickerUser$(email, year).pipe(
+      mergeMap(leagueUser => {
+        const observableList = leagueUser.leagues.map(league => {
+          return this.loadLeagueFromId$(year, league.leagueId).pipe(mergeMap(leagueInfo => {
+            return this.fleaflickerApiService.getFFRosters(year, league.leagueId).pipe(
+              switchMap(rosters => {
+                const roster = rosters.rosters.find(it => it.team.id === league?.metadata?.teamId)?.players;
+                this.mapFleaFlickerIdMap(roster);
+                league.metadata['roster'] = roster?.map(player => player.proPlayer.id.toString());
+                league.isSuperflex = leagueInfo.isSuperflex;
+                league.rosterPositions = leagueInfo.rosterPositions;
+                league.totalRosters = leagueInfo.totalRosters;
+                league.scoringFormat = leagueInfo.scoringFormat;
+                league.type = leagueInfo.type;
+                return of(league);
+              })
+            );
+          }));
+        })
+        return forkJoin(observableList).pipe(map(() => leagueUser));
+      })
+    );
   }
 
   /**
@@ -360,7 +393,9 @@ export class FleaflickerService {
       if (player && player.proPlayer) {
         this.playerIdMap[player.proPlayer.id.toString()] = {
           full_name: player.proPlayer.nameFull,
-          position: player.proPlayer.position
+          position: player.proPlayer.position,
+          short_name: player.proPlayer.nameShort,
+          team: player?.proPlayer?.proTeamAbbreviation || 'FA',
         }
       }
     });

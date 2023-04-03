@@ -79,6 +79,7 @@ export class PlayerValueService {
 
     /**
      * update player filters, function is called when option is selected
+     * TODO simplifiy the redundant code
      */
     updatePlayerFilters(): void {
         const filterOptions = ['QB', 'RB', 'WR', 'TE', 'PI'];

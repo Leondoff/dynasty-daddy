@@ -1,24 +1,24 @@
 /* tslint:disable:variable-name */
-import {LeaguePlatform} from './FantasyPlatformDTO';
+import { LeaguePlatform } from './FantasyPlatformDTO';
 
 export class LeagueDTO {
-  
+
   constructor() {
 
   }
 
   setLeague(isSuperflex: boolean,
-              name: string,
-              league_id: string,
-              total_rosters: number,
-              roster_positions: string[],
-              previous_league_id: string,
-              status: string,
-              season: string,
-              metadata: any,
-              settings: any,
-              scoring_settings: any,
-              leaguePlatform: LeaguePlatform) : LeagueDTO {
+    name: string,
+    league_id: string,
+    total_rosters: number,
+    roster_positions: string[],
+    previous_league_id: string,
+    status: string,
+    season: string,
+    metadata: any,
+    settings: any,
+    scoring_settings: any,
+    leaguePlatform: LeaguePlatform): LeagueDTO {
     this.isSuperflex = isSuperflex;
     this.name = name;
     this.leagueId = league_id;
@@ -29,7 +29,7 @@ export class LeagueDTO {
     this.status = status;
     this.divisions = settings?.divisions;
     for (let i = 0; i < this.divisions; i++) {
-      this.divisionNames.push( metadata ? metadata[`division_${i + 1}`] : `Division ${i + 1}`);
+      this.divisionNames.push(metadata ? metadata[`division_${i + 1}`] : `Division ${i + 1}`);
     }
     this.playoffTeams = settings?.playoff_teams;
     this.startWeek = settings?.start_week;
@@ -78,19 +78,33 @@ export class LeagueDTO {
   type: LeagueType = LeagueType.DYNASTY;
   leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER;
   scoringFormat: LeagueScoringFormat = LeagueScoringFormat.HALF_PPR;
-  metadata: any = null;
+  metadata: any = {};
 
   /**
    * get league scoring format in string format to pull data from map
    */
   getLeagueScoringFormat(): string {
-    switch(this.scoringFormat) {
+    switch (this.scoringFormat) {
       case LeagueScoringFormat.PPR:
         return 'pts_ppr';
       case LeagueScoringFormat.STANDARD:
         return 'pts_std';
       default:
         return 'pts_half_ppr';
+    }
+  }
+
+  /**
+  * get league scoring format in string format but for display
+  */
+  getDisplayNameLeagueScoringFormat(): string {
+    switch (this.scoringFormat) {
+      case LeagueScoringFormat.PPR:
+        return 'PPR';
+      case LeagueScoringFormat.STANDARD:
+        return 'Standard';
+      default:
+        return 'Half PPR';
     }
   }
 }

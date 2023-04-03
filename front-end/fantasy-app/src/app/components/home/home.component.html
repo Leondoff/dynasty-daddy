@@ -108,6 +108,53 @@
                 <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
               </span>
             </div>
+            <div>
+              <mat-radio-group [(ngModel)]="mflLoginMethod" class="mat-dropdown-wide-200 margin-top-15">
+                <mat-radio-button value="mfl_username" style="padding-right: 10px">Username</mat-radio-button>
+                <mat-radio-button value="mfl_league_id">League Id</mat-radio-button>
+              </mat-radio-group>
+            </div>
+            <div *ngIf="mflLoginMethod === 'mfl_username'">
+              <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+                <mat-label>MFL Username</mat-label>
+                <input matInput type="text" [(ngModel)]="mflUsernameInput">
+                <button mat-button *ngIf="mflUsernameInput" matSuffix mat-icon-button aria-label="Clear" (click)="mflUsernameInput=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-form-field>
+              <div>
+                <mat-form-field class="mat-dropdown-wide-200" color="accent">
+                  <mat-label>MFL Password</mat-label>
+                  <input matInput type="password" [(ngModel)]="mflPasswordInput">
+                  <button mat-button *ngIf="mflPasswordInput" matSuffix mat-icon-button aria-label="Clear" (click)="mflPasswordInput=''">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+              <div>
+                <button mat-raised-button [disabled]="!mflUsernameInput || !mflPasswordInput"
+                        color="accent" (click)="fetchMFLInfo()">Sign In
+                </button>
+                <div class="margin-top-10 small-text__light">
+                  We do not store any personal data, it is only passed to the MFL to retrieve data.
+                </div>
+              </div>
+              <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 1">
+                <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
+                  class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
+                </div>
+                <br>
+                <div class="mat-form-field-center">
+                  <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+                    <mat-label>Select a league</mat-label>
+                    <mat-select [(ngModel)]="mflLeagueIdInput" (selectionChange)="loginWithMFLLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
+                      <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
+                                  [value]="league.leagueId">{{league.name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
             <div *ngIf="mflLoginMethod === 'mfl_league_id'">
               <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
                 <mat-label>MFL League Id</mat-label>
@@ -181,7 +228,7 @@
                   <mat-label>Select a league</mat-label>
                   <mat-select [(ngModel)]="fleaflickerLeagueIdInput" (selectionChange)="loginWithFleaflickerLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
                     <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                                [value]="league.leagueId">{{league.name}} test</mat-option>
+                                [value]="league.leagueId">{{league.name}}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
@@ -251,7 +298,7 @@
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
       <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/rankings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">stacked_bar_chart</mat-icon>Power Rankings</div>
       <div class="center-text margin-top-25 margin-bot-50">
-        Using KTC data, Dynasty Daddy will rank all teams by overall value, starter value, and position group. The data will be visualized in a chart as well as a collapsable table. This table can be expanded, sorted, and searched to enable more precise power rankings without being bombarded with a ton of numbers.
+        Using fantasy market data, Dynasty Daddy will rank all teams by overall value, starter value, and position group. The data will be visualized in a chart as well as a collapsable table. This table can be expanded, sorted, and searched to enable more precise power rankings without being bombarded with a ton of numbers.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
@@ -263,7 +310,7 @@
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
       <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/trade']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">compare_arrows</mat-icon>Trade Calculator</div>
       <div class="center-text margin-top-25 margin-bot-50">
-        Using player values, you can build trades to maximize your teams value. Similar to the KTC trade calculator, however it will filter out player recommendations based on the teams selected in trades. This unlocks the ability to quickly find valid trades while using consistent player values. Additional power ranking data will appear when signed in to inform the user on team positional rankings as well.
+        Using player values, you can build trades to maximize your teams value. It will filter out player recommendations based on the teams selected in trades. This unlocks the ability to quickly find valid trades while using consistent player values. Additional power ranking data will appear when signed in to inform the user on team positional rankings as well.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
@@ -282,6 +329,12 @@
       <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/standings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">leaderboard</mat-icon>Standings</div>
       <div class="center-text margin-top-25 margin-bot-50">
         Display advanced league standings & metrics to understand how each team is performing. View strength of schedule, close match ups, highest scoring weeks, and more! Additional schedule comparison insights are also on this page.
+      </div>
+    </div>
+    <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
+      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/portfolio']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_portfolio" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">account_balance</mat-icon>Fantasy Portfolio</div>
+      <div class="center-text margin-top-25 margin-bot-50">
+       Track your fantasy player portfolio's value over time. Break down what players you have invested the most into and diversify your player portfolio accross all leagues. Select which fantasy market to value players at and make sure you are building a portfolio for long term success.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">

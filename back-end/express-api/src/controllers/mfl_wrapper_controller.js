@@ -56,3 +56,19 @@ export const GetMFlDraftResultsEndpoint = async (req, res) => {
   const { year, leagueId } = req.query;
   return sendMFLRequest(year, leagueId, 'draftResults', res);
 };
+
+export const GetMFLLeaguesForUserEndpoint = async (req, res) => {
+  await axios.post('https://www.dynastyplanet.com/api/mfl/login', req.body)
+    .then((response) =>
+      axios.get('https://www.dynastyplanet.com/api/mfl/leagues', {
+        headers: {
+          Cookie: response.headers['set-cookie']
+        }
+      }))
+    .then((response) => {
+      res.status(response.status).json(response.data);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+};

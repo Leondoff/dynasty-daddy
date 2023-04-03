@@ -12,6 +12,7 @@
       <button mat-menu-item [routerLink]="['./league/probability']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav">Playoff Calculator</button>
       <button mat-menu-item [routerLink]="['./league/trade/finder']"  [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav">Trade Finder</button>
       <button mat-menu-item [routerLink]="['./league/draft']"  [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_draft_center" gaCategory="page_nav">Draft Center</button>
+      <button mat-menu-item [routerLink]="['./league/portfolio']"  [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_portfolio" gaCategory="page_nav">Fantasy Portfolio</button>
     </mat-menu>
     <button mat-button [matMenuTriggerFor]="playerMenu"><mat-icon style="font-size: 22px">insights</mat-icon> Players</button>
     <mat-menu #playerMenu="matMenu">
@@ -22,7 +23,7 @@
     </mat-menu>
     <button mat-button [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-button" gaEvent="nav_wrapped" gaCategory="page_nav" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'"><mat-icon class="header-icon">redeem</mat-icon>Wrapped</button>
     <span class="spacer"></span>
-    <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League" matTooltipPosition="below" aria-label="Clear" (click)="openLeague()">
+    <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League" matTooltipPosition="below" aria-label="Clear" (click)="leagueService.openLeague()">
       <mat-icon >offline_share</mat-icon>
     </button>
     <div *ngIf="leagueService.leagueStatus == 'LOADING'" style="margin-right: 10px">
@@ -54,6 +55,7 @@
       <button mat-menu-item [routerLink]="['./league/probability']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav"><mat-icon class="header-icon">calculate</mat-icon>Playoff Calculator</button>
       <button mat-menu-item [routerLink]="['./league/trade/finder']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav"><mat-icon class="header-icon">person_search</mat-icon>Trade Finder</button>
       <button mat-menu-item [routerLink]="['./league/draft']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_draft_center" gaCategory="page_nav"><mat-icon class="header-icon">storage</mat-icon>Draft Center</button>
+      <button mat-menu-item [routerLink]="['./league/portfolio']"  [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_portfolio" gaCategory="page_nav"><mat-icon class="header-icon">account_balance</mat-icon>Fantasy Portfolio</button>
       <button mat-menu-item [routerLink]="['./players/values']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav"><mat-icon class="header-icon">trending_up</mat-icon>Player Values</button>
       <button mat-menu-item [routerLink]="['./players/trade']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav"><mat-icon class="header-icon">compare_arrows</mat-icon>Trade Calculator</button>
       <button mat-menu-item [routerLink]="['./players/statistics']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_positional_statistics" gaCategory="page_nav"><mat-icon class="header-icon">topic</mat-icon>Positional Statistics</button>

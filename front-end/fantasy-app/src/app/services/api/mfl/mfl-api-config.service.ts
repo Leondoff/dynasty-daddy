@@ -15,6 +15,8 @@ export class MflApiConfigService {
 
   private _getMFLDraftResultsEndpoint = '';
 
+  private _getMFLLeaguesForUser = '';
+
   private _getMFLFutureDraftPicksEndpoint = '';
 
   private _getMFLPlayersEndpoint = '';
@@ -35,6 +37,14 @@ export class MflApiConfigService {
 
   set getMFLDraftResultsEndpoint(value: string) {
     this._getMFLDraftResultsEndpoint = value;
+  }
+
+  get getMFLLeaguesForUser(): string {
+    return this._getMFLLeaguesForUser;
+  }
+
+  set getMFLLeaguesForUser(value: string) {
+    this._getMFLLeaguesForUser = value;
   }
 
   get getMFLLeagueStandingEndpoint(): string {
