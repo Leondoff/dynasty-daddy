@@ -12,15 +12,15 @@
             <div class="center-text">
                 <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
                     <mat-label>Sleeper Username</mat-label>
-                    <input matInput type="text" [(ngModel)]="usernameInput">
-                    <button mat-button *ngIf="usernameInput" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="usernameInput=''">
+                    <input matInput type="text" [(ngModel)]="portfolioService.sleeperUsername">
+                    <button mat-button *ngIf="portfolioService.sleeperUsername" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="portfolioService.sleeperUsername=''">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
                     <span style="padding-right: 15px;">
-                        <button mat-raised-button [disabled]="!usernameInput" color="accent"
+                        <button mat-raised-button [disabled]="!portfolioService.sleeperUsername" color="accent"
                             (click)="connectToLeague(0)">Connect
                         </button>
                     </span>
@@ -48,9 +48,9 @@
                 <div>
                     <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
                         <mat-label>MFL Username</mat-label>
-                        <input matInput type="text" [(ngModel)]="mflUsername">
-                        <button mat-button *ngIf="mflUsername" matSuffix mat-icon-button aria-label="Clear"
-                            (click)="mflUsername=''">
+                        <input matInput type="text" [(ngModel)]="portfolioService.mflUsername">
+                        <button mat-button *ngIf="portfolioService.mflUsername" matSuffix mat-icon-button aria-label="Clear"
+                            (click)="portfolioService.mflUsername=''">
                             <mat-icon>close</mat-icon>
                         </button>
                     </mat-form-field>
@@ -58,16 +58,16 @@
                 <div>
                     <mat-form-field class="mat-dropdown-wide-200" color="accent">
                         <mat-label>MFL Password</mat-label>
-                        <input matInput type="password" [(ngModel)]="mflPassword">
-                        <button mat-button *ngIf="mflPassword" matSuffix mat-icon-button aria-label="Clear"
-                            (click)="mflPassword=''">
+                        <input matInput type="password" [(ngModel)]="portfolioService.mflPassword">
+                        <button mat-button *ngIf="portfolioService.mflPassword" matSuffix mat-icon-button aria-label="Clear"
+                            (click)="portfolioService.mflPassword=''">
                             <mat-icon>close</mat-icon>
                         </button>
                     </mat-form-field>
                 </div>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
                     <span style="padding-right: 15px;">
-                        <button mat-raised-button [disabled]="!fleaflickerEmail" color="accent"
+                        <button mat-raised-button [disabled]="!portfolioService.fleaflickerEmail" color="accent"
                             (click)="connectToLeague(1)">Connect
                         </button>
                     </span>
@@ -93,15 +93,15 @@
             <div class="center-text">
                 <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
                     <mat-label>Fleaflicker Email</mat-label>
-                    <input matInput type="text" [(ngModel)]="fleaflickerEmail">
-                    <button mat-button *ngIf="fleaflickerEmail" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="fleaflickerEmail=''">
+                    <input matInput type="text" [(ngModel)]="portfolioService.fleaflickerEmail">
+                    <button mat-button *ngIf="portfolioService.fleaflickerEmail" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="portfolioService.fleaflickerEmail=''">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
                     <span style="padding-right: 15px;">
-                        <button mat-raised-button [disabled]="!fleaflickerEmail" color="accent"
+                        <button mat-raised-button [disabled]="!portfolioService.fleaflickerEmail" color="accent"
                             (click)="connectToLeague(2)">Connect
                         </button>
                     </span>
