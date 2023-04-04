@@ -51,6 +51,7 @@ export class LeagueLoginModalComponent implements OnInit {
                     this.portfolioService.portfolio.leagues[LeaguePlatform.SLEEPER] = leagueUser;
                     this.portfolioService.setPlatformIdMaps(LeaguePlatform.SLEEPER);
                 });
+                this.portfolioService.portfolioLeaguesAdded$.next();
                 break;
             }
             case LeaguePlatform.FLEAFLICKER: {
@@ -58,6 +59,7 @@ export class LeagueLoginModalComponent implements OnInit {
                     this.portfolioService.portfolio.leagues[LeaguePlatform.FLEAFLICKER] = leagueUser;
                     this.portfolioService.setPlatformIdMaps(LeaguePlatform.FLEAFLICKER);
                 });
+                this.portfolioService.portfolioLeaguesAdded$.next();
                 break;
             }
             case LeaguePlatform.MFL: {
@@ -66,11 +68,11 @@ export class LeagueLoginModalComponent implements OnInit {
                     if (leagueUser?.leagues.length > 0) {
                         this.portfolioService.setPlatformIdMaps(LeaguePlatform.MFL, leagueUser?.leagues[0]?.leagueId, this.selectedYear);
                     }
+                    this.portfolioService.portfolioLeaguesAdded$.next();
                 });
                 break;
             }
         }
-        this.portfolioService.portfolioLeaguesAdded$.next();
     }
 
     /**
