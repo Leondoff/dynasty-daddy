@@ -86,13 +86,14 @@ export class PortfolioService {
       const leagueInfo = this.portfolio.leagues[league.platform]?.leagues?.find(l => l.leagueId === league.leagueId);
       this.leagueIdMap[league.leagueId] = {
         name: leagueInfo.name,
-        scoring: league.platform !== LeaguePlatform.FLEAFLICKER ? leagueInfo.getDisplayNameLeagueScoringFormat() : '-',
-        isSuperflex: leagueInfo.isSuperflex ? 'Superflex' : '1 QB',
-        startCount: 'Start ' + leagueInfo.rosterPositions.filter(p => ['QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX'].includes(p)).length,
+        scoring: league.platform === LeaguePlatform.SLEEPER ||
+          (league.platform === LeaguePlatform.MFL && this.portfolio.leagues[league.platform]?.leagues.length <= 15) ? leagueInfo.getDisplayNameLeagueScoringFormat() : '-',
+        isSuperflex:  league.platform === LeaguePlatform.SLEEPER || this.portfolio.leagues[league.platform]?.leagues.length <= 15 ? (leagueInfo.isSuperflex == true ? 'Superflex' : '1 QB') : '-',
+        startCount: leagueInfo.rosterPositions && leagueInfo.rosterPositions.length > 0 ? 'Start ' + leagueInfo.rosterPositions?.filter(p => ['QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX'].includes(p)).length : '-',
         platformDisplay: this.displayService.getDisplayNameForPlatform(leagueInfo.leaguePlatform),
-        platform: leagueInfo.leaguePlatform,
-        year: leagueInfo.season,
-        rosters: leagueInfo.totalRosters + ' Teams',
+        platform: leagueInfo.leaguePlatform || '-',
+        year: leagueInfo.season || '-',
+        rosters: leagueInfo.totalRosters ? leagueInfo.totalRosters + ' Teams' : '-',
         leagueType: this.displayService.getLeagueTypeFromTypeNumber(leagueInfo.type)
       };
       const uniquePlayers: string[] = [...new Set(leagueInfo?.metadata?.['roster'] as string[] || [])]

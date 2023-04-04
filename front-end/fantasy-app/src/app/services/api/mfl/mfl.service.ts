@@ -174,27 +174,43 @@ export class MflService {
   fetchAllLeaguesForUser$(username: string, password: string, year: string): Observable<FantasyPlatformDTO> {
     return this.loadMFLUser$(username, password).pipe(
       mergeMap(leagueUser => {
-        const observableList = leagueUser.leagues?.map(league => {
-          return this.loadLeagueFromId$(year, league.leagueId).pipe(concatMap(leagueInfo => {
-            return this.mflApiService.getMFLRosters(year, league.leagueId).pipe(
-              retry(2),
-              catchError(error => {
-                console.error('Failed to fetch data:', error);
-                return of([]);
-              }),
-              concatMap(rosters => {
-                const roster = rosters.rosters.franchise.find(it => this.formatRosterId(it.id) === league?.metadata?.teamId)?.player;
-                league.metadata['roster'] = roster?.map(player => player.id);
-                league.isSuperflex = leagueInfo.isSuperflex;
-                league.rosterPositions = leagueInfo.rosterPositions;
-                league.totalRosters = leagueInfo.totalRosters;
-                league.scoringFormat = leagueInfo.scoringFormat;
-                league.type = leagueInfo.type;
-                return of(league).pipe(delay(2000));
-              })
-            );
-          }));
-        })
+        let observableList = [];
+        if (leagueUser.leagues.length > 15) {
+          observableList = leagueUser.leagues?.map(league => {
+              return this.mflApiService.getMFLRosters(year, league.leagueId).pipe(
+                retry(2),
+                catchError(error => {
+                  console.error('Failed to fetch data:', error);
+                  return of([]);
+                }),
+                concatMap(rosters => {
+                  const roster = rosters.rosters.franchise.find(it => this.formatRosterId(it.id) === league?.metadata?.teamId)?.player;
+                  league.metadata['roster'] = roster?.map(player => player.id);
+                  return of(league).pipe(delay(2000));
+                })
+              )});
+        } else {
+          observableList = leagueUser.leagues?.map(league => {
+            return this.loadLeagueFromId$(year, league.leagueId).pipe(concatMap(leagueInfo => {
+              return this.mflApiService.getMFLRosters(year, league.leagueId).pipe(
+                retry(2),
+                catchError(error => {
+                  console.error('Failed to fetch data:', error);
+                  return of([]);
+                }),
+                concatMap(rosters => {
+                  const roster = rosters.rosters.franchise.find(it => this.formatRosterId(it.id) === league?.metadata?.teamId)?.player;
+                  league.metadata['roster'] = roster?.map(player => player.id);
+                  league.isSuperflex = leagueInfo.isSuperflex;
+                  league.rosterPositions = leagueInfo.rosterPositions;
+                  league.totalRosters = leagueInfo.totalRosters;
+                  league.scoringFormat = leagueInfo.scoringFormat;
+                  league.type = leagueInfo.type;
+                  return of(league).pipe(delay(2000));
+                })
+              );
+            }));  
+        })};
         return forkJoin(observableList).pipe(concatMap(() => of(leagueUser).pipe(delay(1000))));
       })
     );
