@@ -168,8 +168,9 @@ export class FleaflickerService {
   fetchAllLeaguesForUser$(email: string, year: string): Observable<FantasyPlatformDTO> {
     return this.loadFleaflickerUser$(email, year).pipe(
       mergeMap(leagueUser => {
-        const observableList = leagueUser.leagues.map(league  => {
-          return this.loadLeagueFromId$(year, league.leagueId).pipe(concatMap(leagueInfo => {
+        let observableList = [];
+        if (leagueUser.leagues.length > 15) {
+          observableList = leagueUser.leagues.map(league => {
             return this.fleaflickerApiService.getFFRosters(year, league.leagueId).pipe(
               retry(2),
               catchError(error => {
@@ -180,16 +181,34 @@ export class FleaflickerService {
                 const roster = rosters.rosters.find(it => it.team.id === league?.metadata?.teamId)?.players;
                 this.mapFleaFlickerIdMap(roster);
                 league.metadata['roster'] = roster?.map(player => player.proPlayer.id.toString());
-                league.isSuperflex = leagueInfo.isSuperflex;
-                league.rosterPositions = leagueInfo.rosterPositions;
-                league.totalRosters = leagueInfo.totalRosters;
-                league.scoringFormat = leagueInfo.scoringFormat;
-                league.type = leagueInfo.type;
                 return of(league).pipe(delay(1000));
               })
             );
-          }));
-        })
+          })
+        } else {
+          observableList = leagueUser.leagues.map(league => {
+            return this.loadLeagueFromId$(year, league.leagueId).pipe(concatMap(leagueInfo => {
+              return this.fleaflickerApiService.getFFRosters(year, league.leagueId).pipe(
+                retry(2),
+                catchError(error => {
+                  console.error('Failed to fetch data:', error);
+                  return of([]);
+                }),
+                concatMap(rosters => {
+                  const roster = rosters.rosters.find(it => it.team.id === league?.metadata?.teamId)?.players;
+                  this.mapFleaFlickerIdMap(roster);
+                  league.metadata['roster'] = roster?.map(player => player.proPlayer.id.toString());
+                  league.isSuperflex = leagueInfo.isSuperflex;
+                  league.rosterPositions = leagueInfo.rosterPositions;
+                  league.totalRosters = leagueInfo.totalRosters;
+                  league.scoringFormat = leagueInfo.scoringFormat;
+                  league.type = leagueInfo.type;
+                  return of(league).pipe(delay(1000));
+                })
+              );
+            }));
+          })
+        }
         return forkJoin(observableList).pipe(concatMap(() => of(leagueUser).pipe(delay(1000))));
       })
     );
