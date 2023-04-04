@@ -375,38 +375,51 @@ export class MflService {
     if (!leagueTrans) {
       return [];
     }
-    return leagueTrans.filter(trans => trans.type !== 'TAXI' && trans.type !== 'IR' && !trans.type.includes('AUCTION')).map(trans => {
-      let transaction = new LeagueTeamTransactionDTO(null, []);
-      transaction.type = trans.type.toLowerCase();
-      const rosterId = this.formatRosterId(trans.franchise);
-      const drops = {};
-      const adds = {};
-      if (transaction.type === 'trade') {
-        const rosterId2 = this.formatRosterId(trans.franchise2);
-        transaction = this.processTransactionInTrade(transaction, trans.franchise2_gave_up.split(','), rosterId2, rosterId, season);
-        transaction = this.processTransactionInTrade(transaction, trans.franchise1_gave_up.split(','), rosterId, rosterId2, season);
-        transaction.rosterIds = [rosterId, rosterId2];
-      } else {
-        if (trans.transaction) {
-          const players = trans?.transaction?.split('|');
-          players[1]?.split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4)
-            .forEach(playerId => {
-              drops[playerId] = rosterId;
-            });
-          players[0]?.split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4)
-            .forEach(playerId => {
-              adds[playerId] = rosterId;
-            });
-          transaction.rosterIds = [rosterId];
-          transaction.drops = drops;
-          transaction.adds = adds;
-        }
+    if (Array.isArray(leagueTrans)) {
+      leagueTrans?.filter(trans => trans.type !== 'TAXI' && trans.type !== 'IR' && !trans.type.includes('AUCTION')).map(trans => {
+        return this.marshallSingleTransaction(trans, season)
+      });
+    } else {
+      return [this.marshallSingleTransaction(leagueTrans, season)];
+    }
+  }
+
+  /**
+   * Marshall a single transaction object
+   * @param trans Single transaction object
+   * @returns 
+   */
+  private marshallSingleTransaction(trans: any, season: string): LeagueTeamTransactionDTO {
+    let transaction = new LeagueTeamTransactionDTO(null, []);
+    transaction.type = trans.type.toLowerCase();
+    const rosterId = this.formatRosterId(trans.franchise);
+    const drops = {};
+    const adds = {};
+    if (transaction.type === 'trade') {
+      const rosterId2 = this.formatRosterId(trans.franchise2);
+      transaction = this.processTransactionInTrade(transaction, trans.franchise2_gave_up.split(','), rosterId2, rosterId, season);
+      transaction = this.processTransactionInTrade(transaction, trans.franchise1_gave_up.split(','), rosterId, rosterId2, season);
+      transaction.rosterIds = [rosterId, rosterId2];
+    } else {
+      if (trans.transaction) {
+        const players = trans?.transaction?.split('|');
+        players[1]?.split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4)
+          .forEach(playerId => {
+            drops[playerId] = rosterId;
+          });
+        players[0]?.split(',').filter(playerId => playerId !== '' && !playerId.includes('.') && playerId.length >= 4)
+          .forEach(playerId => {
+            adds[playerId] = rosterId;
+          });
+        transaction.rosterIds = [rosterId];
+        transaction.drops = drops;
+        transaction.adds = adds;
       }
-      transaction.transactionId = 'not provided';
-      transaction.status = TransactionStatus.COMPLETED;
-      transaction.createdAt = Number(trans.timestamp);
-      return transaction;
-    });
+    }
+    transaction.transactionId = 'not provided';
+    transaction.status = TransactionStatus.COMPLETED;
+    transaction.createdAt = Number(trans.timestamp);
+    return transaction;
   }
 
   /**
