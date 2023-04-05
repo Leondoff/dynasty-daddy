@@ -95,7 +95,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
     private updateConnectedLeagues(): void {
         const leagues = [];
         this.portfolioService.portfolio?.leagues?.forEach(plat => {
-            plat?.leagues?.forEach(l => {
+            plat?.leagues?.filter(l => l.metadata['status'] == Status.DONE).forEach(l => {
                 leagues.push({ name: l.name, leagueId: l.leagueId, platform: plat.leaguePlatform });
             });
         });

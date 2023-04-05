@@ -50,6 +50,8 @@ export class PortfolioService {
   /** count of leagues applies, used for exposure */
   leagueCount: number = 0;
 
+  leagueBatches: {} = {};
+
   /** mfl username */
   mflUsername: string = '';
 
@@ -86,9 +88,8 @@ export class PortfolioService {
       const leagueInfo = this.portfolio.leagues[league.platform]?.leagues?.find(l => l.leagueId === league.leagueId);
       this.leagueIdMap[league.leagueId] = {
         name: leagueInfo.name,
-        scoring: league.platform === LeaguePlatform.SLEEPER ||
-          (league.platform === LeaguePlatform.MFL && this.portfolio.leagues[league.platform]?.leagues.length <= 15) ? leagueInfo.getDisplayNameLeagueScoringFormat() : '-',
-        isSuperflex:  league.platform === LeaguePlatform.SLEEPER || this.portfolio.leagues[league.platform]?.leagues.length <= 15 ? (leagueInfo.isSuperflex == true ? 'Superflex' : '1 QB') : '-',
+        scoring: league.platform !== LeaguePlatform.FLEAFLICKER && leagueInfo instanceof LeagueDTO ? (leagueInfo as LeagueDTO).getDisplayNameLeagueScoringFormat() || '-' : '-',
+        isSuperflex: leagueInfo.isSuperflex == true ? 'Superflex' : '1 QB',
         startCount: leagueInfo.rosterPositions && leagueInfo.rosterPositions.length > 0 ? 'Start ' + leagueInfo.rosterPositions?.filter(p => ['QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX'].includes(p)).length : '-',
         platformDisplay: this.displayService.getDisplayNameForPlatform(leagueInfo.leaguePlatform),
         platform: leagueInfo.leaguePlatform || '-',
@@ -157,7 +158,6 @@ export class PortfolioService {
    * @param year optional year for mfl
    */
   setPlatformIdMaps(platform: LeaguePlatform, leagueId: string = '', year: string = ''): void {
-    this.connectAccountStatus = Status.LOADING;
     switch (platform) {
       case LeaguePlatform.FLEAFLICKER: {
         this.playerPlatformIdMap[LeaguePlatform.FLEAFLICKER] = this.fleaflickerService.playerIdMap;

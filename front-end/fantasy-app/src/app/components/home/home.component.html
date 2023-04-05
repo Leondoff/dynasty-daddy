@@ -54,7 +54,7 @@
               </mat-form-field>
             </div>
             <div>
-              <button mat-raised-button [disabled]="!usernameInput || (usernameInput == leagueService.leagueUser?.userData?.username && selectedYear == leagueService.selectedYear)"
+              <button mat-raised-button [disabled]="!usernameInput"
                       color="accent" (click)="fetchSleeperInfo()">Sign In
               </button>
             </div>
@@ -214,7 +214,7 @@
               </mat-form-field>
             </div>
             <div>
-              <button mat-raised-button [disabled]="!fleaflickerEmail || (fleaflickerEmail == leagueService.leagueUser?.userData?.username && selectedYear == leagueService.selectedYear)"
+              <button mat-raised-button [disabled]="!fleaflickerEmail"
                       color="accent" (click)="fetchFleaflickerInfo()">Sign In
               </button>
             </div>
@@ -332,7 +332,7 @@
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/portfolio']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_portfolio" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">account_balance</mat-icon>Fantasy Portfolio</div>
+      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/portfolio']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_portfolio" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">account_balance</mat-icon>Fantasy Portfolio  <span class="warning__alert small-text__light">Beta</span></div>
       <div class="center-text margin-top-25 margin-bot-50">
        Track your fantasy player portfolio's value over time. Break down what players you have invested the most into and diversify your player portfolio accross all leagues. Select which fantasy market to value players at and make sure you are building a portfolio for long term success.
       </div>
