@@ -22,6 +22,9 @@ export class LeagueLoginModalComponent implements OnInit {
     /** selected year for fetching current portfolio */
     selectedYear: string;
 
+    /** league load chunk size */
+    LEAGUE_CHUNK_SIZE: number = 20;
+
     constructor(private dialog: MatDialog,
         public portfolioService: PortfolioService,
         private sleeperService: SleeperService,
@@ -50,23 +53,62 @@ export class LeagueLoginModalComponent implements OnInit {
                 this.sleeperService.fetchAllLeaguesForUser$(this.portfolioService.sleeperUsername, this.selectedYear).subscribe(leagueUser => {
                     this.portfolioService.portfolio.leagues[LeaguePlatform.SLEEPER] = leagueUser;
                     this.portfolioService.setPlatformIdMaps(LeaguePlatform.SLEEPER);
+                    this.portfolioService.portfolioLeaguesAdded$.next();
                 });
-                this.portfolioService.portfolioLeaguesAdded$.next();
                 break;
             }
             case LeaguePlatform.FLEAFLICKER: {
                 this.fleaflickerService.fetchAllLeaguesForUser$(this.portfolioService.fleaflickerEmail, this.selectedYear).subscribe(leagueUser => {
                     this.portfolioService.portfolio.leagues[LeaguePlatform.FLEAFLICKER] = leagueUser;
+                    this.portfolioService.leagueBatches[LeaguePlatform.FLEAFLICKER] = new Array(Math.round(leagueUser.leagues.length/this.LEAGUE_CHUNK_SIZE) + 1).fill(false);
                     this.portfolioService.setPlatformIdMaps(LeaguePlatform.FLEAFLICKER);
+                    this.portfolioService.portfolioLeaguesAdded$.next();
                 });
-                this.portfolioService.portfolioLeaguesAdded$.next();
                 break;
             }
             case LeaguePlatform.MFL: {
                 this.mflService.fetchAllLeaguesForUser$(this.portfolioService.mflUsername, this.portfolioService.mflPassword, this.selectedYear).subscribe(leagueUser => {
                     this.portfolioService.portfolio.leagues[LeaguePlatform.MFL] = leagueUser;
-                    if (leagueUser?.leagues.length > 0) {
+                    this.portfolioService.leagueBatches[LeaguePlatform.MFL] = new Array(Math.round(leagueUser.leagues.length/this.LEAGUE_CHUNK_SIZE) + 1).fill(false);
+                    if (leagueUser?.leagues?.length > 0) {
                         this.portfolioService.setPlatformIdMaps(LeaguePlatform.MFL, leagueUser?.leagues[0]?.leagueId, this.selectedYear);
+                    }
+                    this.portfolioService.portfolioLeaguesAdded$.next();
+                });
+                break;
+            }
+        }
+    }
+
+    /**
+     * load league chunk
+     * @param platform platform id
+     * @param chunkNumber chunk number
+     */
+    loadLeagueChunk(platform: LeaguePlatform, chunkNumber: number): void {
+        this.portfolioService.connectAccountStatus = Status.LOADING;
+        switch (platform) {
+            case LeaguePlatform.MFL: {
+                this.mflService.loadLeagueFromList$(this.portfolioService.portfolio.leagues[LeaguePlatform.MFL].leagues.slice((chunkNumber * this.LEAGUE_CHUNK_SIZE), (chunkNumber * this.LEAGUE_CHUNK_SIZE) + this.LEAGUE_CHUNK_SIZE), this.selectedYear).subscribe(leagues => {
+                    leagues.forEach((l, i) => {
+                        this.portfolioService.portfolio.leagues[LeaguePlatform.MFL].leagues[i + (chunkNumber * this.LEAGUE_CHUNK_SIZE)] = l;
+                    });
+                    this.portfolioService.leagueBatches[LeaguePlatform.MFL][chunkNumber] = true;
+                    if (leagues?.length > 0) {
+                        this.portfolioService.setPlatformIdMaps(LeaguePlatform.MFL, leagues[0]?.leagueId, this.selectedYear);
+                    }
+                    this.portfolioService.portfolioLeaguesAdded$.next();
+                });
+                break;
+            }
+            case LeaguePlatform.FLEAFLICKER: {
+                this.fleaflickerService.loadLeagueFromList$(this.portfolioService.portfolio.leagues[LeaguePlatform.FLEAFLICKER].leagues.slice((chunkNumber * this.LEAGUE_CHUNK_SIZE), (chunkNumber * this.LEAGUE_CHUNK_SIZE) + this.LEAGUE_CHUNK_SIZE), this.selectedYear).subscribe(leagues => {
+                    leagues.forEach((l, i) => {
+                        this.portfolioService.portfolio.leagues[LeaguePlatform.FLEAFLICKER].leagues[i + (chunkNumber * this.LEAGUE_CHUNK_SIZE)] = l;
+                    });
+                    this.portfolioService.leagueBatches[LeaguePlatform.FLEAFLICKER][chunkNumber] = true;
+                    if (leagues?.length > 0) {
+                        this.portfolioService.setPlatformIdMaps(LeaguePlatform.FLEAFLICKER, leagues[0]?.leagueId, this.selectedYear);
                     }
                     this.portfolioService.portfolioLeaguesAdded$.next();
                 });

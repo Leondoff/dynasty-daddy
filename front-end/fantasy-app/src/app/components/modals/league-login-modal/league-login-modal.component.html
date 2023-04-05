@@ -1,3 +1,4 @@
+<mat-dialog-content>
 <div class="center-text margin-bot-20 mid-bold-text">
     Manage Portfolio Leagues
     <button mat-icon-button class="button-right" (click)="closeDialog()"><mat-icon>close</mat-icon></button>
@@ -13,18 +14,18 @@
                 <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
                     <mat-label>Sleeper Username</mat-label>
                     <input matInput type="text" [(ngModel)]="portfolioService.sleeperUsername">
-                    <button mat-button *ngIf="portfolioService.sleeperUsername" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="portfolioService.sleeperUsername=''">
+                    <button mat-button *ngIf="portfolioService.sleeperUsername || portfolioService.portfolio?.leagues[0]" matSuffix mat-icon-button
+                        aria-label="Clear" (click)="portfolioService.sleeperUsername=''">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
-                    <span style="padding-right: 15px;">
+                    <span style="padding-right: 5px;">
                         <button mat-raised-button [disabled]="!portfolioService.sleeperUsername" color="accent"
                             (click)="connectToLeague(0)">Connect
                         </button>
                     </span>
-                    <span style="padding-left: 15px;">
+                    <span style="padding-left: 5px;">
                         <button mat-raised-button
                             [disabled]="!portfolioService.portfolio || !portfolioService.portfolio?.leagues[0]"
                             color="warn" (click)="disconnectUser(0)">Disconnect
@@ -44,13 +45,13 @@
                 <img width="30px" height="30px"
                     src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif">
             </ng-template>
-            <div class="center-text">
+            <div class="center-text" style="overflow: auto;">
                 <div>
                     <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
                         <mat-label>MFL Username</mat-label>
                         <input matInput type="text" [(ngModel)]="portfolioService.mflUsername">
-                        <button mat-button *ngIf="portfolioService.mflUsername" matSuffix mat-icon-button aria-label="Clear"
-                            (click)="portfolioService.mflUsername=''">
+                        <button mat-button *ngIf="portfolioService.mflUsername" matSuffix mat-icon-button
+                            aria-label="Clear" (click)="portfolioService.mflUsername=''">
                             <mat-icon>close</mat-icon>
                         </button>
                     </mat-form-field>
@@ -59,24 +60,39 @@
                     <mat-form-field class="mat-dropdown-wide-200" color="accent">
                         <mat-label>MFL Password</mat-label>
                         <input matInput type="password" [(ngModel)]="portfolioService.mflPassword">
-                        <button mat-button *ngIf="portfolioService.mflPassword" matSuffix mat-icon-button aria-label="Clear"
-                            (click)="portfolioService.mflPassword=''">
+                        <button mat-button *ngIf="portfolioService.mflPassword" matSuffix mat-icon-button
+                            aria-label="Clear" (click)="portfolioService.mflPassword=''">
                             <mat-icon>close</mat-icon>
                         </button>
                     </mat-form-field>
                 </div>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
-                    <span style="padding-right: 15px;">
-                        <button mat-raised-button [disabled]="!portfolioService.mflPassword || !portfolioService.mflUsername" color="accent"
-                            (click)="connectToLeague(1)">Connect
+                    <span style="padding-right: 5px;">
+                        <button mat-raised-button
+                            [disabled]="!portfolioService.mflPassword || !portfolioService.mflUsername || portfolioService.portfolio?.leagues[1]"
+                            color="accent" (click)="connectToLeague(1)">Connect
                         </button>
                     </span>
-                    <span style="padding-left: 15px;">
+                    <span style="padding-left: 5px;">
                         <button mat-raised-button
                             [disabled]="!portfolioService.portfolio || !portfolioService.portfolio?.leagues[1]"
                             color="warn" (click)="disconnectUser(1)">Disconnect
                         </button>
                     </span>
+                </div>
+                <div *ngIf="portfolioService.leagueBatches[1] && portfolioService.leagueBatches[1]?.length > 1">
+                    <div class="margin-top-25 small-text__light">
+                        Whoa you have a lot of leagues!
+                    </div>
+                    <div class="margin-top-10 margin-bot-10 small-text__light">
+                        To prevent overloading their services, we will load the leagues in batches.
+                    </div>
+                </div>
+                <div *ngIf="portfolioService.connectAccountStatus == 1 && portfolioService.portfolio?.leagues[1] && portfolioService.leagueBatches[1].length > 1" class="center-text">
+                    <div *ngFor="let chunkNum of portfolioService.leagueBatches[1]; let ind = index;" class="margin-top-10">
+                        <button mat-raised-button color="accent" (click)="loadLeagueChunk(1, ind)" [disabled]="portfolioService.leagueBatches[1][ind]">
+                            Load Leagues {{ind * LEAGUE_CHUNK_SIZE + 1}}-{{ind * LEAGUE_CHUNK_SIZE + LEAGUE_CHUNK_SIZE}}</button>
+                    </div>
                 </div>
                 <div class="center-spinner" *ngIf="portfolioService.connectAccountStatus == 0">
                     <mat-spinner></mat-spinner>
@@ -94,23 +110,37 @@
                 <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
                     <mat-label>Fleaflicker Email</mat-label>
                     <input matInput type="text" [(ngModel)]="portfolioService.fleaflickerEmail">
-                    <button mat-button *ngIf="portfolioService.fleaflickerEmail" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="portfolioService.fleaflickerEmail=''">
+                    <button mat-button *ngIf="portfolioService.fleaflickerEmail" matSuffix mat-icon-button
+                        aria-label="Clear" (click)="portfolioService.fleaflickerEmail=''">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
-                    <span style="padding-right: 15px;">
-                        <button mat-raised-button [disabled]="!portfolioService.fleaflickerEmail" color="accent"
+                    <span style="padding-right: 5px;">
+                        <button mat-raised-button [disabled]="!portfolioService.fleaflickerEmail || portfolioService.portfolio?.leagues[2]" color="accent"
                             (click)="connectToLeague(2)">Connect
                         </button>
                     </span>
-                    <span style="padding-left: 15px;">
+                    <span style="padding-left: 5px;">
                         <button mat-raised-button
                             [disabled]="!portfolioService.portfolio || !portfolioService.portfolio?.leagues[2]"
                             color="warn" (click)="disconnectUser(2)">Disconnect
                         </button>
                     </span>
+                </div>
+                <div *ngIf="portfolioService.leagueBatches[2] && portfolioService.leagueBatches[2]?.length > 1">
+                    <div class="margin-top-25 small-text__light">
+                        Whoa you have a lot of leagues!
+                    </div>
+                    <div class="margin-top-10 margin-bot-10 small-text__light">
+                        To prevent overloading their services, we will load the leagues in batches.
+                    </div>
+                </div>
+                <div *ngIf="portfolioService.connectAccountStatus == 1 && portfolioService.portfolio?.leagues[2] && portfolioService.leagueBatches[2].length > 1" class="center-text">
+                    <div *ngFor="let chunkNum of portfolioService.leagueBatches[2]; let ind = index;" class="margin-top-10">
+                        <button mat-raised-button color="accent" (click)="loadLeagueChunk(2, ind)" [disabled]="portfolioService.leagueBatches[2][ind]">
+                            Load Leagues {{ind * LEAGUE_CHUNK_SIZE + 1}}-{{ind * LEAGUE_CHUNK_SIZE + LEAGUE_CHUNK_SIZE}}</button>
+                    </div>
                 </div>
                 <div class="center-spinner" *ngIf="portfolioService.connectAccountStatus == 0">
                     <mat-spinner></mat-spinner>
@@ -122,3 +152,4 @@
         </mat-tab>
     </mat-tab-group>
 </div>
+</mat-dialog-content>

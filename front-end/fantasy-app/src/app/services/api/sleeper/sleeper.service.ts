@@ -13,6 +13,7 @@ import { LeagueTeamTransactionDTO } from '../../../model/league/LeagueTeamTransa
 import { FantasyPlatformDTO, LeaguePlatform } from '../../../model/league/FantasyPlatformDTO';
 import { CompletedDraft } from '../../../model/league/CompletedDraft';
 import { DraftCapital } from '../../../model/assets/DraftCapital';
+import { Status } from 'src/app/components/model/status';
 
 @Injectable({
   providedIn: 'root'
@@ -170,14 +171,15 @@ export class SleeperService {
       mergeMap(leagueUser => {
         const observableList = leagueUser.leagues.map(league => {
           return this.sleeperApiService.getSleeperRostersByLeagueId(league.leagueId).pipe(
-            retry(2), // Retry failed requests up to 2 times
+            retry(2),
             catchError(error => {
               console.error('Failed to fetch data:', error);
-              return of([]); // Return an empty object instead of throwing the error
+              return of([]);
             }),
             concatMap(rosters=> {
               const team = rosters.find(it => it.ownerId === leagueUser?.userData?.user_id);
               league.metadata['roster'] = team?.players?.concat(...team.reserve, ...team.taxi) || [];
+              league.metadata['status'] = Status.DONE;
               return of(league);
             })
           );
