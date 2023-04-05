@@ -92,7 +92,7 @@ export class PortfolioService {
         isSuperflex: leagueInfo.isSuperflex == true ? 'Superflex' : '1 QB',
         startCount: leagueInfo.rosterPositions && leagueInfo.rosterPositions.length > 0 ? 'Start ' + leagueInfo.rosterPositions?.filter(p => ['QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX'].includes(p)).length : '-',
         platformDisplay: this.displayService.getDisplayNameForPlatform(leagueInfo.leaguePlatform),
-        platform: leagueInfo.leaguePlatform || '-',
+        platform: leagueInfo.leaguePlatform || league.platform || '-',
         year: leagueInfo.season || '-',
         rosters: leagueInfo.totalRosters ? leagueInfo.totalRosters + ' Teams' : '-',
         leagueType: this.displayService.getLeagueTypeFromTypeNumber(leagueInfo.type)
