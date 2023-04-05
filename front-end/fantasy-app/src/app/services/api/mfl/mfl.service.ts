@@ -211,6 +211,8 @@ export class MflService {
             league.totalRosters = leagueInfo.totalRosters;
             league.scoringFormat = leagueInfo.scoringFormat;
             league.type = leagueInfo.type;
+            league.leaguePlatform = LeaguePlatform.MFL;
+            league.season = leagueInfo.season;
             return of(league).pipe(delay(2000));
           })
         );

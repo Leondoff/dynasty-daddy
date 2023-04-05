@@ -357,9 +357,9 @@ export class LeagueService {
    * @param year optional year to load
    */
   openLeague(leagueId: string = null, platform: LeaguePlatform = null, year: string = null): void {
-    const leagueYear = year || this.selectedLeague.season;
-    const selectedLeagueId = leagueId || this.selectedLeague.leagueId;
-    const selectedPlatform = platform || this.selectedLeague.leaguePlatform;
+    const leagueYear = year || this.selectedLeague?.season;
+    const selectedLeagueId = leagueId || this.selectedLeague?.leagueId;
+    const selectedPlatform = platform != null ? platform : this.selectedLeague?.leaguePlatform;
     switch (selectedPlatform) {
       case LeaguePlatform.MFL:
         window.open('https://www46.myfantasyleague.com/' + leagueYear + '/home/'
