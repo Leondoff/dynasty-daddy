@@ -21,7 +21,7 @@
                 </mat-form-field>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
                     <span style="padding-right: 5px;">
-                        <button mat-raised-button [disabled]="!portfolioService.sleeperUsername" color="accent"
+                        <button mat-raised-button [disabled]="!portfolioService.sleeperUsername || portfolioService.portfolio?.leagues[0]" color="accent"
                             (click)="connectToLeague(0)">Connect
                         </button>
                     </span>
