@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueService } from 'src/app/services/league.service';
 import { PortfolioService } from '../../services/portfolio.service';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-fantasy-portfolio-table',
@@ -29,6 +30,9 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
 
   expandedElement: string[] = [];
 
+  /** mat sort */
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
   constructor(
     public leagueService: LeagueService,
     public configService: ConfigService,
@@ -43,6 +47,15 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
     this.updateTableValues();
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        default: return this.portfolioService.playerHoldingMap[item.name_id][property];
+      }
+    };
+    this.dataSource.sort = this.sort;
+  }
+
   /**
    * Wraps logic for updating and sorting table values
    */
@@ -51,6 +64,7 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
     this.dataSource = new MatTableDataSource(portfolio.sort((a, b) =>
       this.portfolioService.playerHoldingMap[b.name_id]?.shares - this.portfolioService.playerHoldingMap[a.name_id]?.shares ||
       this.portfolioService.playerHoldingMap[b.name_id]?.totalValue - this.portfolioService.playerHoldingMap[a.name_id]?.totalValue));
+    this.dataSource.sort = this.sort;
   }
 
   /**

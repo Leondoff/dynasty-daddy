@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
 import { MflApiService } from './mfl-api.service';
 import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
@@ -183,6 +183,9 @@ export class MflService {
             return of(leagueUser);
           }));
         };
+      }),
+      catchError(error => {
+        return throwError(error);
       })
     );
   }
@@ -247,6 +250,9 @@ export class MflService {
         leagues.push(newLeague);
       })
       return { leagues, userData, leaguePlatform: LeaguePlatform.MFL }
+    }),
+    catchError(error => {
+      return throwError(error);
     }));
   }
 

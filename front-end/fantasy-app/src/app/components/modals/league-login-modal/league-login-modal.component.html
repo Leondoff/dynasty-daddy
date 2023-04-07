@@ -97,6 +97,9 @@
                 <div class="center-spinner" *ngIf="portfolioService.connectAccountStatus == 0">
                     <mat-spinner></mat-spinner>
                 </div>
+                <div class="margin-top-25 warning__alert" *ngIf="mflErrorMsg != '' && portfolioService.connectAccountStatus == 1">
+                    {{mflErrorMsg}}
+                </div>
                 <div class="margin-top-25 small-text__light">
                     We do not store any personal data, it is only passed to the fantasy platform.
                 </div>

@@ -75,10 +75,10 @@
 
   <div class="center-text margin-top-50 large-bold-header-text warning__alert"
     *ngIf="playerPortfolioWithValue.length == 0 && portfolioStatus == 1">
-    No accounts linked
+    No portfolio loaded
   </div>
 </div>
 
-<div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING' || portfolioStatus == 0">
+<div class="center-spinner margin-top-120" *ngIf="portfolioStatus == 0">
   <mat-spinner></mat-spinner>
 </div>

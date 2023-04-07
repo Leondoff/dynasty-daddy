@@ -104,7 +104,7 @@ export const GetPlayerPortfolioEndpoint = async (req, res) => {
   try {
     const { intervalDays, portfolioList } = req.body;
     // eslint-disable-next-line prefer-template, implicit-arrow-linebreak
-    const sqlList = '(' + portfolioList.map(str => `'${str}'`).join(', ') + ')';
+    const sqlList = '(' + portfolioList.map(str => `'${str.replace('\'', '')}'`).join(', ') + ')';
     const valueData = await GetFantasyPortfolioForInterval(intervalDays, sqlList);
     res.status(200).json(valueData.rows);
   } catch (err) {

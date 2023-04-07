@@ -8,3 +8,8 @@
     overflow-x: scroll;
     margin: unset;
 }
+
+.groupBy-dropdown {
+    max-width: 150px;
+    padding-right: 15px;
+}

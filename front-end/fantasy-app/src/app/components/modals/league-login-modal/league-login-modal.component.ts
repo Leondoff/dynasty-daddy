@@ -25,6 +25,9 @@ export class LeagueLoginModalComponent implements OnInit {
     /** league load chunk size */
     LEAGUE_CHUNK_SIZE: number = 20;
 
+    /** error message for mfl errors */
+    mflErrorMsg: string = '';
+
     constructor(private dialog: MatDialog,
         public portfolioService: PortfolioService,
         private sleeperService: SleeperService,
@@ -68,12 +71,17 @@ export class LeagueLoginModalComponent implements OnInit {
             }
             case LeaguePlatform.MFL: {
                 this.mflService.fetchAllLeaguesForUser$(this.portfolioService.mflUsername, this.portfolioService.mflPassword, this.selectedYear).subscribe(leagueUser => {
+                    this.mflErrorMsg = '';
                     this.portfolioService.portfolio.leagues[LeaguePlatform.MFL] = leagueUser;
                     this.portfolioService.leagueBatches[LeaguePlatform.MFL] = new Array(Math.round(leagueUser.leagues.length/this.LEAGUE_CHUNK_SIZE) + 1).fill(false);
                     if (leagueUser?.leagues?.length > 0) {
                         this.portfolioService.setPlatformIdMaps(LeaguePlatform.MFL, leagueUser?.leagues[0]?.leagueId, this.selectedYear);
                     }
                     this.portfolioService.portfolioLeaguesAdded$.next();
+                },
+                error => {
+                    this.mflErrorMsg = 'Unable to login. Make sure Username/Password are correct.'
+                    this.portfolioService.connectAccountStatus = Status.DONE;
                 });
                 break;
             }
