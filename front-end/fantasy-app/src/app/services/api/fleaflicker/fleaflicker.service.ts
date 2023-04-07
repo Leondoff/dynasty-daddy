@@ -124,8 +124,8 @@ export class FleaflickerService {
       leagueWrapper.selectedLeague.playoffRoundType = 1;
       leagueWrapper.selectedLeague.playoffStartWeek = isPlayoffs.findIndex(it => it === true) > -1 ? isPlayoffs.findIndex(it => it === true) : 17;
       const teams = [];
-      leagueWrapper.selectedLeague.metadata.rosters.forEach((division, ind) => {
-        division.teams.forEach(team => {
+      leagueWrapper.selectedLeague.metadata.rosters?.forEach((division, ind) => {
+        division.teams?.forEach(team => {
           const ddTeam = new LeagueTeam(null, null);
           const owner = team.owners[0];
           ddTeam.owner = new LeagueOwnerDTO(owner.id, owner.displayName, team.name, team.logoUrl || this.DEFAULT_TEAM_LOGO);
