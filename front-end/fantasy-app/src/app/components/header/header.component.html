@@ -38,9 +38,9 @@
     <button mat-button [routerLink]="['./login']" *ngIf="!leagueService.leagueUser"><mat-icon class="header-icon">group_add</mat-icon> {{leagueService.selectedLeague?.leaguePlatform === 1 ? 'Change League' : 'Select Username'}}</button>
     <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
       <mat-label>Select a league</mat-label>
-      <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="loadLeagueFromHeader($event.value)">
-        <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                    [value]="league">{{league.name}}</mat-option>
+      <mat-select [(ngModel)]="leagueId" (selectionChange)="loadLeagueFromHeader($event.value)">
+        <mat-option *ngFor="let league of leagueService.leagueUser?.leagues;"
+                    [value]="league.leagueId">{{league.name}}</mat-option>
       </mat-select>
     </mat-form-field>
   </mat-toolbar>

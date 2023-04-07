@@ -76,7 +76,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
       .pipe(takeUntil(this._onDestroy))
       .subscribe(() => {
         this.filterDraftPlayers(this.playerFilterCtrl, this.filteredDraftPlayers);
-    });
+      });
   }
 
   ngAfterViewInit(): void {
@@ -92,7 +92,7 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
         name: team?.owner?.teamName
       }
     });
-    this.mockDraftService.teamPicks.sort((a,b) => a.pick - b.pick);
+    this.mockDraftService.teamPicks.sort((a, b) => a.pick - b.pick);
     this.dataSource = new MatTableDataSource(this.mockDraftService.teamPicks);
     this.dataSource.paginator = this.paginator;
     this.filteredDraftPlayers.next(this.mockDraftService.selectablePlayers.slice(0, 10));
@@ -138,27 +138,23 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
    * @param pick Pick player is drafted at
    */
   draftPlayer(player: FantasyPlayer, pick: number): void {
+    const pickInd = pick - 1;
     const ind = this.mockDraftService.mockDraftSelectedPlayers.findIndex(p => p?.name_id === player?.name_id)
-    if (ind > pick) {
+    if (ind > pickInd) {
       this.mockDraftService.mockDraftSelectedPlayers[ind] = undefined
     }
-    this.mockDraftService.mockDraftSelectedPlayers[pick] = player
+    this.mockDraftService.mockDraftSelectedPlayers[pickInd] = player
     this.filterDraftPlayers(this.playerFilterCtrl, this.filteredDraftPlayers);
   }
 
-    /**
-   * Undraft Player in mock draft
-   * @param player player being undrafted
-   * @param pick Pick player is undrafted at
-   */
-    undraftPlayer(player: FantasyPlayer, pick: number): void {
-      const ind = this.mockDraftService.mockDraftSelectedPlayers.findIndex(p => p?.name_id === player?.name_id)
-      if (ind > pick) {
-        this.mockDraftService.mockDraftSelectedPlayers[ind] = player
-      }
-      this.mockDraftService.mockDraftSelectedPlayers[pick] = undefined
-      this.filterDraftPlayers(this.playerFilterCtrl, this.filteredDraftPlayers);
-    }
+  /**
+ * Undraft Player in mock draft
+ * @param player player being undrafted
+ * @param pick Pick player is undrafted at
+ */
+  undraftPlayer(pick: number): void {
+    this.mockDraftService.mockDraftSelectedPlayers[pick - 1] = null;
+  }
 
   /**
    * Update team pick
