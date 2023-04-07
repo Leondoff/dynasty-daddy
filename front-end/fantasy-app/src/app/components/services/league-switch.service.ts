@@ -128,7 +128,8 @@ export class LeagueSwitchService extends BaseComponent {
    */
   loadLeagueWithLeagueId(leagueId: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): void {
     this.addSubscriptions(this.getLeagueObservable(leagueId, year, leaguePlatform).subscribe(leagueData => {
-        this.loadLeague(leagueData);
+        this.selectedLeague = leagueData;
+        this.loadLeague(this.selectedLeague);
       })
     );
   }

@@ -39,17 +39,21 @@
           mockDraftService.mockDraftSelectedPlayers[element.pick-1].last_name : mockDraftService.mockDraftSelectedPlayers[element.pick-1].full_name}} - {{leagueService.selectedLeague.isSuperflex ? mockDraftService.mockDraftSelectedPlayers[element.pick-1].sf_trade_value : mockDraftService.mockDraftSelectedPlayers[element.pick-1].trade_value}}
         </div>
         <mat-icon (click)=singleSelect.open()
-        *ngIf="leagueService.selectedLeague"
-        class="draft-player">person_add
-        <mat-select #singleSelect style="width: 25px; font-size: 14px;">
-          <mat-option>
-            <ngx-mat-select-search [formControl]="playerFilterCtrl" placeholderLabel="Search Player..."></ngx-mat-select-search>
-          </mat-option>
-          <mat-option *ngFor="let player of filteredDraftPlayers | async" (click)="!isPlayerAlreadySelected(player, element.pick) ? draftPlayer(player, element.pick-1) : null" [disabled]="isPlayerAlreadySelected(player, element.pick)">
-            {{player.full_name}} - {{!leagueService.selectedLeague.isSuperflex ? player.trade_value : player.sf_trade_value}} 
-          </mat-option>
-        </mat-select>
+          *ngIf="leagueService.selectedLeague && !mockDraftService.mockDraftSelectedPlayers[element.pick-1]"
+          class="draft-player">person_add
+          <mat-select #singleSelect style="width: 25px; font-size: 14px;">
+            <mat-option>
+              <ngx-mat-select-search [formControl]="playerFilterCtrl" placeholderLabel="Search Player..."></ngx-mat-select-search>
+            </mat-option>
+            <mat-option *ngFor="let player of filteredDraftPlayers | async" (click)="!isPlayerAlreadySelected(player, element.pick) ? draftPlayer(player, element.pick) : null" [disabled]="isPlayerAlreadySelected(player, element.pick)">
+              {{player.full_name}} - {{!leagueService.selectedLeague.isSuperflex ? player.trade_value : player.sf_trade_value}} 
+            </mat-option>
+          </mat-select>
         </mat-icon>
+        <mat-icon (click)="undraftPlayer(element.pick)"
+        *ngIf="leagueService.selectedLeague && mockDraftService.mockDraftSelectedPlayers[element.pick-1]"
+        class="draft-player">person_remove
+      </mat-icon>
       </mat-cell>
     </ng-container>
 
