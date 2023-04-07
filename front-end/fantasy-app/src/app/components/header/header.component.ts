@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {LeagueService} from '../../services/league.service';
-import {BaseComponent} from '../base-component.abstract';
-import {ConfigService} from '../../services/init/config.service';
-import {LeagueSwitchService} from '../services/league-switch.service';
+import { Component, OnInit } from '@angular/core';
+import { LeagueService } from '../../services/league.service';
+import { BaseComponent } from '../base-component.abstract';
+import { ConfigService } from '../../services/init/config.service';
+import { LeagueSwitchService } from '../services/league-switch.service';
 import { LeagueDTO } from 'src/app/model/league/LeagueDTO';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
 
@@ -16,8 +16,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   hasClosedHeader: boolean = false;
 
   constructor(public leagueService: LeagueService,
-              public configService: ConfigService,
-              public leagueSwitchService: LeagueSwitchService) {
+    public configService: ConfigService,
+    public leagueSwitchService: LeagueSwitchService) {
     super();
   }
 
@@ -31,5 +31,5 @@ export class HeaderComponent extends BaseComponent implements OnInit {
       this.leagueSwitchService.loadLeagueWithLeagueId(league.leagueId, league.season || this.leagueService.selectedYear, league.leaguePlatform);
     }
   }
-  
+
 }
