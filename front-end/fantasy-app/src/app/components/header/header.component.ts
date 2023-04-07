@@ -3,7 +3,7 @@ import {LeagueService} from '../../services/league.service';
 import {BaseComponent} from '../base-component.abstract';
 import {ConfigService} from '../../services/init/config.service';
 import {LeagueSwitchService} from '../services/league-switch.service';
-import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
+import { LeagueDTO } from 'src/app/model/league/LeagueDTO';
 
 @Component({
   selector: 'app-header',
@@ -21,6 +21,10 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  loadLeagueFromHeader(league: LeagueDTO): void {
+    this.leagueSwitchService.loadLeagueWithLeagueId(league.leagueId, league.season || this.leagueService.selectedYear, league.leaguePlatform);
   }
   
 }
