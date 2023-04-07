@@ -108,7 +108,11 @@ export class PortfolioService {
         }
         this.portfolioValuesUpdated$.next();
       }
-    );
+    ),
+    error => {
+      console.error('Error Loading Portfolio', error, playersToGet)
+      this.portfolioValuesUpdated$.next();
+    }
   }
 
   /**
@@ -123,7 +127,7 @@ export class PortfolioService {
         const playerInfo = this.playerPlatformIdMap[league.leaguePlatform]?.[platformId];
         if (playerInfo) {
           ddPlayer = new FantasyPlayer();
-          ddPlayer.name_id = playerInfo.full_name;
+          ddPlayer.name_id = playerInfo.full_name.replace("'", "").replace(".", "");
           ddPlayer.full_name = playerInfo.full_name;
           ddPlayer.sf_trade_value = 0;
           ddPlayer.trade_value = 0;

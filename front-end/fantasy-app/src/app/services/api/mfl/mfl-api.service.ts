@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { MflApiConfigService } from './mfl-api-config.service';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -87,7 +87,10 @@ export class MflApiService {
       (userLeagues: any) => {
         return userLeagues;
       }
-    ));
+    ),
+    catchError(error => {
+      return throwError(error);
+    }));
   }
 
   /**

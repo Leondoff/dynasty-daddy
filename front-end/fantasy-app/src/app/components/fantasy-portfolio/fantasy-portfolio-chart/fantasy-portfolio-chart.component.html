@@ -16,6 +16,13 @@
     <span class="container_spacer" *ngIf="!configService.isMobile">
     </span>
     <span  *ngIf="!configService.isMobile" class='button-right'>
+        <mat-form-field appearance="standard" color="accent" class="groupBy-dropdown">
+            <mat-label>Group By</mat-label>
+            <mat-select [(ngModel)]="selectedGrouping" (selectionChange)="updateChart()">
+              <mat-option *ngFor="let group of groupByOptions"
+                          [value]="group">{{group}}</mat-option>
+            </mat-select>
+        </mat-form-field>
         <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket"
             (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
     </span>
