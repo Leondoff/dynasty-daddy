@@ -144,8 +144,10 @@ export class SleeperService {
                   league.leagueTeamDetails.forEach(team => {
                     team.upcomingDraftOrder.forEach(pick => {
                       const ind = team.futureDraftCapital.findIndex(p => p.pick === 6 && p.round === pick.round && p.year === pick.year);
-                      team.futureDraftCapital[ind].pick = pick.pick;
-                      pick.originalRosterId = team.futureDraftCapital[ind].originalRosterId;
+                      if(ind >= 0){
+                        team.futureDraftCapital[ind].pick = pick.pick;
+                        pick.originalRosterId = team.futureDraftCapital[ind].originalRosterId;
+                      }
                     });
                   });
                 });

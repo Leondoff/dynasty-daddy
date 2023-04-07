@@ -146,6 +146,20 @@ export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
     this.filterDraftPlayers(this.playerFilterCtrl, this.filteredDraftPlayers);
   }
 
+    /**
+   * Undraft Player in mock draft
+   * @param player player being undrafted
+   * @param pick Pick player is undrafted at
+   */
+    undraftPlayer(player: FantasyPlayer, pick: number): void {
+      const ind = this.mockDraftService.mockDraftSelectedPlayers.findIndex(p => p?.name_id === player?.name_id)
+      if (ind > pick) {
+        this.mockDraftService.mockDraftSelectedPlayers[ind] = player
+      }
+      this.mockDraftService.mockDraftSelectedPlayers[pick] = undefined
+      this.filterDraftPlayers(this.playerFilterCtrl, this.filteredDraftPlayers);
+    }
+
   /**
    * Update team pick
    * @param team team to update pick to

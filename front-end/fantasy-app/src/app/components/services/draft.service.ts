@@ -76,8 +76,8 @@ export class DraftService {
         teams.map(team => {
           for (const pick of team.upcomingDraftOrder) {
             if (pick.year === this.leagueService.selectedLeague.season) {
-              this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * 12) + pick.pick,
-                this.createPickString(pick.round, ((pick.round - 1) * 12) + pick.pick),
+              this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * teams.length) + pick.pick,
+                this.createDraftCenterPickString(pick.round, pick.pick, teams.length),
                 team.owner?.ownerName,
                 team.owner?.teamName, 
                 team.roster.rosterId,
@@ -204,6 +204,17 @@ export class DraftService {
   private createPickString(round: number, pick: number): string {
     return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString());
   }
+
+    /**
+   * create date cener pick string display
+   * @param pick pick detailss
+   * @private
+   * returns string
+   */
+    private createDraftCenterPickString(round: number, pick: number, teams: number): string {
+      const overall = ((round - 1) * teams) + pick
+      return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString()) + ` (${overall})`;
+    }
 
   /**
    * reset variables when league is changed
