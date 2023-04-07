@@ -19,7 +19,7 @@
         <div style="font-size: 16px">
           <img #image [src]="teamCache[element.rosterId]?.avatar"
           onerror="style.display = 'none'" class="table-image" style="padding: unset; padding-left: 5px; padding-right: 5px;" *ngIf="!configService.isMobile">
-          <span style="vertical-align: super">{{element.pickTeam}}<span class="light_bg_color" style="font-size: 10px; padding-left: 5px" *ngIf="!configService.isMobile && element.originalRosterId !== element.rosterId">Acquired from {{teamCache[element.originalRosterId].name}}</span></span>
+          <span style="vertical-align: super">{{element.pickTeam}}<span class="light_bg_color" style="font-size: 10px; padding-left: 5px" *ngIf="!configService.isMobile && element.originalRosterId !== element.rosterId && teamCache[element.originalRosterId]">Acquired from {{teamCache[element.originalRosterId]?.name}}</span></span>
         </div>
       </mat-cell>
     </ng-container>

@@ -47,7 +47,7 @@ export class MflService {
    * @param leagueWrapper new league wrapper object
    */
   loadLeague$(leagueWrapper: LeagueWrapper): Observable<LeagueWrapper> {
-    const year = leagueWrapper.selectedLeague.season;
+    const year = leagueWrapper.selectedLeague.season || this.nflService.stateOfNFL.season;
     const leagueId = leagueWrapper.selectedLeague.leagueId;
     const observableList = [];
     let leagueMatchUps = {};
