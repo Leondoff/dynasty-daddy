@@ -346,9 +346,11 @@ export class MflService {
     picks?.forEach(team => {
       if (Array.isArray(team.futureDraftPick)) {
         picksDict[team.id] = team.futureDraftPick?.map(pick =>
-          new DraftCapital(Number(pick.round), 6, pick.year, pick.originalPickFor));
+          new DraftCapital(Number(pick.round), 6, pick.year, this.formatRosterId(pick.originalPickFor)));
+      } else if (team.futureDraftPick) {
+        picksDict[team.id] = picks ? [new DraftCapital(Number(picks.round), 6, picks.year, this.formatRosterId(picks.originalPickFor))] : [];
       } else {
-        picksDict[team.id] = picks ? [new DraftCapital(Number(picks.round), 6, picks.year, picks.originalPickFor)] : [];
+        picksDict[team.id] = [];
       }
     });
     return picksDict;

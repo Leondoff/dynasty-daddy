@@ -271,4 +271,12 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         return 'League';
     }
   }
+
+  /**
+   * Opens url for slide
+   * @param slide slide object with url to open
+   */
+  openSlideUrl(slide: any): void {
+    window.open(slide.url, '_blank');
+  }
 }

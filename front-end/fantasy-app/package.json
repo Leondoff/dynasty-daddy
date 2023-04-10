@@ -8,7 +8,7 @@
     "build": "ng build",
     "build-prod": "ng build --configuration production",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src/",
     "e2e": "ng e2e"
   },
   "private": true,
@@ -26,6 +26,7 @@
     "@angular/platform-browser": "^14.2.12",
     "@angular/platform-browser-dynamic": "^14.2.12",
     "@angular/router": "^14.2.12",
+    "@thouet/material-carousel": "^14.2.2",
     "angular2-query-builder": "^0.6.2",
     "chart.js": "^2.9.3",
     "chartjs-plugin-colorschemes": "^0.4.0",
@@ -47,10 +48,19 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.10",
+    "@angular-eslint/eslint-plugin": "^15.2.1",
+    "@angular-eslint/eslint-plugin-template": "^15.2.1",
     "@types/chart.js": "^2.9.32",
     "@types/jasmine": "~4.3.1",
     "@types/node": "^18.13.0",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
     "codelyzer": "^6.0.2",
+    "eslint": "^8.38.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsdoc": "^40.1.2",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "jasmine-core": "^4.5.0",
     "jasmine-spec-reporter": "^7.0.0",
     "karma": "^6.3.19",
@@ -59,11 +69,10 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.0.0",
     "protractor": "~7.0.0",
-    "ts-node": "~10.9.1",
-    "tslint": "~6.1.0"
+    "ts-node": "~10.9.1"
   },
   "engines": {
     "node": "v18.13.0",
-    "npm": "8.19.2"
+    "npm": "9.6.1"
   }
 }

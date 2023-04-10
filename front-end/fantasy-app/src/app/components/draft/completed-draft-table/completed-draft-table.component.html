@@ -79,20 +79,20 @@
             <!-- Pos Column -->
             <ng-container matColumnDef="team">
               <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber].team}}</mat-cell>
+              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber]?.team}}</mat-cell>
             </ng-container>
 
             <!-- Age Column -->
             <ng-container matColumnDef="owner">
               <mat-header-cell *matHeaderCellDef>Owner</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber].owner}}</mat-cell>
+              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber]?.owner}}</mat-cell>
             </ng-container>
 
             <!-- Value Column -->
             <ng-container matColumnDef="selectedPlayer">
               <mat-header-cell *matHeaderCellDef>Selected Pick (current value)</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber].player}}
-                - {{draftCache[element.pickNumber].value || 'None'}}
+              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber]?.player}}
+                - {{draftCache[element.pickNumber]?.value || 'None'}}
               </mat-cell>
             </ng-container>
 
@@ -119,7 +119,7 @@
 
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="draft-element-row"
-                     [ngClass]="{'mat-table-highlight': leagueService.leagueUser?.userData.username === draftCache[row.pickNumber].owner}"></mat-row>
+                     [ngClass]="{'mat-table-highlight': leagueService.leagueUser?.userData.username === draftCache[row.pickNumber]?.owner}"></mat-row>
           </mat-table>
           <mat-paginator [pageSizeOptions]="[pageLength, 2 * pageLength, 4 * pageLength]" showFirstLastButtons></mat-paginator>
         </div>
