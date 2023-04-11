@@ -106,6 +106,7 @@ import { FantasyPortfolioComponent } from './components/fantasy-portfolio/fantas
 import { FantasyPortfolioTableComponent } from './components/fantasy-portfolio/fantasy-portfolio-table/fantasy-portfolio-table.component';
 import { FantasyPortfolioChartComponent } from './components/fantasy-portfolio/fantasy-portfolio-chart/fantasy-portfolio-chart.component';
 import { LeagueLoginModalComponent } from './components/modals/league-login-modal/league-login-modal.component';
+import { MatCarouselModule } from '@thouet/material-carousel';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -223,6 +224,7 @@ let UniversalDeviceDetectorService;
     MatProgressSpinnerModule,
     MatProgressBarModule,
     NgxGoogleAnalyticsModule.forRoot(environment.gaMeasurementId),
+    MatCarouselModule,
     NgxGoogleAnalyticsRouterModule
   ],
   providers: [EndpointsService,

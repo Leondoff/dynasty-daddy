@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {EndpointsService} from '../endpoints.service';
-import {DeviceDetectorService} from 'ngx-device-detector';
-import {ConfigOption} from '../../model/config/ConfigOption';
-import {ConfigApiService} from '../api/config/config-api.service';
-import {BaseComponent} from '../../components/base-component.abstract';
+import { Injectable } from '@angular/core';
+import { EndpointsService } from '../endpoints.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { ConfigOption } from '../../model/config/ConfigOption';
+import { ConfigApiService } from '../api/config/config-api.service';
+import { BaseComponent } from '../../components/base-component.abstract';
 
 /**
  * dictionary of constant config value keys
@@ -14,7 +14,11 @@ export const ConfigKeyDictionary = {
   HOME_DIALOG_BODY: 'home_dialog_body',
   HOME_DIALOG_BG_COLOR: 'home_dialog_bg_color',
   DEMO_LEAGUE_ID: 'demo_league_id',
-  ENABLE_WRAPPED: 'enable_wrapped'
+  ENABLE_WRAPPED: 'enable_wrapped',
+  PREFERRED_CREATORS: 'preferred_creators',
+  SHOW_HEADER_INFO: 'show_header_info',
+  HEADER_INFO_TEXT: 'header_info_text',
+  HEADER_INFO_URL: 'header_info_url'
 } as const;
 
 @Injectable({
@@ -30,12 +34,14 @@ export class ConfigService extends BaseComponent {
 
   private _headerInfoURL: string = '';
 
+  private _preferredCreators: PreferredCreatorSlide[] = [];
+
   /** config options list for application */
   configOptions: ConfigOption[] = [];
 
   constructor(private endpointsService: EndpointsService,
-              private deviceDetectorService: DeviceDetectorService,
-              private configApiService: ConfigApiService
+    private deviceDetectorService: DeviceDetectorService,
+    private configApiService: ConfigApiService
   ) {
     super();
   }
@@ -56,6 +62,10 @@ export class ConfigService extends BaseComponent {
     return this._headerInfoURL;
   }
 
+  get preferredCreators(): PreferredCreatorSlide[] {
+    return this._preferredCreators;
+  }
+
   checkIfMobile = () =>
     this._isMobile = this.deviceDetectorService.isMobile()
 
@@ -64,11 +74,12 @@ export class ConfigService extends BaseComponent {
     this.endpointsService.assignEndpoints();
     // load config options
     this.addSubscriptions(this.configApiService.fetchAllConfigOptions().subscribe((options) => {
-        this.configOptions = options;
-        this._showHeaderInfo = this.getConfigOptionByKey('show_header_info')?.configValue === 'true';
-        this._headerInfoText = this.getConfigOptionByKey('header_info_text')?.configValue;
-        this._headerInfoURL = this.getConfigOptionByKey('header_info_url')?.configValue;
-      }
+      this.configOptions = options;
+      this._showHeaderInfo = this.getConfigOptionByKey(ConfigKeyDictionary.SHOW_HEADER_INFO)?.configValue === 'true';
+      this._headerInfoText = this.getConfigOptionByKey(ConfigKeyDictionary.HEADER_INFO_TEXT)?.configValue;
+      this._headerInfoURL = this.getConfigOptionByKey(ConfigKeyDictionary.HEADER_INFO_URL)?.configValue;
+      this._preferredCreators = JSON.parse(this.getConfigOptionByKey(ConfigKeyDictionary.PREFERRED_CREATORS).configValue);
+    }
     ));
   }
 
@@ -79,3 +90,5 @@ export class ConfigService extends BaseComponent {
   getConfigOptionByKey = (key: string): ConfigOption =>
     this.configOptions.find((option) => option.configKey === key)
 }
+
+export class PreferredCreatorSlide { url: string; image: string; alt: string }
