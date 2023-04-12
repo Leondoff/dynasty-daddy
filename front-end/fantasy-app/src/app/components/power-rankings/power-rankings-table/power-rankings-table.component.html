@@ -1,4 +1,4 @@
-<div class="power-ranking-container">
+<div [ngClass]="{'power-ranking-container': !configService.isMobile}">
   <div>
     <div [ngClass]="{'button-left': !configService.isMobile, 'center-text': configService.isMobile}" [ngStyle]="configService.isMobile ? 'align-items: center;' : ''">
       <mat-form-field class="player-value-checkbox-margin" [ngClass]="{'button-left mat-dropdown-wide-300': !configService.isMobile, 'mat-dropdown-wide-250': configService.isMobile}" color="accent">
@@ -58,7 +58,7 @@
       </span>
     </div>
   </div>
-  <div [hidden]="this.displayedRankingsSize === 0" class="margin-top-10">
+  <div [hidden]="this.displayedRankingsSize === 0" class="margin-top-10" [ngClass]="{'power-ranking-container': configService.isMobile}">
     <table mat-table
            [dataSource]="dataSource" multiTemplateDataRows
            class="mat-elevation-z8" matSort matSortActive="overallRank" matSortDirection="asc">
