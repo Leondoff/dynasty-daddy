@@ -141,24 +141,89 @@
       </div>
       <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="roster.length > 0 && teamAggregates">
         <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
-          <div class="small-text__light text__light light_bg_color">Overall Value</div>
-          <div class="mid-bold-text margin-top-10">{{teamAggregates['OV_value']}} ({{teamAggregates['OV_change'] > 0 ? '+' : ''}}{{teamAggregates['OV_change']}}%)</div>
+          <div class="small-text__light text__light light_bg_color margin-bot-10">Overall</div>
+          <table>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Value</th>
+              <th style="text-align: right">{{teamAggregates['OV_value']}}</th>
+            </tr>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Trend</th>
+              <th style="text-align: right">{{teamAggregates['OV_change'] > 0 ? '+' : ''}}{{teamAggregates['OV_change']}}%</th>
+            </tr>          
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Avg. Age</th>
+              <th style="text-align: right">{{teamAggregates['OV_avg_age']}}</th>
+            </tr>
+          </table>
         </mat-card>
         <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
-          <div class="small-text__light text__light light_bg_color">QB Value</div>
-          <div class="mid-bold-text margin-top-10">{{teamAggregates['QB_value']}} ({{teamAggregates['QB_change'] > 0 ? '+' : ''}}{{teamAggregates['QB_change']}}%)</div>
+          <div class="small-text__light text__light light_bg_color margin-bot-10">QB Room</div>
+          <table>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Value</th>
+              <th style="text-align: right">{{teamAggregates['QB_value']}}</th>
+            </tr>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Trend</th>
+              <th style="text-align: right">{{teamAggregates['QB_change'] > 0 ? '+' : ''}}{{teamAggregates['QB_change']}}%</th>
+            </tr>          
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Avg. Age</th>
+              <th style="text-align: right">{{teamAggregates['QB_avg_age']}}</th>
+            </tr>
+          </table>
         </mat-card>
         <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
-          <div class="small-text__light text__light light_bg_color">RB Value</div>
-          <div class="mid-bold-text margin-top-10">{{teamAggregates['RB_value']}} ({{teamAggregates['RB_change'] > 0 ? '+' : ''}}{{teamAggregates['RB_change']}}%)</div>
+          <div class="small-text__light text__light light_bg_color margin-bot-10">RB Room</div>
+          <table>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Value</th>
+              <th style="text-align: right">{{teamAggregates['RB_value']}}</th>
+            </tr>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Trend</th>
+              <th style="text-align: right">{{teamAggregates['RB_change'] > 0 ? '+' : ''}}{{teamAggregates['RB_change']}}%</th>
+            </tr>          
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Avg. Age</th>
+              <th style="text-align: right">{{teamAggregates['RB_avg_age']}}</th>
+            </tr>
+          </table>
         </mat-card>
         <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
-          <div class="small-text__light text__light light_bg_color">WR Value</div>
-          <div class="mid-bold-text margin-top-10">{{teamAggregates['WR_value']}} ({{teamAggregates['WR_change'] > 0 ? '+' : ''}}{{teamAggregates['WR_change']}}%)</div>
+          <div class="small-text__light text__light light_bg_color margin-bot-10">WR Room</div>
+          <table>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Value</th>
+              <th style="text-align: right">{{teamAggregates['WR_value']}}</th>
+            </tr>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Trend</th>
+              <th style="text-align: right">{{teamAggregates['WR_change'] > 0 ? '+' : ''}}{{teamAggregates['WR_change']}}%</th>
+            </tr>          
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Avg. Age</th>
+              <th style="text-align: right">{{teamAggregates['WR_avg_age']}}</th>
+            </tr>
+          </table>
         </mat-card>
         <mat-card fxFlex="10%" fxFlex.xs="33%" fxFlex.sm="15%" class="item mat-elevation-z4">
-          <div class="small-text__light text__light light_bg_color">TE Value</div>
-          <div class="mid-bold-text margin-top-10">{{teamAggregates['TE_value']}} ({{teamAggregates['TE_change'] > 0 ? '+' : ''}}{{teamAggregates['TE_change']}}%)</div>
+          <div class="small-text__light text__light light_bg_color margin-bot-10">TE Room</div>
+          <table>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Value</th>
+              <th style="text-align: right">{{teamAggregates['TE_value']}}</th>
+            </tr>
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Trend</th>
+              <th style="text-align: right">{{teamAggregates['TE_change'] > 0 ? '+' : ''}}{{teamAggregates['TE_change']}}%</th>
+            </tr>          
+            <tr>
+              <th style="text-align: left" class="small-text__light text__light light_bg_color">Avg. Age</th>
+              <th style="text-align: right">{{teamAggregates['TE_avg_age']}}</th>
+            </tr>
+          </table>
         </mat-card>
       </div>
       <div class="content">
