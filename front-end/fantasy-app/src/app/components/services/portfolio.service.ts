@@ -50,6 +50,7 @@ export class PortfolioService {
   /** count of leagues applies, used for exposure */
   leagueCount: number = 0;
 
+  /** league batches dict */
   leagueBatches: {} = {};
 
   /** mfl username */
@@ -88,7 +89,7 @@ export class PortfolioService {
       const leagueInfo = this.portfolio.leagues[league.platform]?.leagues?.find(l => l.leagueId === league.leagueId);
       this.leagueIdMap[league.leagueId] = {
         name: leagueInfo.name,
-        scoring: league.platform !== LeaguePlatform.FLEAFLICKER && leagueInfo instanceof LeagueDTO ? (leagueInfo as LeagueDTO).getDisplayNameLeagueScoringFormat() || '-' : '-',
+        scoring: league.platform === LeaguePlatform.SLEEPER && leagueInfo instanceof LeagueDTO ? (leagueInfo as LeagueDTO).getDisplayNameLeagueScoringFormat() || '-' : '-',
         isSuperflex: leagueInfo.isSuperflex == true ? 'Superflex' : '1 QB',
         startCount: leagueInfo.rosterPositions && leagueInfo.rosterPositions.length > 0 ? 'Start ' + leagueInfo.rosterPositions?.filter(p => ['QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX'].includes(p)).length : '-',
         platformDisplay: this.displayService.getDisplayNameForPlatform(leagueInfo.leaguePlatform),
@@ -127,6 +128,10 @@ export class PortfolioService {
         const playerInfo = this.playerPlatformIdMap[league.leaguePlatform]?.[platformId];
         if (playerInfo) {
           ddPlayer = new FantasyPlayer();
+          // For team defense, they don't set full name
+          if(!playerInfo.full_name) {
+            playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
+          }
           ddPlayer.name_id = playerInfo.full_name.replace("'", "").replace(".", "");
           ddPlayer.full_name = playerInfo.full_name;
           ddPlayer.sf_trade_value = 0;
