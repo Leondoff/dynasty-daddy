@@ -13,6 +13,7 @@ import { delay } from 'rxjs/operators';
 import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueLoginModalComponent } from '../modals/league-login-modal/league-login-modal.component';
 import { UntypedFormControl } from '@angular/forms';
+import { DownloadService } from 'src/app/services/utilities/download.service';
 
 @Component({
     selector: 'app-fantasy-portfolio',
@@ -48,6 +49,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         private leagueSwitchService: LeagueSwitchService,
         public leagueService: LeagueService,
         public configService: ConfigService,
+        private downloadService: DownloadService,
         public portfolioService: PortfolioService) {
         super();
     }
@@ -115,8 +117,43 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         );
     }
 
+    /**
+     * Load portfolio leagues and map to players in Dynasty Daddy
+     */
     refreshPortfolio(): void {
+        this.portfolioStatus = Status.LOADING;
         this.portfolioService.appliedLeagues = this.selectedLeagues.value;
         this.portfolioService.updatePortfolio()
+    }
+
+    /**
+     * Format portfolio for download
+     */
+    exportPortfolioTable(): void {
+        const playerData: any[][] = []
+        playerData.push([
+            ['Name', 'Position', 'Age', 'Shares', 'Exposure %', 'Price (SF)', 'Price (STD)', 'Total Value', 'Monthly Trend (SF)', 'Monthly Trend (STD)'],
+        ]);
+        this.playerPortfolioWithValue.slice()
+            .sort((a, b) => this.portfolioService.playerHoldingMap[b.name_id].shares - this.portfolioService.playerHoldingMap[a.name_id].shares ||
+            this.portfolioService.playerHoldingMap[b.name_id].totalValue - this.portfolioService.playerHoldingMap[a.name_id].totalValue)
+            .forEach((player) => {
+                const playerRow = [player?.full_name, player?.position || '-', player?.age || '-',
+                this.portfolioService.playerHoldingMap[player.name_id].shares,
+                Math.round((this.portfolioService.playerHoldingMap[player.name_id].shares / this.portfolioService.leagueCount) * 100) + '%',
+                `${player?.sf_trade_value || 0}`,
+                `${player?.trade_value || 0}`,
+                this.portfolioService.playerHoldingMap[player.name_id].totalValue || 0,
+                `${player?.sf_change || 0}% (${player?.last_month_value_sf || 0})`,
+                `${player?.standard_change || 0}% (${player?.last_month_value || 0})`
+                ];
+                playerData.push(playerRow);
+            });
+
+        const formattedDraftData = playerData.map(e => e.join(',')).join('\n');
+
+        const filename = `Dynasty_Daddy_Portfolio_${new Date().toISOString().slice(0, 10)}.csv`;
+
+        this.downloadService.downloadCSVFile(formattedDraftData, filename);
     }
 }
