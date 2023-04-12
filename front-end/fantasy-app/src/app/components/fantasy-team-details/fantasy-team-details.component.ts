@@ -134,6 +134,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
       aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.leagueService?.selectedLeague?.isSuperflex ? player.sf_trade_value : player.trade_value), 0);
       const lastMonth = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value), 0)
       aggMap[pos + '_change'] = lastMonth > 0 ? Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100) : '-';
+      aggMap[pos + '_avg_age'] = Math.round(playerGroup.reduce((s, player) => s + player.age, 0) / playerGroup.length * 10) / 10;
     }
     return aggMap;
   }
