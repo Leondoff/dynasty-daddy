@@ -3,7 +3,7 @@
   Player statistics come from the Sleeper APIs. The following are tables have custom views for each position group with relevant fantasy related stats for the season.
 </div>
 
-<div class="pos-table-container" *ngIf="playerService.playerStats[playerService.playerValues[0]?.sleeper_id]">
+<div [ngClass]="{'pos-table-container': !configService.isMobile}" *ngIf="playerService.playerStats[playerService.playerValues[0]?.sleeper_id]">
   <div class="margin-top-25" *ngIf="!configService.isMobile">
     <app-player-pos-scatter-chart *ngIf="playerService.playerValues && playerService.playerStats[playerService.playerValues[0]?.sleeper_id] && this.selectableMetrics" [players]="filteredPlayers" [isSuperFlex]="leagueService.selectedLeague?.isSuperflex || true" [selectedMetrics]="selectedMetrics" [highlightFreeAgents]="highlightFreeAgents" [highlightYourTeam]="highlightYourTeam"></app-player-pos-scatter-chart>
   </div>
