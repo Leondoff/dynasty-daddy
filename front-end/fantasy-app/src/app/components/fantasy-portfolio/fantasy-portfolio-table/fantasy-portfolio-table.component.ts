@@ -26,7 +26,7 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
   priceSetting: string = 'SF';
 
   // columns to display in table
-  columnsToDisplay = ['expand', 'player', 'pos', 'team', 'shares', 'exposure', 'price', 'totalValue', 'monthGain'];
+  columnsToDisplay = ['expand', 'player', 'pos', 'team', 'shares', 'exposure', 'price', 'totalValue', 'posGroup', 'monthGain'];
 
   expandedElement: string[] = [];
 
@@ -50,16 +50,15 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
+    this.portfolio = this.playersWithValue;
+    this.portfolio.sort((a, b) =>
+      this.portfolioService.playerHoldingMap[b.name_id]?.shares - this.portfolioService.playerHoldingMap[a.name_id]?.shares ||
+      this.portfolioService.playerHoldingMap[b.name_id]?.totalValue - this.portfolioService.playerHoldingMap[a.name_id]?.totalValue);
     this.updateTableValues();
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      switch (property) {
-        default: return this.portfolioService.playerHoldingMap[item.name_id][property];
-      }
-    };
-    this.dataSource.sort = this.sort;
+    this.setSortForTable();
   }
 
   /**
@@ -67,6 +66,24 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
    */
   updateTableValues(): void {
     this.dataSource = new MatTableDataSource(this.portfolio);
+    this.dataSource.sort = this.sort;
+    this.setSortForTable();
+  }
+
+  /**
+   * Wrapper for setting sort in the table
+   */
+  private setSortForTable(): void {
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'posGroup': {
+          return this.portfolioService.positionGroupValueMap[item.position] != 0 ?
+            ((this.portfolioService.playerHoldingMap[item.name_id]?.totalValue || 0) /
+              this.portfolioService.positionGroupValueMap[item.position]) : 0
+        }
+        default: return this.portfolioService.playerHoldingMap[item.name_id]?.[property] || 0;
+      }
+    };
     this.dataSource.sort = this.sort;
   }
 

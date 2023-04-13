@@ -41,6 +41,9 @@ export class PortfolioService {
   /** player table metadata to display */
   playerHoldingMap: {} = {};
 
+  /** total value of each position group */
+  positionGroupValueMap: {} = [];
+
   /** league map to display in subtable */
   leagueIdMap: {} = {};
 
@@ -83,6 +86,7 @@ export class PortfolioService {
   updatePortfolio(): void {
     this.playersWithValue = [];
     this.playerHoldingMap = {};
+    this.positionGroupValueMap = {};
     this.leagueCount = 0;
     this.appliedLeagues.forEach(league => {
       this.leagueCount++;
@@ -141,6 +145,10 @@ export class PortfolioService {
         }
       }
       if (ddPlayer) {
+        if (!this.positionGroupValueMap[ddPlayer.position]) {
+          this.positionGroupValueMap[ddPlayer.position] = 0;
+        }
+        this.positionGroupValueMap[ddPlayer.position] += league.isSuperflex ? ddPlayer.sf_trade_value : ddPlayer.trade_value;
         if (this.playersWithValue.map(it => it.name_id).includes(ddPlayer.name_id)) {
           this.playerHoldingMap[ddPlayer.name_id].shares++;
           this.playerHoldingMap[ddPlayer.name_id][league.isSuperflex ? 'superflex' : 'standard']++;
