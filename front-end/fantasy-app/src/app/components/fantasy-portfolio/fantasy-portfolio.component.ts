@@ -77,11 +77,13 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
      */
     setUpPortfolio(): void {
         this.playerPortfolioWithValue = this.portfolioService.playersWithValue;
-        this.filteredPortfolio = this.playerPortfolioWithValue.filter(p => {
-            return p.position == 'QB' && this.posFilter[0] || p.position == 'RB' && this.posFilter[1]
-                || p.position == 'WR' && this.posFilter[2] || p.position == 'TE' && this.posFilter[3]
-                || (!['QB', 'RB', 'WR', 'TE'].includes(p.position) && this.posFilter[4]);
-        }).filter(p => p.full_name.toLowerCase().includes(this.searchVal.toLowerCase()));
+        this.filteredPortfolio = this.playerPortfolioWithValue
+            .filter(p => this.portfolioService.playerHoldingMap[p.name_id].shares > 0)
+            .filter(p => {
+                return p.position == 'QB' && this.posFilter[0] || p.position == 'RB' && this.posFilter[1]
+                    || p.position == 'WR' && this.posFilter[2] || p.position == 'TE' && this.posFilter[3]
+                    || (!['QB', 'RB', 'WR', 'TE'].includes(p.position) && this.posFilter[4]);
+            }).filter(p => p.full_name.toLowerCase().includes(this.searchVal.toLowerCase()));
         this.portfolioStatus = Status.DONE;
     }
 
@@ -136,7 +138,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         ]);
         this.playerPortfolioWithValue.slice()
             .sort((a, b) => this.portfolioService.playerHoldingMap[b.name_id].shares - this.portfolioService.playerHoldingMap[a.name_id].shares ||
-            this.portfolioService.playerHoldingMap[b.name_id].totalValue - this.portfolioService.playerHoldingMap[a.name_id].totalValue)
+                this.portfolioService.playerHoldingMap[b.name_id].totalValue - this.portfolioService.playerHoldingMap[a.name_id].totalValue)
             .forEach((player) => {
                 const playerRow = [player?.full_name, player?.position || '-', player?.age || '-',
                 this.portfolioService.playerHoldingMap[player.name_id].shares,

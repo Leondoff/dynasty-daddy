@@ -1,7 +1,7 @@
 <div class="portfolio-container">
     <div style="overflow-x: auto;" [ngClass]="{'portfolio-table-mobile': configService.isMobile}">
-        <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8"
-        matSort matSortActive="shares" matSortDirection="desc">
+        <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort
+            matSortActive="shares" matSortDirection="desc">
 
             <ng-container matColumnDef="expand">
                 <th mat-header-cell *matHeaderCellDef></th>
@@ -25,7 +25,7 @@
 
             <ng-container matColumnDef="team">
                 <th mat-header-cell *matHeaderCellDef>Team</th>
-                <td mat-cell *matCellDef="let element">{{element.team}}</td>
+                <td mat-cell *matCellDef="let element">{{element?.team || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="shares">
@@ -50,15 +50,25 @@
 
             <ng-container matColumnDef="totalValue">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Value</th>
-                <td mat-cell *matCellDef="let element">{{portfolioService.playerHoldingMap[element.name_id]?.totalValue || 0}}</td>
+                <td mat-cell *matCellDef="let element">{{portfolioService.playerHoldingMap[element.name_id]?.totalValue
+                    || 0}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="posGroup">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{configService.isMobile ? 'Pos %' : 'Pos Group %'}}</th>
+                <td mat-cell *matCellDef="let element">{{portfolioService.positionGroupValueMap[element.position] != 0 ?
+                    ((portfolioService.playerHoldingMap[element.name_id]?.totalValue || 0) /
+                    portfolioService.positionGroupValueMap[element.position] | percent) : '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="monthGain">
                 <th mat-header-cell *matHeaderCellDef (click)="toggleTrendSetting()"><span
-                        class="link--text__dot__underline">{{configService.isMobile ? 'Trend' : 'Month Trend'}} - {{monthTrendSetting}}</span></th>
+                        class="link--text__dot__underline">Trend -
+                        {{monthTrendSetting}}</span></th>
                 <td mat-cell *matCellDef="let element"
                     [ngClass]="{'warning__alert': monthTrendSetting == 'SF' ? element.sf_change < 0 : element.standard_change < 0, 'success__alert': monthTrendSetting == 'SF' ? element.sf_change > 0 : element.standard_change > 0}">
-                    {{ monthTrendSetting == 'SF' ? element?.sf_change || 0 : element?.standard_change || 0}}% ({{ monthTrendSetting
+                    {{ monthTrendSetting == 'SF' ? element?.sf_change || 0 : element?.standard_change || 0}}% ({{
+                    monthTrendSetting
                     == 'SF' ? element.sf_trade_value - (element?.last_month_value_sf || 0) : element.trade_value -
                     (element?.last_month_value || 0)}})</td>
             </ng-container>

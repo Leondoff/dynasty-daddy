@@ -36,6 +36,7 @@ tr.portfolio-element-row:not(.portfolio-expanded-row):active {
 .mat-column-shares,
 .mat-column-totalValue,
 .mat-column-monthGain,
+.mat-column-posGroup,
 .mat-column-price {
   text-align: left;
   justify-content: left;
@@ -46,6 +47,7 @@ tr.portfolio-element-row:not(.portfolio-expanded-row):active {
 .mat-column-totalValue,
 .mat-column-monthGain,
 .mat-column-price,
+.mat-column-posGroup,
 .mat-column-pos,
 .mat-column-team {
   max-width: 42px;
@@ -71,5 +73,5 @@ tr.portfolio-element-row:not(.portfolio-expanded-row):active {
 }
 
 .portfolio-table-mobile {
-  margin-right: 60px;
+  margin-right: 120px;
 }
