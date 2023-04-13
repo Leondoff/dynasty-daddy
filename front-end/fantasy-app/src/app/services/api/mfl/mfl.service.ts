@@ -104,7 +104,7 @@ export class MflService {
       leagueWrapper.selectedLeague?.metadata?.rosters?.forEach(team => {
         const ddTeam = new LeagueTeam(null, null);
         ddTeam.owner = new LeagueOwnerDTO(team.id, team.name, team.name, team.icon || this.DEFAULT_TEAM_LOGO);
-        const roster = leagueRosters.find(it => it.id === team.id).player;
+        const roster = leagueRosters.find(it => it.id === team.id)?.player || [];
         ddTeam.roster = new LeagueRosterDTO(
           this.formatRosterId(team.id),
           team.id,
@@ -207,7 +207,7 @@ export class MflService {
           }),
           concatMap(rosters => {
             league.metadata['status'] = Status.DONE;
-            const roster = rosters.rosters.franchise.find(it => this.formatRosterId(it.id) === league?.metadata?.teamId)?.player;
+            const roster = rosters.rosters.franchise.find(it => this.formatRosterId(it.id) === league?.metadata?.teamId)?.player || [];
             league.metadata['roster'] = roster?.map(player => player.id);
             league.isSuperflex = leagueInfo.isSuperflex;
             league.rosterPositions = leagueInfo.rosterPositions;
