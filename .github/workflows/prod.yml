@@ -21,11 +21,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          context: ./back-end/express-api
-          file: ./back-end/express-api/Dockerfile
+          image: jmtimper/dynasty-daddy-back-end
+          dockerfile: ./back-end/express-api/Dockerfile
+          context: .
           push: true
           tags: latest
-          image: jmtimper/dynasty-daddy-back-end:latest
 
   build-and-deploy-front:
     name: Build and Deploy Front-end
@@ -38,11 +38,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          context: ./front-end/fantasy-app
-          file: ./front-end/fantasy-app/Dockerfile
+          image: jmtimper/dynasty-daddy-front-end
+          context: .
+          dockerfile: ./front-end/fantasy-app/Dockerfile
           push: true
           tags: latest
-          image: jmtimper/dynasty-daddy-front-end:latest
 
   build-and-deploy-cron:
     name: Build and Deploy Cron
@@ -56,8 +56,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          context: ./back-end/scripts/KTCScraperScript
-          file: ./back-end/scripts/KTCScraperScript/Dockerfile
+          context: .
+          image: jmtimper/dynasty-daddy-cron
+          dockerfile: ./back-end/scripts/KTCScraperScript/Dockerfile
           push: true
           tags: latest
-          image: jmtimper/dynasty-daddy-cron:latest
