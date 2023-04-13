@@ -134,7 +134,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
     exportPortfolioTable(): void {
         const playerData: any[][] = []
         playerData.push([
-            ['Name', 'Position', 'Age', 'Shares', 'Exposure %', 'Price (SF)', 'Price (STD)', 'Total Value', 'Monthly Trend (SF)', 'Monthly Trend (STD)'],
+            ['Name', 'Position', 'Age', 'Shares', 'Exposure %', 'Price (SF)', 'Price (STD)', 'Total Value', 'Pos Group %', 'Monthly Trend (SF)', 'Monthly Trend (STD)'],
         ]);
         this.playerPortfolioWithValue.slice()
             .sort((a, b) => this.portfolioService.playerHoldingMap[b.name_id].shares - this.portfolioService.playerHoldingMap[a.name_id].shares ||
@@ -146,6 +146,9 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
                 `${player?.sf_trade_value || 0}`,
                 `${player?.trade_value || 0}`,
                 this.portfolioService.playerHoldingMap[player.name_id].totalValue || 0,
+                this.portfolioService.positionGroupValueMap[player.position] != 0 ?
+                    Math.round(((this.portfolioService.playerHoldingMap[player.name_id]?.totalValue || 0) /
+                    this.portfolioService.positionGroupValueMap[player.position]) * 100) + '%' : '0%',
                 `${player?.sf_change || 0}% (${player?.last_month_value_sf || 0})`,
                 `${player?.standard_change || 0}% (${player?.last_month_value || 0})`
                 ];
