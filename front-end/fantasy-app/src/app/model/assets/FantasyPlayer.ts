@@ -1,4 +1,3 @@
-/* tslint:disable:variable-name */
 import { LeaguePlatform } from '../league/FantasyPlatformDTO';
 import {LeagueOwnerDTO} from '../league/LeagueOwnerDTO';
 
@@ -8,6 +7,8 @@ export class FantasyPlayer {
   sleeper_id: string;
   mfl_id: string;
   ff_id: string;
+  espn_id: string;
+  yahoo_id: string;
   full_name: string;
   first_name: string;
   last_name: string;

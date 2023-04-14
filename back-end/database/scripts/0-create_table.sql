@@ -60,6 +60,8 @@ create table player_ids (
     sleeper_id varchar(30),
     mfl_id varchar(10),
     ff_id varchar(10),
+    espn_id varchar(10),
+    yahoo_id varchar(10),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
@@ -260,6 +262,8 @@ From
             pi.sleeper_id as sleeper_id,
             pi.mfl_id,
             pi.ff_id,
+            pi.espn_id,
+            pi.yahoo_id,
             player_info.full_name as full_name,
             player_info.first_name as first_name,
             player_info.last_name as last_name,
