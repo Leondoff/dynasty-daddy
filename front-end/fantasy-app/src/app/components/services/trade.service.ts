@@ -207,7 +207,7 @@ export class TradeService {
     if (this.leagueService.selectedLeague && this.leagueService.selectedLeague.type !== 2) {
       playerList = this.playerService.playerValues.filter(player => player.position !== 'PI');
     }
-    if (userId) {
+    if (userId && userId != 'none') {
       // filter players by team
       const teamPlayerList = playerList.filter(it => it.owner?.userId === userId);
       // get draft capital for team in filter

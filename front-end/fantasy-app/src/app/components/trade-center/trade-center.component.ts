@@ -493,7 +493,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   generateMockPowerRankings(trade: TradePackage): void {
     this.team2MockRankings = null;
     this.team1MockRankings = null;
-    if (trade.team1UserId && trade.team2UserId) {
+    if (trade.team1UserId && trade.team2UserId && trade.team1UserId != 'none' && trade.team2UserId != 'none') {
       const newLeague: LeagueTeam[] = (JSON.parse(JSON.stringify(this.leagueService.leagueTeamDetails)));
       const leaguePlatform = this.leagueService.selectedLeague.leaguePlatform;
       newLeague.forEach(team => {

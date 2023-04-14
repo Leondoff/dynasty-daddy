@@ -43,7 +43,7 @@
             #team2Select
             [(ngModel)]="selectedTeam2"
             class="langSelect">
-            <mat-option class="teamSelect" (click)="selectionMadeTeam2()" [value]="null">None</mat-option>
+            <mat-option class="teamSelect" (click)="selectionMadeTeam2()" [value]="'none'">{{selectedTeam2 == 'none' ? '' : 'None'}}</mat-option>
             <mat-option class="teamSelect" (click)="selectionMadeTeam2()" *ngFor="let team of leagueService.leagueTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
           </mat-select>
         </mat-icon>
@@ -116,7 +116,7 @@
             #team1Select
             [(ngModel)]="selectedTeam1"
           class="langSelect">
-            <mat-option class="teamSelect" [value]="null" (click)="selectionMadeTeam1()">None</mat-option>
+            <mat-option class="teamSelect" [value]="'none'" (click)="selectionMadeTeam1()">{{selectedTeam1 == 'none' ? '' : 'None'}}</mat-option>
             <mat-option class="teamSelect" (click)="selectionMadeTeam1()" *ngFor="let team of leagueService.leagueTeamDetails" [value]="team.owner.userId">{{team.owner.ownerName}}</mat-option>
           </mat-select>
         </mat-icon>
