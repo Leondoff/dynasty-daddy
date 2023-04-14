@@ -12,7 +12,6 @@ from DynastyProcessService import fetchDynastyProcessPlayerValues
 players = Players()
 sleeperData = players.get_all_players()
 
-
 # creates a dict of sleeper ids mapped to name ids
 def getSleeperData():
     temp = {}
@@ -53,8 +52,8 @@ class Player:
     def __init__(self, id, name, first_name, last_name, team, position, sfPositionRank, positionRank, age, experience,
                  sf_value, value, sleeperId=None, college=None, injury_status=None, weight=None, height=None,
                  jersey_number=-1, active=None, mflId=None, fc_sf_value=None, fc_value=None, fc_position_rank=None,
-                 fc_sf_position_rank=None, dp_sf_value=None, dp_value=None, dp_sf_position_rank=None, dp_position_rank=None
-                 ):
+                 fc_sf_position_rank=None, dp_sf_value=None, dp_value=None, dp_sf_position_rank=None, dp_position_rank=None,
+                 espnId=None, yahooId=None):
         self.id = id
         self.name = name
         self.first_name = first_name
@@ -83,10 +82,12 @@ class Player:
         self.dp_value = dp_value
         self.dp_sf_position_rank = dp_sf_position_rank
         self.dp_position_rank = dp_position_rank
+        self.espnId = espnId
+        self.yahooId = yahooId
 
     def toString(self):
         print(self.id, self.name, self.first_name, self.last_name, self.team, self.position, self.sfPositionRank,
-              self.positionRank, self.age, self.experience, self.sf_value, self.value, self.sleeperId, self.college,
+              self.positionRank, self.age, self.experience, self.sf_value, self.value, self.sleeperId, self.espnId, self.yahooId, self.college,
               self.injury_status, self.weight, self.height, self.jersey_number, self.active, self.mflId, self.fc_sf_value,
               self.fc_value, self.fc_sf_position_rank, self.fc_position_rank, self.dp_sf_value, self.dp_value,
               self.dp_sf_position_rank, self.dp_position_rank)
@@ -182,7 +183,7 @@ for player in sf_rankings:
     dpSfRank = dynastyProcessDict.get(playerId)['sf_rank'] if dynastyProcessDict.get(playerId) != None else None
     dpRank = dynastyProcessDict.get(playerId)['std_rank'] if dynastyProcessDict.get(playerId) != None else None
     playerExp, jerseyNum = 0, 0
-    college, injuryStatus, active, weight, height = None, None, None, None, None
+    college, injuryStatus, active, weight, height, espnId, yahooId = None, None, None, None, None, None, None
     if sleeperId is not None:
         try:
             sleeperPlayer = sleeperData.get(sleeperId)
@@ -193,6 +194,8 @@ for player in sf_rankings:
             height = sleeperPlayer['height']
             jerseyNum = sleeperPlayer['number']
             active = sleeperPlayer['active']
+            espnId = sleeperPlayer['espn_id']
+            yahooId = sleeperPlayer['yahoo_id']
         except:
             print('Error getting playerExp for: ' + sleeperId)
     players.append(
@@ -202,7 +205,7 @@ for player in sf_rankings:
                None if str(oneQBPostion.text.strip())[2:] == 'CK' else str(oneQBPostion.text.strip())[2:],
                None if playerAge is None else str(playerAge.text.strip())[:2], playerExp,
                sfTradeValue.text.strip(), tradeValue.text.strip(), sleeperId, college, injuryStatus, weight, height,
-               jerseyNum, active, mflId, fcSfValue, fcStdValue, fcSfRank, fcRank, dpSfValue, dpStdValue, dpSfRank, dpRank))
+               jerseyNum, active, mflId, fcSfValue, fcStdValue, fcSfRank, fcRank, dpSfValue, dpStdValue, dpSfRank, dpRank, espnId, yahooId))
 
 # for player in players:
 #      player.toString()
@@ -259,20 +262,21 @@ try:
                     updated_at = now(); '''
                 cursor.execute(playerInfoStatement, (
                     player.id, player.name, player.first_name, player.last_name, player.team, player.position,
-                    player.age,
-                    player.experience, player.college, player.injury_status, player.weight, player.height,
+                    player.age, player.experience, player.college, player.injury_status, player.weight, player.height,
                     player.jersey_number, player.active, player.id, player.name, player.first_name, player.last_name,
                     player.team, player.position, player.age, player.experience, player.college, player.injury_status,
                     player.weight, player.height, player.jersey_number, player.active))
 
                 # player id linking table insert
-                playerIdsStatement = '''INSERT INTO player_ids (name_id, sleeper_id) VALUES (%s, %s)
+                playerIdsStatement = '''INSERT INTO player_ids (name_id, sleeper_id, espn_id, yahoo_id) VALUES (%s, %s, %s, %s)
                     ON CONFLICT (name_id) DO UPDATE
                     SET
                     name_id = %s,
                     sleeper_id = %s,
+                    espn_id = %s,
+                    yahoo_id = %s,
                     updated_at = now(); '''
-                cursor.execute(playerIdsStatement, (player.id, player.sleeperId, player.id, player.sleeperId))
+                cursor.execute(playerIdsStatement, (player.id, player.sleeperId, player.espnId, player.yahooId, player.id, player.sleeperId, player.espnId, player.yahooId))
             if player.mflId is not None:
                 # player id linking table insert
                 playerIdsStatement = '''INSERT INTO player_ids (name_id, mfl_id) VALUES (%s, %s)
