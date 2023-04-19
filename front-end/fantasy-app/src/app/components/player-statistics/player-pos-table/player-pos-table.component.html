@@ -19,12 +19,16 @@
 
         <ng-container matColumnDef="pass_att">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Pass Att</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pass_att || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.pass_att / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.pass_att || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="pass_cmp">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Pass Cmp</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pass_cmp || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.pass_cmp / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.pass_cmp || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="cmp_pct">
@@ -34,27 +38,37 @@
 
         <ng-container matColumnDef="pass_yd">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Pass Yards</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pass_yd || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.pass_yd / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.pass_yd || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="pass_td">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Pass TDs</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pass_td || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.pass_td / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.pass_td || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="pass_int">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Pass Ints</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pass_int || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.pass_int / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.pass_int || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="rush_att">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Rush Att</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.rush_att || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.rush_att / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.rush_att || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="rush_yd">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Rush Yds</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.rush_yd || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.rush_yd / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.rush_yd || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="rush_ypa">
@@ -64,32 +78,44 @@
 
         <ng-container matColumnDef="rush_td">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Rush TDs</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.rush_td || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.rush_td / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.rush_td || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="pass_sack">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Sacks</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pass_sack || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.pass_sack / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.pass_sack || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="fum_lost">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Fum</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.fum_lost || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.fum_lost / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.fum_lost || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="rec">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Rec</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.rec || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.rec / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.rec || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="rec_tgt">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Targets</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.rec_tgt || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.rec_tgt / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.rec_tgt || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="rec_yd">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Rec Yd</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.rec_yd || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.rec_yd / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.rec_yd || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="rec_ypr">
@@ -99,17 +125,23 @@
 
         <ng-container matColumnDef="rec_td">
           <mat-header-cell *matHeaderCellDef mat-sort-header>TD</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.rec_td || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.rec_td / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.rec_td || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="rec_rz_tgt">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Rec RZ T</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.rec_rz_tgt || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.rec_rz_tgt / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.rec_rz_tgt || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="pass_rz_att">
           <mat-header-cell *matHeaderCellDef mat-sort-header>RZ Att</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{playerService.playerStats[element.sleeper_id]?.pass_rz_att || 0}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{(isPerGame ?
+            ((playerService.playerStats[element.sleeper_id]?.pass_rz_att / playerService.playerStats[element.sleeper_id]?.gp) || 0) 
+            : playerService.playerStats[element.sleeper_id]?.pass_rz_att || 0) | number:'1.0-2'}}</mat-cell>
         </ng-container>
 
         <!-- actions column -->

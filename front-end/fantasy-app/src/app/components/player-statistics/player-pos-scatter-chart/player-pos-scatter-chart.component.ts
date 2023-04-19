@@ -1,10 +1,10 @@
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {ChartDataSets, ChartOptions, ChartType} from 'chart.js';
-import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
-import {PlayerService} from '../../../services/player.service';
-import {ColorService} from '../../../services/utilities/color.service';
-import {BaseChartDirective} from 'ng2-charts';
-import {LeagueService} from '../../../services/league.service';
+import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { FantasyPlayer } from '../../../model/assets/FantasyPlayer';
+import { PlayerService } from '../../../services/player.service';
+import { ColorService } from '../../../services/utilities/color.service';
+import { BaseChartDirective } from 'ng2-charts';
+import { LeagueService } from '../../../services/league.service';
 
 @Component({
   selector: 'app-player-pos-scatter-chart',
@@ -72,8 +72,8 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
   public scatterChartType: ChartType = 'scatter';
 
   constructor(private playerService: PlayerService,
-              private colorService: ColorService,
-              private leagueService: LeagueService) {
+    private colorService: ColorService,
+    private leagueService: LeagueService) {
   }
 
   ngOnInit(): void {
@@ -147,7 +147,9 @@ export class PlayerPosScatterChartComponent implements OnInit, OnChanges {
         if (!this.playerService.playerStats[player.sleeper_id]) {
           return 0;
         }
-        return Number(this.playerService.playerStats[player.sleeper_id][value] || 0);
+        return value.includes('_per_game') ?
+          Math.round(Number(this.playerService.playerStats[player.sleeper_id][value.replace('_per_game', '')] / this.playerService.playerStats[player.sleeper_id]?.gp) * 100 || 0) / 100 :
+          Number(this.playerService.playerStats[player.sleeper_id][value] || 0);
     }
   }
 }

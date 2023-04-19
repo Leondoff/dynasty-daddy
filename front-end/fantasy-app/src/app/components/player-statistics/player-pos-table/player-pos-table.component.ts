@@ -1,14 +1,14 @@
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
-import {LeagueService} from '../../../services/league.service';
-import {ConfigService} from '../../../services/init/config.service';
-import {PlayerService} from '../../../services/player.service';
-import {PlayerComparisonService} from '../../services/player-comparison.service';
-import {Router} from '@angular/router';
-import {LeagueSwitchService} from "../../services/league-switch.service";
+import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { FantasyPlayer } from '../../../model/assets/FantasyPlayer';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { LeagueService } from '../../../services/league.service';
+import { ConfigService } from '../../../services/init/config.service';
+import { PlayerService } from '../../../services/player.service';
+import { PlayerComparisonService } from '../../services/player-comparison.service';
+import { Router } from '@angular/router';
+import { LeagueSwitchService } from "../../services/league-switch.service";
 
 @Component({
   selector: 'app-player-pos-table',
@@ -26,13 +26,17 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
   selectedPosition: string;
 
   /** mat paginator */
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   /** mat sort */
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   /** columns to display */
   displayedColumns: string[] = [];
+
+  /** is stats per game or season  */
+  @Input()
+  isPerGame: boolean = false;
 
   /** general box score cols */
   generalBoxScore = ['full_name', 'points'];
@@ -59,11 +63,11 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
   dataSource: MatTableDataSource<FantasyPlayer> = new MatTableDataSource<FantasyPlayer>();
 
   constructor(public leagueService: LeagueService,
-              public configService: ConfigService,
-              public playerService: PlayerService,
-              public leagueSwitchService: LeagueSwitchService,
-              private playerComparisonService: PlayerComparisonService,
-              public router: Router
+    public configService: ConfigService,
+    public playerService: PlayerService,
+    public leagueSwitchService: LeagueSwitchService,
+    private playerComparisonService: PlayerComparisonService,
+    public router: Router
   ) {
   }
 
@@ -91,8 +95,10 @@ export class PlayerPosTableComponent implements OnInit, OnChanges {
         case 'cmp_pct':
           return this.playerService.playerStats[item.sleeper_id]?.cmp_pct / this.playerService.playerStats[item.sleeper_id]?.gp;
         default:
-          return this.selectedPosition.includes(item.position.toLowerCase())
-            ? this.playerService.playerStats[item.sleeper_id]?.[property] : 0;
+          if (!this.selectedPosition.includes(item.position.toLowerCase())) return 0;
+          return this.isPerGame
+            ? Math.round(Number(this.playerService.playerStats[item.sleeper_id]?.[property] / this.playerService.playerStats[item.sleeper_id]?.gp) * 100 || 0) / 100
+            : this.playerService.playerStats[item.sleeper_id]?.[property];
       }
     };
     this.dataSource.paginator = this.paginator;
