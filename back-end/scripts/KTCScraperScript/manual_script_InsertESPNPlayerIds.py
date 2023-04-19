@@ -1,4 +1,3 @@
-import csv
 import PlayerService
 import psycopg2
 import requests
