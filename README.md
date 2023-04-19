@@ -2,7 +2,7 @@
 
 *This project is currently in Beta and is deployed to https://dynasty-daddy.com.*
 
-Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes fantasy market (KeepTradeCut, FantasyCalc, DynastyProcess) player evaluations to create metrics on each owner's fantasy league (Sleeper, MFL, Fleaflicker).
+Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes fantasy market (KeepTradeCut, FantasyCalc, DynastyProcess) player evaluations to create metrics on each owner's fantasy league (Sleeper, MFL, Fleaflicker, ESPN).
 
 ## Goal
 
@@ -64,12 +64,12 @@ First, clone repo and open up in your preferred IDE.
 
 ## Future Improvements
 
-- Support other platforms like Yahoo, Fleaflicker, etc.
+- Support other platforms like Yahoo, NFL, etc.
 - Machine learning on data to predict the best players to buy and sell.
 - Better draft predictor based on team needs
 - More team analytics
 - Better responsive/mobile experience
-- More value calculations (Dynasty Process, Fantasy Calc)
+- More value calculations
 
 ## Packages
 
@@ -81,6 +81,7 @@ First, clone repo and open up in your preferred IDE.
 - ngx-device-detector - detects if using mobile device, tablet, or desktop
 - ngx-mat-select-search - custom mat select search box with dropdown
 - ngx-google-analytics - used to track user metadata and build reports on features
+- @thouet/material-carousel - responsive carousels for ads
 
 ## Deployment
 - CI/CD using Github Actions to build and push images to docker hub when a PR to main is created.

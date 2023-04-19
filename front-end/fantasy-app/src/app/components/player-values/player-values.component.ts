@@ -107,7 +107,7 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
       playerData.push(filterRow);
       playerData.push([]);
       playerData.push([
-        ['Name', 'Position', 'Age', 'Owner', 'Avg Pos ADP', 'KeepTradeCut', 'KeepTradeCut % Change', 'FantasyCalc', 'FantasyCalc % Change', 'Dynasty Process', 'Dynasty Process % Change'],
+        ['Name', 'Position', 'Age', 'Owner', 'Avg Pos ADP', 'KeepTradeCut', 'KeepTradeCut % Change', 'FantasyCalc', 'FantasyCalc % Change', 'DynastyProcess', 'DynastyProcess % Change'],
       ]);
       this.playerValueService.filteredPlayers.forEach((player, ind) => {
         const playerRow = [player?.full_name, player?.position, player?.age, player?.owner?.ownerName,
