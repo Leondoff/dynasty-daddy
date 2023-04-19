@@ -121,7 +121,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
       draftData.push([`Mock Draft for ${this.leagueService.selectedLeague.name} - ${this.mockDraftService.mockDraftRounds} Rounds - ${this.leagueService.selectedLeague.isSuperflex ? 'Superflex' : 'Standard (1 QB)'}`]);
       draftData.push([]);
       draftData.push([
-        ['Pick', 'Team', 'Owner', 'Notes', 'Team Needs', 'Player', 'Position', 'Age', 'Avg Pos ADP', 'KeepTradeCut', 'FantasyCalc', 'Dynasty Process'],
+        ['Pick', 'Team', 'Owner', 'Notes', 'Team Needs', 'Player', 'Position', 'Age', 'Avg Pos ADP', 'KeepTradeCut', 'FantasyCalc', 'DynastyProcess'],
       ]);
       this.mockDraftService.teamPicks.forEach((pick, ind) => {
         const player = this.mockDraftService.mockDraftSelectedPlayers[ind];

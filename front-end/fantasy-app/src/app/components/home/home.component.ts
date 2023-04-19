@@ -12,6 +12,7 @@ import { MflService } from '../../services/api/mfl/mfl.service';
 import { MflApiService } from '../../services/api/mfl/mfl-api.service';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
 import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
+import { ESPNService } from 'src/app/services/api/espn/espn.service';
 
 @Component({
   selector: 'app-home',
@@ -59,12 +60,20 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   /** mfl login method */
   mflLoginMethod: string = 'mfl_username';
 
+  /** ESPN login method */
+  espnLoginMethod: string = 'espn_league_id';
+
+  /** ESPN league id string */
+  espnLeagueId: string = '429360819';
+
+
   constructor(private sleeperApiService: SleeperApiService,
     public leagueService: LeagueService,
     private playersService: PlayerService,
     public configService: ConfigService,
     private route: ActivatedRoute,
     private mflService: MflService,
+    private espnService: ESPNService,
     private mflApiService: MflApiService,
     private dialog: MatDialog,
     private fleaflickerService: FleaflickerService,
@@ -107,6 +116,9 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         case LeaguePlatform.MFL:
           this.mflLeagueIdInput = this.leagueService.selectedLeague.leagueId;
           break;
+        case LeaguePlatform.ESPN:
+          this.espnLeagueId = this.leagueService.selectedLeague.leagueId;
+          break;
         case LeaguePlatform.FLEAFLICKER:
           this.fleaflickerLeagueIdInput = this.leagueService.selectedLeague.leagueId;
           this.fleaflickerEmail = this.leagueService.leagueUser?.userData?.username || '';
@@ -135,13 +147,23 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   }
 
   /**
- * loads fleaflicker data for user
- */
+   * loads fleaflicker data for user
+   */
   fetchFleaflickerInfo(): void {
     this.fleaflickerLeagueIdInput = '';
     this.leagueService.loadNewUser$(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
     this.leagueService.selectedYear = this.selectedYear;
     this.leagueService.resetLeague();
+  }
+
+
+  /**
+   * loads fleaflicker data for user
+   */
+  loginWithESPNLeagueId(year?: string, leagueId?: string): void {
+    this.espnService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.espnLeagueId).subscribe(leagueData => {
+      this.leagueSwitchService.loadLeague(leagueData);
+    });
   }
 
   /**

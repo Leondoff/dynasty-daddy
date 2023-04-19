@@ -104,7 +104,7 @@ export class FleaflickerService {
     leagueWrapper.selectedLeague.metadata.rosters.forEach(division => {
       division.teams.forEach(team => {
         observableList.push(this.fleaflickerApiService.getFFFutureDraftPicks(season, leagueId, team.id).pipe(map(draftPicks => {
-          teamDraftCapitalMap[team.id] = this.marshalDraftPicks(draftPicks.picks);
+          teamDraftCapitalMap[team.id] = this.marshalDraftPicks(draftPicks.picks, team.id);
           return of(teamDraftCapitalMap);
         })));
       });
@@ -232,7 +232,7 @@ export class FleaflickerService {
       roster,
       leagueInfo.league.id || null,
       leagueInfo.season === new Date().getFullYear() ? 'in_progress' : 'completed',
-      leagueInfo.season,
+      leagueInfo.season.toString(),
       null,
       null,
       null,
@@ -314,10 +314,12 @@ export class FleaflickerService {
    * @param teamDraftPicks team picks from api
    * @returns 
    */
-  private marshalDraftPicks(teamDraftPicks: any[]): DraftCapital[] {
+  private marshalDraftPicks(teamDraftPicks: any[], teamId: number): DraftCapital[] {
     const teamDraftCapital = [];
     teamDraftPicks.forEach(rawPick => {
-      teamDraftCapital.push(new DraftCapital(rawPick.slot.round, rawPick.slot.slot, rawPick?.season?.toString(), rawPick?.originalOwner?.id));
+      if (rawPick.ownedBy.id == teamId) {
+        teamDraftCapital.push(new DraftCapital(rawPick.slot.round, rawPick.slot.slot, rawPick?.season?.toString(), rawPick?.originalOwner?.id || rawPick?.ownedBy?.id));
+      }
     });
     return teamDraftCapital;
   }
@@ -329,7 +331,7 @@ export class FleaflickerService {
    */
   private marshalTrades(trades: any[]): LeagueTeamTransactionDTO[] {
     const leagueTrades = [];
-    trades.forEach(trade => {
+    trades?.forEach(trade => {
       let trans = new LeagueTeamTransactionDTO(null, []);
       trans.transactionId = trade?.id || 'not provided';
       trans.type = 'trade';
@@ -398,14 +400,10 @@ export class FleaflickerService {
    * @returns 
    */
   private marshalIndividualMatchUp(game: any): LeagueTeamMatchUpDTO[] {
-    const matchUpTeamHome = new LeagueTeamMatchUpDTO(null);
-    matchUpTeamHome.matchupId = Number(game.id);
-    matchUpTeamHome.points = game?.homeScore?.score?.value || Number(game?.homeScore?.score?.formatted);
-    matchUpTeamHome.rosterId = Number(game.home.id)
-    const matchUpTeamAway = new LeagueTeamMatchUpDTO(null);
-    matchUpTeamAway.matchupId = Number(game.id);
-    matchUpTeamAway.points = game?.awayScore?.score?.value || Number(game?.awayScore?.score?.formatted);
-    matchUpTeamAway.rosterId = Number(game.away.id);
+    const matchUpTeamHome = new LeagueTeamMatchUpDTO();
+    matchUpTeamHome.createMatchUpObject(Number(game.id), game?.homeScore?.score?.value || Number(game?.homeScore?.score?.formatted), Number(game.home.id));
+    const matchUpTeamAway = new LeagueTeamMatchUpDTO();
+    matchUpTeamAway.createMatchUpObject(Number(game.id), game?.awayScore?.score?.value || Number(game?.awayScore?.score?.formatted), Number(game.away.id));
     return [matchUpTeamAway, matchUpTeamHome];
   }
 

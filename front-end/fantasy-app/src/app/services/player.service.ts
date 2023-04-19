@@ -224,6 +224,10 @@ export class PlayerService {
           if (id === player.ff_id) return player;
           break;
         }
+        case LeaguePlatform.ESPN: {
+          if (id === player.espn_id) return player;
+          break;
+        }
         default: {
           if (id === player.sleeper_id) return player;
           break;
@@ -513,6 +517,8 @@ export class PlayerService {
         return player.mfl_id;
       case LeaguePlatform.FLEAFLICKER:
         return player.ff_id;
+      case LeaguePlatform.ESPN:
+        return player.espn_id;
       default:
         return player.sleeper_id;
     }

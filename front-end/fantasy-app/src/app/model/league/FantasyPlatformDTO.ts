@@ -10,5 +10,6 @@ export class FantasyPlatformDTO {
 export enum LeaguePlatform {
   SLEEPER,
   MFL,
-  FLEAFLICKER
+  FLEAFLICKER,
+  ESPN
 }

@@ -30,6 +30,9 @@ export class DisplayService {
       case LeaguePlatform.FLEAFLICKER: {
         return 'Fleaflicker';
       }
+      case LeaguePlatform.ESPN: {
+        return 'ESPN';
+      }
       case LeaguePlatform.MFL: {
         return 'MFL';
       }

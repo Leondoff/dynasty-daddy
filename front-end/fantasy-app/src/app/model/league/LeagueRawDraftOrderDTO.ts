@@ -46,4 +46,22 @@ export class LeagueRawDraftOrderDTO {
     this.rounds = rounds;
     return this;
   }
+
+  fromESPN(draft: any, rounds: number): LeagueRawDraftOrderDTO {
+    const rosterIdMap = {};
+    for (const pick of draft.picks) {
+      rosterIdMap[pick.teamId] = pick.roundPickNumber;
+    }
+    this.draftOrder = rosterIdMap;
+    const slotOrder = {};
+    let ind = 1;
+    for (const [key, value] of Object.entries(this.draftOrder)) {
+      slotOrder[value as number] = ind;
+      ind++;
+    }
+    this.slotToRosterId = slotOrder;
+    this.playerType = 1;
+    this.rounds = rounds;
+    return this;
+  }
 }
