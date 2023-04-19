@@ -49,17 +49,22 @@
       </mat-form-field>
     </div>
     <span class="container_spacer"></span>
-    <div class="button-right margin-top-25" *ngIf="leagueService.selectedLeague">
-      <mat-slide-toggle color="accent" *ngIf="leagueService.leagueUser" [(ngModel)]="highlightYourTeam">
-        Your Team
-      </mat-slide-toggle>
-      <mat-slide-toggle color="accent" style="margin-left: 15px; margin-right: 10px" [(ngModel)]="highlightFreeAgents">
-        Free Agents
-      </mat-slide-toggle>
+    <div class="button-right margin-top-25">
+      <span *ngIf="leagueService.selectedLeague">
+        <mat-slide-toggle color="accent" *ngIf="leagueService.leagueUser" [(ngModel)]="highlightYourTeam">
+          Your Team
+        </mat-slide-toggle>
+        <mat-slide-toggle color="accent" style="margin-left: 15px; margin-right: 10px" [(ngModel)]="highlightFreeAgents">
+          Free Agents
+        </mat-slide-toggle>
+      </span>
+      <button mat-raised-button color="accent" (click)="isPerGame = !isPerGame">
+        Table: {{isPerGame ? 'By Game' : 'By Season'}}
+      </button>
     </div>
   </div>
   <div class="margin-top-10">
-    <app-player-pos-table *ngIf="playerService.playerValues && playerService.playerStats" [players]="filteredPlayers" [selectedPosition]="selectedPosition"></app-player-pos-table>
+    <app-player-pos-table *ngIf="playerService.playerValues && playerService.playerStats" [players]="filteredPlayers" [selectedPosition]="selectedPosition" [isPerGame]="isPerGame"></app-player-pos-table>
   </div>
 </div>
 
