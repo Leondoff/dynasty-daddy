@@ -4,7 +4,7 @@ import PlayerService
 # fetch players and ids from mfl
 def fetchMFLPlayerDict():
     response = requests.get(
-            "https://api.myfantasyleague.com/2022/export?TYPE=players&L=&APIKEY=&DETAILS=&SINCE=&PLAYERS=&JSON=1")
+            "https://api.myfantasyleague.com/2023/export?TYPE=players&L=&APIKEY=&DETAILS=&SINCE=&PLAYERS=&JSON=1")
 
     mflPlayerDict = {}
     for player in response.json()['players']['player']:

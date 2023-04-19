@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SleeperApiService } from './api/sleeper/sleeper-api.service';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators';
 import { LeagueWrapper } from '../model/league/LeagueWrapper';
 import { SleeperService } from './api/sleeper/sleeper.service';
 import { MflService } from './api/mfl/mfl.service';
@@ -19,6 +19,7 @@ import { LeagueDTO, LeagueScoringFormat } from '../model/league/LeagueDTO';
 import { FleaflickerService } from './api/fleaflicker/fleaflicker.service';
 import { LeagueTeamMatchUpDTO } from '../model/league/LeagueTeamMatchUpDTO';
 import { NflService } from './utilities/nfl.service';
+import { ESPNService } from './api/espn/espn.service';
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +56,7 @@ export class LeagueService {
     private sleeperService: SleeperService,
     private mflApiService: MflApiService,
     private nflService: NflService,
+    private espnService: ESPNService,
     private fleaflickerService: FleaflickerService,
     private mflService: MflService) {
   }
@@ -86,6 +88,12 @@ export class LeagueService {
         return this.fleaflickerService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
           this.setServiceFromLeagueWrapper(league);
           this.platformPlayersMap = this.fleaflickerService.playerIdMap;
+          return of(league);
+        }));
+      case LeaguePlatform.ESPN:
+        return this.espnService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
+          this.setServiceFromLeagueWrapper(league);
+          this.platformPlayersMap = this.espnService.playerIdMap;
           return of(league);
         }));
       default:
@@ -123,7 +131,7 @@ export class LeagueService {
   loadNewUser$(username: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER, password: string = ''): Observable<any> {
     this.selectedYear = year;
     try {
-      switch(leaguePlatform) {
+      switch (leaguePlatform) {
         case LeaguePlatform.SLEEPER: {
           this.sleeperService.loadSleeperUser$(username, year).subscribe(leagueUser => {
             this.leagueUser = leagueUser;
@@ -370,6 +378,9 @@ export class LeagueService {
         break;
       case LeaguePlatform.FLEAFLICKER:
         window.open('https://www.fleaflicker.com/nfl/leagues/' + selectedLeagueId, '_blank');
+        break;
+      case LeaguePlatform.ESPN:
+        window.open('https://fantasy.espn.com/football/team?leagueId=' + selectedLeagueId + '&seasonId=' + leagueYear, '_blank');
         break;
       default:
         console.error('Unsupported League Platform', selectedPlatform);

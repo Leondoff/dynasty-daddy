@@ -90,7 +90,8 @@ export class SleeperService {
           .pipe(mergeMap((weekMatchUps) => {
             const matchUpData: LeagueTeamMatchUpDTO[] = [];
             for (const matchup of weekMatchUps) {
-              matchUpData.push(new LeagueTeamMatchUpDTO(matchup));
+              const newMatch = new LeagueTeamMatchUpDTO();
+              matchUpData.push(newMatch.createMatchUpFromSleeper(matchup));
             }
             leagueMatchUps[weekNum] = matchUpData;
             return of(weekMatchUps);
