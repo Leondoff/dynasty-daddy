@@ -10,8 +10,9 @@ module.exports = {
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "tsconfig.app.json",
-        "sourceType": "module"
+        "project": "tsconfig.json",
+        "sourceType": "module",
+        "tsconfigRootDir": "./front-end/fantasy-app",
     },
     "plugins": [
         "eslint-plugin-import",

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of } from 'rxjs';
-import { map, mergeMap, concatMap, delay, retry, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { LeagueDTO, LeagueType } from '../../../model/league/LeagueDTO';
 import { ESPNApiService } from './espn-api.service';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';

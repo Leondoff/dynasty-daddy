@@ -22,13 +22,13 @@ The goal is to provide users with a frictionless way to see player value, team v
 | Positional Statistics | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | Team Pages | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | Player Pages | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Mock Draft Tool | &#x2714; | &#x2714; | &#x2714; | |
+| Mock Draft Tool | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
 | Draft Recap | &#x2714; | &#x2714; | | &#x2714; |
-| Portfolio | &#x2714; | &#x2714; | &#x2714; | |
-| Username Login | &#x2714; | &#x2714; | &#x2714; | |
+| Portfolio | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
+| Username Login | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
 | League Id Login | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Transactions | &#x2714; | &#x2714; | &#x2714; | |
-| Future Draft Capital | &#x2714; | &#x2714; | &#x2714; | |
+| Transactions | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
+| Future Draft Capital | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
 | Wrapped | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 
 ## Architecture
