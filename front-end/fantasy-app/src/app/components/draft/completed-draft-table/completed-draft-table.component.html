@@ -104,13 +104,13 @@
                   <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item *ngIf="draftCache[element.pickNumber].nameId" (click)="openPlayerComparison(getPlayerByPlayerPlatformId(element.playerId))">
+                  <button mat-menu-item *ngIf="draftCache[element.pickNumber]?.nameId" (click)="openPlayerComparison(getPlayerByPlayerPlatformId(element.playerId))">
                     <span>Add to Player Comparison</span>
                   </button>
-                  <button *ngIf="element.position !== 'PI' && draftCache[element.pickNumber].nameId" mat-menu-item [routerLink]="['../../players/details/', draftCache[element.pickNumber].nameId]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+                  <button *ngIf="element.position !== 'PI' && draftCache[element.pickNumber]?.nameId" mat-menu-item [routerLink]="['../../players/details/', draftCache[element.pickNumber]?.nameId]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
                     <span>View Player Page</span>
                   </button>
-                  <button mat-menu-item [routerLink]="['../team', draftCache[element.pickNumber].owner]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
+                  <button mat-menu-item [routerLink]="['../team', draftCache[element.pickNumber]?.owner]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
                     <span>View Team Page</span>
                   </button>
                 </mat-menu>

@@ -1,23 +1,24 @@
-import {SleeperApiService} from '../../services/api/sleeper/sleeper-api.service';
-import {LeagueService} from '../../services/league.service';
-import {PowerRankingsService} from './power-rankings.service';
-import {PlayerService} from '../../services/player.service';
-import {DraftService} from './draft.service';
-import {MatchupService} from './matchup.service';
-import {PlayoffCalculatorService} from './playoff-calculator.service';
-import {TransactionsService} from './transactions.service';
-import {BehaviorSubject, forkJoin, Observable, Subject} from 'rxjs';
-import {Injectable} from '@angular/core';
-import {BaseComponent} from '../base-component.abstract';
-import {NflService} from '../../services/utilities/nfl.service';
-import {ActivatedRoute, Params, Router} from '@angular/router';
-import {TradeService} from './trade.service';
-import {TradeFinderService} from './trade-finder.service';
-import {MflService} from '../../services/api/mfl/mfl.service';
-import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
-import {LeagueDTO} from '../../model/league/LeagueDTO';
+import { SleeperApiService } from '../../services/api/sleeper/sleeper-api.service';
+import { LeagueService } from '../../services/league.service';
+import { PowerRankingsService } from './power-rankings.service';
+import { PlayerService } from '../../services/player.service';
+import { DraftService } from './draft.service';
+import { MatchupService } from './matchup.service';
+import { PlayoffCalculatorService } from './playoff-calculator.service';
+import { TransactionsService } from './transactions.service';
+import { BehaviorSubject, forkJoin, Observable, Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BaseComponent } from '../base-component.abstract';
+import { NflService } from '../../services/utilities/nfl.service';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { TradeService } from './trade.service';
+import { TradeFinderService } from './trade-finder.service';
+import { MflService } from '../../services/api/mfl/mfl.service';
+import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
+import { LeagueDTO } from '../../model/league/LeagueDTO';
 import { PlayerValueService } from './player-value.service';
 import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
+import { ESPNService } from 'src/app/services/api/espn/espn.service';
 
 @Injectable({
   providedIn: 'root'
@@ -36,21 +37,22 @@ export class LeagueSwitchService extends BaseComponent {
   lastTimeRefreshed: Date;
 
   constructor(private sleeperApiService: SleeperApiService,
-              private mflService: MflService,
-              private fleaflickerService: FleaflickerService,
-              private leagueService: LeagueService,
-              private powerRankingService: PowerRankingsService,
-              private playersService: PlayerService,
-              private tradeService: TradeService,
-              private playerValueService: PlayerValueService,
-              private mockDraftService: DraftService,
-              private matchupService: MatchupService,
-              private nflService: NflService,
-              private playoffCalculatorService: PlayoffCalculatorService,
-              private tradeFinderService: TradeFinderService,
-              private router: Router,
-              private route: ActivatedRoute,
-              private transactionService: TransactionsService) {
+    private mflService: MflService,
+    private fleaflickerService: FleaflickerService,
+    private leagueService: LeagueService,
+    private powerRankingService: PowerRankingsService,
+    private playersService: PlayerService,
+    private tradeService: TradeService,
+    private playerValueService: PlayerValueService,
+    private mockDraftService: DraftService,
+    private matchupService: MatchupService,
+    private nflService: NflService,
+    private espnService: ESPNService,
+    private playoffCalculatorService: PlayoffCalculatorService,
+    private tradeFinderService: TradeFinderService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private transactionService: TransactionsService) {
     super();
   }
 
@@ -71,33 +73,33 @@ export class LeagueSwitchService extends BaseComponent {
     this.transactionService.reset();
     this.tradeService.reset();
     console.time('Fetch League Data');
-    this.addSubscriptions(this.leagueService.loadNewLeague$(this.selectedLeague).subscribe((x) => {
-        this.leagueService.leagueTeamDetails.map((team) => {
-          this.playersService.generateRoster(team, this.selectedLeague.leaguePlatform);
-        });
-        this.matchupService.initMatchUpCharts(
-          this.selectedLeague,
-          this.nflService.getCompletedWeekForSeason(this.selectedLeague.season)
-        ).subscribe(() => {
-          forkJoin([
-            this.powerRankingService.mapPowerRankings(
-              this.leagueService.leagueTeamDetails,
-              this.playersService.playerValues,
-              this.leagueService.selectedLeague.leaguePlatform
-            ),
-            this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
+    this.addSubscriptions(this.leagueService.loadNewLeague$(this.selectedLeague).subscribe(_ => {
+      this.leagueService.leagueTeamDetails.map((team) => {
+        this.playersService.generateRoster(team, this.selectedLeague.leaguePlatform);
+      });
+      this.matchupService.initMatchUpCharts(
+        this.selectedLeague,
+        this.nflService.getCompletedWeekForSeason(this.selectedLeague.season)
+      ).subscribe(() => {
+        forkJoin([
+          this.powerRankingService.mapPowerRankings(
+            this.leagueService.leagueTeamDetails,
+            this.playersService.playerValues,
+            this.leagueService.selectedLeague.leaguePlatform
+          ),
+          this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
             this.leagueService.selectedLeague = this.selectedLeague;
             this.playerValueService.isSuperFlex = this.selectedLeague.isSuperflex;
             this.leagueService.leagueStatus = 'DONE';
-            this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id 
+            this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id
               || this.leagueService.leagueTeamDetails[0]?.owner?.userId;
             console.timeEnd('Fetch League Data');
             this.leagueChanged$.next(this.selectedLeague);
             this.lastTimeRefreshed = new Date();
             this.updateQueryParams();
           });
-        });
-      }
+      });
+    }
     ));
   }
 
@@ -128,9 +130,9 @@ export class LeagueSwitchService extends BaseComponent {
    */
   loadLeagueWithLeagueId(leagueId: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): void {
     this.addSubscriptions(this.getLeagueObservable(leagueId, year, leaguePlatform).subscribe(leagueData => {
-        this.selectedLeague = leagueData;
-        this.loadLeague(this.selectedLeague);
-      })
+      this.selectedLeague = leagueData;
+      this.loadLeague(this.selectedLeague);
+    })
     );
   }
 
@@ -151,6 +153,8 @@ export class LeagueSwitchService extends BaseComponent {
         return this.mflService.loadLeagueFromId$(year, leagueId);
       case LeaguePlatform.FLEAFLICKER.valueOf():
         return this.fleaflickerService.loadLeagueFromId$(year, leagueId);
+      case LeaguePlatform.ESPN.valueOf():
+        return this.espnService.loadLeagueFromId$(year, leagueId);
       default:
         return this.sleeperApiService.getSleeperLeagueByLeagueId(leagueId);
     }
@@ -203,9 +207,9 @@ export class LeagueSwitchService extends BaseComponent {
   updateQueryParams(): void {
     const queryParams = this.buildQueryParams();
     this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams
-      }
+      relativeTo: this.route,
+      queryParams
+    }
     );
   }
 }

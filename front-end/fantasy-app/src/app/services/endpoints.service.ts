@@ -4,6 +4,7 @@ import { SleeperApiConfigService } from './api/sleeper/sleeper-api-config.servic
 import { ConfigApiConfigService } from './api/config/config-api-config.service';
 import { MflApiConfigService } from './api/mfl/mfl-api-config.service';
 import { FleaflickerApiConfigService } from './api/fleaflicker/fleaflicker-api-config.service';
+import { ESPNApiConfigService } from './api/espn/espn-api-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class EndpointsService {
     private sleeperApiConfigService: SleeperApiConfigService,
     private mflAPIConfigService: MflApiConfigService,
     private fleaflickerApiConfigService: FleaflickerApiConfigService,
+    private espnApiConfigService: ESPNApiConfigService,
     private configApiConfigService: ConfigApiConfigService) {
   }
 
@@ -65,5 +67,8 @@ export class EndpointsService {
     this.fleaflickerApiConfigService.getFFTradesEndpoint = this.baseUrl + '/v1/ff/trades';
     this.fleaflickerApiConfigService.getFFDraftResultsEndpoint = this.baseUrl + '/v1/ff/draftResults';
     this.fleaflickerApiConfigService.getUserLeagueEndpoint = this.baseUrl + '/v1/ff/user';
+
+    // ESPN Endpoints
+    this.espnApiConfigService.getESPNLeagueEndpoint = 'https://fantasy.espn.com/apis/v3/games/ffl/seasons/SELECTED_YEAR/segments/0/leagues/LEAGUE_ID?view=mDraftDetail&view=mLiveScoring&view=mMatchupScore&view=mPendingTransactions&view=mPositionalRatings&view=mRoster&view=mSettings&view=mTeam&view=modular&view=mNav'
   }
 }

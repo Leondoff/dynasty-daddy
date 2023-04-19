@@ -85,8 +85,15 @@
     </div>
   </div>
 
-  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming' && mockDraftService.selectedDraft.picks[0].firstName" class="margin-top-25">
+  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming' && mockDraftService.selectedDraft.picks[0].playerId" class="margin-top-25">
     <app-completed-draft-table [selectedDraft]="mockDraftService.selectedDraft" [selectedMarket]="playerService.selectedMarket"></app-completed-draft-table>
+  </div>
+
+  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming' && !mockDraftService.selectedDraft.picks[0].playerId" class="margin-top-25 center-text">
+    <div class="warning__alert">Unable to generate draft recap for {{leagueService.selectedLeague.name}}. Want to create a mock draft?</div>
+    <div class="margin-top-25">
+      <button mat-raised-button color="accent" (click)="createMockDraft()"><mat-icon>format_list_numbered</mat-icon> Create Mock Draft</button>
+    </div>
   </div>
 
 </div>

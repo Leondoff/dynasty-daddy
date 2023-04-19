@@ -9,11 +9,27 @@ Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes
 The goal is to provide users with a frictionless way to see player value, team value, draft breakdowns, and more. When managing my teams I would constantly have to switch between multiple websites to figure out what moves I should make. I wanted to find a way to spend less time doing research and leverage the data in more ways than before. Thus Dynasty Daddy was born to help me beat my friends in fantasy easier!
 
 ### Supported Platforms
-<p float="left">
-<img src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw" alt="Sleeper" title="Sleeper" width="50px">
-<img src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif" alt="MyFantasyLeague" title="MyFantasyLeague" width="50px"/>
-<img src="https://apprecs.org/ios/images/app-icons/256/3a/1259897658.jpg" alt="Fleaflicker" title="Fleaflicker" width="50px"/>
-</p>
+
+| Tool | <img src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw" alt="Sleeper" title="Sleeper" width="50px"> | <img src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif" alt="MyFantasyLeague" title="MyFantasyLeague" width="50px"/> | <img src="https://apprecs.org/ios/images/app-icons/256/3a/1259897658.jpg" alt="Fleaflicker" title="Fleaflicker" width="50px"/> | <img src="https://espnpressroom.com/us/files/2018/03/App-Icon-iOS-mic-flag-cut-to-shape.png" alt="ESPN" title="ESPN" width="50px"/> |
+| --- | --- | --- | --- | --- |
+| Power Rankings | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Playoff Calculator | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Trade Finder | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Standings | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Trade Calculator | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Player Values | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Player Comparison | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Positional Statistics | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Team Pages | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Player Pages | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Mock Draft Tool | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Draft Recap | &#x2714; | &#x2714; | | &#x2714; |
+| Portfolio | &#x2714; | &#x2714; | &#x2714; | |
+| Username Login | &#x2714; | &#x2714; | &#x2714; | |
+| League Id Login | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Transactions | &#x2714; | &#x2714; | &#x2714; | |
+| Future Draft Capital | &#x2714; | &#x2714; | &#x2714; | |
+| Wrapped | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 
 ## Architecture
 

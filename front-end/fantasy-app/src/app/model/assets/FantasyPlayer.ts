@@ -51,6 +51,8 @@ export class FantasyPlayer {
         return this.mfl_id;
       case LeaguePlatform.FLEAFLICKER: 
         return this.ff_id;
+      case LeaguePlatform.ESPN: 
+        return this.espn_id;
       default:
         return this.sleeper_id;
     }

@@ -31,4 +31,12 @@ export class LeagueCompletedPickDTO {
     this.round = Number(pick.round);
     return this;
   }
+
+  fromESPN(pick): LeagueCompletedPickDTO {
+    this.playerId = pick.playerId.toString();
+    this.pickNumber = pick.overallPickNumber;
+    this.rosterId = pick.teamId;
+    this.round = pick.roundId;
+    return this;
+  }
 }

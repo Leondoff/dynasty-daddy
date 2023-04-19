@@ -251,9 +251,9 @@ export class MflService {
       })
       return { leagues, userData, leaguePlatform: LeaguePlatform.MFL }
     }),
-    catchError(error => {
-      return throwError(error);
-    }));
+      catchError(error => {
+        return throwError(error);
+      }));
   }
 
   /**
@@ -389,10 +389,8 @@ export class MflService {
    * @param matchUpId match up id
    */
   private mapTeamMatchUpFromFranchiseScheduleObject(matchUp: any, matchUpId: number): LeagueTeamMatchUpDTO {
-    const newMatchUpData = new LeagueTeamMatchUpDTO(null);
-    newMatchUpData.points = Number(matchUp?.score) || 0;
-    newMatchUpData.matchupId = matchUpId;
-    newMatchUpData.rosterId = this.formatRosterId(matchUp.id);
+    const newMatchUpData = new LeagueTeamMatchUpDTO();
+    newMatchUpData.createMatchUpObject(matchUpId, Number(matchUp?.score) || 0, this.formatRosterId(matchUp.id));
     return newMatchUpData;
   }
 

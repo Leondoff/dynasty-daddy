@@ -138,8 +138,8 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
         owner: this.getOwnerName(pick.rosterId),
         team: this.getTeamName(pick.rosterId),
         player: this.configService.isMobile ?
-          (pick.position || this.leagueService.platformPlayersMap[pick.playerId].position) + ' ' + (pick.lastName || this.leagueService.platformPlayersMap[pick.playerId].full_name) :
-          (pick.position || this.leagueService.platformPlayersMap[pick.playerId].position) + ' ' + (pick.firstName ? (pick.firstName + ' ' + pick.lastName) : this.leagueService.platformPlayersMap[pick.playerId].full_name),
+          (pick?.position || this.leagueService.platformPlayersMap[pick.playerId]?.position || '??') + ' ' + (pick?.lastName || this.leagueService.platformPlayersMap[pick.playerId]?.full_name || 'Unknown') :
+          (pick?.position || this.leagueService.platformPlayersMap[pick.playerId]?.position || '??') + ' ' + (pick?.firstName ? (pick?.firstName + ' ' + pick?.lastName) : this.leagueService.platformPlayersMap[pick.playerId]?.full_name || 'Unknown'),
         value: this.getPlayerByPlayerPlatformId(pick.playerId) ? (this.isSuperFlex ? this.getPlayerByPlayerPlatformId(pick.playerId).sf_trade_value : this.getPlayerByPlayerPlatformId(pick.playerId).trade_value) : 'None',
         nameId: this.getPlayerByPlayerPlatformId(pick.playerId)?.name_id
       }
@@ -224,12 +224,12 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     let fantasyPlayer = this.playerService.getPlayerByPlayerPlatformId(topPick.playerId, this.leagueService.selectedLeague.leaguePlatform);
     for (const pick of this.selectedDraft.picks.slice(1)) {
       const tempPlayer = this.playerService.getPlayerByPlayerPlatformId(pick.playerId, this.leagueService.selectedLeague.leaguePlatform);
-      if (((this.isSuperFlex ? fantasyPlayer?.sf_trade_value : fantasyPlayer?.trade_value) || 0) < ((this.isSuperFlex ? fantasyPlayer?.sf_trade_value : fantasyPlayer?.trade_value) || 0)) {
+      if (((this.isSuperFlex ? fantasyPlayer?.sf_trade_value : fantasyPlayer?.trade_value) || 0) < ((this.isSuperFlex ? tempPlayer?.sf_trade_value : tempPlayer?.trade_value) || 0)) {
         topPick = pick;
         fantasyPlayer = tempPlayer;
       }
     }
-    return 'Pick ' + topPick.pickNumber + ': ' + fantasyPlayer.position + ' - ' + fantasyPlayer.last_name;
+    return 'Pick ' + topPick.pickNumber + ': ' + (fantasyPlayer?.position || '?') + ' - ' + fantasyPlayer.last_name;
   }
 
   /**
@@ -249,7 +249,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
       topPick.playerId,
       this.leagueService.selectedLeague.leaguePlatform
     );
-    return 'Pick ' + topPick.pickNumber + ': ' + fantasyPlayer.position + ' - ' + fantasyPlayer.last_name;
+    return 'Pick ' + topPick.pickNumber + ': ' + (fantasyPlayer?.position || '?') + ' - ' + fantasyPlayer.last_name;
   }
 
   /**
@@ -270,6 +270,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
     const data: number[] = [];
     for (const pick of this.selectedDraft.picks) {
       const player = this.leagueService.platformPlayersMap[pick.playerId];
+      if (!player) continue;
       const index = labels.indexOf(player.position);
       if (index === -1) {
         labels.push(player.position);

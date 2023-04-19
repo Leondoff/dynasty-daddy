@@ -7,6 +7,7 @@ import { CompletedDraft } from '../../model/league/CompletedDraft';
 import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
 import { PlayerService } from 'src/app/services/player.service';
 import { PowerRankingsService } from './power-rankings.service';
+import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -90,7 +91,8 @@ export class DraftService {
         teams.map(team => {
           for (const pick of team.futureDraftCapital) {
             if (pick.year === this.leagueService.selectedLeague.season) {
-              const pickNum = projectedDraftOrder.indexOf(pick.originalRosterId) + 1
+              // fleaflicker sets league picks but other platforms do not
+              const pickNum = this.leagueService.selectedLeague.leaguePlatform === LeaguePlatform.FLEAFLICKER ? pick.pick : projectedDraftOrder.indexOf(pick.originalRosterId) + 1
               this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * projectedDraftOrder.length) + pickNum,
                 this.createPickString(pick.round, pickNum),
                 team.owner?.ownerName,
