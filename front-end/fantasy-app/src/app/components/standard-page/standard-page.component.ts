@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfigService } from 'src/app/services/init/config.service';
+import { LeagueSwitchService } from '../services/league-switch.service';
 
 @Component({
   selector: 'app-standard-page',
@@ -8,7 +9,8 @@ import { ConfigService } from 'src/app/services/init/config.service';
 })
 export class StandardPageComponent implements OnInit {
 
-  constructor(public configService: ConfigService) {
+  constructor(public configService: ConfigService,
+    public leagueSwitchService: LeagueSwitchService) {
   }
 
   ngOnInit(): void {

@@ -1,0 +1,11 @@
+.standard-sidenav-content {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.standard-sidenav {
+    padding: 20px;
+    overflow: hidden;
+}

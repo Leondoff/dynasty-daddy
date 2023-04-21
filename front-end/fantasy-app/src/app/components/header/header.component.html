@@ -3,68 +3,33 @@
     {{configService.headerInfoText}}<span class="button-right" style="cursor: pointer; padding-right: 10px" [ngStyle]="configService.isMobile ? {'font-size': '30px'} : {'font-size': '40px'}"><mat-icon (click)="hasClosedHeader = true">close</mat-icon></span>
     <div><a href="{{configService.headerInfoURL}}" target="_blank" gaEvent="click_header_info" gaCategory="nav_sponsor"><span class="link--text__dot__underline">Click here for more!</span></a></div>
   </div>
-  <mat-toolbar color="primary" *ngIf="!configService.isMobile">
-    <button mat-button [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="header-icon">home</mat-icon> Home</button>
-    <button mat-button [matMenuTriggerFor]="leagueMenu"><mat-icon class="header-icon">people</mat-icon> League</button>
-    <mat-menu #leagueMenu="matMenu">
-      <button mat-menu-item [routerLink]="['./league/rankings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav">Power Rankings</button>
-      <button mat-menu-item [routerLink]="['./league/standings']"  [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav">Standings</button>
-      <button mat-menu-item [routerLink]="['./league/probability']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav">Playoff Calculator</button>
-      <button mat-menu-item [routerLink]="['./league/trade/finder']"  [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav">Trade Finder</button>
-      <button mat-menu-item [routerLink]="['./league/draft']"  [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_draft_center" gaCategory="page_nav">Draft Center</button>
-      <button mat-menu-item [routerLink]="['./league/portfolio']"  [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_portfolio" gaCategory="page_nav">Fantasy Portfolio</button>
-    </mat-menu>
-    <button mat-button [matMenuTriggerFor]="playerMenu"><mat-icon style="font-size: 22px">insights</mat-icon> Players</button>
-    <mat-menu #playerMenu="matMenu">
-      <button mat-menu-item [routerLink]="['./players/values']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav">Player Values</button>
-      <button mat-menu-item [routerLink]="['./players/trade']"  [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav">Trade Calculator</button>
-      <button mat-menu-item [routerLink]="['./players/statistics']"  [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_positional_statistics" gaCategory="page_nav">Positional Statistics</button>
-      <button mat-menu-item [routerLink]="['./players/comparison']"  [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">Value Comparisons</button>
-    </mat-menu>
-    <button mat-button [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-button" gaEvent="nav_wrapped" gaCategory="page_nav" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'"><mat-icon class="header-icon">redeem</mat-icon>Wrapped</button>
-    <span class="spacer"></span>
-    <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League" matTooltipPosition="below" aria-label="Clear" (click)="leagueService.openLeague()">
-      <mat-icon >offline_share</mat-icon>
-    </button>
-    <div *ngIf="leagueService.leagueStatus == 'LOADING'" style="margin-right: 10px">
-      <mat-spinner color="accent" [diameter]="30"></mat-spinner>
-    </div>
-    <div *ngIf="leagueService.leagueStatus == 'LOADING'" style="margin-right: 10px">
-      <mat-spinner color="accent" [diameter]="30"></mat-spinner>
-    </div>
-    <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Synced league data {{leagueSwitchService.getMinutesSinceLastRefresh()}} minute{{leagueSwitchService.getMinutesSinceLastRefresh() === 1 ? '' : 's'}} ago" matTooltipPosition="below" aria-label="Clear" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">
-      <mat-icon>refresh</mat-icon>
-    </button>
-    <button mat-button [routerLink]="['./login']" *ngIf="!leagueService.leagueUser"><mat-icon class="header-icon">group_add</mat-icon> {{leagueService.selectedLeague?.leaguePlatform === 1 ? 'Change League' : 'Select Username'}}</button>
-    <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-      <mat-label>Select a league</mat-label>
-      <mat-select [(ngModel)]="leagueId" (selectionChange)="loadLeagueFromHeader($event.value)">
-        <mat-option *ngFor="let league of leagueService.leagueUser?.leagues;"
-                    [value]="league.leagueId">{{league.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </mat-toolbar>
-  <mat-toolbar color="primary" *ngIf="configService.isMobile">
-    <button mat-icon-button [matMenuTriggerFor]="leagueMenu">
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="toggle()">
       <mat-icon>menu</mat-icon>
     </button>
-    <mat-menu #leagueMenu="matMenu">
-      <button mat-menu-item [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_wrapped" gaCategory="page_nav" class="wrapped-button" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'"><mat-icon class="header-icon">redeem</mat-icon>Wrapped</button>
-      <button mat-menu-item [routerLink]="['./league/rankings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav"><mat-icon class="header-icon">stacked_bar_chart</mat-icon>Power Rankings</button>
-      <button mat-menu-item [routerLink]="['./league/standings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav"><mat-icon class="header-icon">leaderboard</mat-icon>Standings</button>
-      <button mat-menu-item [routerLink]="['./league/probability']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav"><mat-icon class="header-icon">calculate</mat-icon>Playoff Calculator</button>
-      <button mat-menu-item [routerLink]="['./league/trade/finder']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav"><mat-icon class="header-icon">person_search</mat-icon>Trade Finder</button>
-      <button mat-menu-item [routerLink]="['./league/draft']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_draft_center" gaCategory="page_nav"><mat-icon class="header-icon">storage</mat-icon>Draft Center</button>
-      <button mat-menu-item [routerLink]="['./league/portfolio']"  [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_portfolio" gaCategory="page_nav"><mat-icon class="header-icon">account_balance</mat-icon>Fantasy Portfolio</button>
-      <button mat-menu-item [routerLink]="['./players/values']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav"><mat-icon class="header-icon">trending_up</mat-icon>Player Values</button>
-      <button mat-menu-item [routerLink]="['./players/trade']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav"><mat-icon class="header-icon">compare_arrows</mat-icon>Trade Calculator</button>
-      <button mat-menu-item [routerLink]="['./players/statistics']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_positional_statistics" gaCategory="page_nav"><mat-icon class="header-icon">topic</mat-icon>Positional Statistics</button>
-      <button mat-menu-item [routerLink]="['./players/comparison']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav"><mat-icon class="header-icon">insights</mat-icon>Value Comparisons</button>
-    </mat-menu>
-    <span>Dynasty Daddy</span>
+    <span style="cursor: pointer" (click)="toggle()">Dynasty Daddy</span>
     <span class="spacer"></span>
-    <button mat-icon-button class="header-icon" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"  gaEvent="nav_home_page" gaCategory="page_nav">
-      <mat-icon>group_add</mat-icon>
-    </button>
+    <ng-container *ngIf="!configService.isMobile">
+      <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League" matTooltipPosition="below" aria-label="Clear" (click)="leagueService.openLeague()">
+        <mat-icon >offline_share</mat-icon>
+      </button>
+      <div *ngIf="leagueService.leagueStatus == 'LOADING'" style="margin-right: 10px">
+        <mat-spinner color="accent" [diameter]="30"></mat-spinner>
+      </div>
+      <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Synced league data {{leagueSwitchService.getMinutesSinceLastRefresh()}} minute{{leagueSwitchService.getMinutesSinceLastRefresh() === 1 ? '' : 's'}} ago" matTooltipPosition="below" aria-label="Clear" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <div *ngIf="leagueService.leagueStatus == 'LOADING'" style="margin-right: 10px">
+        <mat-spinner color="accent" [diameter]="30"></mat-spinner>
+      </div>
+      <button mat-button [routerLink]="['./login']" *ngIf="!leagueService.leagueUser"><mat-icon class="header-icon">group_add</mat-icon> {{leagueService.selectedLeague?.leaguePlatform === 1 ? 'Change League' : 'Select Username'}}</button>
+      <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+        <mat-label>Select a league</mat-label>
+        <mat-select [(ngModel)]="leagueId" (selectionChange)="loadLeagueFromHeader($event.value)">
+          <mat-option *ngFor="let league of leagueService.leagueUser?.leagues;"
+                      [value]="league.leagueId">{{league.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
   </mat-toolbar>
 </div>

@@ -1,9 +1,18 @@
-<div class="main">
-  <app-header></app-header>
-  <div [ngClass]="{'content-wrapper': !configService.isMobile, 'content-wrapper__mobile': configService.isMobile}">
-    <router-outlet></router-outlet>
-  </div>
-</div>
-<div class="footer">
-  <app-footer></app-footer>
-</div>
+<app-header (toggleMenu)="drawer.toggle()"></app-header>
+<mat-drawer-container autosize style="min-height: 100%">
+  <mat-drawer #drawer class="standard-sidenav" mode="side">
+    <app-sidebar (toggleMenu)="drawer.toggle()"></app-sidebar>
+  </mat-drawer>
+
+  <mat-drawer-content style="overflow: hidden;">
+    <div class="main">
+      <div [ngClass]="{'content-wrapper': !configService.isMobile, 'content-wrapper__mobile': configService.isMobile}">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+    <div class="footer">
+      <app-footer></app-footer>
+    </div>
+  </mat-drawer-content>
+
+</mat-drawer-container>

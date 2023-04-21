@@ -1,6 +1,6 @@
 {
   "name": "dynasty-daddy-api",
-  "version": "1.7.0",
+  "version": "1.9.0",
   "private": true,
   "scripts": {
     "prestart": "babel ./src --out-dir build",
