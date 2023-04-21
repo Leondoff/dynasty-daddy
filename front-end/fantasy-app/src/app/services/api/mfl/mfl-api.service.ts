@@ -17,8 +17,8 @@ export class MflApiService {
   /**
    * fetches all config options for application
    */
-  getMFLLeague(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLLeagueEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getMFLLeague(year: string, leagueId: string, mflUserId?: string): Observable<any> {
+    return this.http.get<any>(this.mflApiConfigService.getMFLLeagueEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
       (league: any) => {
         return league;
       }
@@ -30,8 +30,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLRosters(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLRostersEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getMFLRosters(year: string, leagueId: string, mflUserId?: string): Observable<any> {
+    return this.http.get<any>(this.mflApiConfigService.getMFLRostersEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
       (roster: any) => {
         return roster;
       }
@@ -43,8 +43,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLSchedules(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLScheduleEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getMFLSchedules(year: string, leagueId: string, mflUserId?: string): Observable<any> {
+    return this.http.get<any>(this.mflApiConfigService.getMFLScheduleEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
       (schedules: any) => {
         return schedules;
       }
@@ -56,8 +56,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLTransactions(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLTransactionsEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getMFLTransactions(year: string, leagueId: string, mflUserId?: string): Observable<any> {
+    return this.http.get<any>(this.mflApiConfigService.getMFLTransactionsEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
       (transactions: any) => {
         return transactions;
       }
@@ -69,8 +69,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLDraftResults(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLDraftResultsEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getMFLDraftResults(year: string, leagueId: string, mflUserId?: string): Observable<any> {
+    return this.http.get<any>(this.mflApiConfigService.getMFLDraftResultsEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
       (draftResults: any) => {
         return draftResults;
       }
@@ -98,8 +98,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLFutureDraftPicks(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLFutureDraftPicksEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getMFLFutureDraftPicks(year: string, leagueId: string, mflUserId?: string): Observable<any> {
+    return this.http.get<any>(this.mflApiConfigService.getMFLFutureDraftPicksEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
       (futures: any) => {
         return futures;
       }
@@ -111,8 +111,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLLeagueStandings(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLLeagueStandingEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getMFLLeagueStandings(year: string, leagueId: string, mflUserId?: string): Observable<any> {
+    return this.http.get<any>(this.mflApiConfigService.getMFLLeagueStandingEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
       (standings: any) => {
         return standings;
       }
