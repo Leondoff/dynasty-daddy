@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { LeagueService } from '../../services/league.service';
 import { BaseComponent } from '../base-component.abstract';
 import { ConfigService } from '../../services/init/config.service';
@@ -11,6 +11,9 @@ import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent extends BaseComponent implements OnInit {
+
+  @Output()
+  toggleMenu: EventEmitter<any> = new EventEmitter<any>();
 
   hasClosedHeader: boolean = false;
 
@@ -37,4 +40,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     }
   }
 
+  toggle() {
+      this.toggleMenu.emit();
+  }
 }

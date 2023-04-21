@@ -101,12 +101,16 @@ import { PlayerQueryBuilderComponent } from './components/sub-components/player-
 import { FilterPlayerValuesModalComponent } from './components/modals/filter-player-values-modal/filter-player-values-modal.component';
 import { FantasyMarketDropdown } from './components/sub-components/fantasy-market-dropdown/fantasy-market-dropdown.component';
 import { CommonModule } from '@angular/common';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { PlayerDetailsProfileComponent } from './components/player-details/player-details-profile/player-details-profile.component';
 import { FantasyPortfolioComponent } from './components/fantasy-portfolio/fantasy-portfolio.component';
 import { FantasyPortfolioTableComponent } from './components/fantasy-portfolio/fantasy-portfolio-table/fantasy-portfolio-table.component';
 import { FantasyPortfolioChartComponent } from './components/fantasy-portfolio/fantasy-portfolio-chart/fantasy-portfolio-chart.component';
 import { LeagueLoginModalComponent } from './components/modals/league-login-modal/league-login-modal.component';
 import { MatCarouselModule } from '@thouet/material-carousel';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -164,6 +168,7 @@ let UniversalDeviceDetectorService;
     TradeFinderCardComponent,
     TeamTiersChartComponent,
     EloTeamComparisonModalComponent,
+    SidebarComponent,
     EditLeagueSettingsModalComponent,
     FilterPlayerValuesModalComponent,
     FantasyMarketDropdown,
@@ -197,6 +202,9 @@ let UniversalDeviceDetectorService;
     MatIconModule,
     MatButtonModule,
     MatTableModule,
+    MatSidenavModule,
+    MatListModule,
+    MatExpansionModule,
     MatPaginatorModule,
     MatSortModule,
     MatBadgeModule,

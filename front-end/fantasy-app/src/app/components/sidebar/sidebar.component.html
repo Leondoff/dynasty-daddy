@@ -1,0 +1,54 @@
+<mat-nav-list>
+  <mat-list-item [routerLink]="['./home']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()">
+    <mat-icon>home</mat-icon><span> Home</span>
+  </mat-list-item>
+  <mat-list-item [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-button" gaEvent="nav_wrapped" gaCategory="page_nav" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'">
+    <mat-icon class="header-icon">redeem</mat-icon><span> Wrapped</span>
+  </mat-list-item>
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true">
+      <mat-expansion-panel-header>
+          League Tools
+      </mat-expansion-panel-header>
+      <mat-nav-list>
+        <a mat-list-item [routerLink]="['./league/rankings']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav">
+          <mat-icon>stacked_bar_chart</mat-icon>Power Rankings</a>
+        <a mat-list-item [routerLink]="['./league/standings']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav">
+          <mat-icon>leaderboard</mat-icon>Standings</a>
+        <a mat-list-item [routerLink]="['./league/probability']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav">
+          <mat-icon>calculate</mat-icon>Playoff Calculator</a>
+        <a mat-list-item [routerLink]="['./league/trade/finder']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav">
+          <mat-icon>person_search</mat-icon>Trade Finder</a>
+        <a mat-list-item [routerLink]="['./league/draft']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_draft_center" gaCategory="page_nav">
+          <mat-icon>storage</mat-icon>Draft Center</a>
+        <a mat-list-item [routerLink]="['./league/portfolio']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_portfolio" gaCategory="page_nav">
+          <mat-icon>account_balance</mat-icon>Fantasy Portfolio</a>
+      </mat-nav-list>
+  </mat-expansion-panel>
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true">
+      <mat-expansion-panel-header>
+          Player Tools
+      </mat-expansion-panel-header>
+      <mat-nav-list>
+          <a mat-list-item [routerLink]="['./players/values']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav">
+            <mat-icon>trending_up</mat-icon>Player Rankings</a>
+          <a mat-list-item [routerLink]="['./players/trade']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav">
+            <mat-icon>compare_arrows</mat-icon>Trade Calculator</a>
+          <a mat-list-item [routerLink]="['./players/statistics']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_positional_statistics" gaCategory="page_nav">
+            <mat-icon>topic</mat-icon>Positional Statistics</a>
+          <a mat-list-item [routerLink]="['./players/comparison']" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">
+            <mat-icon>insights</mat-icon>Value Comparisons</a>
+      </mat-nav-list>
+  </mat-expansion-panel>
+  <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">
+    <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent"></mat-progress-bar>
+  </mat-list-item>
+  <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">
+    <mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar>
+  </mat-list-item>
+  <mat-list-item *ngIf="leagueService.isLeagueLoaded()" (click)="leagueService.openLeague()" [queryParams]="leagueSwitchService.buildQueryParams()">
+    <mat-icon >offline_share</mat-icon><span> Open League</span>
+  </mat-list-item>
+  <mat-list-item *ngIf="leagueService.isLeagueLoaded()" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)" [queryParams]="leagueSwitchService.buildQueryParams()">
+    <mat-icon>refresh</mat-icon><span> Refresh League</span>
+  </mat-list-item>
+</mat-nav-list>
