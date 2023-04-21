@@ -31,7 +31,7 @@ export class LeagueRawDraftOrderDTO {
   playerType: number;
 
   fromMFL(draft: any, playerType: string, rounds: number): LeagueRawDraftOrderDTO {
-    const teamDraftOrderIds = draft.round1DraftOrder.split(',').filter(it => it !== '');
+    const teamDraftOrderIds = draft?.round1DraftOrder.split(',').filter(it => it !== '') || [];
     const rosterIdMap = {};
     teamDraftOrderIds.forEach(team => rosterIdMap[team] = Number(team.substr(team.length - 2)));
     this.draftOrder = rosterIdMap;

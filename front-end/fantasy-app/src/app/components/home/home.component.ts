@@ -74,7 +74,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     private route: ActivatedRoute,
     private mflService: MflService,
     private espnService: ESPNService,
-    private mflApiService: MflApiService,
     private dialog: MatDialog,
     private fleaflickerService: FleaflickerService,
     public leagueSwitchService: LeagueSwitchService) {
@@ -115,6 +114,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
       switch (this.leagueService.selectedLeague.leaguePlatform) {
         case LeaguePlatform.MFL:
           this.mflLeagueIdInput = this.leagueService.selectedLeague.leagueId;
+          this.mflUsernameInput = this.leagueService.leagueUser?.userData?.username || '';
           break;
         case LeaguePlatform.ESPN:
           this.espnLeagueId = this.leagueService.selectedLeague.leagueId;
@@ -203,8 +203,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * @param demoId string of demo league id
    */
   loginWithSleeperLeagueId(demoId?: string): void {
-    this.usernameInput = '';
-    this.leagueService.leagueUser = null;
     this.sleeperApiService.getSleeperLeagueByLeagueId(demoId || this.sleeperLeagueIdInput).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(leagueData);
     });
@@ -263,8 +261,8 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * handles logging in with mfl league id
    */
   loginWithMFLLeagueId(year?: string, leagueId?: string): void {
-    this.mflApiService.getMFLLeague(year || this.selectedYear, leagueId || this.mflLeagueIdInput).subscribe(leagueData => {
-      this.leagueSwitchService.loadLeague(this.mflService.fromMFLLeague(leagueData.league, year || this.selectedYear));
+    this.mflService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.mflLeagueIdInput).subscribe(leagueData => {
+      this.leagueSwitchService.loadLeague(leagueData);
     });
   }
 
