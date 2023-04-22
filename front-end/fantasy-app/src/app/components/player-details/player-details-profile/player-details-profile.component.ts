@@ -60,6 +60,10 @@ export class PlayerDetailsProfileComponent implements OnInit {
     this.generateRadarData();
   }
 
+  ngOnChanges(): void {
+    this.generateRadarData();
+  }
+
   generateRadarData(): void {
     this.radarDataSet = [];
     const radarMetrics = [...this.playerProfile?.profile_json?.profile?.college_metrics || [], ...this.playerProfile?.profile_json?.profile?.workout_metrics || []].filter(it => it.value && it.value != '' && it.value != '-');
