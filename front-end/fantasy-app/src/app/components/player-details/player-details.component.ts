@@ -3,7 +3,7 @@ import { PlayerService } from '../../services/player.service';
 import { BaseComponent } from '../base-component.abstract';
 import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../../model/assets/FantasyPlayer';
 import { FantasyPlayerApiService } from '../../services/api/fantasy-player-api.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { LeagueService } from '../../services/league.service';
 import { PlayerComparisonService } from '../services/player-comparison.service';
 import { ConfigService } from '../../services/init/config.service';
@@ -40,6 +40,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
     private route: ActivatedRoute,
     public leagueService: LeagueService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private playerComparisonService: PlayerComparisonService,
     public leagueSwitchService: LeagueSwitchService,
     public configService: ConfigService) {
@@ -47,30 +48,32 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const nameId = this.route.snapshot.paramMap.get('playerNameId');
-    this.playersLoaded = (this.playerService.playerValues.length > 0);
-    if (this.playersLoaded) {
-      this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
-      this.selectedPlayerInsights = this.playerService.getPlayerInsights(this.selectedPlayer,
-        this.leagueService?.selectedLeague?.isSuperflex);
-    }
-    if (this.playerService.playerValues.length === 0) {
-      this.playerService.loadPlayerValuesForToday();
-    }
-    this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
-      this.playersLoaded = true;
-      this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
-    }),
-      this.fantasyPlayerApiService.getPlayerDetailsByNameId(nameId).subscribe((data) => {
-        this.historicalTradeValue = data.historicalData;
-        this.playerProfile = data.profile[0]
-        this.profileUpdatedDate = data.profile[0]?.last_updated?.substring(0,10);
+    this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      const nameId = params.get('playerNameId');
+      this.playersLoaded = (this.playerService.playerValues.length > 0);
+      if (this.playersLoaded) {
+        this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
+        this.selectedPlayerInsights = this.playerService.getPlayerInsights(this.selectedPlayer,
+          this.leagueService?.selectedLeague?.isSuperflex);
       }
-      ),
-      this.route.queryParams.subscribe(params => {
-        this.leagueSwitchService.loadFromQueryParams(params);
-      })
-    );
+      if (this.playerService.playerValues.length === 0) {
+        this.playerService.loadPlayerValuesForToday();
+      }
+      this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
+        this.playersLoaded = true;
+        this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
+      }),
+        this.fantasyPlayerApiService.getPlayerDetailsByNameId(nameId).subscribe((data) => {
+          this.historicalTradeValue = data.historicalData;
+          this.playerProfile = data.profile[0]
+          this.profileUpdatedDate = data.profile[0]?.last_updated?.substring(0,10);
+        }
+        ),
+        this.route.queryParams.subscribe(params => {
+          this.leagueSwitchService.loadFromQueryParams(params);
+        })
+      );
+  });
   }
 
   /**
