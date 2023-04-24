@@ -95,23 +95,38 @@
       <div class="mid-bold-text center-text">Current Contract</div>
       <div class="insight__row">
         <div class="text__light">Contract Expiration</div>
-        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.free_agent || '-'}}</div>
+        <div class="mid-bold-text">
+          <span *ngIf="playerProfile">{{playerProfile.profile_json?.contract?.free_agent || '-'}}</span>
+          <span *ngIf="!playerProfile"><mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar></span>
+        </div>
       </div>
       <div class="insight__row">
         <div class="text__light">Fully Guaranteed</div>
-        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.guaranteed_fully || '-'}}</div>
+        <div class="mid-bold-text">
+          <span *ngIf="playerProfile">{{playerProfile.profile_json?.contract?.guaranteed_fully || '-'}}</span>
+          <span *ngIf="!playerProfile"><mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar></span>
+        </div>
       </div>
       <div class="insight__row">
         <div class="text__light">Total Guaranteed</div>
-        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.guaranteed_free || '-'}}</div>
+        <div class="mid-bold-text">
+          <span *ngIf="playerProfile">{{playerProfile.profile_json?.contract?.guaranteed_free || '-'}}</span>
+          <span *ngIf="!playerProfile"><mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar></span>
+        </div>
       </div>
       <div class="insight__row">
         <div class="text__light">Per Year Salary</div>
-        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.per_year || '-'}}</div>
+        <div class="mid-bold-text">
+          <span *ngIf="playerProfile">{{playerProfile.profile_json?.contract?.per_year || '-'}}</span>
+          <span *ngIf="!playerProfile"><mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar></span>
+        </div>
       </div>
       <div class="insight__row">
         <div class="mid-bold-text">Total</div>
-        <div class="mid-bold-text">{{playerProfile?.profile_json?.contract?.total || '-'}}</div>
+        <div class="mid-bold-text">
+          <span *ngIf="playerProfile">{{playerProfile.profile_json?.contract?.total || '-'}}</span>
+          <span *ngIf="!playerProfile"><mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar></span>
+        </div>
       </div>
     </mat-card>
   </div>

@@ -1,6 +1,6 @@
 <app-header (toggleMenu)="drawer.toggle()"></app-header>
 <mat-drawer-container autosize style="min-height: 100%">
-  <mat-drawer #drawer class="standard-sidenav" mode="side">
+  <mat-drawer #drawer class="standard-sidenav" mode="{{configService.isMobile ? 'over' : 'side'}}">
     <app-sidebar (toggleMenu)="drawer.toggle()"></app-sidebar>
   </mat-drawer>
 

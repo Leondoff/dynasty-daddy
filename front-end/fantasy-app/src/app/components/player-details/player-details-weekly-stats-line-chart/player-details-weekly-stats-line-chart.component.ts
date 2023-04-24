@@ -106,6 +106,7 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
   }
 
   ngOnChanges(): void {
+    this.generateDataSets();
     this.cachePlayerData();
   }
 
