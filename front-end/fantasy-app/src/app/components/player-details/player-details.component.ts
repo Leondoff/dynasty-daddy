@@ -9,6 +9,7 @@ import { PlayerComparisonService } from '../services/player-comparison.service';
 import { ConfigService } from '../../services/init/config.service';
 import { PlayerInsights } from '../model/playerInsights';
 import { LeagueSwitchService } from '../services/league-switch.service';
+import { Status } from '../model/status';
 
 @Component({
   selector: 'app-player-details',
@@ -35,6 +36,9 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
   /** Player Profile updated date */
   profileUpdatedDate: string = '';
 
+  /** name id url param for player to load */
+  NAME_ID_URL_PARAM: string = 'playerNameId';
+
   constructor(public playerService: PlayerService,
     private fantasyPlayerApiService: FantasyPlayerApiService,
     private route: ActivatedRoute,
@@ -49,7 +53,10 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
-      const nameId = params.get('playerNameId');
+      this.historicalTradeValue = null;
+      this.playerProfile = null;
+      this.profileUpdatedDate = null;
+      const nameId = params.get(this.NAME_ID_URL_PARAM);
       this.playersLoaded = (this.playerService.playerValues.length > 0);
       if (this.playersLoaded) {
         this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);

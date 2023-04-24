@@ -361,7 +361,6 @@ app-root,
 .footer {
   display: flex;
   flex: 1 1 auto;
-  /* 1 */
   position: relative;
   flex-direction: column;
   min-width: 1px;
@@ -369,8 +368,8 @@ app-root,
   margin: auto;
   z-index: 1;
   width: 100%;
-  /* 2 */
   text-align: left;
+  margin-bottom: 15px;
 }
 
 .games-container {

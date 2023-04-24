@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, OnChanges} from '@angular/core';
 import {FantasyPlayer} from '../../../model/assets/FantasyPlayer';
 import {PlayerService} from '../../../services/player.service';
 import {MatTableDataSource} from '@angular/material/table';
@@ -88,6 +88,20 @@ export class PlayerDetailsWeeklyBoxScoresTableComponent implements OnInit {
   constructor(public playerService: PlayerService, public leagueService: LeagueService) { }
 
   ngOnInit(): void {
+    // this.refreshBoxScores();
+  }
+
+  ngOnChanges(): void {
+    this.refreshBoxScores();
+  }
+
+  /**
+   * Helper to encapsulate all box score set up
+   */
+  private refreshBoxScores(): void {
+    this.playerWeeklyStats = [];
+    this.doughnutChartData = [];
+    this.doughnutChartLabels = [];
     this.setDisplayColumns();
     for (let i = 1; i < 19; i++) {
       const weekStats = this.playerService.pastSeasonWeeklyStats[i];
@@ -105,6 +119,7 @@ export class PlayerDetailsWeeklyBoxScoresTableComponent implements OnInit {
    * @private
    */
   private setDisplayColumns(): void {
+    this.displayedColumns = [];
     switch (this.selectedPlayer.position){
       case 'QB':
         this.displayedColumns = this.displayedColumns.concat(
