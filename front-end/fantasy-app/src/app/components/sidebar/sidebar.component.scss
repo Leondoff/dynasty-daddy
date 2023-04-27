@@ -1,3 +1,7 @@
+@use '@angular/material' as mat;
+
+@import "../../../styles.scss";
+
 .player-item-container {
   display: flex;
   justify-content: space-between;
@@ -13,8 +17,18 @@
 
 .sidebar-search {
   display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 0 24px;
-    border-radius: inherit;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24px;
+  border-radius: inherit;
+}
+
+.player-trend-active {
+  color: #ffffff;
+  font-weight: bolder;
+}
+
+.player-trending-header {
+  color: mat.get-color-from-palette($mat-dark-theme-foreground, disabled-text) !important;
+  background-color: mat.get-color-from-palette($mat-dark-theme-background, disabled-button-toggle) !important;
 }
