@@ -226,6 +226,7 @@ $altTheme: (
   @include mat.all-component-themes($altTheme);
 }
 
+// scroll bar override
 *::-webkit-scrollbar {
   width: 0.5em;
 	background-color: #1d1d28;

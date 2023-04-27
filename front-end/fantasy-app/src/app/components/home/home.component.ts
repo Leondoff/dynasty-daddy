@@ -66,7 +66,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   /** ESPN league id string */
   espnLeagueId: string = '';
 
-
   constructor(private sleeperApiService: SleeperApiService,
     public leagueService: LeagueService,
     private playersService: PlayerService,

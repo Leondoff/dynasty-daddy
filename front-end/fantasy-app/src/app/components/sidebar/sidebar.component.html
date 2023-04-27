@@ -61,17 +61,17 @@
 </mat-expansion-panel>
   <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="false" *ngIf="searchVal == ''">
     <mat-expansion-panel-header>
-        Trending Players
+      Trending Players
     </mat-expansion-panel-header>
     <mat-nav-list>
-      <a mat-list-item [disabled]="true">
-        <mat-icon>trending_up</mat-icon>Rising Players</a>
+      <a mat-list-item (click)="formatTrendingPlayers(!isTrendingByNumber)" style="cursor: pointer;" class="player-trending-header">
+        <mat-icon>trending_up</mat-icon>Rising Players <span class="player-item-right"><span [ngClass]="{'player-trend-active': isTrendingByNumber}">#</span> | <span [ngClass]="{'player-trend-active': !isTrendingByNumber}">%</span></span></a>
         <a mat-list-item *ngFor="let player of risingPlayers" [routerLink]="['./players/details', player.name_id]" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav" class="player-item-container">
-          <span class="player-item-left">{{player.position}} • {{player.first_name.substring(0,1)}}. {{player.last_name}}</span><span class="player-item-right success__alert">+{{this.isSuperflex ? player.sf_change: player.standard_change}}%</span></a>
-        <a mat-list-item [disabled]="true">
-          <mat-icon>trending_down</mat-icon>Falling Players</a>
+          <span class="player-item-left">{{player.position}} • {{player.first_name.substring(0,1)}}. {{player.last_name}}</span><span class="player-item-right success__alert">+{{getTrendingValue(player)}}</span></a>
+        <a mat-list-item (click)="formatTrendingPlayers(!isTrendingByNumber)" style="cursor: pointer;" class="player-trending-header">
+        <mat-icon>trending_down</mat-icon>Falling Players <span class="player-item-right"><span [ngClass]="{'player-trend-active': isTrendingByNumber}">#</span> | <span [ngClass]="{'player-trend-active': !isTrendingByNumber}">%</span></span></a>
         <a mat-list-item *ngFor="let player of fallingPlayers" [routerLink]="['./players/details', player.name_id]" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav" class="player-item-container">
-          <span class="player-item-left">{{player.position}} • {{player.first_name.substring(0,1)}}. {{player.last_name}}</span><span class="player-item-right warning__alert">{{this.isSuperflex ? player.sf_change: player.standard_change}}%</span></a>
+          <span class="player-item-left">{{player.position}} • {{player.first_name.substring(0,1)}}. {{player.last_name}}</span><span class="player-item-right warning__alert">{{getTrendingValue(player)}}</span></a>
     </mat-nav-list>
 </mat-expansion-panel>
 <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="searchVal != '' && filteredPlayers.length > 0">
@@ -95,7 +95,16 @@
   <mat-list-item *ngIf="leagueService.isLeagueLoaded() && (searchVal == '' || isInSearch('Refresh League'))" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-icon>refresh</mat-icon><span> Refresh League</span>
   </mat-list-item>
-  <mat-list-item *ngIf="searchVal == '' || isInSearch('Roster Review')" (click)="goToRosterReview()" gaEvent="click_roster_review" gaCategory="nav_sponsor">
+  <mat-list-item *ngIf="searchVal == '' || isInSearch('Roster Review')" (click)="openUrl()" gaEvent="click_roster_review" gaCategory="nav_sponsor">
     <mat-icon>paid</mat-icon><span> Roster Review</span>
   </mat-list-item>
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="searchVal != '' ? true : false" *ngIf="filteredCreators.length > 0">
+    <mat-expansion-panel-header>
+        Preferred Creators
+    </mat-expansion-panel-header>
+    <mat-nav-list>
+        <a mat-list-item *ngFor="let creator of filteredCreators" (click)="openUrl(creator.url)" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav" class="player-item-container">
+          <mat-icon>podcasts</mat-icon><span>{{creator.alt}}</span></a>
+    </mat-nav-list>
+  </mat-expansion-panel>
 </mat-nav-list>
