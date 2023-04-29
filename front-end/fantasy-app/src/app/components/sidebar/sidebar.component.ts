@@ -35,10 +35,13 @@ export class SidebarComponent extends BaseComponent implements OnInit {
   /** filtered teams for sidebar */
   filteredTeams: LeagueTeam[] = [];
 
+  /** roster review link */
   ROSTER_REVIEW_LINK: string = 'https://forms.gle/7Uud44CMJbccrjAw7';
 
+  /** preferred creators that show up in the side bar */
   filteredCreators: any[] = [];
 
+  /** is the trending tab by number */
   isTrendingByNumber: boolean = true;
 
   constructor(public leagueService: LeagueService,
@@ -50,10 +53,10 @@ export class SidebarComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.addSubscriptions(this.playerService.playerValuesUpdated$.subscribe(() => {
-      this.formatTrendingPlayers();
+      this.formatTrendingPlayers(this.isTrendingByNumber);
     }),
       this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
-        this.formatTrendingPlayers();
+        this.formatTrendingPlayers(this.isTrendingByNumber);
         this.filterSidebarResults();
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(() => {
