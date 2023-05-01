@@ -4,13 +4,14 @@ from Constants import playerExceptionsMap
 
 # format pick to be a string
 # this is needed to align with name id format
+# TODO verify if the format change is permanent
 def formatFantasyCalcCurrentYearPick(pick):
-    if 'Pick 3' in pick['player']['name']:
-        return [pick['player']['name'][0 : 4] + 'early' + PlayerService.formatPickNumber(pick['player']['name'][11]) + 'pi']
-    elif 'Pick 6' in pick['player']['name']:
-        return [pick['player']['name'][0 : 4] + 'mid' + PlayerService.formatPickNumber(pick['player']['name'][11]) + 'pi']
-    elif 'Pick 10' in pick['player']['name']:
-        return [pick['player']['name'][0 : 4] + 'late' + PlayerService.formatPickNumber(pick['player']['name'][11]) + 'pi']
+    if '.03' in pick['player']['name']:
+        return [pick['player']['name'][0 : 4] + 'early' + PlayerService.formatPickNumber(pick['player']['name'][10]) + 'pi']
+    elif '.06' in pick['player']['name']:
+        return [pick['player']['name'][0 : 4] + 'mid' + PlayerService.formatPickNumber(pick['player']['name'][10]) + 'pi']
+    elif '.10' in pick['player']['name']:
+        return [pick['player']['name'][0 : 4] + 'late' + PlayerService.formatPickNumber(pick['player']['name'][10]) + 'pi']
     else:
         return ['none']
         
