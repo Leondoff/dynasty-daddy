@@ -68,7 +68,7 @@ export class PlayerValueService {
      * Resets player value service metrics when signing into a new league
      * @param isSuperFlex is default superflex
      */
-    reset(isSuperFlex: boolean): void {
+    reset(isSuperFlex: boolean = true): void {
         this.showFreeAgents = false;
         this.showRookies = false;
         this.filterPosGroup = [true, true, true, true, true];
