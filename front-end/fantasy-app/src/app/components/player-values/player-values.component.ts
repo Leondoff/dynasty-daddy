@@ -92,7 +92,7 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
         playerValues[market] = values[market];
       }
       const playerData: any[][] = []
-      playerData.push([`Player Values for ${new Date().toISOString().slice(0, 10)} - ${this.playerValueService.isSuperFlex ? 'Superflex' : 'Standard (1 QB)'}`]);
+      playerData.push([`Player Values for ${new Date().toISOString().slice(0, 10)} - ${this.playerValueService?.isSuperFlex ? 'Superflex' : 'Standard (1 QB)'}`]);
       const filterRow = ['Filters'];
       let postionGroupString = '';
       if (this.playerValueService.filterPosGroup[0]) postionGroupString += 'QB '
@@ -112,22 +112,22 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
       this.playerValueService.filteredPlayers.forEach((player, ind) => {
         const playerRow = [player?.full_name, player?.position, player?.age, player?.owner?.ownerName,
         player?.avg_adp > 0 ? player?.avg_adp : '',
-        this.leagueService.selectedLeague.isSuperflex ?
+        this.playerValueService?.isSuperFlex ?
           playerValues[0][player?.name_id]?.sf_trade_value || 0 :
           playerValues[0][player?.name_id]?.trade_value || 0,
-        this.leagueService.selectedLeague.isSuperflex ?
+        this.playerValueService?.isSuperFlex ?
           playerValues[0][player?.name_id]?.sf_change || 0 :
           playerValues[0][player?.name_id]?.standard_change || 0,
-        this.leagueService.selectedLeague.isSuperflex ?
+        this.playerValueService?.isSuperFlex ?
           playerValues[1][player?.name_id]?.sf_trade_value || 0 :
           playerValues[1][player?.name_id]?.trade_value || 0,
-        this.leagueService.selectedLeague.isSuperflex ?
+        this.playerValueService?.isSuperFlex ?
           playerValues[1][player?.name_id]?.sf_change || 0 :
           playerValues[1][player?.name_id]?.standard_change || 0,
-        this.leagueService.selectedLeague.isSuperflex ?
+        this.playerValueService?.isSuperFlex ?
           playerValues[2][player?.name_id]?.sf_trade_value || 0 :
           playerValues[2][player?.name_id]?.trade_value || 0,
-        this.leagueService.selectedLeague.isSuperflex ?
+        this.playerValueService?.isSuperFlex ?
           playerValues[2][player?.name_id]?.sf_change || 0 :
           playerValues[2][player?.name_id]?.standard_change || 0
         ];
