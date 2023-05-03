@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
-import { map, mergeMap, concatMap, delay, catchError, retry } from 'rxjs/operators';
+import { map, mergeMap, concatMap, delay, catchError, retry, tap } from 'rxjs/operators';
 import { SleeperApiService } from './sleeper-api.service';
 import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
 import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
@@ -139,23 +139,31 @@ export class SleeperService {
             league.leagueTeamDetails.push(new LeagueTeam(owner, roster));
           });
           return this.sleeperApiService.getSleeperDraftbyLeagueId(league.selectedLeague.leagueId)
-            .pipe(mergeMap((draftIds: string[]) => {
-              draftIds.map((draftId: string) => {
-                return this.loadDrafts$(draftId, league).subscribe(league => {
-                  league.leagueTeamDetails.forEach(team => {
-                    team.upcomingDraftOrder.forEach(pick => {
-                      const ind = team.futureDraftCapital.findIndex(p => p.pick === 6 && p.round === pick.round && p.year === pick.year);
-                      if(ind >= 0){
-                        team.futureDraftCapital[ind].pick = pick.pick;
-                        pick.originalRosterId = team.futureDraftCapital[ind].originalRosterId;
-                      }
-                    });
-                  });
-                });
-              }
-              );
-              return this.generateFutureDraftCapital$(league);
-            }));
+  .pipe(
+    mergeMap((draftIds: string[]) => {
+      const draftObservables = draftIds.map((draftId: string) => {
+        return this.loadDrafts$(draftId, league);
+      });
+
+      return forkJoin(draftObservables).pipe(
+        tap((leagues: LeagueWrapper[]) => {
+          leagues.forEach((league: LeagueWrapper) => {
+            league.leagueTeamDetails.forEach(team => {
+              team.upcomingDraftOrder.forEach(pick => {
+                const ind = team.futureDraftCapital.findIndex(p => p.pick === 6 && p.round === pick.round && p.year === pick.year);
+                if (ind >= 0) {
+                  team.futureDraftCapital[ind].pick = pick.pick;
+                  pick.originalRosterId = team.futureDraftCapital[ind].originalRosterId;
+                }
+              });
+            });
+          });
+        }),
+        mergeMap(() => this.generateFutureDraftCapital$(league))
+      );
+    })
+  );
+
         })
         );
     })
@@ -268,9 +276,11 @@ export class SleeperService {
    * @private
    */
   private generateFutureDraftCapital$(league: LeagueWrapper): Observable<LeagueWrapper> {
-    const draftPickOffset = league.completedDrafts.length > 0 ? 1 : 0;
     return this.sleeperApiService.getSleeperTradedPicksByLeagueId(league.selectedLeague.leagueId)
+      // delay in order to pick up process drafts
+      .pipe(delay(5000))
       .pipe(mergeMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
+        const draftPickOffset = league.completedDrafts.length > 0 ? 1 : 0;
         league.leagueTeamDetails.map((team: LeagueTeam) => {
           let draftPicks: DraftCapital[] = [];
           for (
