@@ -278,7 +278,7 @@ export class SleeperService {
   private generateFutureDraftCapital$(league: LeagueWrapper): Observable<LeagueWrapper> {
     return this.sleeperApiService.getSleeperTradedPicksByLeagueId(league.selectedLeague.leagueId)
       // delay in order to pick up process drafts
-      .pipe(delay(5000))
+      .pipe(delay(2000))
       .pipe(mergeMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
         const draftPickOffset = league.completedDrafts.length > 0 ? 1 : 0;
         league.leagueTeamDetails.map((team: LeagueTeam) => {
