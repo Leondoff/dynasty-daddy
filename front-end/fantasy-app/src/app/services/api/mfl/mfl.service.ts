@@ -6,7 +6,7 @@ import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
 import { LeagueTeam } from '../../../model/league/LeagueTeam';
 import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
 import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
-import { map, mergeMap, concatMap, retry, catchError, delay } from 'rxjs/operators';
+import { map, mergeMap, concatMap, retry, catchError, delay, switchMap } from 'rxjs/operators';
 import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
 import { LeagueRawDraftOrderDTO } from '../../../model/league/LeagueRawDraftOrderDTO';
 import { TeamMetrics } from '../../../model/league/TeamMetrics';
@@ -57,7 +57,6 @@ export class MflService {
     const leagueTransactions = {};
     let leagueRosters: any = null;
     let teamMetrics = {};
-    let teamDraftCapital = {};
     let playoffMatchUps = [];
     let completedDraft = null;
     observableList.push(this.mflApiService.getMFLTransactions(year, leagueId, this.mflUserId).pipe(map((leagueTrans) => {
@@ -76,15 +75,6 @@ export class MflService {
       teamMetrics = this.marshallLeagueTeamMetrics(metrics);
       return of(leagueRosters);
     })));
-    // only load future draft capital if dynasty league
-    if (leagueWrapper.selectedLeague.type === LeagueType.DYNASTY) {
-      // get future pick year since it will filter out current year picks
-      const pickYear = year === new Date().getFullYear().toString() ? this.nflService.getYearForStats() : year
-      observableList.push(this.mflApiService.getMFLFutureDraftPicks(pickYear, leagueId, this.mflUserId).pipe(map(draftPicks => {
-        teamDraftCapital = this.marshallFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise);
-        return of(leagueRosters);
-      })));
-    }
     // only load draft if it existed on platform
     if (leagueWrapper.selectedLeague.metadata.loadRosters === 'live_draft' ||
       leagueWrapper.selectedLeague.metadata.loadRosters === 'email_draft') {
@@ -98,33 +88,49 @@ export class MflService {
         return of(leagueRosters);
       })));
     }
-    return forkJoin(observableList).pipe(map(() => {
+    return forkJoin(observableList).pipe(switchMap(() => {
       leagueWrapper.selectedLeague.leagueMatchUps = leagueMatchUps;
       leagueWrapper.selectedLeague.leagueTransactions = leagueTransactions;
       leagueWrapper.playoffMatchUps = playoffMatchUps;
       leagueWrapper.leaguePlatform = LeaguePlatform.MFL;
-      const teams = [];
-      leagueWrapper.selectedLeague?.metadata?.rosters?.forEach(team => {
-        const ddTeam = new LeagueTeam(null, null);
-        ddTeam.owner = new LeagueOwnerDTO(team.id, team.name, team.name, team.icon || this.DEFAULT_TEAM_LOGO);
-        const roster = leagueRosters.find(it => it.id === team.id)?.player || [];
-        ddTeam.roster = new LeagueRosterDTO(
-          this.formatRosterId(team.id),
-          team.id,
-          roster?.map(player => player.id),
-          roster?.filter(player => player.status === 'INJURED_RESERVE').map(player => player.id),
-          roster?.filter(player => player.status === 'TAXI_SQUAD').map(player => player.id),
-          null
-        );
-        ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId] || new TeamMetrics(null);
-        // index in the division array so we want 0 to be default 
-        ddTeam.roster.teamMetrics.division = team.division ? Number(team.division) + 1 : 0;
-        ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId] || [];
-        teams.push(ddTeam);
-      });
-      leagueWrapper.leagueTeamDetails = teams;
       leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
-      return leagueWrapper;
+      // get future pick year since it will filter out current year picks
+      const pickYear = year === new Date().getFullYear().toString() &&
+        (leagueWrapper.completedDrafts.length === 0 || leagueWrapper.completedDrafts[0].draft?.status !== 'completed') ?
+        this.nflService.getYearForStats() : year
+      const observable = leagueWrapper.selectedLeague.type === LeagueType.DYNASTY ?
+        this.mflApiService.getMFLFutureDraftPicks(pickYear, leagueId, this.mflUserId).pipe(
+          map(draftPicks => {
+            const teamDraftCapital = this.marshallFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise);
+            return teamDraftCapital;
+          })
+        ) :
+        of([]);
+      return observable.pipe(map(teamDraftCapital => {
+        const teams = [];
+        leagueWrapper.selectedLeague?.metadata?.rosters?.forEach(team => {
+          const ddTeam = new LeagueTeam(null, null);
+          ddTeam.owner = new LeagueOwnerDTO(team.id, team.name, team.name, team.icon || this.DEFAULT_TEAM_LOGO);
+          const roster = leagueRosters.find(it => it.id === team.id)?.player || [];
+          ddTeam.roster = new LeagueRosterDTO(
+            this.formatRosterId(team.id),
+            team.id,
+            roster?.map(player => player.id),
+            roster?.filter(player => player.status === 'INJURED_RESERVE').map(player => player.id),
+            roster?.filter(player => player.status === 'TAXI_SQUAD').map(player => player.id),
+            null
+          );
+          ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId] || new TeamMetrics(null);
+          // index in the division array so we want 0 to be default 
+          ddTeam.roster.teamMetrics.division = team.division ? Number(team.division) + 1 : 0;
+          // only load future draft capital if dynasty league
+          ddTeam.futureDraftCapital = teamDraftCapital[ddTeam.roster.ownerId] || [];
+          teams.push(ddTeam);
+        });
+        leagueWrapper.leagueTeamDetails = teams;
+        return leagueWrapper;
+      }));
+
     }));
   }
 
@@ -283,8 +289,8 @@ export class MflService {
    * @param starters starters json list
    * @param rosterSize size of roster
    */
-  private generateRosterPositions(starters, rosterSize): string[] {
-    let count = Number(starters.count) - (Number(starters.idp_starters) || Number(starters.iop_starters) || 0);
+  private generateRosterPositions(starters: any, rosterSize: any): string[] {
+    let count = Number(starters.count) - (Number(starters.idp_starters) || 0) - (Number(starters.kdst_starters) || 0);
     const positionMap = [];
     const validStartersList = ['QB', 'RB', 'WR', 'TE'];
     // generate min count
@@ -336,7 +342,7 @@ export class MflService {
       return (new LeagueCompletedPickDTO(null).fromMFL(pick, teamCount));
     });
     return new CompletedDraft(
-      new LeagueRawDraftOrderDTO(draftId.toString(), leagueId, 'completed', null,
+      new LeagueRawDraftOrderDTO(draftId.toString(), leagueId, picks[0]?.playerId != "" ? 'completed' : 'in_progress', null,
         null, null, null, null).fromMFL(draft, playerType, (picks?.length || teamCount * 4) / teamCount),
       picks
     );

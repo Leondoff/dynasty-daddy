@@ -13,22 +13,7 @@ import { PlayerValueService } from '../../services/player-value.service';
 })
 export class FilterPlayerValuesModalComponent implements OnInit {
 
-  /** player search string */
-  playerSearch = '';
-
-  /** filtered search list */
-  filteredList: FantasyPlayer[];
-
-  /** query filtered list */
-  queryList: FantasyPlayer[] = [];
-
-  /** filter grouping options */
-  filterPosGroup: boolean[];
-
-  /** toggle between search and query mode */
-  toggleQueryMode: boolean = false;
-
-  constructor(private playerService: PlayerService,
+  constructor(
     public playerValueService: PlayerValueService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: { isGroup2: boolean },
@@ -37,8 +22,6 @@ export class FilterPlayerValuesModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.filterPosGroup = [true, true, true, true, true, false];
-    this.filteredList = this.playerService.playerValues.slice(0, 11);
   }
 
   /**

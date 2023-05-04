@@ -111,6 +111,7 @@ import { FantasyPortfolioChartComponent } from './components/fantasy-portfolio/f
 import { LeagueLoginModalComponent } from './components/modals/league-login-modal/league-login-modal.component';
 import { MatCarouselModule } from '@thouet/material-carousel';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { FilterPortfolioModalComponent } from './components/modals/filter-portfolio-modal/filter-portfolio-modal.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -158,6 +159,7 @@ let UniversalDeviceDetectorService;
     PlayerStatisticsComponent,
     PlayerPosTableComponent,
     PlayerPosScatterChartComponent,
+    FilterPortfolioModalComponent,
     WeeklyMedianChartComponent,
     TeamTransactionsChartComponent,
     HighLightSearchPipe,

@@ -1,0 +1,84 @@
+<div class="center-text margin-bot-20"
+  [ngClass]="{'large-bold-header-text': !configService.isMobile, 'mid-bold-text': configService.isMobile}"> Portfolio
+  Filtering
+  <span class="button-right">
+    <button mat-icon-button color="accent" class="button-right" (click)="close()"><mat-icon>close</mat-icon></button>
+  </span>
+</div>
+
+<div class="margin-top-10 margin-bot-20">
+  <div class="margin-top-10">
+    <query-builder [(ngModel)]='portfolioService.query' [config]='config' [classNames]="classNames" [allowCollapse]="true"
+      (change)="dirtyQuery = true">
+      <ng-container
+        *queryButtonGroup="let ruleset; let addRule=addRule; let addRuleSet=addRuleSet; let removeRuleSet=removeRuleSet">
+        <button type="button" mat-icon-button (click)="addRule()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button type="button" mat-icon-button (click)="addRuleSet()">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+        <button type="button" mat-icon-button (click)="removeRuleSet()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *queryRemoveButton="let rule; let removeRule=removeRule">
+        <button type="button" mat-icon-button color="accent" (click)="removeRule(rule)">
+          <mat-icon>remove</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *querySwitchGroup="let ruleset">
+        <mat-radio-group *ngIf="ruleset" [(ngModel)]="ruleset.condition" color="accent">
+          <mat-radio-button value="and" style="padding-right: 5px">And</mat-radio-button>
+          <mat-radio-button value="or" style="padding-left: 5px">Or</mat-radio-button>
+        </mat-radio-group>
+      </ng-container>
+      <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
+        <mat-form-field color="accent">
+          <mat-select [(ngModel)]="rule.field" (ngModelChange)="onChange($event, rule)">
+            <mat-option *ngFor="let field of fields" [value]="field.value">{{field.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+      <ng-container *queryOperator="let rule; let operators=operators">
+        <mat-form-field color="accent" class="operators">
+          <mat-select [(ngModel)]="rule.operator">
+            <mat-option *ngFor="let value of operators" [value]="value">{{value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+      <!-- Override input component for 'boolean' type -->
+      <ng-container *queryInput="let rule; type: 'boolean'">
+        <mat-checkbox [(ngModel)]="rule.value" color="accent"></mat-checkbox>
+      </ng-container>
+      <!-- Override input component for 'number' type -->
+      <ng-container *queryInput="let rule; type: 'number'">
+        <mat-form-field color="accent">
+          <input matInput type="number" [(ngModel)]="rule.value">
+        </mat-form-field>
+      </ng-container>
+      <!-- Override input component for 'text' type -->
+      <ng-container *queryInput="let rule; type: 'string'">
+        <mat-form-field color="accent">
+          <input matInput type="text" [(ngModel)]="rule.value">
+        </mat-form-field>
+      </ng-container>
+      <!-- Override input component for 'category' type -->
+      <ng-container *queryInput="let rule; let field=field; let options=options; type: 'category'">
+        <mat-form-field color="accent">
+          <mat-select [(ngModel)]="rule.value" [placeholder]="field.name" (selectionChange)="dirtyQuery = true">
+            <mat-option *ngFor="let opt of options" [value]="opt.value">
+              {{ opt.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+    </query-builder>
+
+  </div>
+  <div class="margin-top-25" [ngClass]="{'button-right': !configService.isMobile}">
+    <button mat-raised-button color="warn" (click)="applyFilter()">
+      Apply Filter
+    </button>
+  </div>
+</div>
