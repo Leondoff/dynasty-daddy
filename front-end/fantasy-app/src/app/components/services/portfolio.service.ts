@@ -68,6 +68,17 @@ export class PortfolioService {
   /** fleaflicker email string */
   fleaflickerEmail: string = '';
 
+  /** portfoliot advance query */
+  query = {
+      condition: 'and',
+      rules: [
+          { field: 'sf_trade_value', operator: '>=', value: '6000' },
+      ]
+  };
+
+  /** is portfolio advanced filter active */
+  advancedFiltering: boolean = false;
+
   constructor(
     private fantasyPlayerApiService: FantasyPlayerApiService,
     private sleeperApiService: SleeperApiService,

@@ -14,6 +14,8 @@ import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueLoginModalComponent } from '../modals/league-login-modal/league-login-modal.component';
 import { UntypedFormControl } from '@angular/forms';
 import { DownloadService } from 'src/app/services/utilities/download.service';
+import { FilterPortfolioModalComponent } from '../modals/filter-portfolio-modal/filter-portfolio-modal.component';
+import { QueryService } from 'src/app/services/utilities/query.service';
 
 @Component({
     selector: 'app-fantasy-portfolio',
@@ -49,6 +51,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         private leagueSwitchService: LeagueSwitchService,
         public leagueService: LeagueService,
         public configService: ConfigService,
+        private queryService: QueryService,
         private downloadService: DownloadService,
         public portfolioService: PortfolioService) {
         super();
@@ -84,6 +87,10 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
                     || p.position == 'WR' && this.posFilter[2] || p.position == 'TE' && this.posFilter[3]
                     || (!['QB', 'RB', 'WR', 'TE'].includes(p.position) && this.posFilter[4]);
             }).filter(p => p.full_name.toLowerCase().includes(this.searchVal.toLowerCase()));
+        // if advanced filtering is enabled
+        if (this.portfolioService.advancedFiltering) {
+            this.filteredPortfolio = this.queryService.processRulesetForPlayer(this.filteredPortfolio, this.portfolioService.query) || [];
+        }
         this.portfolioStatus = Status.DONE;
     }
 
@@ -148,7 +155,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
                 this.portfolioService.playerHoldingMap[player.name_id].totalValue || 0,
                 this.portfolioService.positionGroupValueMap[player.position] != 0 ?
                     Math.round(((this.portfolioService.playerHoldingMap[player.name_id]?.totalValue || 0) /
-                    this.portfolioService.positionGroupValueMap[player.position]) * 100) + '%' : '0%',
+                        this.portfolioService.positionGroupValueMap[player.position]) * 100) + '%' : '0%',
                 `${player?.sf_change || 0}% (${player?.last_month_value_sf || 0})`,
                 `${player?.standard_change || 0}% (${player?.last_month_value || 0})`
                 ];
@@ -160,5 +167,25 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         const filename = `Dynasty_Daddy_Portfolio_${new Date().toISOString().slice(0, 10)}.csv`;
 
         this.downloadService.downloadCSVFile(formattedDraftData, filename);
+    }
+
+    /**
+     * open advanced filtering modal
+     */
+    openPlayerQuery(): void {
+        this.dialog.open(FilterPortfolioModalComponent
+            , {
+                minHeight: '350px',
+                minWidth: this.configService.isMobile ? '300px' : '500px',
+            }
+        );
+    }
+
+    /**
+     * handles disabling advanced filtering when active
+     */
+    disableAdvancedFilter(): void {
+        this.portfolioService.advancedFiltering = false;
+        this.portfolioService.portfolioValuesUpdated$.next();
     }
 }

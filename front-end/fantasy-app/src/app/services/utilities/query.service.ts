@@ -1,13 +1,22 @@
 import { Injectable } from '@angular/core';
 import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { PlayerService } from '../player.service';
+import { PortfolioService } from 'src/app/components/services/portfolio.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QueryService {
 
-  constructor(private playerService: PlayerService) {
+  /** football stats prefix value */
+  FOOTBALL_STAT_PREFIX = 'ff_'
+
+  /** portfolio league prefix value */
+  PORTFOLIO_LEAGUE_PREFIX = 'fl_'
+
+  constructor(
+    private playerService: PlayerService,
+    private portfolioService: PortfolioService) {
   }
 
   /**
@@ -59,38 +68,78 @@ export class QueryService {
             return (player[rule.field] as string).toString().toLowerCase().includes(rule.value.toString().toLowerCase());
           }
           case 'in': {
-            return rule.value.includes(player[rule.field]);
+            switch (rule.field.slice(0, 3)) {
+              case this.PORTFOLIO_LEAGUE_PREFIX:
+                const portfolioLeagueValues = this.getPortfolioPlayerLeagueValues(player.name_id, rule.field.slice(3));
+                return portfolioLeagueValues.includes(rule.value);
+              default:
+                return rule.value.includes(player[rule.field]);
+            }
           }
           case 'not in': {
-            return !rule.value.includes(player[rule.field]);
+            switch (rule.field.slice(0, 3)) {
+              case this.PORTFOLIO_LEAGUE_PREFIX:
+                const portfolioLeagueValues = this.getPortfolioPlayerLeagueValues(player.name_id, rule.field.slice(3));
+                return !portfolioLeagueValues.includes(rule.value);
+              default:
+                return !rule.value.includes(player[rule.field]);
+            }
           }
           case '!=': {
-            return rule.field.slice(0, 3) === 'ff_' ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) !== rule.value
-              : player[rule.field] !== rule.value;
+            switch (rule.field.slice(0, 3)) {
+              case this.FOOTBALL_STAT_PREFIX:
+                return (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) !== rule.value;
+              case this.PORTFOLIO_LEAGUE_PREFIX:
+                const portfolioLeagueValues = this.getPortfolioPlayerLeagueValues(player.name_id, rule.field.slice(3));
+                return !portfolioLeagueValues.includes(rule.value);
+              default:
+                return player[rule.field] !== rule.value;
+            }
           }
           case '<=': {
-            return rule.field.slice(0, 3) === 'ff_' ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) <= rule.value
+            return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) <= rule.value
               : player[rule.field] <= rule.value;
           }
           case '>=': {
-            return rule.field.slice(0, 3) === 'ff_' ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) >= rule.value
+            return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) >= rule.value
               : player[rule.field] >= rule.value;
           }
           case '<': {
-            return rule.field.slice(0, 3) === 'ff_' ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) < rule.value
+            return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) < rule.value
               : player[rule.field] < rule.value;
           }
           case '>': {
-            return rule.field.slice(0, 3) === 'ff_' ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) > rule.value
+            return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) > rule.value
               : player[rule.field] > rule.value;
           }
           default: {
-            return rule.field.slice(0, 3) === 'ff_' ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) === rule.value
-              : player[rule.field] === rule.value;
+            switch (rule.field.slice(0, 3)) {
+              case this.FOOTBALL_STAT_PREFIX:
+                return (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) === rule.value;
+              case this.PORTFOLIO_LEAGUE_PREFIX:
+                const portfolioLeagueValues = this.getPortfolioPlayerLeagueValues(player.name_id, rule.field.slice(3));
+                return portfolioLeagueValues.includes(rule.value);
+              default:
+                return player[rule.field] === rule.value;
+            }
           }
         }
       });
     }
   }
 
+  /**
+   * get values from all leagues assigned to a player
+   * @param nameId player name id
+   * @param field field to fetch
+   * @returns 
+   */
+  private getPortfolioPlayerLeagueValues(nameId: string, field: string): any[] {
+    const leagueValues = [];
+    let leagueIds = this.portfolioService.playerHoldingMap[nameId].leagues
+    leagueIds?.forEach(leagueId => {
+      leagueValues.push(this.portfolioService.leagueIdMap[leagueId][field])
+    });
+    return leagueValues;
+  }
 }

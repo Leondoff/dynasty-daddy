@@ -52,6 +52,8 @@
     <span class="container-spacer" *ngIf="!configService.isMobile"></span>
     <span [ngClass]="{'button-right': !configService.isMobile, 'button-left': configService.isMobile}"
       class="margin-top-10">
+      <button mat-icon-button matTooltip="Clear Advanced Filter" matTooltipPosition="above" *ngIf="portfolioService.advancedFiltering" (click)="disableAdvancedFilter()"><mat-icon>filter_alt_off</mat-icon></button>
+      <button mat-icon-button matTooltip="Advanced Filtering" matTooltipPosition="above" *ngIf="!configService.isMobile" (click)="openPlayerQuery()"><mat-icon>filter_alt</mat-icon></button>
       <mat-checkbox
         [ngClass]="{'player-value-checkbox-margin': !configService.isMobile, 'player-value-checkbox-margin__mobile': configService.isMobile}"
         color="accent" [(ngModel)]="posFilter[0]" (change)="setUpPortfolio()">QB</mat-checkbox>
