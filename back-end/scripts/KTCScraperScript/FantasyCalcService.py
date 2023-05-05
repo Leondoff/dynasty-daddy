@@ -38,8 +38,6 @@ def formatFantasyCalcDict(response):
                         fantasyCalcDict[pick] =  {'value': player['value'], 'rank': player['positionRank'], 'id': player['player']['id']}
         else:
             playerNameId = PlayerService.cleanPlayerIdString(player['player']['name'] + player['player']['position'])
-            if playerNameId in playerExceptionsMap:
-                playerNameId = playerExceptionsMap[playerNameId]
             fantasyCalcDict[playerNameId] = {'value': player['value'], 'rank': player['positionRank'], 'id': player['player']['id']}
     return fantasyCalcDict
 

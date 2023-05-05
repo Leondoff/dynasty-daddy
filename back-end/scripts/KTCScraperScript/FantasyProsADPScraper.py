@@ -18,14 +18,6 @@ class PlayerADP:
         print(self.nameId, self.fantasyProADP, self.bb10ADP, self.rtsportsADP, self.underdogADP, self.draftersADP,
               self.avgADP)
 
-
-# process name id and handle edge cases
-def processNameId(playername, pos):
-    nameId = cleanPlayerIdString(playername + pos)
-    if nameId in playerExceptionsMap:
-        return playerExceptionsMap.get(nameId)
-    return nameId
-
 # get average of List
 def averageOfList(lst):
     return sum(lst) / len(lst)
@@ -44,7 +36,7 @@ def scrapeADP(position):
     for tr in adpSoup.find_all('tr')[1:-5]:
         tds = tr.find_all('td')
         fantasyPro_adp = tds[0].text.strip()
-        nameId = processNameId(tds[2].find('a').text.strip(), position)
+        nameId = cleanPlayerIdString(tds[2].find('a').text.strip() + position)
         bb10_adp = tds[3].text.strip() or None
         rtsports_adp = tds[4].text.strip() or None
         underdog_adp = tds[5].text.strip() or None

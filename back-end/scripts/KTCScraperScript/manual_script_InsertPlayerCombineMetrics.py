@@ -32,8 +32,6 @@ def fetchRASScoreDict():
         for row in csvreader:
             if row[2] in ["QB", "RB", "WR", "TE"]:
                 playerNameId = PlayerService.cleanPlayerIdString(row[1] + row[2])
-                if playerNameId in playerExceptionsMap:
-                    playerNameId = playerExceptionsMap[playerNameId]
                 rasDict[playerNameId] = {
                     "ras": float(row[5]) if row[5] != '' else 0,
                     "alltime_ras": float(row[6]) if row[6] != '' else 0
@@ -49,8 +47,6 @@ def fetchPlayerContractData(url, pos):
         tds = tr.find_all('td')
         name = tds[0].text.strip()
         playerNameId = PlayerService.cleanPlayerIdString(name + pos)
-        if playerNameId in playerExceptionsMap:
-            playerNameId = playerExceptionsMap[playerNameId]
         total = tds[3].text.strip()
         per_year = tds[4].text.strip()
         guaranteed_fully = tds[5].text.strip()

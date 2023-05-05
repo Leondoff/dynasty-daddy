@@ -46,8 +46,6 @@ def formatDynastyProcessDict(response):
                         dynastyProcessDict[pick] = {'std_value': row[8], 'sf_value': row[9]}
         else:
             playerNameId = PlayerService.cleanPlayerIdString(row[0] + row[1])
-            if playerNameId in playerExceptionsMap:
-                playerNameId = playerExceptionsMap[playerNameId]
             dynastyProcessDict[playerNameId] = {'std_value': row[8], 'sf_value': row[9], 'std_rank': None, 'sf_rank': None}  
     
     # assign position rank based on values (this is not found on dynasty process)

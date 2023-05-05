@@ -1,3 +1,4 @@
+from Constants import playerExceptionsMap
 
 ############################
 #    Name Id generation    #
@@ -5,8 +6,11 @@
 
 # cleans player ids in order to map ktc value to sleeper data
 def cleanPlayerIdString(playerId):
-    return playerId.lower().replace("jr.", "").replace("sr.", "").replace("iii", "").replace("ii", "").replace(" ", "")\
+    playerNameId = playerId.lower().replace("jr.", "").replace("sr.", "").replace("iii", "").replace("ii", "").replace(" ", "")\
         .replace(".", "").replace("-", "").replace("'", "")
+    if playerNameId in playerExceptionsMap:
+        playerNameId = playerExceptionsMap[playerNameId]
+    return playerNameId
 
 # format pick number to be a string
 # this is needed to align with name id format
