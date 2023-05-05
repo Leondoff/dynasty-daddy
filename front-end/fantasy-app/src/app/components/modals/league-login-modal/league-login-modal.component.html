@@ -88,7 +88,7 @@
                         To prevent overloading their services, we will load the leagues in batches.
                     </div>
                 </div>
-                <div *ngIf="portfolioService.connectAccountStatus == 1 && portfolioService.portfolio?.leagues[1] && portfolioService.leagueBatches[1].length > 1" class="center-text">
+                <div *ngIf="portfolioService.connectAccountStatus == 1 && portfolioService.portfolio?.leagues[1] && portfolioService.leagueBatches[1]?.length > 1" class="center-text">
                     <div *ngFor="let chunkNum of portfolioService.leagueBatches[1]; let ind = index;" class="margin-top-10">
                         <button mat-raised-button color="accent" (click)="loadLeagueChunk(1, ind)" [disabled]="portfolioService.leagueBatches[1][ind]">
                             Load Leagues {{ind * LEAGUE_CHUNK_SIZE + 1}}-{{ind * LEAGUE_CHUNK_SIZE + LEAGUE_CHUNK_SIZE}}</button>
@@ -139,7 +139,7 @@
                         To prevent overloading their services, we will load the leagues in batches.
                     </div>
                 </div>
-                <div *ngIf="portfolioService.connectAccountStatus == 1 && portfolioService.portfolio?.leagues[2] && portfolioService.leagueBatches[2].length > 1" class="center-text">
+                <div *ngIf="portfolioService.connectAccountStatus == 1 && portfolioService.portfolio?.leagues[2] && portfolioService.leagueBatches[2]?.length > 1" class="center-text">
                     <div *ngFor="let chunkNum of portfolioService.leagueBatches[2]; let ind = index;" class="margin-top-10">
                         <button mat-raised-button color="accent" (click)="loadLeagueChunk(2, ind)" [disabled]="portfolioService.leagueBatches[2][ind]">
                             Load Leagues {{ind * LEAGUE_CHUNK_SIZE + 1}}-{{ind * LEAGUE_CHUNK_SIZE + LEAGUE_CHUNK_SIZE}}</button>

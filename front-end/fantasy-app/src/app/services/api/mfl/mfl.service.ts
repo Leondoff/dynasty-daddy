@@ -248,7 +248,7 @@ export class MflService {
             const roster = rosters.rosters.franchise.find(it => this.formatRosterId(it.id) === league?.metadata?.teamId)?.player || [];
             league.metadata['roster'] = roster?.map(player => player.id);
             return of(league).pipe(
-              delay(this.REQUEST_DELAY),
+              delay(this.REQUEST_DELAY * 2),
               concatMap(() => {
                 return this.loadLeagueFromId$(year, league.leagueId).pipe(
                   map(leagueInfo => {
@@ -261,7 +261,7 @@ export class MflService {
                     league.season = leagueInfo.season;
                     return league;
                   }),
-                  delay(this.REQUEST_DELAY)
+                  delay(this.REQUEST_DELAY * 2)
                 );
               })
             );

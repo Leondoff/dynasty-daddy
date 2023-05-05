@@ -13,6 +13,11 @@
         color="accent" (click)="refreshPortfolio()"
         [disabled]="selectedLeagues.value == portfolioService.appliedLeagues || selectedLeagues?.value?.length == 0">
         {{portfolioService.appliedLeagues.length == 0 ? 'Get' : 'Reload' }} Portfolio</button>
+
+        <button mat-icon-button matTooltip="Clear Portfolio Cache" matTooltipPosition="above" 
+        color="accent" (click)="clearPortfolio()"
+        *ngIf="selectableLeagues.length > 0" style="padding-left: 10px;">
+          <mat-icon>delete_sweep</mat-icon></button>
     </div>
     <span class="container_spacer" *ngIf="!configService.isMobile"></span>
     <div [ngClass]="{'button-right': !configService.isMobile}">

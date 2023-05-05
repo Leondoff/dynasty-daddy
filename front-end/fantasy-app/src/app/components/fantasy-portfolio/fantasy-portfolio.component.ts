@@ -9,13 +9,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Status } from '../model/status';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { PortfolioService } from '../services/portfolio.service';
-import { delay } from 'rxjs/operators';
 import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueLoginModalComponent } from '../modals/league-login-modal/league-login-modal.component';
 import { UntypedFormControl } from '@angular/forms';
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { FilterPortfolioModalComponent } from '../modals/filter-portfolio-modal/filter-portfolio-modal.component';
 import { QueryService } from 'src/app/services/utilities/query.service';
+import { Portfolio } from '../model/portfolio';
 
 @Component({
     selector: 'app-fantasy-portfolio',
@@ -58,6 +58,10 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // if portfolio exists in localstorage fetch it 
+        if (!this.portfolioService.portfolio && localStorage.getItem('portfolio')) {
+            this.portfolioService.portfolio = JSON.parse(localStorage.getItem('portfolio'))
+        }
         this.playerService.loadPlayerValuesForToday();
         this.setUpPortfolio();
         this.updateConnectedLeagues();
@@ -68,7 +72,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
             this.portfolioService.portfolioValuesUpdated$.subscribe(() => {
                 this.setUpPortfolio();
             }),
-            this.portfolioService.portfolioLeaguesAdded$.pipe(delay(3000)).subscribe(() => {
+            this.portfolioService.portfolioLeaguesAdded$.subscribe(() => {
                 this.portfolioService.connectAccountStatus = Status.DONE;
                 this.updateConnectedLeagues();
             })
@@ -98,6 +102,18 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
     clearSearchVal(): void {
         this.searchVal = '';
         this.setUpPortfolio();
+    }
+
+    /**
+     * manually clear portfolio cache
+     */
+    clearPortfolio(): void {
+        this.portfolioService.portfolio = new Portfolio();
+        this.portfolioService.appliedLeagues = [];
+        localStorage.removeItem('portfolio');
+        this.selectableLeagues = [];
+        this.selectedLeagues.reset();
+        this.portfolioService.portfolioValuesUpdated$.next();
     }
 
     /**
@@ -131,7 +147,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
      */
     refreshPortfolio(): void {
         this.portfolioStatus = Status.LOADING;
-        this.portfolioService.appliedLeagues = this.selectedLeagues.value;
+        this.portfolioService.appliedLeagues = this.selectedLeagues?.value || [];
         this.portfolioService.updatePortfolio()
     }
 

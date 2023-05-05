@@ -117,6 +117,7 @@ export class PortfolioService {
       this.addPlayersToList(uniquePlayers, leagueInfo)
     });
     const playersToGet = this.playersWithValue.filter(p => !this.fantasyPortfolioDict[p.name_id] && ['QB', 'RB', 'WR', 'TE'].includes(p.position)).map(p => p?.name_id)
+    localStorage.setItem('portfolio', JSON.stringify(this.portfolio));
     this.fantasyPlayerApiService.getFantasyPortfolio(181, playersToGet).subscribe(
       p => {
         for (let key in p) {
