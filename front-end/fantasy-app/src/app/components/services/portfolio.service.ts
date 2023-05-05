@@ -70,10 +70,10 @@ export class PortfolioService {
 
   /** portfoliot advance query */
   query = {
-      condition: 'and',
-      rules: [
-          { field: 'sf_trade_value', operator: '>=', value: '6000' },
-      ]
+    condition: 'and',
+    rules: [
+      { field: 'sf_trade_value', operator: '>=', value: '6000' },
+    ]
   };
 
   /** is portfolio advanced filter active */
@@ -126,10 +126,10 @@ export class PortfolioService {
         this.portfolioValuesUpdated$.next();
       }
     ),
-    error => {
-      console.error('Error Loading Portfolio', error, playersToGet)
-      this.portfolioValuesUpdated$.next();
-    }
+      error => {
+        console.error('Error Loading Portfolio', error, playersToGet)
+        this.portfolioValuesUpdated$.next();
+      }
   }
 
   /**
@@ -145,7 +145,7 @@ export class PortfolioService {
         if (playerInfo) {
           ddPlayer = new FantasyPlayer();
           // For team defense, they don't set full name
-          if(!playerInfo.full_name) {
+          if (!playerInfo.full_name) {
             playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
           }
           ddPlayer.name_id = playerInfo.full_name.replace("'", "").replace(".", "");
