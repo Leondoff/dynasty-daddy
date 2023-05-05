@@ -103,10 +103,13 @@ export const GetPlayerDetailsEndpoint = async (req, res) => {
 export const GetPlayerPortfolioEndpoint = async (req, res) => {
   try {
     const { intervalDays, portfolioList } = req.body;
-    // eslint-disable-next-line prefer-template, implicit-arrow-linebreak
-    const sqlList = '(' + portfolioList.map(str => `'${str.replace('\'', '')}'`).join(', ') + ')';
-    const valueData = await GetFantasyPortfolioForInterval(intervalDays, sqlList);
-    res.status(200).json(valueData.rows);
+    if (portfolioList.length) {
+      // eslint-disable-next-line prefer-template, implicit-arrow-linebreak
+      const sqlList = '(' + portfolioList.map(str => `'${str.replace('\'', '')}'`).join(', ') + ')';
+      const valueData = await GetFantasyPortfolioForInterval(intervalDays, sqlList);
+      res.status(200).json(valueData.rows);
+    }
+    res.status(200).json([]);
   } catch (err) {
     res.status(500).json(err.stack);
   }
