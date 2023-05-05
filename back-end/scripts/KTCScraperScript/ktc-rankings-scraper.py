@@ -7,6 +7,7 @@ from BeautifulSoupService import setUpSoup
 from PlayerService import cleanPlayerIdString
 from FantasyCalcService import fetchSuperFlexPlayerDict, fetchStandardPlayerDict
 from DynastyProcessService import fetchDynastyProcessPlayerValues
+from Constants import playerExceptionsMap
 
 # API calls to sleeper
 players = Players()
@@ -17,33 +18,8 @@ def getSleeperData():
     temp = {}
     for playerId, value in sleeperData.items():
         if value['active']:
-            sleepervalue = cleanPlayerIdString(str(value['first_name'] + value['last_name'] + str(value['position'])))
-            temp[sleepervalue] = playerId
-            # handle edge cases
-            # P.J. Walker
-            if value['first_name'] == 'Phillip':
-                sleepervalue = cleanPlayerIdString(str('pj' + value['last_name'] + str(value['position'])).lower())
-                temp[sleepervalue] = playerId
-            # Chris Herdon
-            if value['first_name'] == 'Christopher':
-                sleepervalue = cleanPlayerIdString(str('chris' + value['last_name'] + str(value['position'])).lower())
-                temp[sleepervalue] = playerId
-            # Jeffery Wilson
-            if value['first_name'] == 'Jeff':
-                sleepervalue = cleanPlayerIdString(str('jeffery' + value['last_name'] + str(value['position'])).lower())
-                temp[sleepervalue] = playerId
-            # Isiah Pacheco
-            if value['last_name'] == 'Pacheco':
-                sleepervalue = cleanPlayerIdString(str('isiah' + value['last_name'] + str(value['position'])).lower())
-                temp[sleepervalue] = playerId
-            # Nathaniel Dell
-            if value['last_name'] == 'Dell' and value['first_name'] == 'Nathaniel':
-                sleepervalue = cleanPlayerIdString(str('tank' + value['last_name'] + str(value['position'])).lower())
-                temp[sleepervalue] = playerId
-            # Camerun Peoples
-            if value['last_name'] == 'Peoples' and value['first_name'] == 'Camerun':
-                sleepervalue = cleanPlayerIdString(str('Cam' + value['last_name'] + str(value['position'])).lower())
-                temp[sleepervalue] = playerId
+            playerNameId = cleanPlayerIdString(str(value['first_name'] + value['last_name'] + str(value['position'])))
+            temp[playerNameId] = playerId     
     return temp
 
 

@@ -25,8 +25,6 @@ def updateESPNPlayerIds():
     for player in players.json()[0]['players']:
         if player['player']['defaultPositionId'] in espnPosMap.keys():
             playerId = PlayerService.cleanPlayerIdString(player['player']['fullName'] + espnPosMap[player['player']['defaultPositionId']])
-            if playerId in playerExceptionsMap:
-                playerId = playerExceptionsMap[playerId]
             espn_id = player['player']['id']
             playerIdsStatement = ''' UPDATE player_ids
                     SET

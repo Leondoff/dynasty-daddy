@@ -20,8 +20,6 @@ def fetchFromFleaFlickerCsv():
 
         for row in csvreader:
             playerId = PlayerService.cleanPlayerIdString(row[3] + row[4])
-            if playerId in playerExceptionsMap:
-                playerId = playerExceptionsMap[playerNameId]
             fleaflicker_id = row[2]
             playerIdsStatement = ''' UPDATE player_ids
                         SET
