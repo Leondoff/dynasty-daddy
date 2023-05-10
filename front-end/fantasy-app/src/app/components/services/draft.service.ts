@@ -80,7 +80,7 @@ export class DraftService {
               this.teamPicks.push(new TeamMockDraftPick(((pick.round - 1) * teams.length) + pick.pick,
                 this.createDraftCenterPickString(pick.round, pick.pick, teams.length),
                 team.owner?.ownerName,
-                team.owner?.teamName, 
+                team.owner?.teamName,
                 team.roster.rosterId,
                 pick.originalRosterId));
             }
@@ -207,16 +207,16 @@ export class DraftService {
     return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString());
   }
 
-    /**
-   * create date cener pick string display
-   * @param pick pick detailss
-   * @private
-   * returns string
-   */
-    private createDraftCenterPickString(round: number, pick: number, teams: number): string {
-      const overall = ((round - 1) * teams) + pick
-      return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString()) + ` (${overall})`;
-    }
+  /**
+ * create date cener pick string display
+ * @param pick pick detailss
+ * @private
+ * returns string
+ */
+  private createDraftCenterPickString(round: number, pick: number, teams: number): string {
+    const overall = ((round - 1) * teams) + pick
+    return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString()) + ` (${overall})`;
+  }
 
   /**
    * reset variables when league is changed
@@ -312,7 +312,7 @@ export class DraftService {
       let valueAdded = 0;
       for (const pick of selectedDraft.picks) {
         if (pick.rosterId === team.roster.rosterId) {
-          valueAdded += this.getPickValueAdded(pick);
+          valueAdded += this.getPickValueAdded(pick) || 0;
         }
       }
       teams.push({ team, valueAdded });

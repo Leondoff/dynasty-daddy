@@ -15,6 +15,9 @@ import { FantasyPlatformDTO, LeaguePlatform } from '../../../model/league/Fantas
 import { DraftCapital } from '../../../model/assets/DraftCapital';
 import { LeagueUserDTO } from 'src/app/model/league/LeagueUserDTO';
 import { Status } from 'src/app/components/model/status';
+import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
+import { CompletedDraft } from 'src/app/model/league/CompletedDraft';
+import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -82,11 +85,16 @@ export class FleaflickerService {
     const teamDraftCapitalMap = {};
     const leagueSchedule = {};
     const isPlayoffs = [];
+    const draftResults = [];
     const season = leagueWrapper.selectedLeague.season;
     const leagueId = leagueWrapper.selectedLeague.leagueId;
     observableList.push(this.fleaflickerApiService.getFFRosters(season, leagueId).pipe(map(rosters => {
       fleaflickerRosters = rosters.rosters;
       return of(fleaflickerRosters);
+    })));
+    observableList.push(this.fleaflickerApiService.getFFDraftResults(season, leagueId).pipe(map(draft => {
+      draftResults.push(this.marshalDraftResults(draft, leagueId, leagueWrapper.selectedLeague.totalRosters));
+      return of(draftResults);
     })));
     for (let i = 0; i < 3; i++) {
       observableList.push(this.fleaflickerApiService.getFFTransactions(leagueId, (i * 30).toString()).pipe(map(transactions => {
@@ -123,33 +131,24 @@ export class FleaflickerService {
       leagueWrapper.selectedLeague.leagueTransactions = leagueTransactions;
       leagueWrapper.selectedLeague.playoffRoundType = 1;
       leagueWrapper.selectedLeague.playoffStartWeek = isPlayoffs.findIndex(it => it === true) > -1 ? isPlayoffs.findIndex(it => it === true) : 17;
+      leagueWrapper.completedDrafts = draftResults;
       const teams = [];
       leagueWrapper.selectedLeague.metadata.rosters?.forEach((division, ind) => {
         division.teams?.forEach(team => {
-          const ddTeam = new LeagueTeam(null, null);
           const owner = team.owners[0];
-          ddTeam.owner = new LeagueOwnerDTO(owner.id, owner.displayName, team.name, team.logoUrl || this.DEFAULT_TEAM_LOGO);
+          const ownerDTO = new LeagueOwnerDTO(owner.id, owner.displayName, team.name, team.logoUrl || this.DEFAULT_TEAM_LOGO);
           const roster = fleaflickerRosters.find(it => it.team.id === team.id).players;
-          // TODO put in a funtion to reuse
           this.mapFleaFlickerIdMap(roster);
-          ddTeam.roster = new LeagueRosterDTO(
-            team.id,
-            owner.id,
-            roster?.map(player => player.proPlayer.id.toString()),
-            null,
-            null,
-            new TeamMetrics(null)
-          );
+          const rosterDTO = new LeagueRosterDTO()
+            .fromFF(
+              team.id,
+              owner.id,
+              roster?.map(player => player.proPlayer.id.toString()),
+              new TeamMetrics().fromFF(team));
+          const ddTeam = new LeagueTeam(ownerDTO, rosterDTO);
           // index in the division array so we want 0 to be default
           ddTeam.roster.teamMetrics.division = leagueWrapper.selectedLeague.divisions > 1 ?
             leagueWrapper.selectedLeague.divisionNames.findIndex(it => it === division.name) + 1 : 1;
-          ddTeam.roster.teamMetrics.fpts = Number(team.pointsFor?.value || 0);
-          ddTeam.roster.teamMetrics.ppts = Number(team.pointsFor?.value || 0);
-          ddTeam.roster.teamMetrics.fptsAgainst = Number(team.pointsAgainst?.value || 0);
-          ddTeam.roster.teamMetrics.waiverPosition = Number(team.waiverPosition || 0);
-          ddTeam.roster.teamMetrics.wins = Number(team.recordOverall?.wins || 0);
-          ddTeam.roster.teamMetrics.losses = Number(team.recordOverall?.losses || 0);
-          ddTeam.roster.teamMetrics.rank = Number(team.recordOverall?.rank || 0);
           ddTeam.futureDraftCapital = teamDraftCapitalMap[ddTeam.roster.rosterId] || [];
           teams.push(ddTeam);
         });
@@ -192,7 +191,6 @@ export class FleaflickerService {
     const observableList = leagues.map(league => {
       return this.loadLeagueFromId$(year, league.leagueId).pipe(concatMap(leagueInfo => {
         return this.fleaflickerApiService.getFFRosters(year, league.leagueId).pipe(
-          retry(2),
           catchError(error => {
             console.error('Failed to fetch data:', error);
             return of([]);
@@ -224,7 +222,7 @@ export class FleaflickerService {
     const divisions: string[] = [...new Set<string>(leagueInfo?.divisions?.map(division => division?.name))] || [];
     const rosterSize = Number(leagueInfo.league?.rosterRequirements?.rosterSize) + (Number(leagueInfo.league?.rosterRequirements?.reserveCount) || 0);
     const roster = this.generateRosterPositions(leagueInfo.league.rosterRequirements)
-    const ffLeague = new LeagueDTO().setLeague(
+    const ffLeague = new LeagueDTO().fromFF(
       roster.includes('SUPER_FLEX'),
       leagueInfo.league.name,
       leagueInfo.league.id,
@@ -233,20 +231,9 @@ export class FleaflickerService {
       leagueInfo.league.id || null,
       leagueInfo.season === new Date().getFullYear() ? 'in_progress' : 'completed',
       leagueInfo.season.toString(),
-      null,
-      null,
-      null,
-      LeaguePlatform.FLEAFLICKER);
-    ffLeague.rosterSize = rosterSize;
-    ffLeague.divisionNames = divisions;
-    ffLeague.divisions = leagueInfo.divisions.length;
-    ffLeague.startWeek = Number(leagueInfo.startWeek) || 1; // TODO figure out how that is determined
-    ffLeague.type = leagueInfo.league?.maxKeepers > 0 ? LeagueType.DYNASTY : LeagueType.REDRAFT;
-    ffLeague.draftRounds = 5; // TODO figure out the right way
-    ffLeague.medianWins = false; // TODO figure out how that is determined
-    ffLeague.metadata = {
-      rosters: leagueInfo.divisions
-    };
+      rosterSize,
+      leagueInfo);
+    ffLeague.setDivisions(divisions)
     return ffLeague;
   }
 
@@ -282,7 +269,7 @@ export class FleaflickerService {
     let i = 0;
     if (!transactions || transactions.length === 0) return transactionList;
     while (i < transactions.length) {
-      let trans = new LeagueTeamTransactionDTO(null, []);
+      let trans = new LeagueTeamTransactionDTO();
       const currentRosterId = transactions[i]?.transaction?.team?.id
       const timestamp = transactions[i].timeEpochMilli
       do {
@@ -332,7 +319,7 @@ export class FleaflickerService {
   private marshalTrades(trades: any[]): LeagueTeamTransactionDTO[] {
     const leagueTrades = [];
     trades?.forEach(trade => {
-      let trans = new LeagueTeamTransactionDTO(null, []);
+      let trans = new LeagueTeamTransactionDTO();
       trans.transactionId = trade?.id || 'not provided';
       trans.type = 'trade';
       trans.status = TransactionStatus.COMPLETED;
@@ -400,10 +387,10 @@ export class FleaflickerService {
    * @returns 
    */
   private marshalIndividualMatchUp(game: any): LeagueTeamMatchUpDTO[] {
-    const matchUpTeamHome = new LeagueTeamMatchUpDTO();
-    matchUpTeamHome.createMatchUpObject(Number(game.id), game?.homeScore?.score?.value || Number(game?.homeScore?.score?.formatted), Number(game.home.id));
-    const matchUpTeamAway = new LeagueTeamMatchUpDTO();
-    matchUpTeamAway.createMatchUpObject(Number(game.id), game?.awayScore?.score?.value || Number(game?.awayScore?.score?.formatted), Number(game.away.id));
+    const matchUpTeamHome = new LeagueTeamMatchUpDTO()
+      .createMatchUpObject(Number(game.id), game?.homeScore?.score?.value || Number(game?.homeScore?.score?.formatted), Number(game.home.id));
+    const matchUpTeamAway = new LeagueTeamMatchUpDTO()
+      .createMatchUpObject(Number(game.id), game?.awayScore?.score?.value || Number(game?.awayScore?.score?.formatted), Number(game.away.id));
     return [matchUpTeamAway, matchUpTeamHome];
   }
 
@@ -422,5 +409,25 @@ export class FleaflickerService {
         }
       }
     });
+  }
+
+  /**
+   * Format draft results to dynasty daddy format
+   * @param draft draft json response from flea flicker
+   * @param leagueId ff league id
+   * @param teamCount number of teams
+   * @returns 
+   */
+  private marshalDraftResults(draft: any, leagueId: string, teamCount: number): CompletedDraft {
+    const draftId = Math.round(Math.random() * 100);
+    const picks = draft?.orderedSelections?.filter(pick => pick.player.proPlayer).map(pick => {
+      this.mapFleaFlickerIdMap([pick.player])
+      return new LeagueCompletedPickDTO().fromFF(pick);
+    });
+    return new CompletedDraft(
+      new LeagueRawDraftOrderDTO().fromFF(draft, (picks?.length || teamCount * 4) / teamCount,
+        draftId.toString(), leagueId, picks[0]?.playerId != "" ? 'completed' : 'in_progress'),
+      picks
+    );
   }
 }

@@ -229,7 +229,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
         fantasyPlayer = tempPlayer;
       }
     }
-    return 'Pick ' + topPick.pickNumber + ': ' + (fantasyPlayer?.position || '?') + ' - ' + fantasyPlayer.last_name;
+    return 'Pick ' + topPick.pickNumber + ': ' + (fantasyPlayer?.position || '?') + ' - ' + (fantasyPlayer?.last_name || topPick?.lastName || '??');
   }
 
   /**
@@ -249,7 +249,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
       topPick.playerId,
       this.leagueService.selectedLeague.leaguePlatform
     );
-    return 'Pick ' + topPick.pickNumber + ': ' + (fantasyPlayer?.position || '?') + ' - ' + fantasyPlayer.last_name;
+    return 'Pick ' + topPick.pickNumber + ': ' + (fantasyPlayer?.position || '?') + ' - ' + (fantasyPlayer?.last_name || topPick?.lastName || '??');
   }
 
   /**
@@ -306,7 +306,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
               pickWithValues.push({
                 player: fantasyPlayer.full_name,
                 pick: `${pick.round}.${pick.pickNumber % this.leagueService.selectedLeague.totalRosters}`,
-                value: (this.isSuperFlex ? fantasyPlayer.sf_trade_value : fantasyPlayer.trade_value) - this.draftService.roundPickValue[pick.round - 1]
+                value: (this.isSuperFlex ? fantasyPlayer.sf_trade_value : fantasyPlayer.trade_value) - (this.draftService.roundPickValue[pick.round - 1] || 0)
               });
             }
           }

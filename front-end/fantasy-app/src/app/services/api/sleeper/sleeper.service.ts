@@ -90,8 +90,7 @@ export class SleeperService {
           .pipe(mergeMap((weekMatchUps) => {
             const matchUpData: LeagueTeamMatchUpDTO[] = [];
             for (const matchup of weekMatchUps) {
-              const newMatch = new LeagueTeamMatchUpDTO();
-              matchUpData.push(newMatch.createMatchUpFromSleeper(matchup));
+              matchUpData.push(new LeagueTeamMatchUpDTO().createMatchUpFromSleeper(matchup));
             }
             leagueMatchUps[weekNum] = matchUpData;
             return of(weekMatchUps);
@@ -104,7 +103,7 @@ export class SleeperService {
               for (const pick of transaction.draft_picks) {
                 picks.push(new LeagueRawTradePicksDTO(pick.owner_id, pick.previous_owner_id, pick.roster_id, pick.round, pick.season));
               }
-              transactionsData.push(new LeagueTeamTransactionDTO(transaction, picks));
+              transactionsData.push(new LeagueTeamTransactionDTO().fromSleeper(transaction, picks));
             }
             leagueTransactions[weekNum] = transactionsData;
             return of(weekTransactions);
@@ -128,7 +127,7 @@ export class SleeperService {
           rosters.map(roster => {
             // find existing owner or create a new one
             const owner = owners.find(o => o.userId === roster.ownerId)
-              || new LeagueOwnerDTO(roster.rosterId.toString(), 'Retired Owner ' + roster.rosterId, 'Ophan Team ' + roster.rosterId, this.sleeperIcon);
+              || new LeagueOwnerDTO(roster.rosterId.toString(), 'Retired Owner ' + roster.rosterId, 'Orphan Team ' + roster.rosterId, this.sleeperIcon);
             // if orphaned team add new owner and set new id
             if (!roster.ownerId) {
               owners.push(owner);
@@ -207,7 +206,7 @@ export class SleeperService {
       if (draft.status === 'pre_draft' && draft.draftOrder) {
         return this.sleeperApiService.getSleeperTradedPicksByDraftId(draft.draftId)
           .pipe(mergeMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
-            // map pick order for ophaned teams
+            // map pick order for orphaned teams
             if (Object.keys(draft.draftOrder).length != league.leagueTeamDetails.length) {
               league.leagueTeamDetails.forEach(team => {
                 if (!draft.draftOrder[team.owner?.userId]) {
