@@ -47,28 +47,18 @@ export class ESPNService {
   loadLeague$(leagueWrapper: LeagueWrapper): Observable<LeagueWrapper> {
     const teams = [];
     leagueWrapper.selectedLeague.metadata.rosters?.forEach((team, ind) => {
-      const ddTeam = new LeagueTeam(null, null);
       const ownerDetails = leagueWrapper.selectedLeague.metadata.owners?.find(it => it.id === team.primaryOwner)
-      ddTeam.owner = new LeagueOwnerDTO(team.primaryOwner, ownerDetails.firstName.slice(0, 1) + '. ' + ownerDetails.lastName, team.name, team.logo || this.DEFAULT_TEAM_LOGO);
+      const ownerDTO = new LeagueOwnerDTO(team.primaryOwner, ownerDetails.firstName.slice(0, 1) + '. ' + ownerDetails.lastName, team.name, team.logo || this.DEFAULT_TEAM_LOGO);
       const roster = team.roster.entries.map(it => it.playerId.toString());
-      // TODO put in a funtion to reuse
       this.mapESPNIdMap(team.roster.entries);
-      ddTeam.roster = new LeagueRosterDTO(
-        team.id,
-        team.primaryOwner,
-        roster,
-        null,
-        null,
-        new TeamMetrics(null)
-      );
-      // index in the division array so we want 0 to be default
-      // ddTeam.roster.teamMetrics.division = leagueWrapper.selectedLeague.divisions > 1 ?
-      //   leagueWrapper.selectedLeague.divisionNames.findIndex(it => it === division.name) + 1 : 1;
-      ddTeam.roster.teamMetrics.fpts = Number(team.record?.overall?.pointsFor || 0);
-      ddTeam.roster.teamMetrics.fptsAgainst = Number(team.record?.overall?.pointsAgainst || 0);
-      ddTeam.roster.teamMetrics.wins = Number(team.record?.overall?.wins || 0);
-      ddTeam.roster.teamMetrics.losses = Number(team.record?.overall?.losses || 0);
-      ddTeam.roster.teamMetrics.rank = Number(team.playoffSeed || 0);
+      const rosterDTO = new LeagueRosterDTO()
+        .fromESPN(
+          team.id,
+          team.primaryOwner,
+          roster,
+          new TeamMetrics().fromESPN(team)
+        );
+      const ddTeam = new LeagueTeam(ownerDTO, rosterDTO);
       teams.push(ddTeam);
     });
     leagueWrapper.leagueTeamDetails = teams;
@@ -87,7 +77,7 @@ export class ESPNService {
   private fromESPNLeague(leagueInfo: any): LeagueDTO {
     const divisions: string[] = [...new Set<string>(leagueInfo?.settings?.scheduleSettings?.divisions?.map(division => division?.name))] || [];
     const roster = this.generateRosterPositions(leagueInfo.settings.rosterSettings.lineupSlotCounts)
-    const ffLeague = new LeagueDTO().setLeague(
+    const ffLeague = new LeagueDTO().fromESPN(
       roster[1] == 'QB',
       leagueInfo.settings?.name || 'ESPN League',
       leagueInfo.id,
@@ -96,26 +86,9 @@ export class ESPNService {
       leagueInfo.id || null,
       leagueInfo.seasonId === new Date().getFullYear() ? 'in_progress' : 'completed',
       leagueInfo.seasonId.toString(),
-      null,
-      null,
-      null,
-      LeaguePlatform.ESPN);
-    ffLeague.rosterSize = roster.length + (leagueInfo?.settings?.rosterSettings?.lineupSlotCounts["23"] || 2 * roster.length);
-    ffLeague.divisionNames = divisions;
-    ffLeague.divisions = divisions.length;
-    ffLeague.startWeek = Number(leagueInfo.status?.firstScoringPeriod) || 1;
-    ffLeague.type = (leagueInfo.settings?.keeperCount > 0 || leagueInfo.settings?.keeperCountFuture > 0) ? LeagueType.DYNASTY : LeagueType.REDRAFT;
-    ffLeague.draftRounds = (leagueInfo.draftDetail?.picks?.length / leagueInfo.settings?.size) || 5;
-    ffLeague.medianWins = false; // TODO figure out how that is determined
-    ffLeague.playoffStartWeek = leagueInfo?.settings?.scheduleSettings?.matchupPeriodCount || 14;
-    ffLeague.playoffTeams = leagueInfo?.settings?.scheduleSettings?.playoffTeamCount || 6;
-    ffLeague.playoffRoundType = leagueInfo?.settings?.scheduleSettings?.playoffMatchupPeriodLength || 1;
-    ffLeague.metadata = {
-      rosters: leagueInfo.teams,
-      schedule: leagueInfo.schedule,
-      owners: leagueInfo.members,
-      draft: leagueInfo.draftDetail
-    };
+      roster.length + (leagueInfo?.settings?.rosterSettings?.lineupSlotCounts["23"] || 2 * roster.length),
+      leagueInfo);
+    ffLeague.setDivisions(divisions);
     return ffLeague;
   }
 
@@ -164,11 +137,10 @@ export class ESPNService {
   private marshallDraftResults(draft: any, leagueId: string, rounds: number): CompletedDraft {
     const draftId = Math.round(Math.random() * 100);
     const picks = draft?.picks?.map(pick => {
-      return (new LeagueCompletedPickDTO(null).fromESPN(pick));
+      return (new LeagueCompletedPickDTO().fromESPN(pick));
     });
     return new CompletedDraft(
-      new LeagueRawDraftOrderDTO(draftId.toString(), leagueId, 'completed', null,
-        null, null, null, null).fromESPN(draft, rounds),
+      new LeagueRawDraftOrderDTO().fromESPN(draft, rounds, draftId.toString(), leagueId, 'completed'),
       picks
     );
   }

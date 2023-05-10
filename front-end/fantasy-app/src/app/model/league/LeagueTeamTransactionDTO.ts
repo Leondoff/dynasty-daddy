@@ -1,7 +1,21 @@
 import {LeagueRawTradePicksDTO} from './LeagueRawTradePicksDTO';
 
 export class LeagueTeamTransactionDTO {
-  constructor(transaction: any, picks: LeagueRawTradePicksDTO[] = []) {
+
+  type: string;
+  transactionId: string;
+  status: TransactionStatus;
+  settings: {};
+  rosterIds: number[] = [];
+  drops: {} = {};
+  adds: {} = {};
+  draftpicks: LeagueRawTradePicksDTO[] = [];
+  createdAt: number;
+
+  constructor() {
+  }
+
+  fromSleeper(transaction: any, picks: LeagueRawTradePicksDTO[] = []): LeagueTeamTransactionDTO {
     this.type = transaction?.type;
     this.transactionId = transaction?.transaction_id;
     this.status = this.getTransactionStatusFromString(transaction?.status);
@@ -11,17 +25,8 @@ export class LeagueTeamTransactionDTO {
     this.adds = transaction?.adds || {};
     this.draftpicks = picks;
     this.createdAt = transaction?.created;
+    return this;
   }
-
-  type: string;
-  transactionId: string;
-  status: TransactionStatus;
-  settings: {};
-  rosterIds: number[];
-  drops: {} = {};
-  adds: {} = {};
-  draftpicks: LeagueRawTradePicksDTO[];
-  createdAt: number;
 
   getTransactionStatusFromString(status: string): TransactionStatus {
     switch (status) {

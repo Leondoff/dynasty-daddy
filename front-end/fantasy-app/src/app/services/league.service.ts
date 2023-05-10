@@ -179,7 +179,7 @@ export class LeagueService {
    * @param rosterId id
    * returns sleeper team data
    */
-  getTeamByRosterId(rosterId): LeagueTeam {
+  getTeamByRosterId(rosterId: number): LeagueTeam {
     for (const team of this.leagueTeamDetails) {
       if (team.roster.rosterId === rosterId) {
         return team;
@@ -194,14 +194,15 @@ export class LeagueService {
         'Retired Team',
         ''
       ),
-      new LeagueRosterDTO(
-        rosterId,
-        'unable_to_find',
-        [],
-        [],
-        [],
-        new TeamMetrics(null)
-      )
+      new LeagueRosterDTO()
+        .fromSleeper(
+          rosterId,
+          'unable_to_find',
+          [],
+          [],
+          [],
+          new TeamMetrics()
+        )
     );
   }
 

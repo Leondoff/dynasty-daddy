@@ -1,20 +1,20 @@
 /* tslint:disable:max-line-length */
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {SleeperApiConfigService} from './sleeper-api-config.service';
-import {LeagueCompletedPickDTO} from '../../../model/league/LeagueCompletedPickDTO';
-import {LeagueRosterDTO} from '../../../model/league/LeagueRosterDTO';
-import {LeaguePlayoffMatchUpDTO} from '../../../model/league/LeaguePlayoffMatchUpDTO';
-import {LeagueOwnerDTO} from '../../../model/league/LeagueOwnerDTO';
-import {LeagueRawDraftOrderDTO} from '../../../model/league/LeagueRawDraftOrderDTO';
-import {TeamMetrics} from '../../../model/league/TeamMetrics';
-import {StateOfNFLDTO} from '../../../model/league/StateOfNFLDTO';
-import {LeagueRawTradePicksDTO} from '../../../model/league/LeagueRawTradePicksDTO';
-import {LeaguePlatform} from '../../../model/league/FantasyPlatformDTO';
-import {LeagueUserDTO} from '../../../model/league/LeagueUserDTO';
-import {LeagueDTO} from '../../../model/league/LeagueDTO';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { SleeperApiConfigService } from './sleeper-api-config.service';
+import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
+import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
+import { LeaguePlayoffMatchUpDTO } from '../../../model/league/LeaguePlayoffMatchUpDTO';
+import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
+import { LeagueRawDraftOrderDTO } from '../../../model/league/LeagueRawDraftOrderDTO';
+import { TeamMetrics } from '../../../model/league/TeamMetrics';
+import { StateOfNFLDTO } from '../../../model/league/StateOfNFLDTO';
+import { LeagueRawTradePicksDTO } from '../../../model/league/LeagueRawTradePicksDTO';
+import { LeaguePlatform } from '../../../model/league/FantasyPlatformDTO';
+import { LeagueUserDTO } from '../../../model/league/LeagueUserDTO';
+import { LeagueDTO } from '../../../model/league/LeagueDTO';
 
 
 @Injectable({
@@ -41,7 +41,7 @@ export class SleeperApiService {
   getSleeperLeaguesByUserID(userId: string, year: string): Observable<LeagueDTO[]> {
     return this.http.get<LeagueDTO[]>(this.sleeperApiConfigService.getSleeperUsernameEndpoint + userId + '/leagues/nfl/' + year).pipe(map((leagues: any[]) => {
       const leagueList: LeagueDTO[] = [];
-      leagues.map(league => leagueList.push(new LeagueDTO().setLeague(league.roster_positions.includes('SUPER_FLEX'), league.name, league.league_id, league.total_rosters, league.roster_positions, league.previous_league_id, league.status, league.season, league.metadata, league.settings, league.scoring_settings, LeaguePlatform.SLEEPER)));
+      leagues.map(league => leagueList.push(new LeagueDTO().fromSleeper(league.roster_positions.includes('SUPER_FLEX'), league.name, league.league_id, league.total_rosters, league.roster_positions, league.previous_league_id, league.status, league.season, league.metadata, league.settings, league.scoring_settings, LeaguePlatform.SLEEPER)));
       return leagueList;
     }));
   }
@@ -53,7 +53,9 @@ export class SleeperApiService {
   getSleeperRostersByLeagueId(leagueId: string): Observable<LeagueRosterDTO[]> {
     return this.http.get<LeagueRosterDTO[]>(this.sleeperApiConfigService.getSleeperLeagueEndpoint + leagueId + '/rosters').pipe(map((rosters: any[]) => {
       const rosterList: LeagueRosterDTO[] = [];
-      rosters.map(roster => rosterList.push(new LeagueRosterDTO(roster.roster_id, roster.owner_id, roster.players, roster.reserve, roster.taxi, new TeamMetrics(roster.settings))));
+      rosters.map(roster => rosterList.push(new LeagueRosterDTO()
+        .fromSleeper(roster.roster_id, roster.owner_id, roster.players, roster.reserve, roster.taxi, new TeamMetrics().fromSleeper(roster.settings))
+      ));
       return rosterList;
     }));
   }
@@ -64,7 +66,7 @@ export class SleeperApiService {
    */
   getSleeperLeagueByLeagueId(leagueId: string): Observable<LeagueDTO> {
     return this.http.get<LeagueRosterDTO[]>(this.sleeperApiConfigService.getSleeperLeagueEndpoint + leagueId).pipe(map((league: any) => {
-      return new LeagueDTO().setLeague(league.roster_positions.includes('SUPER_FLEX'), league.name, league.league_id, league.total_rosters, league.roster_positions, league.previous_league_id, league.status, league.season, league.metadata, league.settings, league.scoring_settings, LeaguePlatform.SLEEPER);
+      return new LeagueDTO().fromSleeper(league.roster_positions.includes('SUPER_FLEX'), league.name, league.league_id, league.total_rosters, league.roster_positions, league.previous_league_id, league.status, league.season, league.metadata, league.settings, league.scoring_settings, LeaguePlatform.SLEEPER);
     }));
   }
 
@@ -98,7 +100,7 @@ export class SleeperApiService {
    */
   getSleeperDraftDetailsByDraftId(draftId: string): Observable<LeagueRawDraftOrderDTO> {
     return this.http.get<LeagueRawDraftOrderDTO>(this.sleeperApiConfigService.getSleeperDraftEndpoint + draftId).pipe(map((draft: any) => {
-      return new LeagueRawDraftOrderDTO(draft.draft_id, draft.league_id, draft.status, draft.type, draft.draft_order, draft.slot_to_roster_id, draft.season, draft.settings);
+      return new LeagueRawDraftOrderDTO().fromSleeper(draft.draft_id, draft.league_id, draft.status, draft.type, draft.draft_order, draft.slot_to_roster_id, draft.season, draft.settings);
     }));
   }
 
@@ -157,7 +159,7 @@ export class SleeperApiService {
   getSleeperCompletedDraftsByDraftId(draftId: string): Observable<LeagueCompletedPickDTO[]> {
     return this.http.get<LeagueCompletedPickDTO[]>(this.sleeperApiConfigService.getSleeperDraftEndpoint + draftId + '/picks').pipe(map((picks: any[]) => {
       const mappedPicks: LeagueCompletedPickDTO[] = [];
-      picks.map(pick => mappedPicks.push(new LeagueCompletedPickDTO(pick)));
+      picks.map(pick => mappedPicks.push(new LeagueCompletedPickDTO().fromSleeper(pick)));
       return mappedPicks;
     }));
   }
