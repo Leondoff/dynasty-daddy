@@ -93,7 +93,10 @@ export class FleaflickerService {
       return of(fleaflickerRosters);
     })));
     observableList.push(this.fleaflickerApiService.getFFDraftResults(season, leagueId).pipe(map(draft => {
-      draftResults.push(this.marshalDraftResults(draft, leagueId, leagueWrapper.selectedLeague.totalRosters));
+      // if draft is completed marshal data
+      if (draft.orderedSelections) {
+        draftResults.push(this.marshalDraftResults(draft, leagueId, leagueWrapper.selectedLeague.totalRosters));
+      }
       return of(draftResults);
     })));
     for (let i = 0; i < 3; i++) {
