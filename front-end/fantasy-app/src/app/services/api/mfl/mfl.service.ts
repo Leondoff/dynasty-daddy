@@ -66,7 +66,7 @@ export class MflService {
     observableList.push(
       this.mflApiService.getMFLTransactions(year, leagueId, this.mflUserId).pipe(
         map((leagueTrans) => {
-          leagueTransactions[1] = this.marshallLeagueTransactions(leagueTrans?.transactions?.transaction, leagueWrapper.selectedLeague.season);
+          leagueTransactions[1] = this.marshalLeagueTransactions(leagueTrans?.transactions?.transaction, leagueWrapper.selectedLeague.season);
           return of(leagueTransactions);
         })
       )
@@ -74,7 +74,7 @@ export class MflService {
     observableList.push(
       this.mflApiService.getMFLSchedules(year, leagueId, this.mflUserId).pipe(
         map((leagueSchedule) => {
-          leagueMatchUps = this.marshallLeagueMatchUps(leagueSchedule?.schedule?.weeklySchedule);
+          leagueMatchUps = this.marshalLeagueMatchUps(leagueSchedule?.schedule?.weeklySchedule);
           return of(leagueMatchUps);
         })
       )
@@ -103,7 +103,7 @@ export class MflService {
       observableList.push(
         this.mflApiService.getMFLDraftResults(year, leagueId, this.mflUserId).pipe(
           map(draftResults => {
-            completedDraft = this.marshallDraftResults(
+            completedDraft = this.marshalDraftResults(
               draftResults.draftResults?.draftUnit,
               leagueId,
               leagueWrapper?.selectedLeague?.metadata?.draftPoolType,
@@ -132,7 +132,7 @@ export class MflService {
         const observable = leagueWrapper.selectedLeague.type === LeagueType.DYNASTY ?
           this.mflApiService.getMFLFutureDraftPicks(pickYear, leagueId, this.mflUserId).pipe(
             map(draftPicks => {
-              const teamDraftCapital = this.marshallFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise);
+              const teamDraftCapital = this.marshalFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise);
               return teamDraftCapital;
             })
           ) :
@@ -360,7 +360,7 @@ export class MflService {
    * @param playerType draft type
    * @param teamCount number of teams
    */
-  private marshallDraftResults(draft: any, leagueId: string, playerType: string, teamCount: number): CompletedDraft {
+  private marshalDraftResults(draft: any, leagueId: string, playerType: string, teamCount: number): CompletedDraft {
     const draftId = Math.round(Math.random() * 100);
     const picks = draft?.draftPick?.filter(pick => pick.player !== '----').map(pick => {
       return (new LeagueCompletedPickDTO().fromMFL(pick, teamCount));
@@ -379,7 +379,7 @@ export class MflService {
    * format json response to future draft picks dictionary
    * @param picks json of picks
    */
-  private marshallFutureDraftCapital(picks: any): {} {
+  private marshalFutureDraftCapital(picks: any): {} {
     const picksDict = {};
     picks?.forEach(team => {
       if (Array.isArray(team.futureDraftPick)) {
@@ -398,7 +398,7 @@ export class MflService {
    * format json response to match up dictionary
    * @param leagueSchedule json response
    */
-  private marshallLeagueMatchUps(leagueSchedule: any): {} {
+  private marshalLeagueMatchUps(leagueSchedule: any): {} {
     const matchUpsDict = {};
     leagueSchedule?.forEach(matchUps => {
       const week = Number(matchUps.week);
@@ -407,13 +407,13 @@ export class MflService {
       if (matchUps.matchup) {
         if (Array.isArray(matchUps?.matchup)) {
           matchUps?.matchup?.forEach(matchUp => {
-            teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[0], matchUpId));
-            teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUp.franchise[1], matchUpId));
+            teamMatchUps.push(this.marshalMatchUpForTeam(matchUp.franchise[0], matchUpId));
+            teamMatchUps.push(this.marshalMatchUpForTeam(matchUp.franchise[1], matchUpId));
             matchUpId++;
           });
         } else {
-          teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[0], matchUpId));
-          teamMatchUps.push(this.mapTeamMatchUpFromFranchiseScheduleObject(matchUps?.matchup?.franchise[1], matchUpId));
+          teamMatchUps.push(this.marshalMatchUpForTeam(matchUps?.matchup?.franchise[0], matchUpId));
+          teamMatchUps.push(this.marshalMatchUpForTeam(matchUps?.matchup?.franchise[1], matchUpId));
         }
       }
       matchUpsDict[week] = teamMatchUps;
@@ -426,7 +426,7 @@ export class MflService {
    * @param matchUp json
    * @param matchUpId match up id
    */
-  private mapTeamMatchUpFromFranchiseScheduleObject(matchUp: any, matchUpId: number): LeagueTeamMatchUpDTO {
+  private marshalMatchUpForTeam(matchUp: any, matchUpId: number): LeagueTeamMatchUpDTO {
     const newMatchUpData = new LeagueTeamMatchUpDTO()
       .createMatchUpObject(matchUpId, Number(matchUp?.score) || 0, this.formatRosterId(matchUp.id));
     return newMatchUpData;
@@ -437,16 +437,16 @@ export class MflService {
    * @param leagueTrans json
    * @param season
    */
-  private marshallLeagueTransactions(leagueTrans: any, season: string): LeagueTeamTransactionDTO[] {
+  private marshalLeagueTransactions(leagueTrans: any, season: string): LeagueTeamTransactionDTO[] {
     if (!leagueTrans) {
       return [];
     }
     if (Array.isArray(leagueTrans)) {
-      leagueTrans?.filter(trans => trans.type !== 'TAXI' && trans.type !== 'IR' && !trans.type.includes('AUCTION')).map(trans => {
-        return this.marshallSingleTransaction(trans, season)
+      return leagueTrans?.filter(trans => trans.type !== 'TAXI' && trans.type !== 'IR' && !trans.type.includes('AUCTION')).map(trans => {
+        return this.marshalSingleTransaction(trans, season)
       });
     } else {
-      return [this.marshallSingleTransaction(leagueTrans, season)];
+      return [this.marshalSingleTransaction(leagueTrans, season)];
     }
   }
 
@@ -455,7 +455,7 @@ export class MflService {
    * @param trans Single transaction object
    * @returns 
    */
-  private marshallSingleTransaction(trans: any, season: string): LeagueTeamTransactionDTO {
+  private marshalSingleTransaction(trans: any, season: string): LeagueTeamTransactionDTO {
     let transaction = new LeagueTeamTransactionDTO();
     transaction.type = trans.type.toLowerCase();
     const rosterId = this.formatRosterId(trans.franchise);
