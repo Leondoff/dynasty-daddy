@@ -369,7 +369,7 @@ export class MflService {
       new LeagueRawDraftOrderDTO()
         .fromMFL(draft, playerType,
           (picks?.length || teamCount * 4) / teamCount, draftId.toString(),
-          leagueId, picks[0]?.playerId != "" ? 'completed' : 'in_progress'
+          leagueId, picks?.[0]?.playerId != "" ? 'completed' : 'in_progress'
         ),
       picks
     );
