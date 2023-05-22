@@ -48,7 +48,7 @@ export class LeagueDTO {
     this.leagueId = league_id;
     this.totalRosters = total_rosters;
     this.rosterPositions = roster_positions;
-    this.rosterSize = roster_positions.length + (settings?.reserve_slots || 0) + (settings?.taxi_slots || 0);
+    this.rosterSize = (roster_positions?.length || 0) + (settings?.reserve_slots || 0) + (settings?.taxi_slots || 0);
     this.prevLeagueId = previous_league_id;
     this.status = status;
     this.divisions = settings?.divisions;

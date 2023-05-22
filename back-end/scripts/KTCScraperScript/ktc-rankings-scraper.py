@@ -7,7 +7,6 @@ from BeautifulSoupService import setUpSoup
 from PlayerService import cleanPlayerIdString
 from FantasyCalcService import fetchSuperFlexPlayerDict, fetchStandardPlayerDict
 from DynastyProcessService import fetchDynastyProcessPlayerValues
-from Constants import playerExceptionsMap
 
 # API calls to sleeper
 players = Players()

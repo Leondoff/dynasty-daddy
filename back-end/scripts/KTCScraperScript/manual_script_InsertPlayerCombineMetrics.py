@@ -16,7 +16,7 @@ PLAYER_PROFILER_EXCEPTIONS = {
     "robbieandersonwr": "robby-anderson",
     "kennethgainwellrb": "kenny-gainwell",
     "jaelondardenwr": "jaedon-darden",
-    "campeoplesrb": "camerun-peoples",
+    "camerunpeoplesrb": "camerun-peoples",
     "chigoziemokonkwote": "chig-okonkwo",
     "trestanebnerrb": "treston-ebner",
     "nickwestbrookikhinewr": "nick-westbrook",

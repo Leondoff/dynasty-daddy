@@ -1,6 +1,5 @@
 import requests
 import PlayerService
-from Constants import playerExceptionsMap
 
 # format pick to be a string
 # this is needed to align with name id format

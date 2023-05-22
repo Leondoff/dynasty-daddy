@@ -41,7 +41,7 @@ export class SleeperApiService {
   getSleeperLeaguesByUserID(userId: string, year: string): Observable<LeagueDTO[]> {
     return this.http.get<LeagueDTO[]>(this.sleeperApiConfigService.getSleeperUsernameEndpoint + userId + '/leagues/nfl/' + year).pipe(map((leagues: any[]) => {
       const leagueList: LeagueDTO[] = [];
-      leagues.map(league => leagueList.push(new LeagueDTO().fromSleeper(league.roster_positions.includes('SUPER_FLEX'), league.name, league.league_id, league.total_rosters, league.roster_positions, league.previous_league_id, league.status, league.season, league.metadata, league.settings, league.scoring_settings, LeaguePlatform.SLEEPER)));
+      leagues.map(league => leagueList.push(new LeagueDTO().fromSleeper(league?.roster_positions?.includes('SUPER_FLEX'), league.name, league.league_id, league.total_rosters, league.roster_positions, league.previous_league_id, league.status, league.season, league.metadata, league.settings, league.scoring_settings, LeaguePlatform.SLEEPER)));
       return leagueList;
     }));
   }
