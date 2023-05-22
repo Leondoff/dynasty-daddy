@@ -1,7 +1,6 @@
 import PlayerService
 import psycopg2
 import requests
-from Constants import playerExceptionsMap
 
 espnPosMap = {1: 'QB', 2: 'RB', 3: 'WR', 4: 'TE'}
 

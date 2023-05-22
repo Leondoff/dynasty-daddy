@@ -26,6 +26,9 @@ def fetchFromFleaFlickerCsv():
                         ff_id = %s,
                         updated_at = now() where name_id = %s'''
             cursor.execute(playerIdsStatement, (fleaflicker_id, playerId))
+        
+        # update the materialized view for the player ids   
+        cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')
         conn.commit()
 
 fetchFromFleaFlickerCsv()
