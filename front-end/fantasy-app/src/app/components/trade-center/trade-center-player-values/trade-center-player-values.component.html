@@ -1,0 +1,10 @@
+<div *ngIf="lineChartData.length">
+  <mat-card>
+    <div class="margin-bot-10 center-text"><span class="mid-bold-text">Trade Value (Past 40 Days)</span></div>
+    <div style="display: block; height: 300px">
+      <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+        [legend]="lineChartLegend" [chartType]="lineChartType" [colors]="chartColors" [plugins]="lineChartPlugins">
+      </canvas>
+    </div>
+  </mat-card>
+</div>

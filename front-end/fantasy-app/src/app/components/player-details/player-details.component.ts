@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PlayerService } from '../../services/player.service';
 import { BaseComponent } from '../base-component.abstract';
-import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../../model/assets/FantasyPlayer';
+import { FantasyPlayer, FantasyPlayerDataPoint } from '../../model/assets/FantasyPlayer';
 import { FantasyPlayerApiService } from '../../services/api/fantasy-player-api.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { LeagueService } from '../../services/league.service';
@@ -9,7 +9,6 @@ import { PlayerComparisonService } from '../services/player-comparison.service';
 import { ConfigService } from '../../services/init/config.service';
 import { PlayerInsights } from '../model/playerInsights';
 import { LeagueSwitchService } from '../services/league-switch.service';
-import { Status } from '../model/status';
 
 @Component({
   selector: 'app-player-details',

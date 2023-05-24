@@ -6,6 +6,7 @@ import {ChartDataSets} from 'chart.js';
 import {Label} from 'ng2-charts';
 import {FantasyPlayerApiService} from '../../services/api/fantasy-player-api.service';
 import {PlayerService} from '../../services/player.service';
+import { DisplayService } from 'src/app/services/utilities/display.service';
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +56,7 @@ export class PlayerComparisonService {
 
   constructor(
     private fantasyPlayerApiService: FantasyPlayerApiService,
+    private displayService: DisplayService,
     private playerService: PlayerService
   ) {
   }
@@ -100,8 +102,8 @@ export class PlayerComparisonService {
     if (!this.isGroupMode) {
       const data = [];
       for (const dataPoint of player) {
-        if (this.lineChartLabels.includes(this.formatDateForDisplay(dataPoint.date))) {
-          const index = this.lineChartLabels.indexOf(this.formatDateForDisplay(dataPoint.date));
+        if (this.lineChartLabels.includes(this.displayService.formatDateForDisplay(dataPoint.date))) {
+          const index = this.lineChartLabels.indexOf(this.displayService.formatDateForDisplay(dataPoint.date));
           data[index] = this.playerService.getValueFromDataPoint(dataPoint, this.isSuperFlex, fantasyMarket);
         }
       }
@@ -138,8 +140,8 @@ export class PlayerComparisonService {
       for (const player of this.selectedPlayers) {
         const data = [];
         for (const dataPoint of player.data) {
-          if (this.lineChartLabels.includes(this.formatDateForDisplay(dataPoint.date))) {
-            const index = this.lineChartLabels.indexOf(this.formatDateForDisplay(dataPoint.date));
+          if (this.lineChartLabels.includes(this.displayService.formatDateForDisplay(dataPoint.date))) {
+            const index = this.lineChartLabels.indexOf(this.displayService.formatDateForDisplay(dataPoint.date));
             data[index] = this.playerService.getValueFromDataPoint(dataPoint, this.isSuperFlex, fantasyMarket);
           }
         }
@@ -160,12 +162,6 @@ export class PlayerComparisonService {
   }
 
   /**
-   * formats date display for table labels
-   * @param date string of date to format
-   */
-  formatDateForDisplay = (date: string) => new Date(date).toString().slice(4, 15);
-
-  /**
    * calculates aggregated player values
    * @param players
    * @param fantasyMarket
@@ -175,8 +171,8 @@ export class PlayerComparisonService {
     const data = [];
     for (const player of players) {
       for (const dataPoint of player.data) {
-        if (this.lineChartLabels.includes(this.formatDateForDisplay(dataPoint.date))) {
-          const index = this.lineChartLabels.indexOf(this.formatDateForDisplay(dataPoint.date));
+        if (this.lineChartLabels.includes(this.displayService.formatDateForDisplay(dataPoint.date))) {
+          const index = this.lineChartLabels.indexOf(this.displayService.formatDateForDisplay(dataPoint.date));
           if (!data[index]) {
             data[index] = 0;
           }
