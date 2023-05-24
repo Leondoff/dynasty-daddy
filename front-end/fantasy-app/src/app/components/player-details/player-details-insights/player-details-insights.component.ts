@@ -7,6 +7,7 @@ import { BaseChartDirective, Label } from 'ng2-charts';
 import { Router } from '@angular/router';
 import { PlayerComparisonService } from '../../services/player-comparison.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
+import { DisplayService } from 'src/app/services/utilities/display.service';
 
 @Component({
   selector: 'app-player-details-insights',
@@ -94,6 +95,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   constructor(
     public playerService: PlayerService,
     public leagueService: LeagueService,
+    private displayService: DisplayService,
     private playerComparisonService: PlayerComparisonService,
     private leagueSwitchService: LeagueSwitchService,
     private router: Router) {
@@ -168,14 +170,14 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
             if (new Date(new Date(dateLabel).setHours(0, 0, 0, 0)).getTime()
               === new Date(new Date(dataPoint.date).setHours(0, 0, 0, 0)).getTime()) {
               dataList.push(this.playerService.getValueFromDataPoint(dataPoint, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket) || 0);
-              this.lineChartLabels.push(this.playerComparisonService.formatDateForDisplay(dataPoint.date));
+              this.lineChartLabels.push(this.displayService.formatDateForDisplay(dataPoint.date));
               dataPointInd++;
             }
           });
           // if no point matches
           if (dataList.length < ind) {
             dataList.push(ind === 40 ? null : 0);
-            this.lineChartLabels.push(this.playerComparisonService.formatDateForDisplay(
+            this.lineChartLabels.push(this.displayService.formatDateForDisplay(
               new Date(new Date(dateLabel).setHours(0, 0, 0, 0)).toString()));
           }
         }

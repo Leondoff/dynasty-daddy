@@ -49,4 +49,10 @@ export class DisplayService {
   getLeagueTypeFromTypeNumber(leagueType: number): string {
     return this.leagueTypes[leagueType];
   }
+
+  /**
+   * Formats date string for display
+   * @param date date string to format
+   */
+  formatDateForDisplay = (date: string) => new Date(date).toString().slice(4, 15);
 }

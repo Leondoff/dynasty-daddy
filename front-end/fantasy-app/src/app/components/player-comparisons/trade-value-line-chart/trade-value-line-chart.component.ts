@@ -1,12 +1,13 @@
-import {Component, OnInit, ViewChild, Input, OnChanges} from '@angular/core';
-import {BaseChartDirective} from 'ng2-charts';
-import {ChartOptions} from 'chart.js';
-import {PlayerComparisonService} from '../../services/player-comparison.service';
-import {BaseComponent} from '../../base-component.abstract';
-import {ConfigService} from '../../../services/init/config.service';
-import {tap} from 'rxjs/operators';
+import { Component, OnInit, ViewChild, Input, OnChanges } from '@angular/core';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartOptions } from 'chart.js';
+import { PlayerComparisonService } from '../../services/player-comparison.service';
+import { BaseComponent } from '../../base-component.abstract';
+import { ConfigService } from '../../../services/init/config.service';
+import { tap } from 'rxjs/operators';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 import { ComparisonColorPalette } from '../../../services/utilities/color.service';
+import { DisplayService } from 'src/app/services/utilities/display.service';
 
 @Component({
   selector: 'app-trade-value-line-chart',
@@ -19,7 +20,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
   selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
   /** chart set up */
-  @ViewChild(BaseChartDirective, {static: true}) chart: BaseChartDirective;
+  @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
   /** selected filter range */
   selectedDateFilter = '3month';
@@ -95,7 +96,8 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
   public lineChartPlugins = [];
 
   constructor(public playerComparisonService: PlayerComparisonService,
-              public configService: ConfigService) {
+    private displayService: DisplayService,
+    public configService: ConfigService) {
     super();
   }
 
@@ -151,7 +153,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - (displayDays - i));
-      this.playerComparisonService.lineChartLabels.push(this.playerComparisonService.formatDateForDisplay(yesterday.toString()));
+      this.playerComparisonService.lineChartLabels.push(this.displayService.formatDateForDisplay(yesterday.toString()));
     }
     this.playerComparisonService.refreshTable(this.selectedMarket);
   }

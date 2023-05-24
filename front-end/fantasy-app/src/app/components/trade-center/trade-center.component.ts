@@ -62,6 +62,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   /** list of players to drop from trade */
   public team2PlayerDropList: FantasyPlayer[] = [];
 
+  /** list of all players involved in the trade */
+  public combinedPlayerList: FantasyPlayer[] = [];
+
   /** is super flex toggle for trade package */
   public isSuperFlex: boolean;
 
@@ -327,6 +330,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   addPlayerToTeam1(player: FantasyPlayer): void {
     if (player) {
       this.team1PlayerList.push(player);
+      this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
       this.processTrade();
     }
   }
@@ -338,6 +342,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   addPlayerToTeam2(player: FantasyPlayer): void {
     if (player) {
       this.team2PlayerList.push(player);
+      this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
       this.processTrade();
     }
   }
@@ -348,6 +353,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    */
   removePlayerFromTeam1(index: number): void {
     this.team1PlayerList.splice(index, 1);
+    this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
     this.processTrade();
   }
 
@@ -357,6 +363,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    */
   removePlayerFromTeam2(index: number): void {
     this.team2PlayerList.splice(index, 1);
+    this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
     this.processTrade();
   }
 
@@ -380,6 +387,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     this.team2PlayerList = [];
     this.team1PlayerDropList = [];
     this.team2PlayerDropList = [];
+    this.combinedPlayerList = [];
     this.showDrops = false;
     this.team2Rankings = null;
     this.team1Rankings = null;
