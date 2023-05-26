@@ -29,6 +29,7 @@ export class TradeFinderService {
     userId: string,
     isSuperFlex: boolean = true,
     posFilterList: boolean[],
+    excludedUserIds: string[],
     fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut,
     limit: number = 10,
   ): TradePackage[] {
@@ -37,6 +38,7 @@ export class TradeFinderService {
       const newTrade = new TradePackage(players, [], 5, fantasyMarket)
         .setTeam1(userId)
         .setExcludePlayerList(this.buildExcludePlayerList(posFilterList))
+        .setExcludedUserIds(excludedUserIds)
         .enableAutofill();
       const processedTrade = this.tradeService.determineTrade(newTrade, isSuperFlex);
       tradePackages.push(processedTrade);
