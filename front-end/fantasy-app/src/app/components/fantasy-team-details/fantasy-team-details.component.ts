@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
 import { PowerRankingsService } from '../services/power-rankings.service';
 import { PlayerService } from '../../services/player.service';
-import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
 import { PlayerComparisonService } from '../services/player-comparison.service';
 import { TransactionsService } from '../services/transactions.service';
 import { TransactionUI } from '../model/transaction';

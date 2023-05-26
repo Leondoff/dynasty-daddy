@@ -185,7 +185,8 @@ export class TradeService {
     let sortedList = this.filterPlayersList(userIdFilter)
       .filter(player => (isSuperFlex ? player.sf_trade_value : player.trade_value) <= maxValue)
       .filter(player => !tradePackage?.team1Assets.includes(player) && !tradePackage?.team2Assets.includes(player))
-      .filter(player => !tradePackage.excludePosGroup.includes(player.position));
+      .filter(player => !tradePackage.excludePosGroup.includes(player.position))
+      .filter(player => !tradePackage.excludedUserIds.includes(player?.owner?.userId));
     if (tradePackage.autoFillTrade) {
       sortedList = sortedList.filter(player => (player.position === 'PI'
         || player.owner !== null && player.owner.userId !== tradePackage.team1UserId));

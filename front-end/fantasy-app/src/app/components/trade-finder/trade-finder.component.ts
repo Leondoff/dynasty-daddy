@@ -1,15 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import {BaseComponent} from '../base-component.abstract';
-import {LeagueSwitchService} from '../services/league-switch.service';
-import {PlayerService} from '../../services/player.service';
-import {TradeFinderService} from '../services/trade-finder.service';
-import {LeagueService} from '../../services/league.service';
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
-import {PowerRankingsService} from '../services/power-rankings.service';
-import {TradePackage} from '../model/tradePackage';
-import {ActivatedRoute} from '@angular/router';
-import {ConfigService} from '../../services/init/config.service';
+import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base-component.abstract';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { PlayerService } from '../../services/player.service';
+import { TradeFinderService } from '../services/trade-finder.service';
+import { LeagueService } from '../../services/league.service';
+import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { PowerRankingsService } from '../services/power-rankings.service';
+import { TradePackage } from '../model/tradePackage';
+import { ActivatedRoute } from '@angular/router';
+import { ConfigService } from '../../services/init/config.service';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
+import { UntypedFormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-trade-finder',
@@ -31,6 +32,12 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
 
   /** is league a superflex league */
   isSuperflex: boolean;
+
+  /** form control for selected teams dropdown */
+  includedTeams = new UntypedFormControl();
+
+  /** available teams to filter out */
+  availableTeams: any[] = [];
 
   /** filter trade finder results by position */
   filterPosGroup: boolean[] = [true, true, true, true, true];
@@ -60,8 +67,8 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
       this.setUpTradeFinder();
     }
     this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
-        this.setUpTradeFinder();
-      }),
+      this.setUpTradeFinder();
+    }),
       this.leagueSwitchService.leagueChanged$.subscribe(() => {
         this.setUpTradeFinder();
       }),
@@ -77,6 +84,8 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
   setUpTradeFinder(): void {
     this.tradeFinderService.selectedPlayers = [];
     this.tradeList = [];
+    this.availableTeams = this.setAvailableTeams()
+    this.includedTeams.setValue(this.availableTeams);
     this.teamPlayers = this.filterPlayersByTeam();
     this.teamPicks = this.filterPicksByTeam();
     this.isSuperflex = this.leagueService.selectedLeague?.isSuperflex;
@@ -90,20 +99,24 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
    */
   generateTradeOffers(): void {
     this.tradeList = [];
+    const excludedTeams = this.availableTeams
+    .filter(team => !this.includedTeams.value.includes(team))
+    .map(team => team.userId)
     const trades = this.tradeFinderService.generateTradeFinderResults(
       this.tradeFinderService.selectedPlayers,
       this.tradeFinderService.selectedTeamUserId,
       this.isSuperflex,
       this.filterPosGroup,
+      excludedTeams,
       this.playerService.selectedMarket
     );
     // filters trades with no players or duplicate trades out
     // TODO do we want to couple this logic in the trade finder service?
     this.tradeList = trades.filter(trade => trade.team2Assets.length > 0)
       .filter((value, index, self) =>
-          index === self.findIndex((t) => (
-            JSON.stringify(t.team2Assets) === JSON.stringify(value.team2Assets)
-          ))
+        index === self.findIndex((t) => (
+          JSON.stringify(t.team2Assets) === JSON.stringify(value.team2Assets)
+        ))
       );
   }
 
@@ -114,6 +127,16 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     return this.playerService.playerValues.filter(player => {
       return player.owner?.userId === this.tradeFinderService.selectedTeamUserId;
     });
+  }
+
+  setAvailableTeams(): any[] {
+    const teams = [];
+    this.leagueService.leagueTeamDetails.forEach(team => {
+      if (team.owner.userId != this.tradeFinderService.selectedTeamUserId) {
+        teams.push({ display: team.owner.teamName, userId: team.owner.userId, isDisabled: false })
+      }
+    });
+    return teams;
   }
 
   /**

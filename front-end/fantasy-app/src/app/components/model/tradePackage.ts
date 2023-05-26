@@ -18,6 +18,7 @@ export class TradePackage {
   autoFillTrade: boolean = false;
   fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
   excludePosGroup: string[] = [];
+  excludedUserIds: string[] = [];
 
   constructor(team1Assets: FantasyPlayer[], team2Assets: FantasyPlayer[], acceptanceVariance: number = 5, fantasyMarket: FantasyMarket = FantasyMarket.KeepTradeCut) {
     this.team1Assets = team1Assets;
@@ -53,6 +54,11 @@ export class TradePackage {
 
   setExcludePlayerList(excludeList: string[]): TradePackage {
     this.excludePosGroup = excludeList;
+    return this;
+  }
+
+  setExcludedUserIds(excludedUserIds: string[]): TradePackage {
+    this.excludedUserIds = excludedUserIds;
     return this;
   }
 
