@@ -321,7 +321,22 @@
       <div class="center-text">
         <div class="mid-bold-text">Join Our Community</div>
         <br>
-        <iframe src="https://discord.com/widget?id=837372928005767220&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+        <div class="center-text">
+          <span  (click)="loadTwitterTimeline()"><img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter" style="cursor: pointer"/></span>
+          <span style="margin-right: 5px; margin-left: 5px;" (click)="dynastyDaddySocials = 'discord'"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Join Community Badge" style="cursor: pointer"/></span>
+          <span (click)="dynastyDaddySocials = 'youtube'"><img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Subscribe" style="cursor: pointer"/></span>
+        </div>
+        <div *ngIf="dynastyDaddySocials == 'twitter'">
+          <div style="text-align: -webkit-center;">
+            <a class="twitter-timeline" href="https://twitter.com/DynastyDaddyff?ref_src=twsrc%5Etfw" width="350" height="400">Loading Feed<mat-spinner [diameter]="20"></mat-spinner></a>
+          </div>
+        </div>
+        <div *ngIf="dynastyDaddySocials == 'discord'">
+          <iframe src="https://discord.com/widget?id=837372928005767220&theme=dark" width="350" height="400" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+        </div>
+        <div *ngIf="dynastyDaddySocials == 'youtube'">
+          <iframe width="350" height="197" src="https://www.youtube.com/embed/videoseries?list=PLj5YOlMjbtAIRSFnPi-D6HJxeX-HjtGw2" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -422,13 +437,6 @@
       <div class="center-text mid-bold-text"><mat-icon class="home-icon" style="padding-right: 35px">redeem</mat-icon>Wrapped</div>
       <div class="center-text margin-top-25 margin-bot-50">
         Creates a Spotify Wrapped style recap for your fantasy league. Recapping the best fantasy trades, transactions, and teams in your league in a visually pleasing presentation that can easily be shared with league mates and others on social media.
-      </div>
-    </div>
-  </div>
-  <div class="margin-top-15 center-text">
-    <div>
-      <div style="text-align: -webkit-center;">
-        <a class="twitter-timeline" href="https://twitter.com/DynastyDaddyff?ref_src=twsrc%5Etfw" width="350" height="500">Recent Tweets</a>
       </div>
     </div>
   </div>
