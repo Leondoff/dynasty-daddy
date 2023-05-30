@@ -9,7 +9,6 @@ import { ActivatedRoute } from '@angular/router';
 import { EditLeagueSettingsModalComponent } from '../modals/edit-league-settings-modal/edit-league-settings-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MflService } from '../../services/api/mfl/mfl.service';
-import { MflApiService } from '../../services/api/mfl/mfl-api.service';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
 import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
 import { ESPNService } from 'src/app/services/api/espn/espn.service';
@@ -20,6 +19,9 @@ import { ESPNService } from 'src/app/services/api/espn/espn.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent extends BaseComponent implements OnInit, AfterViewInit {
+
+  /** What dynasty daddy social media is toggled to show */
+  dynastyDaddySocials: string = 'twitter';
 
   /** sleeper username input */
   usernameInput: string = '';
@@ -132,7 +134,14 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   }
 
   ngAfterViewInit(): void {
-    // twitter widget
+    this.loadTwitterTimeline();
+  }
+
+  /**
+   * Wraps refresh call to twitter for pulling timeline
+   */
+  loadTwitterTimeline(): void {
+    this.dynastyDaddySocials = 'twitter';
     (<any>window).twttr.widgets.load();
   }
 

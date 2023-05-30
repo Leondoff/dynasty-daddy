@@ -103,8 +103,8 @@
         Preferred Creators
     </mat-expansion-panel-header>
     <mat-nav-list>
-        <a mat-list-item *ngFor="let creator of filteredCreators" (click)="openUrl(creator.url)" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav" class="player-item-container">
-          <mat-icon>podcasts</mat-icon><span>{{creator.alt}}</span></a>
+        <a mat-list-item *ngFor="let creator of filteredCreators" (click)="openUrl(creator.url)" [queryParams]="leagueSwitchService.buildQueryParams()" class="player-item-container">
+          <mat-icon>{{creator.icon || 'podcasts'}}</mat-icon><span>{{creator.alt}}</span></a>
     </mat-nav-list>
   </mat-expansion-panel>
 </mat-nav-list>
