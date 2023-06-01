@@ -181,7 +181,7 @@
         </mat-tab>
         <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ff_login')?.configValue === 'true'">
           <ng-template mat-tab-label>
-            <img width="30px" height="30px" src="https://apprecs.org/ios/images/app-icons/256/3a/1259897658.jpg">
+            <img width="30px" height="30px" src="https://d1h60c43tcq0zx.cloudfront.net/static/images/icons/apple-touch-icon-f3d0ad2586e334ad16152ed2ea83733c.png">
           </ng-template>
           <div style="overflow: hidden !important;">
           <br>
@@ -328,7 +328,7 @@
         </div>
         <div *ngIf="dynastyDaddySocials == 'twitter'">
           <div style="text-align: -webkit-center;">
-            <a class="twitter-timeline" href="https://twitter.com/DynastyDaddyff?ref_src=twsrc%5Etfw" width="350" height="400">Loading Feed<mat-spinner [diameter]="20"></mat-spinner></a>
+            <a class="twitter-timeline" href="https://twitter.com/DynastyDaddyff?ref_src=twsrc%5Etfw" width="350" height="400" data-tweet-limit="3">Loading Feed<mat-spinner [diameter]="20"></mat-spinner></a>
           </div>
         </div>
         <div *ngIf="dynastyDaddySocials == 'discord'">
