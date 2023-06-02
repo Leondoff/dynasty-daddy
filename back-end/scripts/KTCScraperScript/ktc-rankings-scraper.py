@@ -7,6 +7,7 @@ from BeautifulSoupService import setUpSoup
 from PlayerService import cleanPlayerIdString
 from FantasyCalcService import fetchSuperFlexPlayerDict, fetchStandardPlayerDict
 from DynastyProcessService import fetchDynastyProcessPlayerValues
+from DynastySuperflexService import fetchDynastySuperflexPlayerValues
 
 # API calls to sleeper
 players = Players()
@@ -27,7 +28,8 @@ class Player:
     def __init__(self, id, name, first_name, last_name, team, position, sfPositionRank, positionRank, age, experience,
                  sf_value, value, sleeperId=None, college=None, injury_status=None, weight=None, height=None,
                  jersey_number=-1, active=None, mflId=None, fc_sf_value=None, fc_value=None, fc_position_rank=None,
-                 fc_sf_position_rank=None, dp_sf_value=None, dp_value=None, dp_sf_position_rank=None, dp_position_rank=None):
+                 fc_sf_position_rank=None, dp_sf_value=None, dp_value=None, dp_sf_position_rank=None, dp_position_rank=None,
+                 ds_sf_value=None, ds_value=None, ds_sf_position_rank=None, ds_position_rank=None):
         self.id = id
         self.name = name
         self.first_name = first_name
@@ -56,13 +58,17 @@ class Player:
         self.dp_value = dp_value
         self.dp_sf_position_rank = dp_sf_position_rank
         self.dp_position_rank = dp_position_rank
+        self.ds_sf_value = ds_sf_value
+        self.ds_value = ds_value
+        self.ds_sf_position_rank = ds_sf_position_rank
+        self.ds_position_rank = ds_position_rank
 
     def toString(self):
         print(self.id, self.name, self.first_name, self.last_name, self.team, self.position, self.sfPositionRank,
               self.positionRank, self.age, self.experience, self.sf_value, self.value, self.sleeperId, self.college,
               self.injury_status, self.weight, self.height, self.jersey_number, self.active, self.mflId, self.fc_sf_value,
               self.fc_value, self.fc_sf_position_rank, self.fc_position_rank, self.dp_sf_value, self.dp_value,
-              self.dp_sf_position_rank, self.dp_position_rank)
+              self.dp_sf_position_rank, self.dp_position_rank, self.ds_sf_value, self.ds_value, self.ds_sf_position_rank, self.ds_position_rank)
 
 
 #################################
@@ -103,6 +109,9 @@ fantasyCalcSTDDict = fetchStandardPlayerDict()
 
 # fetch dynasty process dictionary with both standard & superflex values
 dynastyProcessDict = fetchDynastyProcessPlayerValues()
+
+# fetch dynasty superflex dict with std & sf values
+dynastySuperflexDict = fetchDynastySuperflexPlayerValues()
 
 # loop through ranking divs and create player classes
 for player in sf_rankings:
@@ -154,6 +163,10 @@ for player in sf_rankings:
     dpStdValue = dynastyProcessDict.get(playerId)['std_value'] if dynastyProcessDict.get(playerId) != None else 0
     dpSfRank = dynastyProcessDict.get(playerId)['sf_rank'] if dynastyProcessDict.get(playerId) != None else None
     dpRank = dynastyProcessDict.get(playerId)['std_rank'] if dynastyProcessDict.get(playerId) != None else None
+    dsSfValue = dynastySuperflexDict.get(playerId)['sf_value'] if dynastySuperflexDict.get(playerId) != None else 0
+    dsStdValue = dynastySuperflexDict.get(playerId)['std_value'] if dynastySuperflexDict.get(playerId) != None else 0
+    dsSfRank = dynastySuperflexDict.get(playerId)['sf_rank'] if dynastySuperflexDict.get(playerId) != None else None
+    dsRank = dynastySuperflexDict.get(playerId)['std_rank'] if dynastySuperflexDict.get(playerId) != None else None
     playerExp, jerseyNum = 0, 0
     college, injuryStatus, active, weight, height = None, None, None, None, None
     if sleeperId is not None:
@@ -175,7 +188,8 @@ for player in sf_rankings:
                None if str(oneQBPostion.text.strip())[2:] == 'CK' else str(oneQBPostion.text.strip())[2:],
                None if playerAge is None else str(playerAge.text.strip())[:2], playerExp,
                sfTradeValue.text.strip(), tradeValue.text.strip(), sleeperId, college, injuryStatus, weight, height,
-               jerseyNum, active, mflId, fcSfValue, fcStdValue, fcSfRank, fcRank, dpSfValue, dpStdValue, dpSfRank, dpRank))
+               jerseyNum, active, mflId, fcSfValue, fcStdValue, fcSfRank, fcRank, dpSfValue, dpStdValue, dpSfRank, dpRank,
+               dsSfValue, dsStdValue, dsSfRank, dsRank))
 
 # for player in players:
 #      player.toString()
@@ -256,9 +270,9 @@ try:
                 cursor.execute(playerIdsStatement, (player.id, player.mflId, player.id, player.mflId))
 
             # player values insert daily values
-            cursor.execute('''INSERT into player_values(name_id, sf_position_rank, position_rank, sf_trade_value, trade_value, fc_sf_trade_value, fc_trade_value, fc_sf_position_rank, fc_position_rank, dp_sf_trade_value, dp_trade_value, dp_sf_position_rank, dp_position_rank)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', (
-                player.id, player.sfPositionRank, player.positionRank, player.sf_value, player.value, player.fc_sf_value, player.fc_value, player.fc_sf_position_rank, player.fc_position_rank, player.dp_sf_value, player.dp_value, player.dp_sf_position_rank, player.dp_position_rank))
+            cursor.execute('''INSERT into player_values(name_id, sf_position_rank, position_rank, sf_trade_value, trade_value, fc_sf_trade_value, fc_trade_value, fc_sf_position_rank, fc_position_rank, dp_sf_trade_value, dp_trade_value, dp_sf_position_rank, dp_position_rank, ds_sf_trade_value, ds_sf_position_rank, ds_trade_value, ds_position_rank)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', (
+                player.id, player.sfPositionRank, player.positionRank, player.sf_value, player.value, player.fc_sf_value, player.fc_value, player.fc_sf_position_rank, player.fc_position_rank, player.dp_sf_value, player.dp_value, player.dp_sf_position_rank, player.dp_position_rank, player.ds_sf_value, player.ds_sf_position_rank, player.ds_value, player.ds_position_rank))
 
         # player adp rankings updated
         for adp in playerADPs:
@@ -277,11 +291,17 @@ try:
         # update mat view for players
         cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')
         
+        # update mat view for dynasty superflex values
+        cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_ktc_player_values;''')
+        
         # update mat view for fantasy calc values
         cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_fc_player_values;''')
 
         # update mat view for dynasty process values
         cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_dp_player_values;''')
+
+        # update mat view for dynasty superflex values
+        cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_ds_player_values;''')
 
         # Commit your changes in the database
         conn.commit()
