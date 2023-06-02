@@ -119,7 +119,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
         case PowerRankingOrder.STARTER:
           return b.adpValueStarter - a.adpValueStarter;
         default:
-          return !this.leagueService.selectedLeague.isSuperflex ?
+          return !this.leagueService.selectedLeague?.isSuperflex ?
             b.tradeValueOverall - a.tradeValueOverall :
             b.sfTradeValueOverall - a.sfTradeValueOverall;
       }
@@ -150,7 +150,7 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
       const tempPicks = [];
       for (const team of this.powerRankings) {
         const index = this.dataLabels.indexOf(team.team.owner?.ownerName);
-        !this.leagueService.selectedLeague.isSuperflex ?
+        !this.leagueService.selectedLeague?.isSuperflex ?
           tempPicks[index] = team.picks.tradeValue :
           tempPicks[index] = team.picks.sfTradeValue;
         this.data[4] = { data: tempPicks, label: 'Draft Capital', hoverBackgroundColor: [] };

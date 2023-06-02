@@ -1,6 +1,6 @@
 <div [ngClass]="{'power-ranking-container': !configService.isMobile}">
   <div>
-    <div [ngClass]="{'button-left': !configService.isMobile, 'center-text': configService.isMobile}" [ngStyle]="configService.isMobile ? 'align-items: center;' : ''">
+    <div [ngClass]="{'button-left': !configService.isMobile, 'center-text': configService.isMobile}" [ngStyle]="configService.isMobile ? {'align-items': 'center'} : {}">
       <mat-form-field class="player-value-checkbox-margin" [ngClass]="{'button-left mat-dropdown-wide-300': !configService.isMobile, 'mat-dropdown-wide-250': configService.isMobile}" color="accent">
         <mat-label>Search Player</mat-label>
         <input matInput type="text" (keyup)="searchFilterPowerRankings()" [(ngModel)]="searchVal">
