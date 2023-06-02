@@ -42,7 +42,7 @@
     <!-- Fantasy Points -->
     <ng-container matColumnDef="halfppr">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{playerService.playerStatsYear}} Points</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{playerInfoCache[element.name_id]?.points || '-'}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{playerInfoCache[element.name_id]?.points || playerService.getPlayerPointsByFormat(element.sleeper_id, this.leagueService.getLeagueScoringFormat()) || '-'}}</mat-cell>
     </ng-container>
 
     <!-- Avg ADP Column -->
