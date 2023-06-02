@@ -1,35 +1,47 @@
 <div class="app-header">
-  <div *ngIf="configService.isShowInfoHeader && !hasClosedHeader" class="center-text header-info" [ngStyle]="configService.isMobile ? {'font-size': '12px', 'height': '38px'} : {'font-size': '22px', 'height': '64px'}">
-    {{configService.headerInfoText}}<span class="button-right" style="cursor: pointer; padding-right: 10px" [ngStyle]="configService.isMobile ? {'font-size': '30px'} : {'font-size': '40px'}"><mat-icon (click)="hasClosedHeader = true">close</mat-icon></span>
-    <div><a href="{{configService.headerInfoURL}}" target="_blank" gaEvent="click_header_info" gaCategory="nav_sponsor"><span class="link--text__dot__underline">Click here for more!</span></a></div>
+  <div *ngIf="configService.isShowInfoHeader && !hasClosedHeader" class="center-text header-info"
+    [ngStyle]="configService.isMobile ? {'font-size': '12px', 'height': '38px'} : {'font-size': '22px', 'height': '64px'}">
+    {{configService.headerInfoText}}<span class="button-right" style="cursor: pointer; padding-right: 10px"
+      [ngStyle]="configService.isMobile ? {'font-size': '30px'} : {'font-size': '40px'}"><mat-icon
+        (click)="hasClosedHeader = true">close</mat-icon></span>
+    <div><a href="{{configService.headerInfoURL}}" target="_blank" gaEvent="click_header_info"
+        gaCategory="nav_sponsor"><span class="link--text__dot__underline">Click here for more!</span></a></div>
   </div>
   <mat-toolbar color="primary">
     <button mat-icon-button (click)="toggle()">
       <mat-icon>menu</mat-icon>
     </button>
-    <span style="cursor: pointer" (click)="toggle()">Dynasty Daddy</span>
+    <span style="cursor: pointer" (click)="toggle()">{{configService.isMobile && leagueService.leagueUser?.leagues.length ? 'DD' : 'Dynasty Daddy'}}</span>
     <span class="spacer"></span>
     <ng-container *ngIf="!configService.isMobile">
-      <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League" matTooltipPosition="below" aria-label="Clear" (click)="leagueService.openLeague()">
-        <mat-icon >offline_share</mat-icon>
+      <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League"
+        matTooltipPosition="below" aria-label="Clear" (click)="leagueService.openLeague()">
+        <mat-icon>offline_share</mat-icon>
       </button>
       <div *ngIf="leagueService.leagueStatus == 'LOADING'" style="margin-right: 10px">
         <mat-spinner color="accent" [diameter]="30"></mat-spinner>
       </div>
-      <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Synced league data {{leagueSwitchService.getMinutesSinceLastRefresh()}} minute{{leagueSwitchService.getMinutesSinceLastRefresh() === 1 ? '' : 's'}} ago" matTooltipPosition="below" aria-label="Clear" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">
+      <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button
+        matTooltip="Synced league data {{leagueSwitchService.getMinutesSinceLastRefresh()}} minute{{leagueSwitchService.getMinutesSinceLastRefresh() === 1 ? '' : 's'}} ago"
+        matTooltipPosition="below" aria-label="Clear"
+        (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)">
         <mat-icon>refresh</mat-icon>
       </button>
       <div *ngIf="leagueService.leagueStatus == 'LOADING'" style="margin-right: 10px">
         <mat-spinner color="accent" [diameter]="30"></mat-spinner>
       </div>
-      <button mat-button [routerLink]="['./login']" *ngIf="!leagueService.leagueUser"><mat-icon class="header-icon">group_add</mat-icon> {{leagueService.selectedLeague?.leaguePlatform === 1 ? 'Change League' : 'Select Username'}}</button>
-      <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-        <mat-label>Select a league</mat-label>
-        <mat-select [(ngModel)]="leagueId" (selectionChange)="loadLeagueFromHeader($event.value)">
-          <mat-option *ngFor="let league of leagueService.leagueUser?.leagues;"
-                      [value]="league.leagueId">{{league.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <button mat-button [routerLink]="['./login']" *ngIf="!leagueService.leagueUser"><mat-icon
+          class="header-icon">group_add</mat-icon> {{leagueService.selectedLeague?.leaguePlatform === 1 ? 'Change
+        League' : 'Select Username'}}</button>
+
     </ng-container>
+    <mat-form-field appearance="standard" color="accent" style="font-size: 14px;"
+      *ngIf="leagueService.leagueUser?.leagues.length > 0" [ngStyle]="configService.isMobile ? {'max-width': '90px;'} : {}">
+      <mat-label>Select a league</mat-label>
+      <mat-select [(ngModel)]="leagueId" (selectionChange)="loadLeagueFromHeader($event.value)">
+        <mat-option *ngFor="let league of leagueService.leagueUser?.leagues;"
+        [value]="league.leagueId">{{configService.isMobile ? (league.name | truncate:15) : league.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </mat-toolbar>
 </div>
