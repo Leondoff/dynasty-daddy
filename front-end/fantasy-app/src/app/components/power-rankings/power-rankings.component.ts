@@ -6,6 +6,8 @@ import { BaseComponent } from '../base-component.abstract';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { delay } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
+import { DownloadService } from 'src/app/services/utilities/download.service';
+import { DisplayService } from 'src/app/services/utilities/display.service';
 
 @Component({
   selector: 'app-power-rankings',
@@ -23,6 +25,8 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
   constructor(public leagueService: LeagueService,
     public powerRankingService: PowerRankingsService,
     private playersService: PlayerService,
+    private downloadService: DownloadService,
+    private displayService: DisplayService,
     private route: ActivatedRoute,
     public leagueSwitchService: LeagueSwitchService) {
 
@@ -52,5 +56,45 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
         this.leagueService.selectedLeague.leaguePlatform
       );
     }
+  }
+
+  /**
+   * Export non-expanded power rankings to csv
+   */
+  exportPowerRankings(): void {
+    const powerRankingData: any[][] = []
+    powerRankingData.push([`League Power Rankings for ${this.leagueService.selectedLeague.name}`]);
+    powerRankingData.push([]);
+    powerRankingData.push([
+        ['Team', 'Owner', 'Tier', 'Overall Rank', 'Overall Value', 'Starter Rank', 'Starter Value', 'QB Rank', 'QB Value', 'RB Rank', 'RB Value', 'WR Rank', 'WR Value', 'TE Rank', 'TE Value', 'Draft Capital Rank', 'Draft Capital Value'],
+      ]);
+
+    this.powerRankingService.powerRankings.forEach(team => {
+      powerRankingData.push([
+        team.team.owner.teamName,
+        team.team.owner.ownerName,
+        this.displayService.getTierFromNumber(team.tier),
+        team.overallRank,
+        this.leagueService.selectedLeague.isSuperflex ? team.sfTradeValueOverall : team.tradeValueOverall,
+        team.starterRank,
+        team.adpValueStarter,
+        team.roster[0].rank,
+        this.leagueService.selectedLeague.isSuperflex ? team.roster[0].sfTradeValue : team.roster[0].tradeValue,
+        team.roster[1].rank,
+        this.leagueService.selectedLeague.isSuperflex ? team.roster[1].sfTradeValue : team.roster[1].tradeValue,
+        team.roster[2].rank,
+        this.leagueService.selectedLeague.isSuperflex ? team.roster[2].sfTradeValue : team.roster[2].tradeValue,
+        team.roster[3].rank,
+        this.leagueService.selectedLeague.isSuperflex ? team.roster[3].sfTradeValue : team.roster[3].tradeValue,
+        team.picks.rank,
+        this.leagueService.selectedLeague.isSuperflex ? team.picks.sfTradeValue : team.picks.tradeValue,
+      ]);
+    });
+  
+    const formattedPowerRankings = powerRankingData.map(e => e.join(',')).join('\n');
+  
+    const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Power_Rankings_${new Date().toISOString().slice(0, 10)}.csv`;
+  
+    this.downloadService.downloadCSVFile(formattedPowerRankings, filename)
   }
 }
