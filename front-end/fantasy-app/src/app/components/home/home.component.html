@@ -55,7 +55,7 @@
             </div>
             <div>
               <button mat-raised-button [disabled]="!usernameInput"
-                      color="accent" (click)="fetchSleeperInfo()">Sign In
+                      color="accent" (click)="fetchSleeperInfo()" gaEvent="login_sleeper_username" gaCategory="platform_login">Sign In
               </button>
             </div>
             <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 0">
@@ -84,7 +84,7 @@
             </mat-form-field>
             <div>
               <button mat-raised-button [disabled]="!sleeperLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
-                      color="accent" (click)="loginWithSleeperLeagueId()">Sign In
+                      color="accent" (click)="loginWithSleeperLeagueId()"gaEvent="login_sleeper_league_id" gaCategory="platform_login">Sign In
               </button>
             </div>
           </div>
@@ -133,7 +133,7 @@
               </div>
               <div>
                 <button mat-raised-button [disabled]="!mflUsernameInput || !mflPasswordInput"
-                        color="accent" (click)="fetchMFLInfo()">Sign In
+                        color="accent" (click)="fetchMFLInfo()" gaEvent="login_mfl_username" gaCategory="platform_login">Sign In
                 </button>
                 <div class="margin-top-10 small-text__light">
                   We do not store any personal data, it is only passed to the MFL to retrieve data.
@@ -173,7 +173,7 @@
               </div>
               <div>
                 <button mat-raised-button [disabled]="!mflLeagueIdInput"
-                        color="accent" (click)="loginWithMFLLeagueId()">Sign In
+                        color="accent" (click)="loginWithMFLLeagueId()" gaEvent="login_mfl_league_id" gaCategory="platform_login">Sign In
                 </button>
               </div>
             </div>
@@ -215,7 +215,7 @@
             </div>
             <div>
               <button mat-raised-button [disabled]="!fleaflickerEmail"
-                      color="accent" (click)="fetchFleaflickerInfo()">Sign In
+                      color="accent" (click)="fetchFleaflickerInfo()" gaEvent="login_ff_email" gaCategory="platform_login">Sign In
               </button>
             </div>
             <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 2">
@@ -252,7 +252,7 @@
             </div>
             <div>
               <button mat-raised-button [disabled]="!fleaflickerLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
-                      color="accent" (click)="loginWithFleaflickerLeagueId()">Sign In
+                      color="accent" (click)="loginWithFleaflickerLeagueId()" gaEvent="login_ff_league_id" gaCategory="platform_login">Sign In
               </button>
             </div>
           </div>
@@ -288,7 +288,7 @@
             </div>
             <div>
               <button mat-raised-button [disabled]="!espnLeagueId || usernameInput === leagueService.selectedLeague?.leagueId"
-                      color="accent" (click)="loginWithESPNLeagueId()">Sign In
+                      color="accent" (click)="loginWithESPNLeagueId()" gaEvent="login_espn_league_id" gaCategory="platform_login">Sign In
               </button>
             </div>
           </div>

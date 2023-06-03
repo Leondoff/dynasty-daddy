@@ -92,7 +92,7 @@
 
   <div class="center-text margin-top-50"
     *ngIf="playerPortfolioWithValue.length > 0 && portfolioStatus == 1">
-    <button mat-stroked-button (click)="exportPortfolioTable()"><mat-icon>download</mat-icon> Download Portfolio</button>
+    <button mat-stroked-button (click)="exportPortfolioTable()" gaEvent="click_export_portfolio" gaCategory="click"><mat-icon>download</mat-icon> Download Portfolio</button>
   </div>
 </div>
 

@@ -92,7 +92,7 @@
   <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming' && !mockDraftService.selectedDraft.picks[0].playerId" class="margin-top-25 center-text">
     <div class="warning__alert">Unable to generate draft recap for {{leagueService.selectedLeague.name}}. Want to create a mock draft?</div>
     <div class="margin-top-25">
-      <button mat-raised-button color="accent" (click)="createMockDraft()"><mat-icon>format_list_numbered</mat-icon> Create Mock Draft</button>
+      <button mat-raised-button color="accent" (click)="createMockDraft()" gaEvent="click_mock_draft" gaCategory="click"><mat-icon>format_list_numbered</mat-icon> Create Mock Draft</button>
     </div>
   </div>
 
@@ -109,6 +109,6 @@
 <div *ngIf="leagueService.isLeagueLoaded() && mockDraftService.teamPicks.length === 0 && leagueService.completedDrafts.length === 0" class="center-text">
   <div class="warning__alert">No draft found for {{leagueService.selectedLeague.name}}. Want to create a mock draft?</div>
   <div class="margin-top-25">
-    <button mat-raised-button color="accent" (click)="createMockDraft()"><mat-icon>format_list_numbered</mat-icon> Create Mock Draft</button>
+    <button mat-raised-button color="accent" (click)="createMockDraft()" gaEvent="click_export_portfolio" gaCategory="click"><mat-icon>format_list_numbered</mat-icon> Create Mock Draft</button>
   </div>
 </div>

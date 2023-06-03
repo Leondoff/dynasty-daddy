@@ -3,7 +3,7 @@
 }
 
 .item {
-  margin: 14px;
+  margin: 15px;
   min-width: 300px;
 }
 
@@ -29,7 +29,7 @@
 }
 
 .insight__row {
-  margin-top: 15px;
+  margin-top: 12px;
   display: flex;
   align-items: center;
   justify-content: center;

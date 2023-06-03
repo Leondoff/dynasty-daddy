@@ -18,7 +18,8 @@ export class FantasyMarketDropdown implements OnInit {
     fantasyMarkets = [
         { 'num': FantasyMarket.KeepTradeCut, 'value': 'KeepTradeCut' },
         { 'num': FantasyMarket.FantasyCalc, 'value': 'FantasyCalc' },
-        { 'num': FantasyMarket.DynastyProcess, 'value': 'DynastyProcess' }
+        { 'num': FantasyMarket.DynastyProcess, 'value': 'DynastyProcess' },
+        { 'num': FantasyMarket.DynastySuperflex, 'value': 'DynastySuperflex' }
     ]
 
     constructor(private playerService: PlayerService) {

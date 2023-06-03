@@ -55,7 +55,8 @@ export class PowerRankingsService {
       { 'value': 0, 'display': 'KeepTradeCut' },
       { 'value': 1, 'display': 'FantasyCalc' },
       { 'value': 2, 'display': 'DynastyProcess' },
-      { 'value': 3, 'display': 'ADP' }
+      { 'value': 3, 'display': 'DynastySuperflex' },
+      { 'value': 4, 'display': 'ADP' }
     ]
 
   /** power rankings table filter options */
@@ -619,5 +620,6 @@ export enum PowerRankingMarket {
   KeepTradeCut,
   FantasyCalc,
   DynastyProcess,
+  DynastySuperflex,
   ADP
 }

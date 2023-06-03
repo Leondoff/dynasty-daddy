@@ -142,7 +142,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    */
   loadTwitterTimeline(): void {
     this.dynastyDaddySocials = 'twitter';
-    (<any>window).twttr.widgets.load();
+    (<any>window)?.twttr?.widgets?.load();
   }
 
   /**
