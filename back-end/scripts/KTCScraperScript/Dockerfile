@@ -13,6 +13,7 @@ COPY back-end/scripts/KTCScraperScript/BeautifulSoupService.py /app/BeautifulSou
 COPY back-end/scripts/KTCScraperScript/MFLPlayerService.py /app/MFLPlayerService.py
 COPY back-end/scripts/KTCScraperScript/FantasyCalcService.py /app/FantasyCalcService.py
 COPY back-end/scripts/KTCScraperScript/DynastyProcessService.py /app/DynastyProcessService.py
+COPY back-end/scripts/KTCScraperScript/DynastySuperflexService.py /app/DynastySuperflexService.py
 COPY back-end/scripts/KTCScraperScript/Constants.py /app/Constants.py
 
 # execution rights to cron
