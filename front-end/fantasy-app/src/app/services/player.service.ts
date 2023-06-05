@@ -573,7 +573,7 @@ export class PlayerService {
    */
   fetchTradeValuesForAllMarket(): Observable<{}[]> {
     const marketObservables = []
-    for (let market = 0; market < 3; market++) {
+    for (let market = 0; market < 4; market++) {
       marketObservables.push(this.fantasyPlayerApiService.getPlayerValueForFantasyMarket(market as FantasyMarket))
     }
     return forkJoin(marketObservables);

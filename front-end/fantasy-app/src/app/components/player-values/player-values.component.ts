@@ -107,7 +107,7 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
       playerData.push(filterRow);
       playerData.push([]);
       playerData.push([
-        ['Name', 'Position', 'Age', 'Owner', 'Avg Pos ADP', 'KeepTradeCut', 'KeepTradeCut % Change', 'FantasyCalc', 'FantasyCalc % Change', 'DynastyProcess', 'DynastyProcess % Change'],
+        ['Name', 'Position', 'Age', 'Owner', 'Avg Pos ADP', 'KeepTradeCut', 'KeepTradeCut % Change', 'FantasyCalc', 'FantasyCalc % Change', 'DynastyProcess', 'DynastyProcess % Change', 'DynastySuperflex', 'DynastySuperflex % Change'],
       ]);
       this.playerValueService.filteredPlayers.forEach((player, ind) => {
         const playerRow = [player?.full_name, player?.position, player?.age, player?.owner?.ownerName,
@@ -129,7 +129,13 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
           playerValues[2][player?.name_id]?.trade_value || 0,
         this.playerValueService?.isSuperFlex ?
           playerValues[2][player?.name_id]?.sf_change || 0 :
-          playerValues[2][player?.name_id]?.standard_change || 0
+          playerValues[2][player?.name_id]?.standard_change || 0,
+          this.playerValueService?.isSuperFlex ?
+          playerValues[3][player?.name_id]?.sf_trade_value || 0 :
+          playerValues[3][player?.name_id]?.trade_value || 0,
+        this.playerValueService?.isSuperFlex ?
+          playerValues[3][player?.name_id]?.sf_change || 0 :
+          playerValues[3][player?.name_id]?.standard_change || 0
         ];
         playerData.push(playerRow);
       });
