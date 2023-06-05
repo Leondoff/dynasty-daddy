@@ -4,6 +4,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { ConfigOption } from '../../model/config/ConfigOption';
 import { ConfigApiService } from '../api/config/config-api.service';
 import { BaseComponent } from '../../components/base-component.abstract';
+import { DisplayService } from '../utilities/display.service';
 
 /**
  * dictionary of constant config value keys
@@ -41,6 +42,7 @@ export class ConfigService extends BaseComponent {
 
   constructor(private endpointsService: EndpointsService,
     private deviceDetectorService: DeviceDetectorService,
+    private displayService: DisplayService,
     private configApiService: ConfigApiService
   ) {
     super();
@@ -78,9 +80,18 @@ export class ConfigService extends BaseComponent {
       this._showHeaderInfo = this.getConfigOptionByKey(ConfigKeyDictionary.SHOW_HEADER_INFO)?.configValue === 'true';
       this._headerInfoText = this.getConfigOptionByKey(ConfigKeyDictionary.HEADER_INFO_TEXT)?.configValue;
       this._headerInfoURL = this.getConfigOptionByKey(ConfigKeyDictionary.HEADER_INFO_URL)?.configValue;
-      this._preferredCreators = JSON.parse(this.getConfigOptionByKey(ConfigKeyDictionary.PREFERRED_CREATORS).configValue);
+      this._preferredCreators = this.formatPreferredCreators();
+      
     }
     ));
+  }
+
+  /**
+   * format preferred creators and return them randomized
+   */
+  formatPreferredCreators(): PreferredCreatorSlide[] {
+    const rawCreators = JSON.parse(this.getConfigOptionByKey(ConfigKeyDictionary.PREFERRED_CREATORS).configValue);
+    return [...this.displayService.shuffle(rawCreators.slice(0, rawCreators.length - 1)), ...[rawCreators[rawCreators.length - 1]]];
   }
 
   /**
@@ -91,4 +102,4 @@ export class ConfigService extends BaseComponent {
     this.configOptions.find((option) => option.configKey === key)
 }
 
-export class PreferredCreatorSlide { url: string; image: string; alt: string }
+export class PreferredCreatorSlide { url: string; image: string; alt: string; icon: string }

@@ -21,11 +21,15 @@
     </mat-card>
   </div>
   <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" *ngIf="playerService.playerStats[this.selectedPlayer.sleeper_id]">
-    <mat-card style="min-height: 365px">
+    <mat-card style="max-height: 360px">
       <div class="mid-bold-text center-text margin-bot-10">Trade Value Metrics</div>
       <div class="insight__row">
-        <div class="text__light">Change in Past 30 Days</div>
+        <div class="text__light">Value Change in Past 30 Days</div>
         <div class="mid-bold-text">{{playerCache.change || 0}}%</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">Rank Change in Past 30 Days</div>
+        <div class="mid-bold-text">{{playerCache.rankChange || 0}}</div>
       </div>
       <div class="insight__row">
         <div class="text__light">90-Day High</div>
@@ -36,12 +40,28 @@
         <div class="mid-bold-text">{{playerCache.threeMonthLow || 0}}</div>
       </div>
       <div class="insight__row">
+        <div class="text__light">90-Day Best Rank</div>
+        <div class="mid-bold-text">{{playerCache.threeMonthBestRank || '-'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">90-Day Worst Rank</div>
+        <div class="mid-bold-text">{{playerCache.threeMonthWorstRank || '-'}}</div>
+      </div>
+      <div class="insight__row">
         <div class="text__light">All-Time High</div>
         <div class="mid-bold-text">{{playerCache.allTimeHigh || '-'}}</div>
       </div>
       <div class="insight__row">
         <div class="text__light">All-Time Low</div>
         <div class="mid-bold-text">{{playerCache.allTimeLow || 0}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">All-Time Best Rank</div>
+        <div class="mid-bold-text">{{playerCache.allTimeBestRank || '-'}}</div>
+      </div>
+      <div class="insight__row">
+        <div class="text__light">All-Time Worst Rank</div>
+        <div class="mid-bold-text">{{playerCache.allTimeWorstRank || '-'}}</div>
       </div>
     </mat-card>
 

@@ -119,6 +119,16 @@ export class PlayerService {
         player.position_rank = playerValues?.position_rank;
         player.last_month_value = playerValues?.last_month_value || 0;
         player.last_month_value_sf = playerValues?.last_month_value_sf || 0;
+        player.all_time_best_rank = playerValues?.all_time_best_rank;
+        player.all_time_best_rank_sf = playerValues?.all_time_best_rank_sf;
+        player.all_time_worst_rank = playerValues?.all_time_worst_rank;
+        player.all_time_worst_rank_sf = playerValues?.all_time_worst_rank_sf;
+        player.three_month_best_rank = playerValues?.three_month_best_rank;
+        player.three_month_best_rank_sf = playerValues?.three_month_best_rank_sf;
+        player.three_month_worst_rank = playerValues?.three_month_worst_rank;
+        player.three_month_worst_rank_sf = playerValues?.three_month_worst_rank_sf;
+        player.last_month_rank = playerValues?.last_month_rank || 0;
+        player.last_month_rank_sf = playerValues?.last_month_rank_sf || 0;
         return player;
       });
       this.playerValues = this.unfilteredPlayerValues.filter(player => {
@@ -550,6 +560,8 @@ export class PlayerService {
         return !isSuperflex ? player.fc_trade_value : player.fc_sf_trade_value;
       case FantasyMarket.DynastyProcess:
         return !isSuperflex ? player.dp_trade_value : player.dp_sf_trade_value;
+      case FantasyMarket.DynastySuperflex:
+        return !isSuperflex ? player.ds_trade_value : player.ds_sf_trade_value;
       default:
         return !isSuperflex ? player.trade_value : player.sf_trade_value;
     }
