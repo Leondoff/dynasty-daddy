@@ -180,7 +180,7 @@ export const GetPlayerValuesForMarket = async (market) => {
       mp.${marketPrefix}last_month_value_sf as last_month_value_sf,
       mp.${marketPrefix}all_time_best_rank_sf as all_time_best_rank_sf,
       mp.${marketPrefix}all_time_best_rank as all_time_best_rank,
-      mp.${marketPrefix}all_time_worst_rank_sf as all_time_worst_sf,
+      mp.${marketPrefix}all_time_worst_rank_sf as all_time_worst_rank_sf,
       mp.${marketPrefix}all_time_worst_rank as all_time_worst_rank,
       mp.${marketPrefix}three_month_best_rank_sf as three_month_best_rank_sf,
       mp.${marketPrefix}three_month_best_rank as three_month_best_rank,

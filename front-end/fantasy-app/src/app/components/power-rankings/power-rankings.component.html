@@ -53,7 +53,7 @@
 </div>
 
 <div class="center-text margin-top-50"*ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0">
-  <button mat-stroked-button (click)="exportPowerRankings()"><mat-icon>download</mat-icon> Download Power Rankings</button>
+  <button mat-stroked-button (click)="exportPowerRankings()" gaEvent="click_export_power_rankings" gaCategory="click"><mat-icon>download</mat-icon> Download Power Rankings</button>
 </div>
 
 <div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">

@@ -33,6 +33,16 @@ export class FantasyPlayer {
   three_month_low: number;
   last_month_value: number;
   last_month_value_sf: number;
+  all_time_best_rank_sf: number;
+  all_time_worst_rank_sf: number;
+  all_time_best_rank: number;
+  all_time_worst_rank: number;
+  three_month_best_rank_sf: number;
+  three_month_best_rank: number;
+  three_month_worst_rank_sf: number;
+  three_month_worst_rank: number;
+  last_month_rank: number;
+  last_month_rank_sf: number;
   most_recent_data_point: string;
   sf_change: number = null;
   standard_change: number = null;
@@ -70,6 +80,8 @@ export class FantasyPlayerDataPoint {
   fc_trade_value: number;
   dp_sf_trade_value: number;
   dp_trade_value: number;
+  ds_sf_trade_value: number;
+  ds_trade_value: number;
   date: string;
 }
 
@@ -84,5 +96,6 @@ export enum Position {
 export enum FantasyMarket {
   KeepTradeCut,
   FantasyCalc,
-  DynastyProcess
+  DynastyProcess,
+  DynastySuperflex
 }

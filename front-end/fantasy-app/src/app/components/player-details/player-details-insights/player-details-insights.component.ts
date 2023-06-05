@@ -30,6 +30,9 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   @Input()
   selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
+  /** is page insights in superflex or standard */
+  isSuperflex: boolean = true;
+
   /** list of adjacent players overall */
   overallAdjPlayers: { rank: number, player: FantasyPlayer }[];
 
@@ -44,9 +47,6 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
 
   /** line chart labels */
   public lineChartLabels: Label[] = [];
-
-  /** what display to filter values on */
-  public isSuperflex: boolean = true;
 
   /** line chart options */
   public lineChartOptions: (ChartOptions & { annotation?: any }) = {
@@ -106,7 +106,6 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   }
 
   ngOnInit(): void {
-    this.isSuperflex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : true;
     this.overallAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
       this.selectedPlayer?.name_id, '', this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
     this.positionAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
@@ -128,26 +127,34 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
    */
   cachePlayerData(): void {
     this.playerCache = {}
+    this.isSuperflex = this.leagueService.selectedLeague?.isSuperflex;
     this.playerCache = {
-      value: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.sf_trade_value : this.selectedPlayer.trade_value,
+      value: this.isSuperflex ? this.selectedPlayer.sf_trade_value : this.selectedPlayer.trade_value,
       stdValue: this.selectedPlayer.trade_value,
-      change: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.sf_change : this.selectedPlayer.standard_change,
-      allTimeHigh: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.all_time_high_sf : this.selectedPlayer.all_time_high,
-      allTimeLow: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.all_time_low_sf : this.selectedPlayer.all_time_low,
-      threeMonthHigh: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.three_month_high_sf : this.selectedPlayer.three_month_high,
-      threeMonthLow: (this.leagueService?.selectedLeague?.isSuperflex || true) ? this.selectedPlayer.three_month_low_sf : this.selectedPlayer.three_month_low
+      change: this.isSuperflex ? this.selectedPlayer.sf_change : this.selectedPlayer.standard_change,
+      allTimeHigh: this.isSuperflex ? this.selectedPlayer.all_time_high_sf : this.selectedPlayer.all_time_high,
+      allTimeLow: this.isSuperflex ? this.selectedPlayer.all_time_low_sf : this.selectedPlayer.all_time_low,
+      threeMonthHigh: this.isSuperflex ? this.selectedPlayer.three_month_high_sf : this.selectedPlayer.three_month_high,
+      threeMonthLow: this.isSuperflex ? this.selectedPlayer.three_month_low_sf : this.selectedPlayer.three_month_low,
+      rankChange: this.isSuperflex ?
+        this.selectedPlayer.sf_position_rank - this.selectedPlayer.last_month_rank_sf :
+        this.selectedPlayer.position_rank - this.selectedPlayer.last_month_rank,
+      allTimeBestRank: this.isSuperflex ? this.selectedPlayer.all_time_best_rank_sf : this.selectedPlayer.all_time_best_rank,
+      allTimeWorstRank: this.isSuperflex ? this.selectedPlayer.all_time_worst_rank_sf : this.selectedPlayer.all_time_worst_rank,
+      threeMonthBestRank: this.isSuperflex ? this.selectedPlayer.three_month_best_rank_sf : this.selectedPlayer.three_month_best_rank,
+      threeMonthWorstRank: this.isSuperflex ? this.selectedPlayer.three_month_worst_rank_sf : this.selectedPlayer.three_month_worst_rank
     }
     this.adjOverallValues = {}
     this.overallAdjPlayers.forEach(player => {
       this.adjOverallValues[player.player.name_id] = {
-        value: (this.leagueService?.selectedLeague?.isSuperflex || true) ? player.player.sf_trade_value : player.player.trade_value
+        value: this.isSuperflex ? player.player.sf_trade_value : player.player.trade_value
       }
     });
     this.adjPosValues = {}
     this.positionAdjPlayers.forEach(player => {
       this.adjPosValues[player.player.name_id] = {
-        value: (this.leagueService?.selectedLeague?.isSuperflex || true) ? player.player.sf_trade_value : player.player.trade_value,
-        rank: (this.leagueService?.selectedLeague?.isSuperflex || true) ? player.player.sf_position_rank : player.player.position_rank
+        value: this.isSuperflex ? player.player.sf_trade_value : player.player.trade_value,
+        rank: this.isSuperflex ? player.player.sf_position_rank : player.player.position_rank
       }
     });
   }
@@ -161,7 +168,6 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
       this.lineChartLabels = [];
       const dataList = [];
       if (this.selectedPlayerValues) {
-        let dataPointInd = 1;
         for (let ind = 1; ind <= 40; ind++) {
           // date iterator value
           const dateLabel = new Date().getTime() - 1000 * 60 * 60 * 24 * (40 - ind);
@@ -171,7 +177,6 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
               === new Date(new Date(dataPoint.date).setHours(0, 0, 0, 0)).getTime()) {
               dataList.push(this.playerService.getValueFromDataPoint(dataPoint, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket) || 0);
               this.lineChartLabels.push(this.displayService.formatDateForDisplay(dataPoint.date));
-              dataPointInd++;
             }
           });
           // if no point matches
