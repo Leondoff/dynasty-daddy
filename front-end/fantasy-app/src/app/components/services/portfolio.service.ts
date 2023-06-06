@@ -87,7 +87,6 @@ export class PortfolioService {
     private displayService: DisplayService,
     private playerService: PlayerService,
   ) {
-
   }
 
   /**
@@ -138,23 +137,28 @@ export class PortfolioService {
    * @param league LeagueDTO
    */
   private addPlayersToList(leaguePlayers: string[], league: LeagueDTO): void {
-    leaguePlayers.forEach(platformId => {
-      let ddPlayer = this.playerService.getPlayerByPlayerPlatformId(platformId, league.leaguePlatform);
+    leaguePlayers.forEach(platformPlayerId => {
+      let ddPlayer = this.playerService.getPlayerByPlayerPlatformId(platformPlayerId, league.leaguePlatform);
       if (!ddPlayer) {
-        const playerInfo = this.playerPlatformIdMap[league.leaguePlatform]?.[platformId];
-        if (playerInfo) {
-          ddPlayer = new FantasyPlayer();
-          // For team defense, they don't set full name
-          if (!playerInfo.full_name) {
-            playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
-          }
-          ddPlayer.name_id = playerInfo.full_name.replace("'", "").replace(".", "");
-          ddPlayer.full_name = playerInfo.full_name;
-          ddPlayer.sf_trade_value = 0;
-          ddPlayer.trade_value = 0;
-          ddPlayer.team = playerInfo.team;
-          ddPlayer.position = playerInfo.position;
+        let playerInfo = this.playerPlatformIdMap[league.leaguePlatform]?.[platformPlayerId];
+        // if id is not found then just display league id
+        if (!playerInfo) {
+          playerInfo = {};
+          playerInfo.full_name = this.displayService.getDisplayNameForPlatform(league.leaguePlatform) + ' ID: ' + platformPlayerId;
+          playerInfo.team = 'FA';
+          playerInfo.position = '??';
         }
+        ddPlayer = new FantasyPlayer();
+        // For team defense, they don't set full name
+        if (!playerInfo.full_name) {
+          playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
+        }
+        ddPlayer.name_id = playerInfo.full_name?.replace("'", "").replace(".", "");
+        ddPlayer.full_name = playerInfo.full_name;
+        ddPlayer.sf_trade_value = 0;
+        ddPlayer.trade_value = 0;
+        ddPlayer.team = playerInfo.team;
+        ddPlayer.position = playerInfo.position;
       }
       if (ddPlayer) {
         if (!this.positionGroupValueMap[ddPlayer.position]) {
@@ -195,7 +199,7 @@ export class PortfolioService {
       case LeaguePlatform.SLEEPER: {
         if (!this.playerPlatformIdMap[LeaguePlatform.SLEEPER]) {
           this.sleeperApiService.fetchAllSleeperPlayers().subscribe((players) => {
-            this.playerPlatformIdMap[LeaguePlatform.SLEEPER] = players
+            this.playerPlatformIdMap[LeaguePlatform.SLEEPER] = players;
             return of(players);
           });
         }
@@ -204,7 +208,7 @@ export class PortfolioService {
       case LeaguePlatform.MFL: {
         if (!this.playerPlatformIdMap[LeaguePlatform.MFL]) {
           this.mflApiService.getMFLPlayers(year, leagueId).subscribe((players) => {
-            this.playerPlatformIdMap[LeaguePlatform.MFL] = players
+            this.playerPlatformIdMap[LeaguePlatform.MFL] = players;
             return of(players);
           });
         }

@@ -60,7 +60,16 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
     ngOnInit(): void {
         // if portfolio exists in localstorage fetch it 
         if (!this.portfolioService.portfolio && localStorage.getItem('portfolio')) {
-            this.portfolioService.portfolio = JSON.parse(localStorage.getItem('portfolio'))
+            this.portfolioService.portfolio = JSON.parse(localStorage.getItem('portfolio'));
+            this.portfolioService.portfolio.leagues.forEach(league => {
+                if (!this.portfolioService.playerPlatformIdMap[league.leaguePlatform]) {
+                    this.portfolioService.setPlatformIdMaps(
+                        league.leaguePlatform,
+                        league.leagues[0].leagueId,
+                        league.leagues[0].season
+                    )
+                }
+            });
         }
         this.playerService.loadPlayerValuesForToday();
         this.setUpPortfolio();

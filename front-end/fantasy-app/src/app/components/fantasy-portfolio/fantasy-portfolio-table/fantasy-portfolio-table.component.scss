@@ -75,3 +75,10 @@ tr.portfolio-element-row:not(.portfolio-expanded-row):active {
 .portfolio-table-mobile {
   margin-right: 120px;
 }
+
+.warning_icon {
+  width: unset !important;
+  font-size: 16px;
+  vertical-align: middle;
+  cursor: help;
+}

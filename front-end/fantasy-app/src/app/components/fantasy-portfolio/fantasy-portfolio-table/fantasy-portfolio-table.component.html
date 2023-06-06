@@ -15,7 +15,7 @@
 
             <ng-container matColumnDef="player">
                 <th mat-header-cell *matHeaderCellDef>Player</th>
-                <td mat-cell *matCellDef="let element">{{element.full_name}}</td>
+                <td mat-cell *matCellDef="let element">{{element.full_name}} <span *ngIf="element.full_name.includes(':')"><mat-icon class="warning_icon" matTooltip="Unable to find name for player. May be a devy player or custom player not return from the platform APIs." matTooltipPosition="above">help</mat-icon></span></td>
             </ng-container>
 
             <ng-container matColumnDef="pos">
