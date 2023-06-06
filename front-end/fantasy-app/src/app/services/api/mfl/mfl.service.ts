@@ -314,7 +314,8 @@ export class MflService {
    * @param rosterSize size of roster
    */
   private generateRosterPositions(starters: any, rosterSize: any): string[] {
-    let count = Number(starters.count) - (Number(starters.idp_starters) || 0) - (Number(starters.kdst_starters) || 0);
+    const rawStarterNumber = starters.count.includes('-') ? starters.count?.split('-').slice(-1)[0] : Number(starters.count); 
+    let count = rawStarterNumber - (Number(starters.idp_starters) || 0) - (Number(starters.kdst_starters) || 0);
     const positionMap = [];
     const validStartersList = ['QB', 'RB', 'WR', 'TE'];
     // generate min count
