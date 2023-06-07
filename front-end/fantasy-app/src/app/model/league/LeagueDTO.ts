@@ -206,20 +206,6 @@ export class LeagueDTO {
         return 'pts_half_ppr';
     }
   }
-
-  /**
-  * get league scoring format in string format but for display
-  */
-  getDisplayNameLeagueScoringFormat(): string {
-    switch (this.scoringFormat) {
-      case LeagueScoringFormat.PPR:
-        return 'PPR';
-      case LeagueScoringFormat.STANDARD:
-        return 'Standard';
-      default:
-        return 'Half PPR';
-    }
-  }
 }
 
 export enum LeagueType {

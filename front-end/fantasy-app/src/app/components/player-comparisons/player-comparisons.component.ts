@@ -10,6 +10,7 @@ import {ConfigService} from '../../services/init/config.service';
 import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
 import {ActivatedRoute} from '@angular/router';
 import {LeagueSwitchService} from '../services/league-switch.service';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-player-comparisons',
@@ -24,6 +25,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
               public playerComparisonService: PlayerComparisonService,
               private route: ActivatedRoute,
               public leagueSwitchService: LeagueSwitchService,
+              protected $gaService: GoogleAnalyticsService,
               public configService: ConfigService) {
     super();
   }
@@ -34,6 +36,7 @@ export class PlayerComparisonsComponent extends BaseComponent implements AfterVi
   activePlayers: FantasyPlayer[] = [];
 
   ngAfterViewInit(): void {
+    this.$gaService.pageView('/players/comparison', 'Player Comparison')
     if (this.leagueService.isLeagueLoaded()) {
       this.playerComparisonService.isSuperFlex = this.leagueService.selectedLeague?.isSuperflex;
     }

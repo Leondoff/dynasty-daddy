@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
 import { TeamRankingTier } from '../../components/model/powerRankings';
+import { LeagueScoringFormat } from 'src/app/model/league/LeagueDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -78,4 +79,20 @@ export class DisplayService {
 
     return array;
   }
+
+    /**
+  * get league scoring format in string format but for display
+  */
+    getDisplayNameLeagueScoringFormat(scoringFormat: LeagueScoringFormat): string {
+      switch (scoringFormat) {
+        case LeagueScoringFormat.PPR:
+          return 'PPR';
+        case LeagueScoringFormat.STANDARD:
+          return 'Standard';
+        case LeagueScoringFormat.HALF_PPR:
+          return 'Half PPR';
+        default:
+          return '-';
+      }
+    }
 }

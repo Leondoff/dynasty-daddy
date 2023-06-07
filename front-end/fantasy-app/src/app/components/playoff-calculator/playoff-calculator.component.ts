@@ -14,6 +14,7 @@ import { EloTeamComparisonModalComponent } from "../modals/elo-team-comparison-m
 import { MatDialog } from "@angular/material/dialog";
 import { PlayerService } from "../../services/player.service";
 import { DownloadService } from 'src/app/services/utilities/download.service';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-playoff-calculator',
@@ -79,11 +80,13 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     private downloadService: DownloadService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
+    protected $gaService: GoogleAnalyticsService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
   }
 
   ngOnInit(): void {
+    this.$gaService.pageView('/league/probability', 'Playoff Calculator')
     this.playerService.loadPlayerValuesForToday();
     this.initPlayoffCalc();
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {

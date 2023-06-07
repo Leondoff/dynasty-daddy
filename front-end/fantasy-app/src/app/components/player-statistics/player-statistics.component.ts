@@ -7,6 +7,7 @@ import { LeagueService } from '../../services/league.service';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { ActivatedRoute } from '@angular/router';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-player-statistics',
@@ -140,11 +141,13 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
     public configService: ConfigService,
     public leagueSwitchService: LeagueSwitchService,
     private route: ActivatedRoute,
+    protected $gaService: GoogleAnalyticsService,
     public leagueService: LeagueService) {
     super();
   }
 
   ngOnInit(): void {
+    this.$gaService.pageView('/players/statistics', 'Positional Statistics')
     this.playersLoaded = (this.playerService.playerValues.length > 0);
     this.selectedPosition = 'qb';
     this.selectedXMetric = this.selectedMetrics[0];

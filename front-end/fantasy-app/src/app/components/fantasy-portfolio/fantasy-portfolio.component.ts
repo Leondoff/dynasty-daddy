@@ -16,6 +16,7 @@ import { DownloadService } from 'src/app/services/utilities/download.service';
 import { FilterPortfolioModalComponent } from '../modals/filter-portfolio-modal/filter-portfolio-modal.component';
 import { QueryService } from 'src/app/services/utilities/query.service';
 import { Portfolio } from '../model/portfolio';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
     selector: 'app-fantasy-portfolio',
@@ -53,11 +54,13 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         public configService: ConfigService,
         private queryService: QueryService,
         private downloadService: DownloadService,
+        protected $gaService: GoogleAnalyticsService,
         public portfolioService: PortfolioService) {
         super();
     }
 
     ngOnInit(): void {
+        this.$gaService.pageView('/league/portfolio', 'Fantasy Portfolio')
         // if portfolio exists in localstorage fetch it 
         if (!this.portfolioService.portfolio && localStorage.getItem('portfolio')) {
             this.portfolioService.portfolio = JSON.parse(localStorage.getItem('portfolio'));

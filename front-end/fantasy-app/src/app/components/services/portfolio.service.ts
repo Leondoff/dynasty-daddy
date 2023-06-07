@@ -103,7 +103,7 @@ export class PortfolioService {
       const leagueInfo = this.portfolio.leagues[league.platform]?.leagues?.find(l => l.leagueId === league.leagueId);
       this.leagueIdMap[league.leagueId] = {
         name: leagueInfo.name,
-        scoring: league.platform === LeaguePlatform.SLEEPER && leagueInfo instanceof LeagueDTO ? (leagueInfo as LeagueDTO).getDisplayNameLeagueScoringFormat() || '-' : '-',
+        scoring: league.platform === LeaguePlatform.SLEEPER ? this.displayService.getDisplayNameLeagueScoringFormat(leagueInfo?.scoringFormat) : '-',
         isSuperflex: leagueInfo.isSuperflex == true ? 'Superflex' : '1 QB',
         startCount: leagueInfo.rosterPositions && leagueInfo.rosterPositions.length > 0 ? 'Start ' + leagueInfo.rosterPositions?.filter(p => ['QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX'].includes(p)).length : '-',
         platformDisplay: this.displayService.getDisplayNameForPlatform(leagueInfo.leaguePlatform),
@@ -139,27 +139,25 @@ export class PortfolioService {
   private addPlayersToList(leaguePlayers: string[], league: LeagueDTO): void {
     leaguePlayers.forEach(platformPlayerId => {
       let ddPlayer = this.playerService.getPlayerByPlayerPlatformId(platformPlayerId, league.leaguePlatform);
-      if (!ddPlayer) {
-        let playerInfo = this.playerPlatformIdMap[league.leaguePlatform]?.[platformPlayerId];
-        // if id is not found then just display league id
-        if (!playerInfo) {
-          playerInfo = {};
-          playerInfo.full_name = this.displayService.getDisplayNameForPlatform(league.leaguePlatform) + ' ID: ' + platformPlayerId;
-          playerInfo.team = 'FA';
-          playerInfo.position = '??';
-        }
-        ddPlayer = new FantasyPlayer();
-        // For team defense, they don't set full name
-        if (!playerInfo.full_name) {
-          playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
-        }
-        ddPlayer.name_id = playerInfo.full_name?.replace("'", "").replace(".", "");
-        ddPlayer.full_name = playerInfo.full_name;
-        ddPlayer.sf_trade_value = 0;
-        ddPlayer.trade_value = 0;
-        ddPlayer.team = playerInfo.team;
-        ddPlayer.position = playerInfo.position;
+      let playerInfo = this.playerPlatformIdMap[league.leaguePlatform]?.[platformPlayerId];
+      // if id is not found then just display league id, custom logic for custom players added to MFL leagues
+      if (!playerInfo || (league.leaguePlatform === LeaguePlatform.MFL && platformPlayerId.length === 4 && platformPlayerId[0] === '0')) {
+        playerInfo = {};
+        playerInfo.full_name = this.displayService.getDisplayNameForPlatform(league.leaguePlatform) + ' ID: ' + platformPlayerId;
+        playerInfo.team = 'FA';
+        playerInfo.position = '??';
       }
+      ddPlayer = new FantasyPlayer();
+      // For team defense, they don't set full name
+      if (!playerInfo.full_name) {
+        playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
+      }
+      ddPlayer.name_id = playerInfo.full_name?.replace("'", "").replace(".", "");
+      ddPlayer.full_name = playerInfo.full_name;
+      ddPlayer.sf_trade_value = 0;
+      ddPlayer.trade_value = 0;
+      ddPlayer.team = playerInfo.team;
+      ddPlayer.position = playerInfo.position;
       if (ddPlayer) {
         if (!this.positionGroupValueMap[ddPlayer.position]) {
           this.positionGroupValueMap[ddPlayer.position] = 0;

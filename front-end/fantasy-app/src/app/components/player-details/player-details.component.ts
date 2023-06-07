@@ -9,6 +9,7 @@ import { PlayerComparisonService } from '../services/player-comparison.service';
 import { ConfigService } from '../../services/init/config.service';
 import { PlayerInsights } from '../model/playerInsights';
 import { LeagueSwitchService } from '../services/league-switch.service';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-player-details',
@@ -46,11 +47,13 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private playerComparisonService: PlayerComparisonService,
     public leagueSwitchService: LeagueSwitchService,
+    protected $gaService: GoogleAnalyticsService,
     public configService: ConfigService) {
     super();
   }
 
   ngOnInit(): void {
+    this.$gaService.pageView('/player/details', 'Player Page', undefined, { player: this.selectedPlayer.full_name})
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       this.historicalTradeValue = null;
       this.playerProfile = null;
