@@ -15,6 +15,7 @@ import { DisplayService } from '../../services/utilities/display.service';
 import { MatchupService } from '../services/matchup.service';
 import { NflService } from 'src/app/services/utilities/nfl.service';
 import { standardDeviation, variance } from 'simple-statistics';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-fantasy-team-details',
@@ -62,11 +63,13 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     public transactionsService: TransactionsService,
     public displayService: DisplayService,
     private playersService: PlayerService,
+    protected $gaService: GoogleAnalyticsService,
     public configService: ConfigService) {
     super();
   }
 
   ngOnInit(): void {
+    this.$gaService.pageView('/league/team', 'Team Page')
     this.playersService.loadPlayerValuesForToday();
     this.addSubscriptions(
       this.route.queryParams.subscribe(params => {

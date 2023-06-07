@@ -147,7 +147,7 @@ export class LeagueService {
           break
         }
         case LeaguePlatform.MFL: {
-          this.mflService.loadMFLUser$(username, password).subscribe(leagueUser => {
+          this.mflService.loadMFLUser$(username, password, year).subscribe(leagueUser => {
             this.leagueUser = leagueUser;
             return of(leagueUser);
           });

@@ -197,7 +197,7 @@ export class MflService {
    * @returns 
    */
   fetchAllLeaguesForUser$(username: string, password: string, year: string): Observable<FantasyPlatformDTO> {
-    return this.loadMFLUser$(username, password).pipe(
+    return this.loadMFLUser$(username, password, year).pipe(
       mergeMap(leagueUser => {
         if (leagueUser?.leagues?.length > 20) {
           return of(leagueUser);
@@ -263,8 +263,8 @@ export class MflService {
   * @param password password for user
   * @returns 
   */
-  loadMFLUser$(username: string, password: string): Observable<FantasyPlatformDTO> {
-    return this.mflApiService.getMFLLeaguesForUser(username, password).pipe(map(response => {
+  loadMFLUser$(username: string, password: string, season: string): Observable<FantasyPlatformDTO> {
+    return this.mflApiService.getMFLLeaguesForUser(username, password, season).pipe(map(response => {
       if (response == null) {
         console.warn('User data could not be found. Try again!');
         return null;
