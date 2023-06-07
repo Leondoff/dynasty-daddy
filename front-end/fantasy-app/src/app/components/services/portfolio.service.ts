@@ -147,17 +147,19 @@ export class PortfolioService {
         playerInfo.team = 'FA';
         playerInfo.position = '??';
       }
-      ddPlayer = new FantasyPlayer();
-      // For team defense, they don't set full name
-      if (!playerInfo.full_name) {
-        playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
+      if (!ddPlayer) {
+        ddPlayer = new FantasyPlayer();
+        // For team defense, they don't set full name
+        if (!playerInfo.full_name) {
+          playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
+        }
+        ddPlayer.name_id = playerInfo.full_name?.replace("'", "").replace(".", "");
+        ddPlayer.full_name = playerInfo.full_name;
+        ddPlayer.sf_trade_value = 0;
+        ddPlayer.trade_value = 0;
+        ddPlayer.team = playerInfo.team;
+        ddPlayer.position = playerInfo.position;
       }
-      ddPlayer.name_id = playerInfo.full_name?.replace("'", "").replace(".", "");
-      ddPlayer.full_name = playerInfo.full_name;
-      ddPlayer.sf_trade_value = 0;
-      ddPlayer.trade_value = 0;
-      ddPlayer.team = playerInfo.team;
-      ddPlayer.position = playerInfo.position;
       if (ddPlayer) {
         if (!this.positionGroupValueMap[ddPlayer.position]) {
           this.positionGroupValueMap[ddPlayer.position] = 0;
