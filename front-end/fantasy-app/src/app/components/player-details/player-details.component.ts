@@ -47,13 +47,11 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private playerComparisonService: PlayerComparisonService,
     public leagueSwitchService: LeagueSwitchService,
-    protected $gaService: GoogleAnalyticsService,
     public configService: ConfigService) {
     super();
   }
 
   ngOnInit(): void {
-    this.$gaService.pageView('/player/details', 'Player Page', undefined, { player: this.selectedPlayer.full_name})
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       this.historicalTradeValue = null;
       this.playerProfile = null;
