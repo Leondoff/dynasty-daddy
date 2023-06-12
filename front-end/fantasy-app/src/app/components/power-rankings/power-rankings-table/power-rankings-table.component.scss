@@ -44,8 +44,36 @@ tr.power-ranking-element-row:not(.power-ranking-expanded-row):active {
 .mat-column-rbRank,
 .mat-column-wrRank,
 .mat-column-teRank,
+.mat-column-qbStarterRank,
+.mat-column-rbStarterRank,
+.mat-column-wrStarterRank,
+.mat-column-teStarterRank,
 .mat-column-draftRank {
   max-width: 50px;
   text-align: center;
   justify-content: center;
+}
+
+.contender-mat-chip {
+  background-color: #c59700 !important;
+}
+
+.frisky-mat-chip {
+  background-color: #FF5733 !important;
+}
+
+.fraud-mat-chip {
+  background-color: #C70039 !important;
+}
+
+.rebuilding-mat-chip {
+  background-color: #900C3F !important;
+}
+
+.super-team-mat-chip {
+  background-color: #9DC700 !important;
+}
+
+.trust-the-process-mat-chip {
+  background-color: #581845 !important;
 }

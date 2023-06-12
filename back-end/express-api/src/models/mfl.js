@@ -19,7 +19,6 @@ export const FormatMFLLeagues = async (leagues) => {
       leagueList.push(await formatSingularLeague(l));
     });
   } else {
-    console.log(leagues)
     leagueList.push(await formatSingularLeague(leagues.league));
   }
   return leagueList;

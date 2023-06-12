@@ -69,8 +69,12 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     powerRankingData.push([`League Power Rankings for ${this.leagueService.selectedLeague.name}`]);
     powerRankingData.push([]);
     powerRankingData.push([
-        ['Team', 'Owner', 'Tier', 'Overall Rank', 'Overall Value', 'Starter Rank', 'Starter Value', 'QB Rank', 'QB Value', 'RB Rank', 'RB Value', 'WR Rank', 'WR Value', 'TE Rank', 'TE Value', 'Draft Capital Rank', 'Draft Capital Value'],
-      ]);
+      ['Team', 'Owner', 'Tier', 'Overall Rank', 'Overall Value', 'Starter Rank',
+        'Starter Value', 'QB Rank', 'QB Value', 'RB Rank', 'RB Value', 'WR Rank',
+        'WR Value', 'TE Rank', 'TE Value', 'Draft Capital Rank', 'Draft Capital Value',
+        'QB Starter Rank', 'QB Starter Value', 'RB Starter Rank', 'RB Starter Value',
+        'WR Starter Rank', 'WR Starter Value', 'TE Starter Rank', 'TE Starter Value'],
+    ]);
 
     this.powerRankingService.powerRankings.forEach(team => {
       powerRankingData.push([
@@ -91,13 +95,21 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
         this.leagueService.selectedLeague?.isSuperflex ? team.roster[3].sfTradeValue : team.roster[3].tradeValue,
         team.picks.rank,
         this.leagueService.selectedLeague?.isSuperflex ? team.picks.sfTradeValue : team.picks.tradeValue,
+        team.roster[0].starterRank,
+        Math.round(team.roster[0].starterValue * 10) / 10,
+        team.roster[1].starterRank,
+        Math.round(team.roster[1].starterValue * 10) / 10,
+        team.roster[2].starterRank,
+        Math.round(team.roster[2].starterValue * 10) / 10,
+        team.roster[3].starterRank,
+        Math.round(team.roster[3].starterValue * 10) / 10,
       ]);
     });
-  
+
     const formattedPowerRankings = powerRankingData.map(e => e.join(',')).join('\n');
-  
+
     const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Power_Rankings_${new Date().toISOString().slice(0, 10)}.csv`;
-  
+
     this.downloadService.downloadCSVFile(formattedPowerRankings, filename)
   }
 }

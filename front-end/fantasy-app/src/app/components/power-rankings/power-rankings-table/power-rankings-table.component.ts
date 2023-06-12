@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { TeamPowerRanking } from '../../model/powerRankings';
+import { TeamPowerRanking, TeamRankingTier } from '../../model/powerRankings';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
@@ -11,7 +11,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { DisplayService } from '../../../services/utilities/display.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { LeagueType } from "../../../model/league/LeagueDTO";
-import { PowerRankingMarket, PowerRankingsService } from '../../services/power-rankings.service';
+import { PowerRankingMarket, PowerRankingTableView, PowerRankingsService } from '../../services/power-rankings.service';
 import { BaseComponent } from '../../base-component.abstract';
 
 // details animation
@@ -73,19 +73,19 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     public leagueSwitchService: LeagueSwitchService,
     public displayService: DisplayService,
     private clipboard: Clipboard) {
-      super();
+    super();
   }
 
   ngOnInit(): void {
     this.alertThreshold = this.powerRankings.length / 3;
-    this.handleLeagueTypeChanges();
+    this.setUpTableView();
     this.createNewTableDataSource(this.powerRankings);
     this.refreshPowerRankingCache();
   }
 
   ngOnChanges(): void {
     this.dataSource.data = this.powerRankings;
-    this.handleLeagueTypeChanges();
+    this.setUpTableView();
     this.refreshPowerRankingCache();
   }
 
@@ -123,11 +123,25 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         rosters: {}
       }
       team.roster.forEach((group) => {
-        this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
-          value: this.isSuperFlex ? group.sfTradeValue : group.tradeValue,
-          rank: group.rank,
-          isRed: group.rank > this.alertThreshold * 2,
-          isGreen: group.rank < this.alertThreshold
+        switch (this.powerRankingsService.powerRankingsTableView) {
+          case PowerRankingTableView.Starters: {
+            this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
+              value: group.starterValue,
+              rank: group.starterRank,
+              isRed: group.starterRank > this.alertThreshold * 2,
+              isGreen: group.starterRank < this.alertThreshold
+            }
+            break;
+          }
+          default: {
+            this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
+              value: this.isSuperFlex ? group.sfTradeValue : group.tradeValue,
+              rank: group.rank,
+              isRed: group.rank > this.alertThreshold * 2,
+              isGreen: group.rank < this.alertThreshold
+            }
+            break;
+          }
         }
       });
       this.powerRankingCache[team.team.roster.rosterId].rosters[team.picks.position] = {
@@ -137,20 +151,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         isGreen: team.picks.rank < this.alertThreshold
       }
     });
-  }
-
-  /**
-   * gets columns for power rankings table based on league type
-   * @private
-   */
-  private handleLeagueTypeChanges(): void {
-    if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
-      this.powerRankingsService.rankingMarket = this.playerService.selectedMarket.valueOf();
-      this.columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank', 'draftRank']
-    } else {
-      this.powerRankingsService.rankingMarket = PowerRankingMarket.ADP;
-      this.columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
-    }
   }
 
   /**
@@ -211,19 +211,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   isInjured(player: FantasyPlayer): boolean {
     const injuries = ['PUP', 'IR', 'Sus', 'COV'];
     return injuries.includes(player.injury_status);
-  }
-
-  /**
-   * copies starters to clipboard
-   * @param rosterId team id
-   */
-  copyStartersFromTeam(team: TeamPowerRanking): void {
-    const starterStrings = 'Team\n' +
-      `QB: ${this.getListOfPlayerNames('qb', team.starters)}\n` +
-      `RB: ${this.getListOfPlayerNames('rb', team.starters)}\n` +
-      `WR: ${this.getListOfPlayerNames('wr', team.starters)}\n` +
-      `TE: ${this.getListOfPlayerNames('te', team.starters)} `;
-    this.clipboard.copy(starterStrings);
   }
 
   /**
@@ -315,6 +302,14 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         return item.roster[2].rank;
       } else if (property === 'teRank') {
         return item.roster[3].rank;
+      } else if (property === 'qbStarterRank') {
+        return item.roster[0].starterRank;
+      } else if (property === 'rbStarterRank') {
+        return item.roster[1].starterRank;
+      } else if (property === 'wrStarterRank') {
+        return item.roster[2].starterRank;
+      } else if (property === 'teStarterRank') {
+        return item.roster[3].starterRank;
       } else if (property === 'draftRank') {
         return item.picks.rank;
       } else if (property === 'overallRank') {
@@ -352,6 +347,31 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         this.playerService.selectedMarket = this.powerRankingsService.rankingMarket.valueOf();
       }));
     }
+    this.refreshPowerRankingCache();
+  }
+
+  /**
+   * gets columns for power rankings table based on league type & table view
+   */
+  public setUpTableView(): void {
+    let newColumns = [];
+    switch (this.powerRankingsService.powerRankingsTableView) {
+      case PowerRankingTableView.Starters: {
+        newColumns = ['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank'];
+        this.powerRankingsService.rankingMarket = PowerRankingMarket.ADP;
+        break;
+      }
+      default: {
+        newColumns = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+      }
+    }
+    if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+      this.powerRankingsService.rankingMarket = this.playerService.selectedMarket.valueOf();
+      newColumns.push('draftRank');
+    } else {
+      this.powerRankingsService.rankingMarket = PowerRankingMarket.ADP;
+    }
+    this.columnsToDisplay = newColumns;
     this.refreshPowerRankingCache();
   }
 }

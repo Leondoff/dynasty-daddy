@@ -5,6 +5,8 @@ import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueService } from 'src/app/services/league.service';
 import { PortfolioService } from '../../services/portfolio.service';
 import { MatSort } from '@angular/material/sort';
+import { Router } from '@angular/router';
+import { LeagueSwitchService } from '../../services/league-switch.service';
 
 @Component({
   selector: 'app-fantasy-portfolio-table',
@@ -38,6 +40,8 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
   constructor(
     public leagueService: LeagueService,
     public configService: ConfigService,
+    private leagueSwitchService: LeagueSwitchService,
+    private route: Router,
     public portfolioService: PortfolioService
   ) { }
 
@@ -168,5 +172,14 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
         return `${player.trade_value}`;
       }
     }
+  }
+
+  openLeague(leagueId: string): void {
+    this.leagueSwitchService.loadLeagueWithLeagueId(
+      leagueId,
+      this.portfolioService.leagueIdMap[leagueId].year,
+      this.portfolioService.leagueIdMap[leagueId].platform
+    )
+    this.route.navigate(['/league/rankings']);
   }
 }

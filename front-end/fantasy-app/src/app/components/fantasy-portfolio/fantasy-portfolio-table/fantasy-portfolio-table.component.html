@@ -99,6 +99,14 @@
                                     </td>
                                     <td class="sub-table-detail">{{portfolioService.leagueIdMap[leagueId]?.scoring}}
                                     </td>
+                                    <td class="sub-table-actions"><mat-icon mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="League Actions" style="width: unset; height: unset;">more_horiz</mat-icon>
+                                      <mat-menu #actionMenu="matMenu" yPosition="above">
+                                        <button mat-menu-item (click)="openLeague(leagueId)">
+                                            <mat-icon>open_in_new</mat-icon>
+                                            <span>Open in Dynasty Daddy</span>
+                                        </button>
+                                      </mat-menu>
+                                    </td>
                                 </tr>
                             </table>
                         </div>
