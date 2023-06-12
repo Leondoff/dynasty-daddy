@@ -10,7 +10,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { FilterPlayerValuesModalComponent } from '../modals/filter-player-values-modal/filter-player-values-modal.component';
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-player-values',
@@ -29,13 +28,11 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
     private downloadService: DownloadService,
     public playerValueService: PlayerValueService,
     public leagueSwitchService: LeagueSwitchService,
-    protected $gaService: GoogleAnalyticsService,
     private route: ActivatedRoute) {
     super();
   }
 
   ngOnInit(): void {
-    this.$gaService.pageView('/players/values', 'Player Rankings')
     this.playersLoaded = (this.playerService.playerValues.length > 0);
     if (!this.playersLoaded) {
       this.playerService.loadPlayerValuesForToday();

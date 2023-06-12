@@ -8,7 +8,6 @@ import { delay } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-power-rankings',
@@ -29,14 +28,12 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     private downloadService: DownloadService,
     private displayService: DisplayService,
     private route: ActivatedRoute,
-    protected $gaService: GoogleAnalyticsService,
     public leagueSwitchService: LeagueSwitchService) {
 
     super();
   }
 
   ngOnInit(): void {
-    this.$gaService.pageView('/league/rankings', 'Power Rankings')
     this.playersService.loadPlayerValuesForToday();
     this.mapPowerRankings();
     // TODO potentially improve how this functions

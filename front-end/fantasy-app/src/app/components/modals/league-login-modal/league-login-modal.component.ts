@@ -73,6 +73,7 @@ export class LeagueLoginModalComponent implements OnInit {
                 this.mflService.fetchAllLeaguesForUser$(this.portfolioService.mflUsername, this.portfolioService.mflPassword, this.selectedYear).subscribe(leagueUser => {
                     this.mflErrorMsg = '';
                     this.portfolioService.portfolio.leagues[LeaguePlatform.MFL] = leagueUser;
+                    this.portfolioService.portfolioMFLUserId = this.mflService.mflUserId;
                     this.portfolioService.leagueBatches[LeaguePlatform.MFL] = new Array(Math.round(leagueUser.leagues.length/this.LEAGUE_CHUNK_SIZE) + 1).fill(false);
                     if (leagueUser?.leagues?.length > 0) {
                         this.portfolioService.setPlatformIdMaps(LeaguePlatform.MFL, leagueUser?.leagues[0]?.leagueId, this.selectedYear);

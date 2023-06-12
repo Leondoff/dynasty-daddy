@@ -56,6 +56,7 @@ export class EndpointsService {
     this.mflAPIConfigService.getMFLLeagueStandingEndpoint = this.baseUrl + '/v1/mfl/leagueStandings';
     this.mflAPIConfigService.getMFLRostersEndpoint = this.baseUrl + '/v1/mfl/rosters';
     this.mflAPIConfigService.getMFLFutureDraftPicksEndpoint = this.baseUrl + '/v1/mfl/futureDraftPicks';
+    this.mflAPIConfigService.postMFLWaiverMoveEndpoint = this.baseUrl + '/v1/mfl/waiver';
 
     // Fleaflicker Endpoints
     this.fleaflickerApiConfigService.getFFLeagueEndpoint = this.baseUrl + '/v1/ff/league';

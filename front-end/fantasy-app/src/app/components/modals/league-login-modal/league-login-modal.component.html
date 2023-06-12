@@ -14,20 +14,20 @@
                 <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
                     <mat-label>Sleeper Username</mat-label>
                     <input matInput type="text" [(ngModel)]="portfolioService.sleeperUsername">
-                    <button mat-button *ngIf="portfolioService.sleeperUsername || portfolioService.portfolio?.leagues[0]" matSuffix mat-icon-button
+                    <button mat-button *ngIf="portfolioService.sleeperUsername || portfolioService.portfolio?.leagues?.[0]" matSuffix mat-icon-button
                         aria-label="Clear" (click)="portfolioService.sleeperUsername=''">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
                 <div *ngIf="portfolioService.connectAccountStatus == 1">
                     <span style="padding-right: 5px;">
-                        <button mat-raised-button [disabled]="!portfolioService.sleeperUsername || portfolioService.portfolio?.leagues[0]" color="accent"
+                        <button mat-raised-button [disabled]="!portfolioService.sleeperUsername || portfolioService.portfolio?.leagues?.[0]" color="accent"
                             (click)="connectToLeague(0)">Connect
                         </button>
                     </span>
                     <span style="padding-left: 5px;">
                         <button mat-raised-button
-                            [disabled]="!portfolioService.portfolio || !portfolioService.portfolio?.leagues[0]"
+                            [disabled]="!portfolioService.portfolio || !portfolioService.portfolio?.leagues?.[0]"
                             color="warn" (click)="disconnectUser(0)">Disconnect
                         </button>
                     </span>

@@ -13,7 +13,6 @@ import {ActivatedRoute} from '@angular/router';
 import {NflService} from '../../services/utilities/nfl.service';
 import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 import {PlayerService} from "../../services/player.service";
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-standings',
@@ -37,7 +36,6 @@ export class StandingsComponent extends BaseComponent implements OnInit {
               private playerService: PlayerService,
               private nflService: NflService,
               public leagueSwitchService: LeagueSwitchService,
-              protected $gaService: GoogleAnalyticsService,
               public transactionService: TransactionsService) {
     super();
   }
@@ -51,7 +49,6 @@ export class StandingsComponent extends BaseComponent implements OnInit {
   pointsForCols = ['week', 'points', 'team1PointsFor', 'score', 'team2Name'];
 
   ngOnInit(): void {
-    this.$gaService.pageView('/league/standings', 'League Standings')
     this.playerService.loadPlayerValuesForToday();
     this.setUpStandings();
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {

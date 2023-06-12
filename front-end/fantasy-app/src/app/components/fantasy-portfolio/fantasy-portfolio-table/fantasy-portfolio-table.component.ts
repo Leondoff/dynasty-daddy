@@ -7,6 +7,10 @@ import { PortfolioService } from '../../services/portfolio.service';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { LeagueSwitchService } from '../../services/league-switch.service';
+import { DialogConfig } from '@angular/cdk/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogModal } from '../../modals/confirmation-dialog/confirmation-dialog.component';
+import { MflService } from 'src/app/services/api/mfl/mfl.service';
 
 @Component({
   selector: 'app-fantasy-portfolio-table',
@@ -42,6 +46,8 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
     public configService: ConfigService,
     private leagueSwitchService: LeagueSwitchService,
     private route: Router,
+    private dialog: MatDialog,
+    private mflService: MflService,
     public portfolioService: PortfolioService
   ) { }
 
@@ -181,5 +187,37 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
       this.portfolioService.leagueIdMap[leagueId].platform
     )
     this.route.navigate(['/league/rankings']);
+  }
+
+  /**
+   * Drop player in MFL league
+   * @param leagueId MFL league id
+   * @param playerId MFL player id
+   */
+  dropPlayer(leagueId: string, playerId: string): void {
+    const player = this.playersWithValue.find(p => p.name_id == playerId);
+    const dialogRef = this.dialog.open(ConfirmationDialogModal, {
+      disableClose: true,
+      autoFocus: true,
+      data: {
+        title: `Are you sure you want to drop ${player.full_name} in ${this.portfolioService.leagueIdMap[leagueId]?.name}?`
+      }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.mflService.postWaiverTransaction$(
+          leagueId,
+          '2023',
+          null,
+          player.mfl_id
+        ).subscribe(_ => {
+          this.portfolioService.playerHoldingMap[playerId]?.cutLeagues.push(leagueId);
+        })
+      }
+    })
+  }
+
+  isPlayerCut = (nameId: string, leagueId: string) => {
+    return this.portfolioService.playerHoldingMap[nameId]?.cutLeagues.includes(leagueId)
   }
 }

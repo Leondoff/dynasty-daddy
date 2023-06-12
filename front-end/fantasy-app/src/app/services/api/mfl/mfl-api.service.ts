@@ -88,9 +88,9 @@ export class MflApiService {
         return userLeagues;
       }
     ),
-    catchError(error => {
-      return throwError(error);
-    }));
+      catchError(error => {
+        return throwError(error);
+      }));
   }
 
   /**
@@ -133,6 +133,19 @@ export class MflApiService {
           playerMap[p.id] = { position: p.position, full_name: nameArr[1] + ' ' + nameArr[0] };
         });
         return playerMap;
+      }
+    ));
+  }
+
+  /**
+ * fetch additional team standings information
+ * @param year season
+ * @param leagueId league id
+ */
+  postMFLWaiverMove(year: string, leagueId: string, mflUserId: string, body: any): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.postMFLWaiverMoveEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId, body).pipe(map(
+      (res: any) => {
+        return res;
       }
     ));
   }

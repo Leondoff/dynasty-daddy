@@ -18,7 +18,6 @@ import { LeagueSwitchService } from '../services/league-switch.service';
 import { DisplayService } from '../../services/utilities/display.service';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
 import { DraftCapital } from '../../model/assets/DraftCapital';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-trade-center',
@@ -115,7 +114,6 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     public playerComparisonService: PlayerComparisonService,
     public leagueSwitchService: LeagueSwitchService,
     public displayService: DisplayService,
-    protected $gaService: GoogleAnalyticsService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -123,7 +121,6 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   }
 
   ngOnInit(): void {
-    this.$gaService.pageView('/players/trade', 'Trade Calculator')
     if (this.playerService.playerValues.length === 0) {
       this.playerService.loadPlayerValuesForToday();
     } else {
