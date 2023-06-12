@@ -113,6 +113,7 @@ import { MatCarouselModule } from '@thouet/material-carousel';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FilterPortfolioModalComponent } from './components/modals/filter-portfolio-modal/filter-portfolio-modal.component';
 import { TradeCenterPlayerValuesComponent } from './components/trade-center/trade-center-player-values/trade-center-player-values.component';
+import { ConfirmationDialogModal } from './components/modals/confirmation-dialog/confirmation-dialog.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -193,6 +194,7 @@ let UniversalDeviceDetectorService;
     FantasyPortfolioTableComponent,
     FantasyPortfolioChartComponent,
     LeagueLoginModalComponent,
+    ConfirmationDialogModal,
     TruncatePipe,
   ],
   imports: [

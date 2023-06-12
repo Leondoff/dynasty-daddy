@@ -292,6 +292,24 @@ export class MflService {
   }
 
   /**
+   * Post waiver transaction to MFL league
+   * @param leagueId league id
+   * @param season string for year
+   * @param addPlayerId mfl id of player to add
+   * @param dropPlayerId comma delimited list of mfl ids to drop
+   * @param mflUserId optional mfl user id
+   */
+  postWaiverTransaction$(leagueId: string, season: string, addPlayerId?: string, dropPlayerId?: string, mflUserId?: string): Observable<any> {
+    const body = {
+      ADD: addPlayerId,
+      DROP: dropPlayerId
+    }
+    return this.mflApiService.postMFLWaiverMove(season, leagueId, mflUserId || this.mflUserId, body).pipe(map(res => {
+      return res
+    }));
+  }
+
+  /**
    * Determines the type of league in MFL
    * @param leagueType league type passed in
    * @param maxKeeper max keeper count
@@ -314,7 +332,7 @@ export class MflService {
    * @param rosterSize size of roster
    */
   private generateRosterPositions(starters: any, rosterSize: any): string[] {
-    const rawStarterNumber = starters.count.includes('-') ? starters.count?.split('-').slice(-1)[0] : Number(starters.count); 
+    const rawStarterNumber = starters.count.includes('-') ? starters.count?.split('-').slice(-1)[0] : Number(starters.count);
     let count = rawStarterNumber - (Number(starters.idp_starters) || 0) - (Number(starters.kdst_starters) || 0);
     const positionMap = [];
     const validStartersList = ['QB', 'RB', 'WR', 'TE'];

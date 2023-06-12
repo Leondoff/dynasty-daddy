@@ -11,6 +11,7 @@ import { PlayerService } from 'src/app/services/player.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
 import { Portfolio } from '../model/portfolio';
 import { Status } from '../model/status';
+import { MflService } from 'src/app/services/api/mfl/mfl.service';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +63,9 @@ export class PortfolioService {
   /** mfl password */
   mflPassword: string = '';
 
+  /** mfl user id for write back */
+  portfolioMFLUserId: string = '';
+
   /** sleeper username input */
   sleeperUsername: string = '';
 
@@ -83,6 +87,7 @@ export class PortfolioService {
     private fantasyPlayerApiService: FantasyPlayerApiService,
     private sleeperApiService: SleeperApiService,
     private mflApiService: MflApiService,
+    private mflService: MflService,
     private fleaflickerService: FleaflickerService,
     private displayService: DisplayService,
     private playerService: PlayerService,
@@ -117,6 +122,7 @@ export class PortfolioService {
     });
     const playersToGet = this.playersWithValue.filter(p => !this.fantasyPortfolioDict[p.name_id] && ['QB', 'RB', 'WR', 'TE'].includes(p.position)).map(p => p?.name_id)
     localStorage.setItem('portfolio', JSON.stringify(this.portfolio));
+    localStorage.setItem('portfolioMFLUserId', this.portfolioMFLUserId);
     this.fantasyPlayerApiService.getFantasyPortfolio(181, playersToGet).subscribe(
       p => {
         for (let key in p) {
@@ -150,11 +156,9 @@ export class PortfolioService {
       if (!ddPlayer) {
         ddPlayer = new FantasyPlayer();
         // For team defense, they don't set full name
-        if (!playerInfo.full_name) {
-          playerInfo.full_name = `${playerInfo.first_name} ${playerInfo.last_name}`
-        }
-        ddPlayer.name_id = playerInfo.full_name?.replace("'", "").replace(".", "");
-        ddPlayer.full_name = playerInfo.full_name;
+        ddPlayer.full_name = playerInfo.full_name ? playerInfo.full_name : `${playerInfo.first_name} ${playerInfo.last_name}`
+        ddPlayer.name_id = (playerInfo?.full_name + playerInfo?.position)
+          .replace("'", "").replace(".", "").replace(" ", "").toLowerCase();
         ddPlayer.sf_trade_value = 0;
         ddPlayer.trade_value = 0;
         ddPlayer.team = playerInfo.team;
@@ -177,6 +181,7 @@ export class PortfolioService {
             standard: league.isSuperflex ? 0 : 1,
             totalValue: league.isSuperflex ? ddPlayer.sf_trade_value : ddPlayer.trade_value,
             leagues: [league.leagueId],
+            cutLeagues: [],
           }
           this.playersWithValue.push(ddPlayer);
         }

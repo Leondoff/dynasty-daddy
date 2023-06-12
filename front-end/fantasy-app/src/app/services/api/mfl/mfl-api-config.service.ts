@@ -23,6 +23,8 @@ export class MflApiConfigService {
 
   private _getMFLTransactionsEndpoint = '';
 
+  private _postMFLWaiverMoveEndpoint = '';
+
   get getMFLLeagueEndpoint(): string {
     return this._getMFLLeagueEndpoint;
   }
@@ -85,6 +87,14 @@ export class MflApiConfigService {
 
   set getMFLRostersEndpoint(value: string) {
     this._getMFLRostersEndpoint = value;
+  }
+
+  get postMFLWaiverMoveEndpoint(): string {
+    return this._postMFLWaiverMoveEndpoint;
+  }
+
+  set postMFLWaiverMoveEndpoint(value: string) {
+    this._postMFLWaiverMoveEndpoint = value;
   }
 
   get getMFLScheduleEndpoint(): string {

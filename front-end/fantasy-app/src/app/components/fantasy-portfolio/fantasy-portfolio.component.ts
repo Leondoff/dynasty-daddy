@@ -16,7 +16,6 @@ import { DownloadService } from 'src/app/services/utilities/download.service';
 import { FilterPortfolioModalComponent } from '../modals/filter-portfolio-modal/filter-portfolio-modal.component';
 import { QueryService } from 'src/app/services/utilities/query.service';
 import { Portfolio } from '../model/portfolio';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
     selector: 'app-fantasy-portfolio',
@@ -54,18 +53,20 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         public configService: ConfigService,
         private queryService: QueryService,
         private downloadService: DownloadService,
-        protected $gaService: GoogleAnalyticsService,
         public portfolioService: PortfolioService) {
         super();
     }
 
     ngOnInit(): void {
-        this.$gaService.pageView('/league/portfolio', 'Fantasy Portfolio')
         // if portfolio exists in localstorage fetch it 
         if (!this.portfolioService.portfolio && localStorage.getItem('portfolio')) {
             this.portfolioService.portfolio = JSON.parse(localStorage.getItem('portfolio'));
+            // get MFL portfolio id if stored
+            if (localStorage.getItem('portfolioMFLUserId')) {
+                this.portfolioService.portfolioMFLUserId = localStorage.getItem('portfolioMFLUserId');
+            }
             this.portfolioService.portfolio.leagues.forEach(league => {
-                if (!this.portfolioService.playerPlatformIdMap[league.leaguePlatform]) {
+                if (league && !this.portfolioService.playerPlatformIdMap[league.leaguePlatform]) {
                     this.portfolioService.setPlatformIdMaps(
                         league.leaguePlatform,
                         league.leagues[0].leagueId,
@@ -123,6 +124,7 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         this.portfolioService.portfolio = new Portfolio();
         this.portfolioService.appliedLeagues = [];
         localStorage.removeItem('portfolio');
+        localStorage.removeItem('portfolioMFLUserId');
         this.selectableLeagues = [];
         this.selectedLeagues.reset();
         this.portfolioService.portfolioValuesUpdated$.next();

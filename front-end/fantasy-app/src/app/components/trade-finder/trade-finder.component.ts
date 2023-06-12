@@ -11,7 +11,6 @@ import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from '../../services/init/config.service';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
 import { UntypedFormControl } from '@angular/forms';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-trade-finder',
@@ -56,14 +55,12 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     private powerRankingsService: PowerRankingsService,
     private route: ActivatedRoute,
     public tradeFinderService: TradeFinderService,
-    protected $gaService: GoogleAnalyticsService,
     public configService: ConfigService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.$gaService.pageView('/league/trade/finder', 'Trade Finder')
     if (this.playerService.playerValues.length === 0) {
       this.playerService.loadPlayerValuesForToday();
     } else {

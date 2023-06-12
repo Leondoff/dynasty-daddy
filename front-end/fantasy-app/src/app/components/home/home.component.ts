@@ -12,7 +12,6 @@ import { MflService } from '../../services/api/mfl/mfl.service';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
 import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
 import { ESPNService } from 'src/app/services/api/espn/espn.service';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-home',
@@ -78,13 +77,11 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     private espnService: ESPNService,
     private dialog: MatDialog,
     private fleaflickerService: FleaflickerService,
-    protected $gaService: GoogleAnalyticsService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
   }
 
   ngOnInit(): void {
-    this.$gaService.pageView('/home', 'Home')
     this.supportedYears = this.generateYears();
     if (!this.leagueService.selectedYear) {
       this.selectedYear = this.supportedYears[1];

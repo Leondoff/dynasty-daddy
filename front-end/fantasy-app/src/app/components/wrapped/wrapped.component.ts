@@ -6,7 +6,6 @@ import { PlayerService } from 'src/app/services/player.service';
 import { BaseComponent } from '../base-component.abstract';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { WrappedService } from '../services/wrapped.service';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
     selector: 'app-wrapped',
@@ -27,13 +26,11 @@ import { GoogleAnalyticsService } from 'ngx-google-analytics';
        public leagueService: LeagueService,
        private playersService: PlayerService,
        private leagueSwitchService: LeagueSwitchService,
-       protected $gaService: GoogleAnalyticsService,
        private route: ActivatedRoute) {
         super();
     }
     
     ngOnInit(): void {
-      this.$gaService.pageView('/wrapped', 'Wrapped')
       this.wrappedService.frameNumber = 0;
       this.playersService.loadPlayerValuesForToday();
       // TODO potentially improve how this functions

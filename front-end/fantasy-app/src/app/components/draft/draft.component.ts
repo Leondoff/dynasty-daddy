@@ -10,7 +10,6 @@ import { ConfigService } from 'src/app/services/init/config.service';
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 import { PowerRankingsService } from '../services/power-rankings.service';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
   selector: 'app-draft',
@@ -38,13 +37,11 @@ export class DraftComponent extends BaseComponent implements OnInit {
     private route: ActivatedRoute,
     private powerRankingsService: PowerRankingsService,
     private downloadService: DownloadService,
-    protected $gaService: GoogleAnalyticsService,
     public mockDraftService: DraftService) {
     super();
   }
 
   ngOnInit(): void {
-    this.$gaService.pageView('/league/draft', 'Draft Center')
     if (this.leagueService.selectedLeague && this.playerService.playerValues.length !== 0) {
       this.initServices();
     } else {

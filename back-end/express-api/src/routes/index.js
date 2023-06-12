@@ -27,6 +27,7 @@ import {
   GetPlayerDetailsEndpoint,
   GetPlayerPortfolioEndpoint,
   GetMFLLeaguesForUserEndpoint,
+  PostMFlWaiverEndpoint,
 } from '../controllers';
 
 const indexRouter = express.Router();
@@ -52,6 +53,7 @@ indexRouter.get('/mfl/draftResults', GetMFlDraftResultsEndpoint);
 indexRouter.get('/mfl/playoffBrackets', GetMFlPlayoffBracketsEndpoint);
 indexRouter.get('/mfl/schedule', GetMFlScheduleEndpoint);
 indexRouter.post('/mfl/leagues', GetMFLLeaguesForUserEndpoint);
+indexRouter.post('/mfl/waiver', PostMFlWaiverEndpoint);
 
 // Fleaflicker Wrapper Endpoints
 indexRouter.get('/ff/league', GetFFLeagueEndpoint);
