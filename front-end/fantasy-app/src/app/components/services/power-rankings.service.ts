@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
 import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
-import { PositionPowerRanking, TeamPowerRanking } from '../model/powerRankings';
+import { PositionGroup, PositionPowerRanking, TeamPowerRanking } from '../model/powerRankings';
 import { LeagueService } from '../../services/league.service';
 import { PlayerService } from '../../services/player.service';
 import { Observable, of, Subject } from 'rxjs';
@@ -64,6 +64,9 @@ export class PowerRankingsService {
 
   /** rankings options */
   rankingMarket: PowerRankingMarket = PowerRankingMarket.KeepTradeCut;
+
+  /** Power Rankings table view setting */
+  powerRankingsTableView: PowerRankingTableView = PowerRankingTableView.TradeValues;
 
   /** Subject that emits when the component has been destroyed. */
   protected _onDestroy = new Subject<void>();
@@ -212,8 +215,8 @@ export class PowerRankingsService {
         });
       }
       team.picks.players.sort((a, b) => {
-        return Number(a.first_name) - Number(b.first_name) 
-        || (isSuperflex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value);
+        return Number(a.first_name) - Number(b.first_name)
+          || (isSuperflex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value);
       });
     });
     return teams;
@@ -230,23 +233,20 @@ export class PowerRankingsService {
     teams = this.sortTeamPowerRankingGroups(teams, isSuperflex);
     // Rank position groups
     this.positionGroups.forEach((value, index) => {
-      this.rankingMetricsOptions.slice(0, 3).forEach((metric) => {
-        teams.sort((teamA, teamB) => {
-          return isSuperflex ? teamB.roster[index].sfTradeValue - teamA.roster[index].sfTradeValue : teamB.roster[index].tradeValue - teamA.roster[index].tradeValue;
-        });
-        teams.forEach((team, teamIndex) => {
-          team.roster[index].rank = teamIndex + 1;
-        });
+      // dynasty value rankings
+      teams.sort((teamA, teamB) => {
+        return isSuperflex ? teamB.roster[index].sfTradeValue - teamA.roster[index].sfTradeValue : teamB.roster[index].tradeValue - teamA.roster[index].tradeValue;
+      });
+      teams.forEach((team, teamIndex) => {
+        team.roster[index].rank = teamIndex + 1;
       });
     });
     // Rank picks
-    this.rankingMetricsOptions.slice(0, 3).forEach((metric) => {
-      teams.sort((teamA, teamB) => {
-        return isSuperflex ? teamB.picks.sfTradeValue - teamA.picks.sfTradeValue : teamB.picks.tradeValue - teamA.picks.tradeValue;
-      });
-      teams.forEach((team, teamIndex) => {
-        team.picks.rank = teamIndex + 1;
-      });
+    teams.sort((teamA, teamB) => {
+      return isSuperflex ? teamB.picks.sfTradeValue - teamA.picks.sfTradeValue : teamB.picks.tradeValue - teamA.picks.tradeValue;
+    });
+    teams.forEach((team, teamIndex) => {
+      team.picks.rank = teamIndex + 1;
     });
     // calculate best starting lineup
     this.calculateADPValue(teams);
@@ -259,14 +259,21 @@ export class PowerRankingsService {
     teams.forEach((team, index) => {
       team.starterRank = index + 1;
     });
-    // rank overall points
-    this.rankingMetricsOptions.slice(0, 3).forEach((metric) => {
+    // starter value rankings
+    this.positionGroups.forEach((value, index) => {
       teams.sort((teamA, teamB) => {
-        return !this.leagueService.selectedLeague.isSuperflex ? teamB.tradeValueOverall - teamA.tradeValueOverall : teamB.sfTradeValueOverall - teamA.sfTradeValueOverall;
+        return teamA.roster[index].starterValue - teamB.roster[index].starterValue;
       });
       teams.forEach((team, teamIndex) => {
-        team.overallRank = teamIndex + 1;
+        team.roster[index].starterRank = teamIndex + 1;
       });
+    })
+    // rank overall points
+    teams.sort((teamA, teamB) => {
+      return !this.leagueService.selectedLeague.isSuperflex ? teamB.tradeValueOverall - teamA.tradeValueOverall : teamB.sfTradeValueOverall - teamA.sfTradeValueOverall;
+    });
+    teams.forEach((team, teamIndex) => {
+      team.overallRank = teamIndex + 1;
     });
     this.setTeamTiers(teams, isSuperflex);
   }
@@ -284,25 +291,33 @@ export class PowerRankingsService {
     let worstTeamStarterValue: number = 0;
     teams.map(team => {
       let teamRosterCount: number[] = positionGroupCount.slice();
-      if (teamRosterCount[0] > 0) // qb
+      if (teamRosterCount[PositionGroup.QB] > 0) // qb
       {
-        const adpSortedQBs = this.sortPlayersByADP(team.roster[0].players);
-        team.starters.push(...this.getHealthyPlayersFromList(adpSortedQBs, teamRosterCount[0]));
+        const adpSortedQBs = this.sortPlayersByADP(team.roster[PositionGroup.QB].players);
+        const starters = this.getHealthyPlayersFromList(adpSortedQBs, teamRosterCount[PositionGroup.QB]);
+        team.roster[PositionGroup.QB].starterValue = starters.reduce((t, s) => t + s.avg_adp, 0);
+        team.starters.push(...starters);
       }
-      if (teamRosterCount[1] > 0) // rb
+      if (teamRosterCount[PositionGroup.RB] > 0) // rb
       {
-        const adpSortedRBs = this.sortPlayersByADP(team.roster[1].players);
-        team.starters.push(...this.getHealthyPlayersFromList(adpSortedRBs, teamRosterCount[1]));
+        const adpSortedRBs = this.sortPlayersByADP(team.roster[PositionGroup.RB].players);
+        const starters = this.getHealthyPlayersFromList(adpSortedRBs, teamRosterCount[PositionGroup.RB]);
+        team.roster[PositionGroup.RB].starterValue = starters.reduce((t, s) => t + s.avg_adp, 0);
+        team.starters.push(...this.getHealthyPlayersFromList(adpSortedRBs, teamRosterCount[PositionGroup.RB]));
       }
-      if (teamRosterCount[2] > 0) // wr
+      if (teamRosterCount[PositionGroup.WR] > 0) // wr
       {
-        const adpSortedWRs = this.sortPlayersByADP(team.roster[2].players);
-        team.starters.push(...this.getHealthyPlayersFromList(adpSortedWRs, teamRosterCount[2]));
+        const adpSortedWRs = this.sortPlayersByADP(team.roster[PositionGroup.WR].players);
+        const starters = this.getHealthyPlayersFromList(adpSortedWRs, teamRosterCount[PositionGroup.WR]);
+        team.roster[PositionGroup.WR].starterValue = starters.reduce((t, s) => t + s.avg_adp, 0);
+        team.starters.push(...this.getHealthyPlayersFromList(adpSortedWRs, teamRosterCount[PositionGroup.WR]));
       }
-      if (teamRosterCount[3] > 0) // te
+      if (teamRosterCount[PositionGroup.TE] > 0) // te
       {
-        const adpSortedTEs = this.sortPlayersByADP(team.roster[3].players);
-        team.starters.push(...this.getHealthyPlayersFromList(adpSortedTEs, teamRosterCount[3]));
+        const adpSortedTEs = this.sortPlayersByADP(team.roster[PositionGroup.TE].players);
+        const starters = this.getHealthyPlayersFromList(adpSortedTEs, teamRosterCount[PositionGroup.TE]);
+        team.roster[PositionGroup.TE].starterValue = starters.reduce((t, s) => t + s.avg_adp, 0);
+        team.starters.push(...this.getHealthyPlayersFromList(adpSortedTEs, teamRosterCount[PositionGroup.TE]));
       }
       if (teamRosterCount[4] > 0) // flex
       {
@@ -314,7 +329,8 @@ export class PowerRankingsService {
         const superFlexQB = this.getHealthyPlayersFromList(adpSortedQBs, 1, team.starters);
         if (superFlexQB.length > 0) {
           team.starters.push(...superFlexQB);
-          teamRosterCount[0]++;
+          team.roster[PositionGroup.QB].starterValue += superFlexQB.reduce((v, qb) => v + qb.avg_adp, 0);
+          teamRosterCount[PositionGroup.QB]++;
         } else {
           teamRosterCount = this.getBestAvailableFlex(teamRosterCount[5], teamRosterCount, team);
         }
@@ -521,6 +537,7 @@ export class PowerRankingsService {
       const activeFlex = this.getHealthyPlayersFromList([flexPlayer], 1, team.starters);
       if (activeFlex.length > 0) {
         team.starters.push(flexPlayer);
+        team.roster[PositionGroup[flexPlayer.position.toUpperCase()]].starterValue += flexPlayer.avg_adp;
         teamRosterCount[this.positionGroups.indexOf(flexPlayer.position)]++;
         selectedCount++;
       }
@@ -622,4 +639,9 @@ export enum PowerRankingMarket {
   DynastyProcess,
   DynastySuperflex,
   ADP
+}
+
+export enum PowerRankingTableView {
+  TradeValues,
+  Starters
 }

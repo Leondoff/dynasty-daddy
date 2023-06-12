@@ -52,6 +52,8 @@ export class PositionPowerRanking {
   position: string;
   sfTradeValue: number;
   tradeValue: number;
+  starterValue: number = 0;
+  starterRank: number;
   players: FantasyPlayer[];
 }
 
@@ -62,4 +64,11 @@ export enum TeamRankingTier {
   Fraud,
   Rebuilding,
   Trust_the_Process
+}
+
+export enum PositionGroup {
+  QB,
+  RB,
+  WR,
+  TE
 }

@@ -30,6 +30,15 @@
     </div>
   </div>
   <div *ngIf="showAdvancedSettings">
+    <div class="button-left" style="padding-left: 12px;">
+      <mat-form-field appearance="standard" color="accent">
+        <mat-label>Table View</mat-label>
+        <mat-select [(ngModel)]="powerRankingsService.powerRankingsTableView" (selectionChange)="setUpTableView()">
+        <mat-option [value]="0">Trade Values</mat-option>
+        <mat-option [value]="1">Starters</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
     <span class="container_spacer"></span>
     <div class="button-right">
       <span style="padding-right: 10px">
@@ -75,7 +84,15 @@
 
       <ng-container matColumnDef="tier">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Tier</th>
-        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].tier}} </td>
+        <td mat-cell *matCellDef="let element"><mat-chip-list><mat-chip [ngClass]="{
+            'contender-mat-chip': powerRankingCache[element.team.roster.rosterId].tier == 'Contender',
+            'frisky-mat-chip': powerRankingCache[element.team.roster.rosterId].tier == 'Frisky',
+            'fraud-mat-chip': powerRankingCache[element.team.roster.rosterId].tier == 'Fraud',
+            'rebuilding-mat-chip': powerRankingCache[element.team.roster.rosterId].tier == 'Rebuilding',
+            'super-team-mat-chip': powerRankingCache[element.team.roster.rosterId].tier == 'Super Team',
+            'trust-the-process-mat-chip': powerRankingCache[element.team.roster.rosterId].tier == 'Trust the Process'
+          }">{{powerRankingCache[element.team.roster.rosterId].tier}}</mat-chip>
+          </mat-chip-list></td>
       </ng-container>
 
       <ng-container matColumnDef="overallRank">
@@ -105,6 +122,26 @@
 
       <ng-container matColumnDef="teRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>TE Rank</th>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['TE'].rank}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="qbStarterRank">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>QB ADP Rank</th>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['QB'].rank}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rbStarterRank">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>RB ADP Rank</th>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['RB'].rank}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="wrStarterRank">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>WR ADP Rank</th>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['WR'].rank}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="teStarterRank">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>TE ADP Rank</th>
         <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['TE'].rank}} </td>
       </ng-container>
 
@@ -150,8 +187,7 @@
                   </div>
                 </div>
                 <div class="margin-top-10">
-                  <button mat-icon-button matTooltip="Copy Starters Roster" matTooltipPosition="above" (click)="copyStartersFromTeam(element)"><mat-icon>content_copy</mat-icon></button>
-                  <button mat-icon-button matTooltip="Copy Whole Roster" matTooltipPosition="above" (click)="copyWholeFromTeam(element)"><mat-icon>copy_all</mat-icon></button>
+                  <button mat-icon-button matTooltip="Copy roster to clipboard" matTooltipPosition="above" (click)="copyWholeFromTeam(element)"><mat-icon>copy_all</mat-icon></button>
                 </div>
                 <div *ngIf="configService.isMobile" class="margin-top-15">
                   <button style="margin: unset !important;" mat-stroked-button [routerLink]="['../team', element.team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">View Team Page</button>
@@ -160,7 +196,7 @@
               <div *ngFor="let positionGroup of element.roster;" class="grid-16">
                 <div>
               <span><span class="small-text__light">{{positionGroup.position}} Value: </span> <span
-                class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].value}}</span></span>
+                class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].value | number : '1.0-1'}}</span></span>
                   <div class="small-text__light"> Rank: <span
                     [ngClass]="{'success__alert': powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].isGreen, 'warning__alert': powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].isRed}">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].rank}}</span>
                   </div>

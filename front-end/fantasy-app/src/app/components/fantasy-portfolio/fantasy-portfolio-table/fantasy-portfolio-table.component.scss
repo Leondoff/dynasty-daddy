@@ -65,15 +65,23 @@ tr.portfolio-element-row:not(.portfolio-expanded-row):active {
 .sub-table-league {
   width: 20%;
   text-align: left;
+  vertical-align: middle;
 }
 
 .sub-table-detail {
-  width: 8%;
+  width: 13%;
   text-align: left;
+  vertical-align: middle;
+}
+
+.sub-table-actions {
+  float: right;
+  cursor: pointer;
+  height: 1px;
 }
 
 .portfolio-table-mobile {
-  margin-right: 120px;
+  margin-right: 90px;
 }
 
 .warning_icon {
