@@ -209,7 +209,8 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
           leagueId,
           '2023',
           null,
-          player.mfl_id
+          player.mfl_id,
+          this.portfolioService.portfolioMFLUserId
         ).subscribe(_ => {
           this.portfolioService.playerHoldingMap[playerId]?.cutLeagues.push(leagueId);
         })
