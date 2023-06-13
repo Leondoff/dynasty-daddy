@@ -114,11 +114,12 @@ export const GetMFLLeaguesForUserEndpoint = async (req, res) => {
 
 export const PostMFlWaiverEndpoint = async (req, res) => {
   const {
-    year, leagueId, user
+    year, leagueId
   } = req.query;
   const dropPlayerId = req.body.DROP;
-  if (user === 'null') {
+  const mflUserId = req.body.mflUserId;
+  if (!mflUserId) {
     return res.status(400).json('MFL User Id not set. Try logging in again.');
   }
-  return sendMFLImportRequest(year, leagueId, user, 'fcfsWaiver', `&DROP=${dropPlayerId}`, res);
+  return sendMFLImportRequest(year, leagueId, mflUserId, 'fcfsWaiver', `&DROP=${dropPlayerId}`, res);
 };

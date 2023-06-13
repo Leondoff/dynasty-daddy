@@ -302,9 +302,10 @@ export class MflService {
   postWaiverTransaction$(leagueId: string, season: string, addPlayerId?: string, dropPlayerId?: string, mflUserId?: string): Observable<any> {
     const body = {
       ADD: addPlayerId,
-      DROP: dropPlayerId
+      DROP: dropPlayerId,
+      mflUserId: mflUserId || this.mflUserId
     }
-    return this.mflApiService.postMFLWaiverMove(season, leagueId, mflUserId || this.mflUserId, body).pipe(map(res => {
+    return this.mflApiService.postMFLWaiverMove(season, leagueId, body).pipe(map(res => {
       return res
     }));
   }
