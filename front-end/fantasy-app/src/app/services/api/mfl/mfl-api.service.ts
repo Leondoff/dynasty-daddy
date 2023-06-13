@@ -142,8 +142,8 @@ export class MflApiService {
  * @param year season
  * @param leagueId league id
  */
-  postMFLWaiverMove(year: string, leagueId: string, mflUserId: string, body: any): Observable<any> {
-    return this.http.post<any>(this.mflApiConfigService.postMFLWaiverMoveEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId, body).pipe(map(
+  postMFLWaiverMove(year: string, leagueId: string, body: any): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.postMFLWaiverMoveEndpoint + '?leagueId=' + leagueId + '&year=' + year, body).pipe(map(
       (res: any) => {
         return res;
       }
