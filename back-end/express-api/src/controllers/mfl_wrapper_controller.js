@@ -24,7 +24,8 @@ const sendMFLRequest = async (year, leagueId, mflUserId, callType, res) => {
 const sendMFLImportRequest = async (year, leagueId, mflUserId, callType, additionalParams, res) => {
   const headers = { 'User-Agent': 'DYNASTYDADDY' };
   if (mflUserId != null) {
-    headers.Cookie = `MFL_USER_ID=${mflUserId};`;
+    // eslint-disable-next-line dot-notation
+    headers['Cookie'] = `MFL_USER_ID=${mflUserId};`;
   }
   await axios.get(
     `https://www.myfantasyleague.com/${year}/import?TYPE=${callType}&L=${leagueId}${additionalParams}&APIKEY=&JSON=1`,

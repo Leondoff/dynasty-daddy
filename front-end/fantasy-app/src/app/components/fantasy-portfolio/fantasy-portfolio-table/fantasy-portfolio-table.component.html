@@ -103,7 +103,7 @@
                                       <mat-icon mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="League Actions" style="width: unset; height: unset;" *ngIf="!isPlayerCut(element.name_id, leagueId)">more_horiz</mat-icon>
                                       <mat-menu #actionMenu="matMenu" yPosition="above">
                                         <button mat-menu-item (click)="dropPlayer(leagueId, element.name_id)"
-                                            *ngIf="portfolioService.leagueIdMap[leagueId]?.platform == 1"
+                                            *ngIf="configService.getConfigOptionByKey('mfl_writeback')?.configValue === 'true' && portfolioService.leagueIdMap[leagueId]?.platform == 1"
                                             [disabled]="!portfolioService.portfolioMFLUserId" >
                                             <mat-icon>person_remove</mat-icon>
                                             <span matToolTip="No MFL User Id found. Reconnect your MFL account. You do not have to reload the portfolio just connect your MFL account">Drop Player</span>
