@@ -163,6 +163,7 @@ export class PortfolioService {
         ddPlayer.trade_value = 0;
         ddPlayer.team = playerInfo.team;
         ddPlayer.position = playerInfo.position;
+        ddPlayer.mfl_id = platformPlayerId;
       }
       if (ddPlayer) {
         if (!this.positionGroupValueMap[ddPlayer.position]) {

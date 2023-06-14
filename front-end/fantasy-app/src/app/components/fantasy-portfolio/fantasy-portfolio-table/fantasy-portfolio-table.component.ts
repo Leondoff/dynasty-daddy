@@ -7,7 +7,6 @@ import { PortfolioService } from '../../services/portfolio.service';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { LeagueSwitchService } from '../../services/league-switch.service';
-import { DialogConfig } from '@angular/cdk/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogModal } from '../../modals/confirmation-dialog/confirmation-dialog.component';
 import { MflService } from 'src/app/services/api/mfl/mfl.service';
@@ -36,6 +35,7 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
 
   expandedElement: string[] = [];
 
+  /** list of players in portfolio */
   portfolio: FantasyPlayer[] = [];
 
   /** mat sort */
