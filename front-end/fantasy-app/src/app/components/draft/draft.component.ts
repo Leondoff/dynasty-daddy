@@ -109,6 +109,13 @@ export class DraftComponent extends BaseComponent implements OnInit {
   }
 
   /**
+   * Checks if current season is this year for displaying mock draft
+   */
+  isCurrentSeason(): boolean {
+    return Number(this.leagueService.selectedLeague.season) >= new Date().getFullYear()
+  }
+
+  /**
    * Exports mock draft data to CSV file
    */
   exportMockDraft(): void {

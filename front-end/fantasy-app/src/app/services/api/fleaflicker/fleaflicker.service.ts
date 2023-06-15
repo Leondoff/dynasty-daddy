@@ -429,7 +429,7 @@ export class FleaflickerService {
     });
     return new CompletedDraft(
       new LeagueRawDraftOrderDTO().fromFF(draft, (picks?.length || teamCount * 4) / teamCount,
-        draftId.toString(), leagueId, picks[0]?.playerId != "" ? 'completed' : 'in_progress'),
+        draftId.toString(), leagueId, picks?.[0]?.playerId != "" ? 'completed' : 'in_progress'),
       picks
     );
   }
