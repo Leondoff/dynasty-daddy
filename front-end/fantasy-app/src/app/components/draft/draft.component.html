@@ -14,7 +14,7 @@
       <mat-optgroup label="Upcoming" *ngIf="mockDraftService.teamPicks.length > 0">
         <mat-option value="upcoming">Mock Draft: {{mockDraftService.teamPicks.length / leagueService.selectedLeague.totalRosters}} Rounds</mat-option>
       </mat-optgroup>
-      <mat-option *ngIf="mockDraftService.teamPicks.length === 0" (click)="createMockDraft()">Create Mock Draft</mat-option>
+      <mat-option *ngIf="mockDraftService.teamPicks.length === 0 && isCurrentSeason()" (click)="createMockDraft()">Create Mock Draft</mat-option>
     </mat-select>
   </mat-form-field>
   <span *ngIf="!configService.isMobile" class="right-align-text" style="float: right;">
@@ -85,11 +85,11 @@
     </div>
   </div>
 
-  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming' && mockDraftService.selectedDraft.picks[0].playerId" class="margin-top-25">
+  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming' && mockDraftService.selectedDraft.picks?.[0].playerId" class="margin-top-25">
     <app-completed-draft-table [selectedDraft]="mockDraftService.selectedDraft" [selectedMarket]="playerService.selectedMarket"></app-completed-draft-table>
   </div>
 
-  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming' && !mockDraftService.selectedDraft.picks[0].playerId" class="margin-top-25 center-text">
+  <div *ngIf="mockDraftService.selectedDraft && mockDraftService.selectedDraft !== 'upcoming' && !mockDraftService.selectedDraft.picks?.[0].playerId" class="margin-top-25 center-text">
     <div class="warning__alert">Unable to generate draft recap for {{leagueService.selectedLeague.name}}. Want to create a mock draft?</div>
     <div class="margin-top-25">
       <button mat-raised-button color="accent" (click)="createMockDraft()" gaEvent="click_mock_draft" gaCategory="click"><mat-icon>format_list_numbered</mat-icon> Create Mock Draft</button>
@@ -106,7 +106,7 @@
 
 <app-login-error [errorHeader]="noDraftsErrMsg" *ngIf="leagueService.leagueStatus === 'NONE'"></app-login-error>
 
-<div *ngIf="leagueService.isLeagueLoaded() && mockDraftService.teamPicks.length === 0 && leagueService.completedDrafts.length === 0" class="center-text">
+<div *ngIf="leagueService.isLeagueLoaded() && mockDraftService.teamPicks.length === 0 && leagueService.completedDrafts.length === 0 && isCurrentSeason()" class="center-text">
   <div class="warning__alert">No draft found for {{leagueService.selectedLeague.name}}. Want to create a mock draft?</div>
   <div class="margin-top-25">
     <button mat-raised-button color="accent" (click)="createMockDraft()" gaEvent="click_export_portfolio" gaCategory="click"><mat-icon>format_list_numbered</mat-icon> Create Mock Draft</button>
