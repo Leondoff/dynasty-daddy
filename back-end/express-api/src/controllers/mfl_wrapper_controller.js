@@ -3,14 +3,14 @@ import { FormatMFLLeagues } from '../models/mfl';
 
 const axios = require('axios');
 
-const sendMFLRequest = async (year, leagueId, mflUserId, callType, res) => {
+const sendMFLRequest = async (year, leagueId, baseUrl, mflUserId, callType, res) => {
   const headers = { 'User-Agent': 'DYNASTYDADDY' };
   if (mflUserId != null) {
     // eslint-disable-next-line dot-notation
     headers['Cookie'] = `MFL_USER_ID=${mflUserId};`;
   }
   await axios.get(
-    `https://www.myfantasyleague.com/${year}/export?TYPE=${callType}&L=${leagueId}&APIKEY=&JSON=1`,
+    `${baseUrl}/${year}/export?TYPE=${callType}&L=${leagueId}&APIKEY=&JSON=1`,
     { headers }
   )
     .then((response) => {
@@ -21,14 +21,16 @@ const sendMFLRequest = async (year, leagueId, mflUserId, callType, res) => {
     });
 };
 
-const sendMFLImportRequest = async (year, leagueId, mflUserId, callType, additionalParams, res) => {
+const sendMFLImportRequest = async (
+  year, leagueId, baseUrl, mflUserId, callType, additionalParams, res
+) => {
   const headers = { 'User-Agent': 'DYNASTYDADDY' };
   if (mflUserId != null) {
     // eslint-disable-next-line dot-notation
     headers['Cookie'] = `MFL_USER_ID=${mflUserId};`;
   }
   await axios.get(
-    `https://www.myfantasyleague.com/${year}/import?TYPE=${callType}&L=${leagueId}${additionalParams}&APIKEY=&JSON=1`,
+    `${baseUrl}/${year}/import?TYPE=${callType}&L=${leagueId}${additionalParams}&APIKEY=&JSON=1`,
     { headers }
   )
     .then((response) => {
@@ -40,48 +42,93 @@ const sendMFLImportRequest = async (year, leagueId, mflUserId, callType, additio
 };
 
 export const GetMFlLeagueEndpoint = async (req, res) => {
-  const { year, leagueId, user } = req.query;
-  return sendMFLRequest(year, leagueId, user, 'league', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'league', res);
 };
 
 export const GetMFlScheduleEndpoint = async (req, res) => {
-  const { year, leagueId, user } = req.query;
-  return sendMFLRequest(year, leagueId, user, 'schedule', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'schedule', res);
 };
 
 export const GetMFlRostersEndpoint = async (req, res) => {
-  const { year, leagueId, user } = req.query;
-  return sendMFLRequest(year, leagueId, user, 'rosters', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'rosters', res);
 };
 
 export const GetMFlTransactionsEndpoint = async (req, res) => {
-  const { year, leagueId, user } = req.query;
-  return sendMFLRequest(year, leagueId, user, 'transactions', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'transactions', res);
 };
 
 export const GetMFlLeagueStandingsEndpoint = async (req, res) => {
-  const { year, leagueId, user } = req.query;
-  return sendMFLRequest(year, leagueId, user, 'leagueStandings', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'leagueStandings', res);
 };
 
 export const GetMFlFutureDraftPicksEndpoint = async (req, res) => {
-  const { year, leagueId, user } = req.query;
-  return sendMFLRequest(year, leagueId, user, 'futureDraftPicks', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'futureDraftPicks', res);
 };
 
 export const GetMFlPlayoffBracketsEndpoint = async (req, res) => {
-  const { year, leagueId, user } = req.query;
-  return sendMFLRequest(year, leagueId, user, 'playoffBrackets', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'playoffBrackets', res);
 };
 
 export const GetMFlPlayersEndpoint = async (req, res) => {
-  const { year, leagueId } = req.query;
-  return sendMFLRequest(year, leagueId, null, 'players', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, null, 'players', res);
 };
 
 export const GetMFlDraftResultsEndpoint = async (req, res) => {
-  const { year, leagueId, user } = req.query;
-  return sendMFLRequest(year, leagueId, user, 'draftResults', res);
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'draftResults', res);
 };
 
 export const GetMFLLeaguesForUserEndpoint = async (req, res) => {
@@ -115,12 +162,12 @@ export const GetMFLLeaguesForUserEndpoint = async (req, res) => {
 
 export const PostMFlWaiverEndpoint = async (req, res) => {
   const {
-    year, leagueId
+    year, leagueId, url
   } = req.query;
   const dropPlayerId = req.body.DROP;
   const mflUserId = req.body.mflUserId;
   if (!mflUserId) {
     return res.status(400).json('MFL User Id not set. Try logging in again.');
   }
-  return sendMFLImportRequest(year, leagueId, mflUserId, 'fcfsWaiver', `&DROP=${dropPlayerId}`, res);
+  return sendMFLImportRequest(year, leagueId, url, mflUserId, 'fcfsWaiver', `&DROP=${dropPlayerId}`, res);
 };

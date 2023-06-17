@@ -1,5 +1,6 @@
 /* tslint:disable:variable-name */
 import { LeaguePlatform } from './FantasyPlatformDTO';
+import { LeagueScoringDTO } from './LeagueScoringDTO';
 
 export class LeagueDTO {
   
@@ -25,6 +26,7 @@ export class LeagueDTO {
   type: LeagueType = LeagueType.DYNASTY;
   leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER;
   scoringFormat: LeagueScoringFormat = LeagueScoringFormat.HALF_PPR;
+  scoringSettings: LeagueScoringDTO;
   metadata: any = {};
 
   constructor() {
@@ -63,6 +65,7 @@ export class LeagueDTO {
     this.type = settings?.type;
     this.playoffRoundType = settings?.playoff_round_type;
     this.medianWins = settings?.league_average_match === 1;
+    this.scoringSettings = new LeagueScoringDTO().fromSleeper(scoring_settings);
     this.leaguePlatform = leaguePlatform;
     if (scoring_settings) {
       switch (scoring_settings.rec) {
