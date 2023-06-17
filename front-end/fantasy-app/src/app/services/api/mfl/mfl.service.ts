@@ -186,6 +186,7 @@ export class MflService {
     );
     mflLeague.type = this.getMFLLeagueType(leagueInfo.keeperType, leagueInfo.maxKeepers);
     mflLeague.setDivisions(divisions);
+    mflLeague.metadata['mflBaseURL'] = leagueInfo?.baseURL;
     return mflLeague;
   }
 
@@ -282,6 +283,7 @@ export class MflService {
         newLeague.leaguePlatform = LeaguePlatform.MFL;
         newLeague.metadata['teamId'] = this.formatRosterId(league?.franchise_id);
         newLeague.metadata['status'] = Status.LOADING;
+        newLeague.metadata['mflBaseURL'] = league?.baseURL;
         leagues.push(newLeague);
       })
       return { leagues, userData, leaguePlatform: LeaguePlatform.MFL }

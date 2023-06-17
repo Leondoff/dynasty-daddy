@@ -9,16 +9,23 @@ import { catchError, map } from 'rxjs/operators';
 })
 export class MflApiService {
 
+  /** response JSON format */
   MFL_JSON_FORMAT = 'JSON=1';
+
+  /** default base url if one isn't passed through */
+  DEFAULT_BASE_URL = 'https://www.myfantasyleague.com';
 
   constructor(private http: HttpClient, private mflApiConfigService: MflApiConfigService) {
   }
+
+  private formatBody = (mflUserId?: string, url?: string) =>
+     { return {user: mflUserId, url: url || this.DEFAULT_BASE_URL } }
 
   /**
    * fetches all config options for application
    */
   getMFLLeague(year: string, leagueId: string, mflUserId?: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLLeagueEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
+    return this.http.post<any>(this.mflApiConfigService.getMFLLeagueEndpoint + '?leagueId=' + leagueId + '&year=' + year, this.formatBody(mflUserId)).pipe(map(
       (league: any) => {
         return league;
       }
@@ -30,8 +37,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLRosters(year: string, leagueId: string, mflUserId?: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLRostersEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
+  getMFLRosters(year: string, leagueId: string, mflUserId?: string, mflBaseURL?: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLRostersEndpoint + '?leagueId=' + leagueId + '&year=' + year, this.formatBody(mflUserId, mflBaseURL)).pipe(map(
       (roster: any) => {
         return roster;
       }
@@ -43,8 +50,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLSchedules(year: string, leagueId: string, mflUserId?: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLScheduleEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
+  getMFLSchedules(year: string, leagueId: string, mflUserId?: string, mflBaseURL?: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLScheduleEndpoint + '?leagueId=' + leagueId + '&year=' + year, this.formatBody(mflUserId, mflBaseURL)).pipe(map(
       (schedules: any) => {
         return schedules;
       }
@@ -56,8 +63,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLTransactions(year: string, leagueId: string, mflUserId?: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLTransactionsEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
+  getMFLTransactions(year: string, leagueId: string, mflUserId?: string, mflBaseURL?: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLTransactionsEndpoint + '?leagueId=' + leagueId + '&year=' + year , this.formatBody(mflUserId, mflBaseURL)).pipe(map(
       (transactions: any) => {
         return transactions;
       }
@@ -69,8 +76,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLDraftResults(year: string, leagueId: string, mflUserId?: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLDraftResultsEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
+  getMFLDraftResults(year: string, leagueId: string, mflUserId?: string, mflBaseURL?: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLDraftResultsEndpoint + '?leagueId=' + leagueId + '&year=' + year, this.formatBody(mflUserId, mflBaseURL)).pipe(map(
       (draftResults: any) => {
         return draftResults;
       }
@@ -98,8 +105,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLFutureDraftPicks(year: string, leagueId: string, mflUserId?: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLFutureDraftPicksEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
+  getMFLFutureDraftPicks(year: string, leagueId: string, mflUserId?: string, mflBaseURL?: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLFutureDraftPicksEndpoint + '?leagueId=' + leagueId + '&year=' + year, this.formatBody(mflUserId, mflBaseURL)).pipe(map(
       (futures: any) => {
         return futures;
       }
@@ -111,8 +118,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLLeagueStandings(year: string, leagueId: string, mflUserId?: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLLeagueStandingEndpoint + '?leagueId=' + leagueId + '&year=' + year + '&user=' + mflUserId).pipe(map(
+  getMFLLeagueStandings(year: string, leagueId: string, mflUserId?: string, mflBaseURL?: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLLeagueStandingEndpoint + '?leagueId=' + leagueId + '&year=' + year, this.formatBody(mflUserId, mflBaseURL)).pipe(map(
       (standings: any) => {
         return standings;
       }
@@ -124,8 +131,8 @@ export class MflApiService {
    * @param year season
    * @param leagueId league id
    */
-  getMFLPlayers(year: string, leagueId: string): Observable<any> {
-    return this.http.get<any>(this.mflApiConfigService.getMFLPlayersEndpoint + '?leagueId=' + leagueId + '&year=' + year).pipe(map(
+  getMFLPlayers(year: string, leagueId: string, mflBaseURL?: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLPlayersEndpoint + '?leagueId=' + leagueId + '&year=' + year, this.formatBody(null, mflBaseURL)).pipe(map(
       (players: any) => {
         const playerMap = {};
         players.players.player.forEach(p => {
@@ -142,7 +149,8 @@ export class MflApiService {
  * @param year season
  * @param leagueId league id
  */
-  postMFLWaiverMove(year: string, leagueId: string, body: any): Observable<any> {
+  postMFLWaiverMove(year: string, leagueId: string, body: any, mflBaseURL?: string): Observable<any> {
+    body.url = mflBaseURL || this.DEFAULT_BASE_URL;
     return this.http.post<any>(this.mflApiConfigService.postMFLWaiverMoveEndpoint + '?leagueId=' + leagueId + '&year=' + year, body).pipe(map(
       (res: any) => {
         return res;

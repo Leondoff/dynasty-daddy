@@ -43,15 +43,15 @@ indexRouter.post('/portfolio', GetPlayerPortfolioEndpoint);
 indexRouter.get('/config/all', GetConfigValuesEndpoint);
 
 // MFL Wrapper Endpoints
-indexRouter.get('/mfl/league', GetMFlLeagueEndpoint);
-indexRouter.get('/mfl/players', GetMFlPlayersEndpoint);
-indexRouter.get('/mfl/transactions', GetMFlTransactionsEndpoint);
-indexRouter.get('/mfl/futureDraftPicks', GetMFlFutureDraftPicksEndpoint);
-indexRouter.get('/mfl/leagueStandings', GetMFlLeagueStandingsEndpoint);
-indexRouter.get('/mfl/rosters', GetMFlRostersEndpoint);
-indexRouter.get('/mfl/draftResults', GetMFlDraftResultsEndpoint);
-indexRouter.get('/mfl/playoffBrackets', GetMFlPlayoffBracketsEndpoint);
-indexRouter.get('/mfl/schedule', GetMFlScheduleEndpoint);
+indexRouter.post('/mfl/league', GetMFlLeagueEndpoint);
+indexRouter.post('/mfl/players', GetMFlPlayersEndpoint);
+indexRouter.post('/mfl/transactions', GetMFlTransactionsEndpoint);
+indexRouter.post('/mfl/futureDraftPicks', GetMFlFutureDraftPicksEndpoint);
+indexRouter.post('/mfl/leagueStandings', GetMFlLeagueStandingsEndpoint);
+indexRouter.post('/mfl/rosters', GetMFlRostersEndpoint);
+indexRouter.post('/mfl/draftResults', GetMFlDraftResultsEndpoint);
+indexRouter.post('/mfl/playoffBrackets', GetMFlPlayoffBracketsEndpoint);
+indexRouter.post('/mfl/schedule', GetMFlScheduleEndpoint);
 indexRouter.post('/mfl/leagues', GetMFLLeaguesForUserEndpoint);
 indexRouter.post('/mfl/waiver', PostMFlWaiverEndpoint);
 
