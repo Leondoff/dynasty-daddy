@@ -56,6 +56,7 @@ export class MflService {
   loadLeague$(leagueWrapper: LeagueWrapper): Observable<LeagueWrapper> {
     const year = leagueWrapper.selectedLeague.season || this.nflService.stateOfNFL.season;
     const leagueId = leagueWrapper.selectedLeague.leagueId;
+    const baseURL = leagueWrapper.selectedLeague?.metadata?.['mflBaseURL'];
     const observableList = [];
     let leagueMatchUps = {};
     const leagueTransactions = {};
@@ -64,7 +65,7 @@ export class MflService {
     let playoffMatchUps = [];
     let completedDraft = null;
     observableList.push(
-      this.mflApiService.getMFLTransactions(year, leagueId, this.mflUserId).pipe(
+      this.mflApiService.getMFLTransactions(year, leagueId, this.mflUserId, baseURL).pipe(
         map((leagueTrans) => {
           leagueTransactions[1] = this.marshalLeagueTransactions(leagueTrans?.transactions?.transaction, leagueWrapper.selectedLeague.season);
           return of(leagueTransactions);
@@ -72,7 +73,7 @@ export class MflService {
       )
     );
     observableList.push(
-      this.mflApiService.getMFLSchedules(year, leagueId, this.mflUserId).pipe(
+      this.mflApiService.getMFLSchedules(year, leagueId, this.mflUserId, baseURL).pipe(
         map((leagueSchedule) => {
           leagueMatchUps = this.marshalLeagueMatchUps(leagueSchedule?.schedule?.weeklySchedule);
           return of(leagueMatchUps);
@@ -80,7 +81,7 @@ export class MflService {
       )
     );
     observableList.push(
-      this.mflApiService.getMFLRosters(year, leagueId, this.mflUserId).pipe(
+      this.mflApiService.getMFLRosters(year, leagueId, this.mflUserId, baseURL).pipe(
         map(rosters => {
           leagueRosters = rosters.rosters.franchise;
           return of(leagueRosters);
@@ -88,7 +89,7 @@ export class MflService {
       )
     );
     observableList.push(
-      this.mflApiService.getMFLLeagueStandings(year, leagueId, this.mflUserId).pipe(
+      this.mflApiService.getMFLLeagueStandings(year, leagueId, this.mflUserId, baseURL).pipe(
         map(metrics => {
           teamMetrics = this.marshallLeagueTeamMetrics(metrics);
           return of(leagueRosters);
@@ -101,7 +102,7 @@ export class MflService {
       leagueWrapper.selectedLeague.metadata.loadRosters === 'email_draft'
     ) {
       observableList.push(
-        this.mflApiService.getMFLDraftResults(year, leagueId, this.mflUserId).pipe(
+        this.mflApiService.getMFLDraftResults(year, leagueId, this.mflUserId, baseURL).pipe(
           map(draftResults => {
             completedDraft = this.marshalDraftResults(
               draftResults.draftResults?.draftUnit,
@@ -130,7 +131,7 @@ export class MflService {
           (leagueWrapper.completedDrafts.length === 0 || leagueWrapper.completedDrafts[0].draft?.status !== 'completed') ?
           this.nflService.getYearForStats() : year
         const observable = leagueWrapper.selectedLeague.type === LeagueType.DYNASTY ?
-          this.mflApiService.getMFLFutureDraftPicks(pickYear, leagueId, this.mflUserId).pipe(
+          this.mflApiService.getMFLFutureDraftPicks(pickYear, leagueId, this.mflUserId, baseURL).pipe(
             map(draftPicks => {
               const teamDraftCapital = this.marshalFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise);
               return teamDraftCapital;
@@ -224,7 +225,8 @@ export class MflService {
   loadLeagueFromList$(leagues: LeagueDTO[], year: string): Observable<LeagueDTO[]> {
     return from(leagues).pipe(
       concatMap(league => {
-        return this.mflApiService.getMFLRosters(year, league.leagueId, this.mflUserId).pipe(
+        const baseURL = league.metadata?.['mflBaseURL']
+        return this.mflApiService.getMFLRosters(year, league.leagueId, this.mflUserId, baseURL).pipe(
           catchError(error => {
             console.error('Failed to fetch data:', error);
             return of([]);
