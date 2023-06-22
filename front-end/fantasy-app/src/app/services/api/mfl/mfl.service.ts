@@ -64,6 +64,7 @@ export class MflService {
     let teamMetrics = {};
     let playoffMatchUps = [];
     let completedDraft = null;
+    let scoringSettings: any = null;
     observableList.push(
       this.mflApiService.getMFLTransactions(year, leagueId, this.mflUserId, baseURL).pipe(
         map((leagueTrans) => {
@@ -96,6 +97,15 @@ export class MflService {
         })
       )
     );
+    // observableList.push(
+    //   this.mflApiService.getMFLLeagueRules(year, leagueId, this.mflUserId, baseURL).pipe(
+    //     map(response => {
+    //       scoringSettings = response;
+    //       console.log(response)
+    //       return of(scoringSettings);
+    //     })
+    //   )
+    // );
     // only load draft if it existed on platform
     if (
       leagueWrapper.selectedLeague.metadata.loadRosters === 'live_draft' ||

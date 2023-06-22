@@ -13,6 +13,8 @@ export class MflApiConfigService {
 
   private _getMFLLeagueStandingEndpoint = '';
 
+  private _getMFLLeagueRulesEndpoint = '';
+
   private _getMFLDraftResultsEndpoint = '';
 
   private _getMFLLeaguesForUser = '';
@@ -87,6 +89,14 @@ export class MflApiConfigService {
 
   set getMFLRostersEndpoint(value: string) {
     this._getMFLRostersEndpoint = value;
+  }
+
+  get getMFLLeagueRulesEndpoint(): string {
+    return this._getMFLLeagueRulesEndpoint;
+  }
+
+  set getMFLLeagueRulesEndpoint(value: string) {
+    this._getMFLLeagueRulesEndpoint = value;
   }
 
   get postMFLWaiverMoveEndpoint(): string {

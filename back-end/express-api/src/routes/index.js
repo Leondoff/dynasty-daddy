@@ -5,15 +5,16 @@ import {
   GetPlayerValueForMarketEndpoint,
   GetPrevPlayerValuesByDaysEndpoint,
   GetHistoricalPlayerValueByIdEndpoint,
-  GetMFlDraftResultsEndpoint,
-  GetMFlFutureDraftPicksEndpoint,
-  GetMFlLeagueEndpoint,
-  GetMFlLeagueStandingsEndpoint,
-  GetMFlPlayersEndpoint,
-  GetMFlPlayoffBracketsEndpoint,
-  GetMFlRostersEndpoint,
-  GetMFlScheduleEndpoint,
-  GetMFlTransactionsEndpoint,
+  GetMFLDraftResultsEndpoint,
+  GetMFLFutureDraftPicksEndpoint,
+  GetMFLLeagueEndpoint,
+  GetMFLLeagueStandingsEndpoint,
+  GetMFLPlayersEndpoint,
+  GetMFLPlayoffBracketsEndpoint,
+  GetMFLRostersEndpoint,
+  GetMFLScheduleEndpoint,
+  GetMFLTransactionsEndpoint,
+  GetMFLLeagueRulesEndpoint,
   GetFFDraftEndpoint,
   GetFFLeagueEndpoint,
   GetFFLeagueTransactionsEndpoint,
@@ -27,7 +28,7 @@ import {
   GetPlayerDetailsEndpoint,
   GetPlayerPortfolioEndpoint,
   GetMFLLeaguesForUserEndpoint,
-  PostMFlWaiverEndpoint,
+  PostMFLWaiverEndpoint,
 } from '../controllers';
 
 const indexRouter = express.Router();
@@ -43,17 +44,18 @@ indexRouter.post('/portfolio', GetPlayerPortfolioEndpoint);
 indexRouter.get('/config/all', GetConfigValuesEndpoint);
 
 // MFL Wrapper Endpoints
-indexRouter.post('/mfl/league', GetMFlLeagueEndpoint);
-indexRouter.post('/mfl/players', GetMFlPlayersEndpoint);
-indexRouter.post('/mfl/transactions', GetMFlTransactionsEndpoint);
-indexRouter.post('/mfl/futureDraftPicks', GetMFlFutureDraftPicksEndpoint);
-indexRouter.post('/mfl/leagueStandings', GetMFlLeagueStandingsEndpoint);
-indexRouter.post('/mfl/rosters', GetMFlRostersEndpoint);
-indexRouter.post('/mfl/draftResults', GetMFlDraftResultsEndpoint);
-indexRouter.post('/mfl/playoffBrackets', GetMFlPlayoffBracketsEndpoint);
-indexRouter.post('/mfl/schedule', GetMFlScheduleEndpoint);
+indexRouter.post('/mfl/league', GetMFLLeagueEndpoint);
+indexRouter.post('/mfl/players', GetMFLPlayersEndpoint);
+indexRouter.post('/mfl/transactions', GetMFLTransactionsEndpoint);
+indexRouter.post('/mfl/futureDraftPicks', GetMFLFutureDraftPicksEndpoint);
+indexRouter.post('/mfl/leagueStandings', GetMFLLeagueStandingsEndpoint);
+indexRouter.post('/mfl/rosters', GetMFLRostersEndpoint);
+indexRouter.post('/mfl/draftResults', GetMFLDraftResultsEndpoint);
+indexRouter.post('/mfl/playoffBrackets', GetMFLPlayoffBracketsEndpoint);
+indexRouter.post('/mfl/schedule', GetMFLScheduleEndpoint);
+indexRouter.post('/mfl/rules', GetMFLLeagueRulesEndpoint);
 indexRouter.post('/mfl/leagues', GetMFLLeaguesForUserEndpoint);
-indexRouter.post('/mfl/waiver', PostMFlWaiverEndpoint);
+indexRouter.post('/mfl/waiver', PostMFLWaiverEndpoint);
 
 // Fleaflicker Wrapper Endpoints
 indexRouter.get('/ff/league', GetFFLeagueEndpoint);

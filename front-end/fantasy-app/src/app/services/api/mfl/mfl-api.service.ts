@@ -127,6 +127,19 @@ export class MflApiService {
   }
 
   /**
+   * fetch league scoring settings
+   * @param year season
+   * @param leagueId league id
+   */
+  getMFLLeagueRules(year: string, leagueId: string, mflUserId?: string, mflBaseURL?: string): Observable<any> {
+    return this.http.post<any>(this.mflApiConfigService.getMFLLeagueRulesEndpoint + '?leagueId=' + leagueId + '&year=' + year, this.formatBody(mflUserId, mflBaseURL)).pipe(map(
+      (standings: any) => {
+        return standings;
+      }
+    ));
+  }
+
+  /**
    * fetch all players in mfl
    * @param year season
    * @param leagueId league id
@@ -145,7 +158,7 @@ export class MflApiService {
   }
 
   /**
- * fetch additional team standings information
+ * post MFL waiver to league
  * @param year season
  * @param leagueId league id
  */

@@ -41,7 +41,7 @@ const sendMFLImportRequest = async (
     });
 };
 
-export const GetMFlLeagueEndpoint = async (req, res) => {
+export const GetMFLLeagueEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -51,7 +51,7 @@ export const GetMFlLeagueEndpoint = async (req, res) => {
   return sendMFLRequest(year, leagueId, url, user, 'league', res);
 };
 
-export const GetMFlScheduleEndpoint = async (req, res) => {
+export const GetMFLScheduleEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -61,7 +61,7 @@ export const GetMFlScheduleEndpoint = async (req, res) => {
   return sendMFLRequest(year, leagueId, url, user, 'schedule', res);
 };
 
-export const GetMFlRostersEndpoint = async (req, res) => {
+export const GetMFLRostersEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -71,7 +71,7 @@ export const GetMFlRostersEndpoint = async (req, res) => {
   return sendMFLRequest(year, leagueId, url, user, 'rosters', res);
 };
 
-export const GetMFlTransactionsEndpoint = async (req, res) => {
+export const GetMFLTransactionsEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -81,7 +81,7 @@ export const GetMFlTransactionsEndpoint = async (req, res) => {
   return sendMFLRequest(year, leagueId, url, user, 'transactions', res);
 };
 
-export const GetMFlLeagueStandingsEndpoint = async (req, res) => {
+export const GetMFLLeagueStandingsEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -91,7 +91,7 @@ export const GetMFlLeagueStandingsEndpoint = async (req, res) => {
   return sendMFLRequest(year, leagueId, url, user, 'leagueStandings', res);
 };
 
-export const GetMFlFutureDraftPicksEndpoint = async (req, res) => {
+export const GetMFLFutureDraftPicksEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -101,7 +101,7 @@ export const GetMFlFutureDraftPicksEndpoint = async (req, res) => {
   return sendMFLRequest(year, leagueId, url, user, 'futureDraftPicks', res);
 };
 
-export const GetMFlPlayoffBracketsEndpoint = async (req, res) => {
+export const GetMFLPlayoffBracketsEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -111,7 +111,7 @@ export const GetMFlPlayoffBracketsEndpoint = async (req, res) => {
   return sendMFLRequest(year, leagueId, url, user, 'playoffBrackets', res);
 };
 
-export const GetMFlPlayersEndpoint = async (req, res) => {
+export const GetMFLPlayersEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -121,7 +121,17 @@ export const GetMFlPlayersEndpoint = async (req, res) => {
   return sendMFLRequest(year, leagueId, url, null, 'players', res);
 };
 
-export const GetMFlDraftResultsEndpoint = async (req, res) => {
+export const GetMFLLeagueRulesEndpoint = async (req, res) => {
+  const {
+    year, leagueId
+  } = req.query;
+  const {
+    user, url
+  } = req.body;
+  return sendMFLRequest(year, leagueId, url, user, 'rules', res);
+};
+
+export const GetMFLDraftResultsEndpoint = async (req, res) => {
   const {
     year, leagueId
   } = req.query;
@@ -160,7 +170,7 @@ export const GetMFLLeaguesForUserEndpoint = async (req, res) => {
   }
 };
 
-export const PostMFlWaiverEndpoint = async (req, res) => {
+export const PostMFLWaiverEndpoint = async (req, res) => {
   const {
     year, leagueId, url
   } = req.query;
