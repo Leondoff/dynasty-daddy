@@ -54,6 +54,7 @@ export class EndpointsService {
     this.mflAPIConfigService.getMFLDraftResultsEndpoint = this.baseUrl + '/v1/mfl/draftResults';
     this.mflAPIConfigService.getMFLLeaguesForUser = this.baseUrl + '/v1/mfl/leagues';
     this.mflAPIConfigService.getMFLLeagueStandingEndpoint = this.baseUrl + '/v1/mfl/leagueStandings';
+    this.mflAPIConfigService.getMFLLeagueRulesEndpoint = this.baseUrl + '/v1/mfl/rules';
     this.mflAPIConfigService.getMFLRostersEndpoint = this.baseUrl + '/v1/mfl/rosters';
     this.mflAPIConfigService.getMFLFutureDraftPicksEndpoint = this.baseUrl + '/v1/mfl/futureDraftPicks';
     this.mflAPIConfigService.postMFLWaiverMoveEndpoint = this.baseUrl + '/v1/mfl/waiver';
