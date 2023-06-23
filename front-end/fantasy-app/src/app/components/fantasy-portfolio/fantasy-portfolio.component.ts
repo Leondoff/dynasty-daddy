@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Status } from '../model/status';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { PortfolioService } from '../services/portfolio.service';
-import { ConfigService } from 'src/app/services/init/config.service';
+import { ConfigService, LocalStorageDictionary } from 'src/app/services/init/config.service';
 import { LeagueLoginModalComponent } from '../modals/league-login-modal/league-login-modal.component';
 import { UntypedFormControl } from '@angular/forms';
 import { DownloadService } from 'src/app/services/utilities/download.service';
@@ -59,11 +59,11 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
 
     ngOnInit(): void {
         // if portfolio exists in localstorage fetch it 
-        if (!this.portfolioService.portfolio && localStorage.getItem('portfolio')) {
-            this.portfolioService.portfolio = JSON.parse(localStorage.getItem('portfolio'));
+        if (!this.portfolioService.portfolio && localStorage.getItem(LocalStorageDictionary.PORTFOLIO_ITEM)) {
+            this.portfolioService.portfolio = JSON.parse(localStorage.getItem(LocalStorageDictionary.PORTFOLIO_ITEM));
             // get MFL portfolio id if stored
-            if (localStorage.getItem('portfolioMFLUserId')) {
-                this.portfolioService.portfolioMFLUserId = localStorage.getItem('portfolioMFLUserId');
+            if (localStorage.getItem(LocalStorageDictionary.PORTFOLIO_MFL_USER_ID_ITEM)) {
+                this.portfolioService.portfolioMFLUserId = localStorage.getItem(LocalStorageDictionary.PORTFOLIO_MFL_USER_ID_ITEM);
             }
             this.portfolioService.portfolio.leagues.forEach(league => {
                 if (league && !this.portfolioService.playerPlatformIdMap[league.leaguePlatform]) {
@@ -123,8 +123,8 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
     clearPortfolio(): void {
         this.portfolioService.portfolio = new Portfolio();
         this.portfolioService.appliedLeagues = [];
-        localStorage.removeItem('portfolio');
-        localStorage.removeItem('portfolioMFLUserId');
+        localStorage.removeItem(LocalStorageDictionary.PORTFOLIO_ITEM);
+        localStorage.removeItem(LocalStorageDictionary.PORTFOLIO_MFL_USER_ID_ITEM);
         this.selectableLeagues = [];
         this.selectedLeagues.reset();
         this.portfolioService.portfolioValuesUpdated$.next();

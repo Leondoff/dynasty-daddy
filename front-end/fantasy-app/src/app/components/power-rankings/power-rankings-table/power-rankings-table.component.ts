@@ -363,14 +363,13 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
       }
       default: {
         newColumns = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+        if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+          this.powerRankingsService.rankingMarket = this.playerService.selectedMarket.valueOf();
+          newColumns.push('draftRank');
+        }
       }
     }
-    if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
-      this.powerRankingsService.rankingMarket = this.playerService.selectedMarket.valueOf();
-      newColumns.push('draftRank');
-    } else {
-      this.powerRankingsService.rankingMarket = PowerRankingMarket.ADP;
-    }
+
     this.columnsToDisplay = newColumns;
     this.refreshPowerRankingCache();
   }

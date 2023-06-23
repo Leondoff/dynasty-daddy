@@ -19,6 +19,9 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
   @Input()
   selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
+  /** all time start dates mapped to enums */
+  allTimeStartDates = ["2021-04-16T12:00:00", "2022-05-02T12:00:00", "2023-02-17T12:00:00", "2023-06-03T12:00:00"]
+
   /** chart set up */
   @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
@@ -166,7 +169,7 @@ export class TradeValueLineChartComponent extends BaseComponent implements OnIni
   private calculateAllTime(): number {
     const oneDay = 24 * 60 * 60 * 1000;
     const firstDate = new Date();
-    const secondDate = new Date('2021-04-16T12:00:00');
+    const secondDate = new Date(this.allTimeStartDates[this.selectedMarket]);
 
     return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
   }

@@ -22,6 +22,18 @@ export const ConfigKeyDictionary = {
   HEADER_INFO_URL: 'header_info_url'
 } as const;
 
+/**
+ * dictionary of local storage item keys
+ */
+export const LocalStorageDictionary = {
+  PORTFOLIO_ITEM: 'portfolio',
+  PORTFOLIO_MFL_USER_ID_ITEM: 'portfolioMFLUserId',
+  SLEEPER_USERNAME_ITEM: 'sleeper_username',
+  MFL_USERNAME_ITEM: 'mfl_username',
+  FF_USERNAME_ITEM:'ff_username'
+} as const;
+
+
 @Injectable({
   providedIn: 'root'
 })

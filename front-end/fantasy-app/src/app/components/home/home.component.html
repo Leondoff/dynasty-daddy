@@ -55,7 +55,7 @@
             </div>
             <div>
               <button mat-raised-button [disabled]="!usernameInput"
-                      color="accent" (click)="fetchSleeperInfo()" gaEvent="login_sleeper_username" gaCategory="platform_login">Sign In
+                      color="accent" (click)="fetchUserInfo(0)" gaEvent="login_sleeper_username" gaCategory="platform_login">Sign In
               </button>
             </div>
             <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 0">
@@ -133,7 +133,7 @@
               </div>
               <div>
                 <button mat-raised-button [disabled]="!mflUsernameInput || !mflPasswordInput"
-                        color="accent" (click)="fetchMFLInfo()" gaEvent="login_mfl_username" gaCategory="platform_login">Sign In
+                        color="accent" (click)="fetchUserInfo(1)" gaEvent="login_mfl_username" gaCategory="platform_login">Sign In
                 </button>
                 <div class="margin-top-10 small-text__light">
                   We do not store any personal data, it is only passed to the MFL to retrieve data.
@@ -215,7 +215,7 @@
             </div>
             <div>
               <button mat-raised-button [disabled]="!fleaflickerEmail"
-                      color="accent" (click)="fetchFleaflickerInfo()" gaEvent="login_ff_email" gaCategory="platform_login">Sign In
+                      color="accent" (click)="fetchUserInfo(2)" gaEvent="login_ff_email" gaCategory="platform_login">Sign In
               </button>
             </div>
             <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 2">
