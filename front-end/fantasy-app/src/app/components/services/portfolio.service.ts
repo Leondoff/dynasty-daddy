@@ -11,7 +11,7 @@ import { PlayerService } from 'src/app/services/player.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
 import { Portfolio } from '../model/portfolio';
 import { Status } from '../model/status';
-import { MflService } from 'src/app/services/api/mfl/mfl.service';
+import { LocalStorageDictionary } from 'src/app/services/init/config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -87,7 +87,6 @@ export class PortfolioService {
     private fantasyPlayerApiService: FantasyPlayerApiService,
     private sleeperApiService: SleeperApiService,
     private mflApiService: MflApiService,
-    private mflService: MflService,
     private fleaflickerService: FleaflickerService,
     private displayService: DisplayService,
     private playerService: PlayerService,
@@ -121,8 +120,8 @@ export class PortfolioService {
       this.addPlayersToList(uniquePlayers, leagueInfo)
     });
     const playersToGet = this.playersWithValue.filter(p => !this.fantasyPortfolioDict[p.name_id] && ['QB', 'RB', 'WR', 'TE'].includes(p.position)).map(p => p?.name_id)
-    localStorage.setItem('portfolio', JSON.stringify(this.portfolio));
-    localStorage.setItem('portfolioMFLUserId', this.portfolioMFLUserId);
+    localStorage.setItem(LocalStorageDictionary.PORTFOLIO_ITEM, JSON.stringify(this.portfolio));
+    localStorage.setItem(LocalStorageDictionary.PORTFOLIO_MFL_USER_ID_ITEM, this.portfolioMFLUserId);
     this.fantasyPlayerApiService.getFantasyPortfolio(181, playersToGet).subscribe(
       p => {
         for (let key in p) {

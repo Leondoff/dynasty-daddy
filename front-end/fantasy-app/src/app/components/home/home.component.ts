@@ -3,7 +3,7 @@ import { BaseComponent } from '../base-component.abstract';
 import { SleeperApiService } from '../../services/api/sleeper/sleeper-api.service';
 import { LeagueService } from '../../services/league.service';
 import { PlayerService } from '../../services/player.service';
-import { ConfigKeyDictionary, ConfigService } from '../../services/init/config.service';
+import { ConfigKeyDictionary, ConfigService, LocalStorageDictionary } from '../../services/init/config.service';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { ActivatedRoute } from '@angular/router';
 import { EditLeagueSettingsModalComponent } from '../modals/edit-league-settings-modal/edit-league-settings-modal.component';
@@ -115,22 +115,20 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
       switch (this.leagueService.selectedLeague.leaguePlatform) {
         case LeaguePlatform.MFL:
           this.mflLeagueIdInput = this.leagueService.selectedLeague.leagueId;
-          this.mflUsernameInput = this.leagueService.leagueUser?.userData?.username || '';
           break;
         case LeaguePlatform.ESPN:
           this.espnLeagueId = this.leagueService.selectedLeague.leagueId;
           break;
         case LeaguePlatform.FLEAFLICKER:
           this.fleaflickerLeagueIdInput = this.leagueService.selectedLeague.leagueId;
-          this.fleaflickerEmail = this.leagueService.leagueUser?.userData?.username || '';
           break;
         default:
-          this.usernameInput =
-            this.leagueService.leagueUser?.userData?.username == null || this.leagueService.leagueUser?.userData?.username === 'undefined'
-              ? '' : this.leagueService.leagueUser?.userData?.username;
           this.sleeperLeagueIdInput = this.leagueService.selectedLeague.leagueId;
       }
     }
+    this.usernameInput = localStorage.getItem(LocalStorageDictionary.SLEEPER_USERNAME_ITEM) || '';
+    this.fleaflickerEmail = localStorage.getItem(LocalStorageDictionary.FF_USERNAME_ITEM) || '';
+    this.mflUsernameInput = localStorage.getItem(LocalStorageDictionary.MFL_USERNAME_ITEM) || '';
   }
 
   ngAfterViewInit(): void {
@@ -145,21 +143,30 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     (<any>window)?.twttr?.widgets?.load();
   }
 
-  /**
-   * loads sleeper data for user
-   */
-  fetchSleeperInfo(): void {
-    this.leagueService.loadNewUser$(this.usernameInput, this.selectedYear);
-    this.leagueService.selectedYear = this.selectedYear;
-    this.leagueService.resetLeague();
-  }
 
   /**
-   * loads fleaflicker data for user
+   * Loads users for platform
+   * @param platform platform to load user for
    */
-  fetchFleaflickerInfo(): void {
-    this.fleaflickerLeagueIdInput = '';
-    this.leagueService.loadNewUser$(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
+  fetchUserInfo(platform: LeaguePlatform): void {
+    switch (platform) {
+      case LeaguePlatform.SLEEPER:
+        this.leagueService.loadNewUser$(this.usernameInput, this.selectedYear);
+        localStorage.setItem(LocalStorageDictionary.SLEEPER_USERNAME_ITEM, this.usernameInput);
+        break;
+      case LeaguePlatform.MFL:
+        this.mflLeagueIdInput = '';
+        this.leagueService.loadNewUser$(this.mflUsernameInput, this.selectedYear, LeaguePlatform.MFL, this.mflPasswordInput);
+        localStorage.setItem(LocalStorageDictionary.MFL_USERNAME_ITEM, this.mflLeagueIdInput);
+        break;
+      case LeaguePlatform.FLEAFLICKER:
+        this.fleaflickerLeagueIdInput = '';
+        this.leagueService.loadNewUser$(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
+        localStorage.setItem(LocalStorageDictionary.FF_USERNAME_ITEM, this.fleaflickerEmail)
+        break;
+      default:
+        console.error(`${platform} is not a supported platform for user login.`)
+    }
     this.leagueService.selectedYear = this.selectedYear;
     this.leagueService.resetLeague();
   }
@@ -172,16 +179,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     this.espnService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.espnLeagueId).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(leagueData);
     });
-  }
-
-  /**
-   * loads MFL data for user
-   */
-  fetchMFLInfo(): void {
-    this.mflLeagueIdInput = '';
-    this.leagueService.loadNewUser$(this.mflUsernameInput, this.selectedYear, LeaguePlatform.MFL, this.mflPasswordInput);
-    this.leagueService.selectedYear = this.selectedYear;
-    this.leagueService.resetLeague();
   }
 
   /**
