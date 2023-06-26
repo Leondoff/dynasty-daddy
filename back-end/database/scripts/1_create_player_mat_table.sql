@@ -22,6 +22,7 @@ From
             pi.mfl_id,
             pi.ff_id,
             pi.espn_id,
+            pi.ffpc_id,
             pi.yahoo_id,
             player_info.full_name as full_name,
             player_info.first_name as first_name,
@@ -53,8 +54,6 @@ From
             player_info.name_id,
             pv.id desc
     ) as T
-order by
-    sf_trade_value asc WITH NO DATA;
 
 CREATE UNIQUE INDEX ON mat_vw_players (name_id);
 
