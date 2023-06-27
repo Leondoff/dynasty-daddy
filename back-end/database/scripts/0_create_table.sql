@@ -66,6 +66,7 @@ create table player_ids (
     ff_id varchar(10),
     espn_id varchar(10),
     yahoo_id varchar(10),
+    ffpc_id varchar(10),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );

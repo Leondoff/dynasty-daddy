@@ -14,6 +14,7 @@ export const GetCurrentPlayerValues = async () => {
       mp.ff_id,
       mp.espn_id,
       mp.yahoo_id,
+      mp.ffpc_id,
       mp.full_name,
       mp.first_name,
       mp.last_name,

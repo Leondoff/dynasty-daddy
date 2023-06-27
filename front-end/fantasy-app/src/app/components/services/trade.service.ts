@@ -192,7 +192,8 @@ export class TradeService {
         || player.owner !== null && player.owner.userId !== tradePackage.team1UserId));
     }
     // sort list by largest value
-    return sortedList.sort((a, b) => isSuperFlex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value).slice(0, listLength);
+    return sortedList.sort((a, b) => isSuperFlex ? (b?.sf_trade_value || 0) - (a?.sf_trade_value || 0)
+      : (b?.trade_value || 0) - (a?.trade_value || 0)).slice(0, listLength);
   }
 
   /**
@@ -219,14 +220,14 @@ export class TradeService {
           const pickPlayer = this.playerService.getPlayerByNameId(pick);
           if (pickPlayer) {
             teamPlayerList.push(pickPlayer);
-            if(includeAllPicks && pick.includes("mid")) {
+            if (includeAllPicks && pick.includes("mid")) {
               teamPlayerList.push(this.playerService.getPlayerByNameId(pick.replace("mid", "early")));
               teamPlayerList.push(this.playerService.getPlayerByNameId(pick.replace("mid", "late")));
             }
           }
         });
       }
-      return teamPlayerList.sort((a, b) => b.sf_trade_value - a.sf_trade_value);
+      return teamPlayerList.sort((a, b) => (b?.sf_trade_value || 0) - (a?.sf_trade_value || 0));
     } else {
       return playerList;
     }
