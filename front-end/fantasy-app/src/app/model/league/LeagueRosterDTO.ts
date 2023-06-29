@@ -49,4 +49,12 @@ export class LeagueRosterDTO {
     return this;
   }
 
+  fromFFPC(rosterId: number, ownerId: string, playerIds: string[], teamMetrics?: TeamMetrics): LeagueRosterDTO {
+    this.rosterId = rosterId;
+    this.ownerId = ownerId;
+    this.players = playerIds;
+    this.teamMetrics = teamMetrics || new TeamMetrics();
+    return this;
+  }
+
 }

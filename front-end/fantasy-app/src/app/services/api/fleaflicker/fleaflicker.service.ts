@@ -18,14 +18,12 @@ import { Status } from 'src/app/components/model/status';
 import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 import { CompletedDraft } from 'src/app/model/league/CompletedDraft';
 import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
+import { PlatformLogos } from '../../utilities/display.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FleaflickerService {
-
-  /** default flea flicker icon if team has no icon */
-  private DEFAULT_TEAM_LOGO = 'https://apprecs.org/ios/images/app-icons/256/3a/1259897658.jpg';
 
   /** player id map for players found in apis */
   playerIdMap = {}
@@ -139,7 +137,7 @@ export class FleaflickerService {
       leagueWrapper.selectedLeague.metadata.rosters?.forEach((division, ind) => {
         division.teams?.forEach(team => {
           const owner = team.owners[0];
-          const ownerDTO = new LeagueOwnerDTO(owner.id, owner.displayName, team.name, team.logoUrl || this.DEFAULT_TEAM_LOGO);
+          const ownerDTO = new LeagueOwnerDTO(owner.id, owner.displayName, team.name, team.logoUrl || PlatformLogos.FLEAFLICKER_LOGO);
           const roster = fleaflickerRosters.find(it => it.team.id === team.id).players;
           this.mapFleaFlickerIdMap(roster);
           const rosterDTO = new LeagueRosterDTO()

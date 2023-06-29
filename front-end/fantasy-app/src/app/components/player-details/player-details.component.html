@@ -85,9 +85,10 @@
       <div class="margin-top-10 center-text">A collection of metrics and insights on {{selectedPlayer.full_name}}.
       </div>
       <div [ngClass]="{'right-align-text': !configService.isMobile, 'center-text': configService.isMobile}">
+        <mat-slide-toggle color="accent" style="padding-right: 15px" *ngIf="!configService.isMobile && !leagueService.selectedLeague" [(ngModel)]="isSuperflex">SuperFlex</mat-slide-toggle>
         <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
       </div>
-      <app-player-details-insights [selectedPlayer]="selectedPlayer" [selectedPlayerValues]="historicalTradeValue" [selectedMarket]="playerService.selectedMarket"></app-player-details-insights>
+      <app-player-details-insights [selectedPlayer]="selectedPlayer" [selectedPlayerValues]="historicalTradeValue" [selectedMarket]="playerService.selectedMarket" [isSuperflex]="isSuperflex"></app-player-details-insights>
     </mat-tab>
     <mat-tab label="{{configService.isMobile ? 'Logs' : 'Game Logs'}}">
       <app-player-details-weekly-box-scores-table *ngIf="isPlayerStatsGenerated()" [selectedPlayer]="selectedPlayer"></app-player-details-weekly-box-scores-table>

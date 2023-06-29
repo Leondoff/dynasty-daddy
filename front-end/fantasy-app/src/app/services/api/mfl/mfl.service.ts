@@ -19,14 +19,12 @@ import { DraftCapital } from '../../../model/assets/DraftCapital';
 import { NflService } from '../../utilities/nfl.service';
 import { LeagueUserDTO } from 'src/app/model/league/LeagueUserDTO';
 import { Status } from 'src/app/components/model/status';
+import { PlatformLogos } from '../../utilities/display.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MflService {
-
-  /** default team logo */
-  private DEFAULT_TEAM_LOGO = 'http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif';
 
   /** Request Delay for api calls to prevent 429s */
   private REQUEST_DELAY = 500
@@ -151,7 +149,7 @@ export class MflService {
         return observable.pipe(map(teamDraftCapital => {
           const teams = [];
           leagueWrapper.selectedLeague?.metadata?.rosters?.forEach(team => {
-            const ownerDTO = new LeagueOwnerDTO(team.id, team.name, team.name, team.icon || this.DEFAULT_TEAM_LOGO);
+            const ownerDTO = new LeagueOwnerDTO(team.id, team.name, team.name, team.icon || PlatformLogos.MFL_LOGO);
             const roster = leagueRosters.find(it => it.id === team.id)?.player || [];
             const rosterDTO = new LeagueRosterDTO()
               .fromMFL(

@@ -13,14 +13,12 @@ import { LeagueTeamMatchUpDTO } from 'src/app/model/league/LeagueTeamMatchUpDTO'
 import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
 import { CompletedDraft } from 'src/app/model/league/CompletedDraft';
 import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
+import { PlatformLogos } from '../../utilities/display.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ESPNService {
-
-  /** default flea flicker icon if team has no icon */
-  private DEFAULT_TEAM_LOGO = 'https://g.espncdn.com/lm-static/ffl/images/default_logos/12.svg';
 
   /** player id map for players found in apis */
   playerIdMap = {}
@@ -48,7 +46,7 @@ export class ESPNService {
     const teams = [];
     leagueWrapper.selectedLeague.metadata.rosters?.forEach((team, ind) => {
       const ownerDetails = leagueWrapper.selectedLeague.metadata.owners?.find(it => it.id === team.primaryOwner)
-      const ownerDTO = new LeagueOwnerDTO(team.primaryOwner, ownerDetails.firstName.slice(0, 1) + '. ' + ownerDetails.lastName, team.name, team.logo || this.DEFAULT_TEAM_LOGO);
+      const ownerDTO = new LeagueOwnerDTO(team.primaryOwner, ownerDetails.firstName.slice(0, 1) + '. ' + ownerDetails.lastName, team.name, team.logo || PlatformLogos.ESPN_LOGO);
       const roster = team.roster.entries.map(it => it.playerId.toString());
       this.mapESPNIdMap(team.roster.entries);
       const rosterDTO = new LeagueRosterDTO()

@@ -31,6 +31,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
   /** is page insights in superflex or standard */
+  @Input()
   isSuperflex: boolean = true;
 
   /** list of adjacent players overall */
@@ -106,19 +107,21 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   }
 
   ngOnInit(): void {
+    this.isSuperflex = this.leagueService.selectedLeague?.isSuperflex || this.isSuperflex;
     this.overallAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
-      this.selectedPlayer?.name_id, '', this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
+      this.selectedPlayer?.name_id, '', this.isSuperflex, this.selectedMarket);
     this.positionAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
-      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
+      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.isSuperflex, this.selectedMarket);
     this.cachePlayerData();
   }
 
   ngOnChanges(): void {
+    this.isSuperflex = this.leagueService.selectedLeague?.isSuperflex || this.isSuperflex;
     this.generateChartData();
     this.overallAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
-      this.selectedPlayer?.name_id, '', this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
+      this.selectedPlayer?.name_id, '', this.isSuperflex, this.selectedMarket);
     this.positionAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
-      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket);
+      this.selectedPlayer?.name_id, this.selectedPlayer?.position, this.isSuperflex, this.selectedMarket);
     this.cachePlayerData();
   }
 
@@ -127,7 +130,6 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
    */
   cachePlayerData(): void {
     this.playerCache = {}
-    this.isSuperflex = this.leagueService.selectedLeague?.isSuperflex;
     this.playerCache = {
       value: this.isSuperflex ? this.selectedPlayer.sf_trade_value : this.selectedPlayer.trade_value,
       stdValue: this.selectedPlayer.trade_value,
@@ -175,7 +177,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
           this.selectedPlayerValues.map(dataPoint => {
             if (new Date(new Date(dateLabel).setHours(0, 0, 0, 0)).getTime()
               === new Date(new Date(dataPoint.date).setHours(0, 0, 0, 0)).getTime()) {
-              dataList.push(this.playerService.getValueFromDataPoint(dataPoint, this.leagueService.selectedLeague?.isSuperflex, this.selectedMarket) || 0);
+              dataList.push(this.playerService.getValueFromDataPoint(dataPoint, this.isSuperflex, this.selectedMarket) || 0);
               this.lineChartLabels.push(this.displayService.formatDateForDisplay(dataPoint.date));
             }
           });

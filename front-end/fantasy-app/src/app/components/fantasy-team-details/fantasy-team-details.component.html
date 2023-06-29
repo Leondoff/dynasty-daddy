@@ -280,7 +280,7 @@
         </div>
       </div>
     </mat-tab>
-    <mat-tab label="Activity Feed">
+    <mat-tab label="Activity Feed" *ngIf="leagueService?.selectedLeague?.leaguePlatform !== 3 && leagueService?.selectedLeague?.leaguePlatform !== 4">
       <div class="mid-bold-text margin-top-10 center-text">Activity Feed</div>
       <div class="margin-top-10 center-text">Recent moves by {{selectedTeam?.owner?.teamName}}</div>
       <div [ngClass]="{'right-align-text': !configService.isMobile, 'center-text': configService.isMobile}">

@@ -2,11 +2,11 @@ export class LeagueTeamMatchUpDTO {
   constructor() {
   }
 
-  starterPoints: number[];
-  starters: string[];
+  starterPoints: number[] = [];
+  starters: string[] = [];
   rosterId: number;
   points: number;
-  players: string[];
+  players: string[] = [];
   matchupId: number;
   customPoints: number;
 

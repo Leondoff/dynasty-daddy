@@ -238,6 +238,10 @@ export class PlayerService {
           if (id === player.espn_id) return player;
           break;
         }
+        case LeaguePlatform.FFPC: {
+          if (id === player.ffpc_id) return player;
+          break;
+        }
         default: {
           if (id === player.sleeper_id) return player;
           break;
@@ -345,7 +349,7 @@ export class PlayerService {
   getAdjacentPlayersByNameId(nameId: string, posFilter: string = '', isSuperflex: boolean = true, fantasyMarket: FantasyMarket = this.selectedMarket): { rank: number, player: FantasyPlayer }[] {
     const cleanedPlayerList = this.cleanOldPlayerData(this.playerValues);
     cleanedPlayerList.sort((a, b) => {
-      return isSuperflex ? b.sf_trade_value - a.sf_trade_value : b.trade_value - a.trade_value;
+      return !isSuperflex ? b.trade_value - a.trade_value : b.sf_trade_value - a.sf_trade_value;
     });
     const players = this.getAdjacentPlayersFromList(nameId, cleanedPlayerList, posFilter);
     return players.sort((a, b) => {
@@ -529,6 +533,8 @@ export class PlayerService {
         return player.ff_id;
       case LeaguePlatform.ESPN:
         return player.espn_id;
+      case LeaguePlatform.FFPC:
+        return player.ffpc_id;
       default:
         return player.sleeper_id;
     }

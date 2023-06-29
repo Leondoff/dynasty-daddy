@@ -36,6 +36,17 @@ export class LeagueCompletedPickDTO {
     return this;
   }
 
+  fromFFPC(pick: any): LeagueCompletedPickDTO {
+    const metadata = pick?._attributes;
+    this.playerId = pick?.player?.bgsPlayerID.toString();
+    this.pickNumber = Number(metadata?.overall || 0);
+    this.firstName = pick?.player?.firstName;
+    this.lastName = pick?.player?.lastName;
+    this.rosterId = Number(metadata?.teamID || 0);
+    this.round = Number(metadata?.round || 0);
+    return this;
+  }
+
   fromESPN(pick: any): LeagueCompletedPickDTO {
     this.playerId = pick.playerId.toString();
     this.pickNumber = pick.overallPickNumber;
