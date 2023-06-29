@@ -106,8 +106,8 @@ export class MflService {
     // );
     // only load draft if it existed on platform
     if (
-      leagueWrapper.selectedLeague.metadata.loadRosters === 'live_draft' ||
-      leagueWrapper.selectedLeague.metadata.loadRosters === 'email_draft'
+      leagueWrapper.selectedLeague.metadata.loadRosters.includes('live_draft') ||
+      leagueWrapper.selectedLeague.metadata.loadRosters.includes('email_draft')
     ) {
       observableList.push(
         this.mflApiService.getMFLDraftResults(year, leagueId, this.mflUserId, baseURL).pipe(
@@ -136,7 +136,7 @@ export class MflService {
         leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
         // get future pick year since it will filter out current year picks
         const pickYear = year === new Date().getFullYear().toString() &&
-          (leagueWrapper.completedDrafts.length === 0 || leagueWrapper.completedDrafts[0].draft?.status !== 'completed') ?
+          ((leagueWrapper.completedDrafts.length === 0 && new Date().getMonth() < 7) || leagueWrapper.completedDrafts[0].draft?.status !== 'completed') ?
           this.nflService.getYearForStats() : year
         const observable = leagueWrapper.selectedLeague.type === LeagueType.DYNASTY ?
           this.mflApiService.getMFLFutureDraftPicks(pickYear, leagueId, this.mflUserId, baseURL).pipe(
