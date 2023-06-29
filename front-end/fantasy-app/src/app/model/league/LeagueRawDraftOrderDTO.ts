@@ -21,17 +21,17 @@ export class LeagueRawDraftOrderDTO {
     slot_to_roster_id: any,
     year: string,
     settings: any) {
-      this.draftId = draft_id;
-      this.leagueId = league_id;
-      this.status = status;
-      this.type = type;
-      this.draftOrder = draft_order;
-      this.slotToRosterId = slot_to_roster_id;
-      this.rounds = settings?.rounds;
-      this.season = year;
-      this.playerType = settings?.player_type;
-      return this;
-    }
+    this.draftId = draft_id;
+    this.leagueId = league_id;
+    this.status = status;
+    this.type = type;
+    this.draftOrder = draft_order;
+    this.slotToRosterId = slot_to_roster_id;
+    this.rounds = settings?.rounds;
+    this.season = year;
+    this.playerType = settings?.player_type;
+    return this;
+  }
 
   fromMFL(draft: any, playerType: string, rounds: number, draftId: string, leagueId: string, status: string): LeagueRawDraftOrderDTO {
     const teamDraftOrderIds = draft?.round1DraftOrder.split(',').filter(it => it !== '') || [];
@@ -87,6 +87,25 @@ export class LeagueRawDraftOrderDTO {
     this.slotToRosterId = slotOrder;
     // TODO how to determine this for flea flicker
     this.playerType = 0;
+    this.rounds = rounds;
+    this.draftId = draftId;
+    this.leagueId = leagueId;
+    this.status = status;
+    return this;
+  }
+
+  fromFFPC(picks: any, rounds: number, draftId: string, leagueId: string, status: string): LeagueRawDraftOrderDTO {
+    const rosterIdMap = {};
+    picks?.filter(p => p._attributes.round === "1")
+      ?.forEach(pick => rosterIdMap[Number(pick?._attributes?.teamID || 1)] = Number(pick?._attributes?.teamID || 1));
+    this.draftOrder = rosterIdMap;
+    const slotOrder = {};
+    let ind = 1;
+    for (const [key, value] of Object.entries(this.draftOrder)) {
+      slotOrder[value as number] = ind;
+      ind++;
+    }
+    this.slotToRosterId = slotOrder;
     this.rounds = rounds;
     this.draftId = draftId;
     this.leagueId = leagueId;

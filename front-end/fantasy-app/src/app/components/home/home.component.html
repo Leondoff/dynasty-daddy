@@ -16,285 +16,82 @@
 
 <div class=" margin-top-50" class="flex-start-container">
   <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-50">
-    <div class="flex-item-home center-text" style="min-width: 400px;">
+    <div class="flex-item-home center-text">
       <div class="mid-bold-text">Let's get started!</div>
-      <mat-tab-group mat-align-tabs="center" class="margin-top-25" selectedIndex="{{selectedTab}}">
-        <mat-tab>
-          <ng-template mat-tab-label>
-            <img width="30px" height="30px" src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw">
-          </ng-template>
-          <div style="overflow: hidden !important;">
-          <br>
-            <div class="margin-bot-20 center-text">
-              <span class="mid-bold-text">Sleeper</span>
-              <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 0">
-                <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
-              </span>
-            </div>
-          <div>
-            <mat-radio-group [(ngModel)]="sleeperLoginMethod" class="mat-dropdown-wide-200">
-              <mat-radio-button value="sleeper_username" style="padding-right: 10px">Username</mat-radio-button>
-              <mat-radio-button value="sleeper_league_id">League Id</mat-radio-button>
-            </mat-radio-group>
+      <!-- Desktop platform select -->
+      <div *ngIf="!configService.isMobile">
+        <mat-tab-group mat-align-tabs="center" class="margin-top-25" selectedIndex="{{selectedTab}}">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(0)'>
+            </ng-template>
+            <div *ngIf="false else sleeperTemplate"></div>
+          </mat-tab>
+          <mat-tab *ngIf="configService.getConfigOptionByKey('allow_mfl_login')?.configValue === 'true'">
+            <ng-template mat-tab-label>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(1)'>
+            </ng-template>
+            <div *ngIf="false else mflTemplate"></div>
+          </mat-tab>
+          <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ff_login')?.configValue === 'true'">
+            <ng-template mat-tab-label>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(2)'>
+            </ng-template>
+            <div *ngIf="false else fleaflickerTemplate"></div>
+          </mat-tab>
+          <mat-tab *ngIf="configService.getConfigOptionByKey('allow_espn_login')?.configValue === 'true'">
+            <ng-template mat-tab-label>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(3)'>
+            </ng-template>
+            <div *ngIf="false else espnTemplate"></div>
+          </mat-tab>
+          <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ffpc_login')?.configValue === 'true'">
+            <ng-template mat-tab-label>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(4)'>
+            </ng-template>
+            <div *ngIf="false else ffpcTemplate"></div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+      <!-- Mobile Platform select -->
+      <div *ngIf="configService.isMobile">
+        <mat-form-field color="accent" class="margin-top-25">
+          <mat-label>Select Platform</mat-label>
+          <mat-select [(ngModel)]="selectedTab">
+            <mat-select-trigger>
+              <img class="dropdown-img" [src]='getSelectedImage()'>
+              <span style="padding-left: 15px">{{getSelectedPlatformName()}}</span>
+            </mat-select-trigger>
+            <mat-option value="0">
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(0)'><span style="padding-left: 15px">Sleeper</span></mat-option>
+            <mat-option value="1" *ngIf="configService.getConfigOptionByKey('allow_mfl_login')?.configValue === 'true'">
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(1)'><span style="padding-left: 15px">MyFantasyLeague</span></mat-option>
+            <mat-option value="2" *ngIf="configService.getConfigOptionByKey('allow_ff_login')?.configValue === 'true'">
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(2)'><span style="padding-left: 15px">Fleaflicker</span></mat-option>
+            <mat-option value="3" *ngIf="configService.getConfigOptionByKey('allow_espn_login')?.configValue === 'true'">
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(3)'><span style="padding-left: 15px">ESPN</span></mat-option>
+            <mat-option value="4" *ngIf="configService.getConfigOptionByKey('allow_ffpc_login')?.configValue === 'true'">
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(4)'><span style="padding-left: 15px">FFPC</span></mat-option>
+          </mat-select>
+        </mat-form-field>
+        <ng-container [ngSwitch]="selectedTab">
+          <div *ngSwitchCase="'0'">
+            <div *ngIf="false else sleeperTemplate"></div>
           </div>
-          <div *ngIf="sleeperLoginMethod === 'sleeper_username'">
-            <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
-              <mat-label>Sleeper Username</mat-label>
-              <input matInput type="text" [(ngModel)]="usernameInput">
-              <button mat-button *ngIf="usernameInput" matSuffix mat-icon-button aria-label="Clear" (click)="usernameInput=''">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-            <div>
-              <mat-form-field appearance="standard" color="accent">
-                <mat-label>Select a year</mat-label>
-                <mat-select [(ngModel)]="selectedYear">
-                  <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div>
-              <button mat-raised-button [disabled]="!usernameInput"
-                      color="accent" (click)="fetchUserInfo(0)" gaEvent="login_sleeper_username" gaCategory="platform_login">Sign In
-              </button>
-            </div>
-            <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 0">
-              <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
-                class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
-              </div>
-              <br>
-              <div class="mat-form-field-center">
-                <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-                  <mat-label>Select a league</mat-label>
-                  <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)" [disabled]="leagueService.leagueStatus === 'LOADING'">
-                    <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                                [value]="league">{{league.name}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
+          <div *ngSwitchCase="'1'">
+            <div *ngIf="false else mflTemplate"></div>
           </div>
-          <div *ngIf="sleeperLoginMethod === 'sleeper_league_id'">
-            <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
-              <mat-label>Sleeper League Id</mat-label>
-              <input matInput type="text" [(ngModel)]="sleeperLeagueIdInput">
-              <button mat-button *ngIf="sleeperLeagueIdInput" matSuffix mat-icon-button aria-label="Clear" (click)="sleeperLeagueIdInput=''">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-            <div>
-              <button mat-raised-button [disabled]="!sleeperLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
-                      color="accent" (click)="loginWithSleeperLeagueId()"gaEvent="login_sleeper_league_id" gaCategory="platform_login">Sign In
-              </button>
-            </div>
+          <div *ngSwitchCase="'2'">
+            <div *ngIf="false else fleaflickerTemplate"></div>
           </div>
-          <div *ngIf="(sleeperLoginMethod === 'sleeper_league_id' && !leagueService.selectedLeague) || (sleeperLoginMethod === 'sleeper_username' && !leagueService.leagueUser && !leagueService.selectedLeague)">
-            <div class="mid-bold-text margin-top-25 margin-bot-25">OR</div>
-            <button mat-raised-button
-                    color="accent" (click)="loginWithDemo()">Try a Demo
-            </button>
+          <div *ngSwitchCase="'3'">
+            <div *ngIf="false else espnTemplate"></div>
           </div>
+          <div *ngSwitchCase="'4'">
+            <div *ngIf="false else ffpcTemplate"></div>
           </div>
-        </mat-tab>
-        <mat-tab *ngIf="configService.getConfigOptionByKey('allow_mfl_login')?.configValue === 'true'">
-          <ng-template mat-tab-label>
-            <img width="30px" height="30px" src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif">
-          </ng-template>
-          <div style="overflow: hidden !important;">
-            <br>
-            <div class="margin-bot-10 center-text">
-              <span class="mid-bold-text">MyFantasyLeague <span class="warning__alert small-text__light">Beta</span></span>
-              <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 1">
-                <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
-              </span>
-            </div>
-            <div>
-              <mat-radio-group [(ngModel)]="mflLoginMethod" class="mat-dropdown-wide-200 margin-top-15">
-                <mat-radio-button value="mfl_username" style="padding-right: 10px">Username</mat-radio-button>
-                <mat-radio-button value="mfl_league_id">League Id</mat-radio-button>
-              </mat-radio-group>
-            </div>
-            <div *ngIf="mflLoginMethod === 'mfl_username'">
-              <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
-                <mat-label>MFL Username</mat-label>
-                <input matInput type="text" [(ngModel)]="mflUsernameInput">
-                <button mat-button *ngIf="mflUsernameInput" matSuffix mat-icon-button aria-label="Clear" (click)="mflUsernameInput=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </mat-form-field>
-              <div>
-                <mat-form-field class="mat-dropdown-wide-200" color="accent">
-                  <mat-label>MFL Password</mat-label>
-                  <input matInput type="password" [(ngModel)]="mflPasswordInput">
-                  <button mat-button *ngIf="mflPasswordInput" matSuffix mat-icon-button aria-label="Clear" (click)="mflPasswordInput=''">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </mat-form-field>
-              </div>
-              <div>
-                <button mat-raised-button [disabled]="!mflUsernameInput || !mflPasswordInput"
-                        color="accent" (click)="fetchUserInfo(1)" gaEvent="login_mfl_username" gaCategory="platform_login">Sign In
-                </button>
-                <div class="margin-top-10 small-text__light">
-                  We do not store any personal data, it is only passed to the MFL to retrieve data.
-                </div>
-              </div>
-              <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 1">
-                <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
-                  class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
-                </div>
-                <br>
-                <div class="mat-form-field-center">
-                  <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-                    <mat-label>Select a league</mat-label>
-                    <mat-select [(ngModel)]="mflLeagueIdInput" (selectionChange)="loginWithMFLLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
-                      <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                                  [value]="league.leagueId">{{league.name}}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-              </div>
-            </div>
-            <div *ngIf="mflLoginMethod === 'mfl_league_id'">
-              <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
-                <mat-label>MFL League Id</mat-label>
-                <input matInput type="text" [(ngModel)]="mflLeagueIdInput">
-                <button mat-button *ngIf="mflLeagueIdInput" matSuffix mat-icon-button aria-label="Clear" (click)="mflLeagueIdInput=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </mat-form-field>
-              <div>
-                <mat-form-field appearance="standard" color="accent">
-                  <mat-label>Select a year</mat-label>
-                  <mat-select [(ngModel)]="selectedYear">
-                    <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div>
-                <button mat-raised-button [disabled]="!mflLeagueIdInput"
-                        color="accent" (click)="loginWithMFLLeagueId()" gaEvent="login_mfl_league_id" gaCategory="platform_login">Sign In
-                </button>
-              </div>
-            </div>
-          </div>
-        </mat-tab>
-        <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ff_login')?.configValue === 'true'">
-          <ng-template mat-tab-label>
-            <img width="30px" height="30px" src="https://d1h60c43tcq0zx.cloudfront.net/static/images/icons/apple-touch-icon-f3d0ad2586e334ad16152ed2ea83733c.png">
-          </ng-template>
-          <div style="overflow: hidden !important;">
-          <br>
-            <div class="margin-bot-20 center-text">
-              <span class="mid-bold-text">Fleaflicker <span class="warning__alert small-text__light">Beta</span></span>
-              <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 2">
-                <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
-              </span>
-            </div>
-          <div>
-            <mat-radio-group [(ngModel)]="fleaflickerLoginMethod" class="mat-dropdown-wide-200">
-              <mat-radio-button value="fleaflicker_email" style="padding-right: 10px">Email</mat-radio-button>
-              <mat-radio-button value="fleaflicker_league_id">League Id</mat-radio-button>
-            </mat-radio-group>
-          </div>
-          <div *ngIf="fleaflickerLoginMethod === 'fleaflicker_email'">
-            <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
-              <mat-label>Fleaflicker Email</mat-label>
-              <input matInput type="text" [(ngModel)]="fleaflickerEmail">
-              <button mat-button *ngIf="fleaflickerEmail" matSuffix mat-icon-button aria-label="Clear" (click)="fleaflickerEmail=''">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-            <div>
-              <mat-form-field appearance="standard" color="accent">
-                <mat-label>Select a year</mat-label>
-                <mat-select [(ngModel)]="selectedYear">
-                  <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div>
-              <button mat-raised-button [disabled]="!fleaflickerEmail"
-                      color="accent" (click)="fetchUserInfo(2)" gaEvent="login_ff_email" gaCategory="platform_login">Sign In
-              </button>
-            </div>
-            <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 2">
-              <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
-                class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
-              </div>
-              <br>
-              <div class="mat-form-field-center">
-                <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-                  <mat-label>Select a league</mat-label>
-                  <mat-select [(ngModel)]="fleaflickerLeagueIdInput" (selectionChange)="loginWithFleaflickerLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
-                    <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                                [value]="league.leagueId">{{league.name}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-          <div *ngIf="fleaflickerLoginMethod=== 'fleaflicker_league_id'">
-            <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
-              <mat-label>Fleaflicker League Id</mat-label>
-              <input matInput type="text" [(ngModel)]="fleaflickerLeagueIdInput">
-              <button mat-button *ngIf="fleaflickerLeagueIdInput" matSuffix mat-icon-button aria-label="Clear" (click)="fleaflickerLeagueIdInput=''">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-            <div>
-              <mat-form-field appearance="standard" color="accent">
-                <mat-label>Select a year</mat-label>
-                <mat-select [(ngModel)]="selectedYear">
-                  <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div>
-              <button mat-raised-button [disabled]="!fleaflickerLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
-                      color="accent" (click)="loginWithFleaflickerLeagueId()" gaEvent="login_ff_league_id" gaCategory="platform_login">Sign In
-              </button>
-            </div>
-          </div>
-          </div>
-        </mat-tab>
-        <mat-tab *ngIf="configService.getConfigOptionByKey('allow_espn_login')?.configValue === 'true'">
-          <ng-template mat-tab-label>
-            <img width="30px" height="30px" src="https://espnpressroom.com/us/files/2018/03/App-Icon-iOS-mic-flag-cut-to-shape.png">
-          </ng-template>
-          <div style="overflow: hidden !important;">
-          <br>
-            <div class="margin-bot-20 center-text">
-              <span class="mid-bold-text">ESPN <span class="warning__alert small-text__light">Beta</span></span>
-              <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 3">
-                <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
-              </span>
-            </div>
-          <div *ngIf="espnLoginMethod=== 'espn_league_id'">
-            <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
-              <mat-label>ESPN League Id</mat-label>
-              <input matInput type="text" [(ngModel)]="espnLeagueId">
-              <button mat-button *ngIf="espnLeagueId" matSuffix mat-icon-button aria-label="Clear" (click)="espnLeagueId=''">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-            <div>
-              <mat-form-field appearance="standard" color="accent">
-                <mat-label>Select a year</mat-label>
-                <mat-select [(ngModel)]="selectedYear">
-                  <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div>
-              <button mat-raised-button [disabled]="!espnLeagueId || usernameInput === leagueService.selectedLeague?.leagueId"
-                      color="accent" (click)="loginWithESPNLeagueId()" gaEvent="login_espn_league_id" gaCategory="platform_login">Sign In
-              </button>
-            </div>
-          </div>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
+        </ng-container>
+      </div>
       <div *ngIf="leagueService.leagueStatus === 'LOADING'" class="center-spinner margin-top-25">
         <mat-spinner [diameter]="50"></mat-spinner>
       </div>
@@ -447,3 +244,352 @@
     Support Dynasty Daddy at the links in the footer!
   </div>
 </div>
+
+<!-- Sleeper Login Component -->
+<ng-template #sleeperTemplate>
+  <div style="overflow: hidden !important;">
+    <br>
+      <div class="margin-bot-20 center-text">
+        <span class="mid-bold-text">Sleeper</span>
+        <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 0">
+          <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
+        </span>
+      </div>
+    <div>
+      <mat-radio-group [(ngModel)]="sleeperLoginMethod" class="mat-dropdown-wide-200">
+        <mat-radio-button value="sleeper_username" style="padding-right: 10px">Username</mat-radio-button>
+        <mat-radio-button value="sleeper_league_id">League Id</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div *ngIf="sleeperLoginMethod === 'sleeper_username'">
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+        <mat-label>Sleeper Username</mat-label>
+        <input matInput type="text" [(ngModel)]="usernameInput">
+        <button mat-button *ngIf="usernameInput" matSuffix mat-icon-button aria-label="Clear" (click)="usernameInput=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Select a year</mat-label>
+          <mat-select [(ngModel)]="selectedYear">
+            <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button [disabled]="!usernameInput"
+                color="accent" (click)="fetchUserInfo(0)" gaEvent="login_sleeper_username" gaCategory="platform_login">Sign In
+        </button>
+      </div>
+      <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 0">
+        <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
+          class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
+        </div>
+        <br>
+        <div class="mat-form-field-center">
+          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+            <mat-label>Select a league</mat-label>
+            <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)" [disabled]="leagueService.leagueStatus === 'LOADING'">
+              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
+                          [value]="league">{{league.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="sleeperLoginMethod === 'sleeper_league_id'">
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+        <mat-label>Sleeper League Id</mat-label>
+        <input matInput type="text" [(ngModel)]="sleeperLeagueIdInput">
+        <button mat-button *ngIf="sleeperLeagueIdInput" matSuffix mat-icon-button aria-label="Clear" (click)="sleeperLeagueIdInput=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <button mat-raised-button [disabled]="!sleeperLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
+                color="accent" (click)="loginWithSleeperLeagueId()"gaEvent="login_sleeper_league_id" gaCategory="platform_login">Sign In
+        </button>
+      </div>
+    </div>
+    <div *ngIf="(sleeperLoginMethod === 'sleeper_league_id' && !leagueService.selectedLeague) || (sleeperLoginMethod === 'sleeper_username' && !leagueService.leagueUser && !leagueService.selectedLeague)">
+      <div class="mid-bold-text margin-top-25 margin-bot-25">OR</div>
+      <button mat-raised-button
+              color="accent" (click)="loginWithDemo()">Try a Demo
+      </button>
+    </div>
+    </div>
+</ng-template>
+
+<!-- MyFantasyLeague (MFL) Login Component -->
+<ng-template #mflTemplate>
+  <div style="overflow: hidden !important;">
+    <br>
+    <div class="margin-bot-20 center-text">
+      <span class="mid-bold-text">MyFantasyLeague <span class="warning__alert small-text__light">Beta</span></span>
+      <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 1">
+        <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
+      </span>
+    </div>
+    <div>
+      <mat-radio-group [(ngModel)]="mflLoginMethod" class="mat-dropdown-wide-200">
+        <mat-radio-button value="mfl_username" style="padding-right: 10px">Username</mat-radio-button>
+        <mat-radio-button value="mfl_league_id">League Id</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div *ngIf="mflLoginMethod === 'mfl_username'">
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+        <mat-label>MFL Username</mat-label>
+        <input matInput type="text" [(ngModel)]="mflUsernameInput">
+        <button mat-button *ngIf="mflUsernameInput" matSuffix mat-icon-button aria-label="Clear" (click)="mflUsernameInput=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <mat-form-field class="mat-dropdown-wide-200" color="accent">
+          <mat-label>MFL Password</mat-label>
+          <input matInput type="password" [(ngModel)]="mflPasswordInput">
+          <button mat-button *ngIf="mflPasswordInput" matSuffix mat-icon-button aria-label="Clear" (click)="mflPasswordInput=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button [disabled]="!mflUsernameInput || !mflPasswordInput"
+                color="accent" (click)="fetchUserInfo(1)" gaEvent="login_mfl_username" gaCategory="platform_login">Sign In
+        </button>
+        <div class="margin-top-10 small-text__light">
+          We do not store any personal data, it is only passed to the MFL to retrieve data.
+        </div>
+      </div>
+      <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 1">
+        <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
+          class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
+        </div>
+        <br>
+        <div class="mat-form-field-center">
+          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+            <mat-label>Select a league</mat-label>
+            <mat-select [(ngModel)]="mflLeagueIdInput" (selectionChange)="loginWithMFLLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
+              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
+                          [value]="league.leagueId">{{league.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="mflLoginMethod === 'mfl_league_id'">
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+        <mat-label>MFL League Id</mat-label>
+        <input matInput type="text" [(ngModel)]="mflLeagueIdInput">
+        <button mat-button *ngIf="mflLeagueIdInput" matSuffix mat-icon-button aria-label="Clear" (click)="mflLeagueIdInput=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Select a year</mat-label>
+          <mat-select [(ngModel)]="selectedYear">
+            <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button [disabled]="!mflLeagueIdInput"
+                color="accent" (click)="loginWithMFLLeagueId()" gaEvent="login_mfl_league_id" gaCategory="platform_login">Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Fleaflicker Login Component -->
+<ng-template #fleaflickerTemplate>
+  <div style="overflow: hidden !important;">
+    <br>
+      <div class="margin-bot-20 center-text">
+        <span class="mid-bold-text">Fleaflicker <span class="warning__alert small-text__light">Beta</span></span>
+        <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 2">
+          <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
+        </span>
+      </div>
+    <div>
+      <mat-radio-group [(ngModel)]="fleaflickerLoginMethod" class="mat-dropdown-wide-200">
+        <mat-radio-button value="fleaflicker_email" style="padding-right: 10px">Email</mat-radio-button>
+        <mat-radio-button value="fleaflicker_league_id">League Id</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div *ngIf="fleaflickerLoginMethod === 'fleaflicker_email'">
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+        <mat-label>Fleaflicker Email</mat-label>
+        <input matInput type="text" [(ngModel)]="fleaflickerEmail">
+        <button mat-button *ngIf="fleaflickerEmail" matSuffix mat-icon-button aria-label="Clear" (click)="fleaflickerEmail=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Select a year</mat-label>
+          <mat-select [(ngModel)]="selectedYear">
+            <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button [disabled]="!fleaflickerEmail"
+                color="accent" (click)="fetchUserInfo(2)" gaEvent="login_ff_email" gaCategory="platform_login">Sign In
+        </button>
+      </div>
+      <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 2">
+        <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
+          class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
+        </div>
+        <br>
+        <div class="mat-form-field-center">
+          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+            <mat-label>Select a league</mat-label>
+            <mat-select [(ngModel)]="fleaflickerLeagueIdInput" (selectionChange)="loginWithFleaflickerLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
+              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
+                          [value]="league.leagueId">{{league.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="fleaflickerLoginMethod=== 'fleaflicker_league_id'">
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+        <mat-label>Fleaflicker League Id</mat-label>
+        <input matInput type="text" [(ngModel)]="fleaflickerLeagueIdInput">
+        <button mat-button *ngIf="fleaflickerLeagueIdInput" matSuffix mat-icon-button aria-label="Clear" (click)="fleaflickerLeagueIdInput=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Select a year</mat-label>
+          <mat-select [(ngModel)]="selectedYear">
+            <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button [disabled]="!fleaflickerLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
+                color="accent" (click)="loginWithFleaflickerLeagueId()" gaEvent="login_ff_league_id" gaCategory="platform_login">Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- ESPN Login Component -->
+<ng-template #espnTemplate>
+  <div style="overflow: hidden !important;">
+    <br>
+      <div class="margin-bot-20 center-text">
+        <span class="mid-bold-text">ESPN <span class="warning__alert small-text__light">Beta</span></span>
+        <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 3">
+          <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
+        </span>
+      </div>
+    <div *ngIf="espnLoginMethod=== 'espn_league_id'">
+      <mat-form-field class="mat-dropdown-wide-200" color="accent">
+        <mat-label>ESPN League Id</mat-label>
+        <input matInput type="text" [(ngModel)]="espnLeagueId">
+        <button mat-button *ngIf="espnLeagueId" matSuffix mat-icon-button aria-label="Clear" (click)="espnLeagueId=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Select a year</mat-label>
+          <mat-select [(ngModel)]="selectedYear">
+            <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button [disabled]="!espnLeagueId || usernameInput === leagueService.selectedLeague?.leagueId"
+                color="accent" (click)="loginWithESPNLeagueId()" gaEvent="login_espn_league_id" gaCategory="platform_login">Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- FFPC Login Template -->
+<ng-template #ffpcTemplate>
+  <div style="overflow: hidden !important;">
+    <br>
+    <div class="margin-bot-20 center-text">
+      <span class="mid-bold-text">FFPC <span class="warning__alert small-text__light">Beta</span></span>
+      <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 4">
+        <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
+      </span>
+    </div>
+    <div>
+      <mat-radio-group [(ngModel)]="ffpcLoginMethod" class="mat-dropdown-wide-200">
+        <mat-radio-button value="ffpc_email" style="padding-right: 10px">Email</mat-radio-button>
+        <mat-radio-button value="ffpc_league_id">League Id</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div *ngIf="ffpcLoginMethod === 'ffpc_email'">
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+        <mat-label>FFPC Email</mat-label>
+        <input matInput type="text" [(ngModel)]="ffpcEmail">
+        <button mat-button *ngIf="ffpcEmail" matSuffix mat-icon-button aria-label="Clear" (click)="ffpcEmail=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Select a year</mat-label>
+          <mat-select [(ngModel)]="selectedYear">
+            <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button [disabled]="!ffpcLoginMethod"
+                color="accent" (click)="fetchUserInfo(4)" gaEvent="login_ffpc_email" gaCategory="platform_login">Sign In
+        </button>
+      </div>
+      <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 4">
+        <div><span *ngIf="leagueService.leagueUser.userData.username !== 'undefined'">Hello <span class="warning__alert">{{leagueService.leagueUser?.userData.username}}</span>!</span> We found <span
+          class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to this account in <span class="warning__alert">{{leagueService.selectedYear}}</span>.
+        </div>
+        <br>
+        <div class="mat-form-field-center">
+          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
+            <mat-label>Select a league</mat-label>
+            <mat-select [(ngModel)]="ffpcLeagueId" (selectionChange)="loginWithFFPCLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
+              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
+                          [value]="league.leagueId">{{league.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="ffpcLoginMethod === 'ffpc_league_id'">
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+        <mat-label>FFPC League Id</mat-label>
+        <input matInput type="text" [(ngModel)]="ffpcLeagueId">
+        <button mat-button *ngIf="ffpcLeagueId" matSuffix mat-icon-button aria-label="Clear" (click)="ffpcLeagueId=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Select a year</mat-label>
+          <mat-select [(ngModel)]="selectedYear">
+            <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button [disabled]="!ffpcLeagueId || usernameInput === leagueService.selectedLeague?.leagueId"
+                color="accent" (click)="loginWithFFPCLeagueId()" gaEvent="login_ffpc_league_id" gaCategory="platform_login">Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

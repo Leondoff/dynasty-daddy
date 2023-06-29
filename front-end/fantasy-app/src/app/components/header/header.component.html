@@ -11,7 +11,7 @@
     <button mat-icon-button (click)="toggle()">
       <mat-icon>menu</mat-icon>
     </button>
-    <span style="cursor: pointer" (click)="toggle()">{{configService.isMobile && leagueService.leagueUser?.leagues.length ? 'DD' : 'Dynasty Daddy'}}</span>
+    <span style="cursor: pointer" (click)="toggle()"><img class="header-img" src="https://i.ibb.co/1TV6bnw/favicon.png" alt="DD" title="Dynasty Daddy"><span style="padding-left: 10px">{{configService.isMobile && leagueService.leagueUser?.leagues.length ? '' : 'Dynasty Daddy'}}</span></span>
     <span class="spacer"></span>
     <ng-container *ngIf="!configService.isMobile">
       <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League"

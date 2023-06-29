@@ -12,11 +12,13 @@ import { MflService } from '../../services/api/mfl/mfl.service';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
 import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
 import { ESPNService } from 'src/app/services/api/espn/espn.service';
+import { FFPCService } from 'src/app/services/api/ffpc/ffpc.service';
+import { DisplayService } from 'src/app/services/utilities/display.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent extends BaseComponent implements OnInit, AfterViewInit {
 
@@ -68,13 +70,24 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   /** ESPN league id string */
   espnLeagueId: string = '';
 
+  /** FFPC login method */
+  ffpcLoginMethod: string = 'ffpc_email';
+
+  /** FFPC league id string */
+  ffpcLeagueId: string = '';
+
+  /** FFPC email string */
+  ffpcEmail: string = '';
+
   constructor(private sleeperApiService: SleeperApiService,
     public leagueService: LeagueService,
     private playersService: PlayerService,
+    private displayService: DisplayService,
     public configService: ConfigService,
     private route: ActivatedRoute,
     private mflService: MflService,
     private espnService: ESPNService,
+    private ffpcService: FFPCService,
     private dialog: MatDialog,
     private fleaflickerService: FleaflickerService,
     public leagueSwitchService: LeagueSwitchService) {
@@ -122,6 +135,9 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         case LeaguePlatform.FLEAFLICKER:
           this.fleaflickerLeagueIdInput = this.leagueService.selectedLeague.leagueId;
           break;
+        case LeaguePlatform.FFPC:
+          this.ffpcLeagueId = this.leagueService.selectedLeague.leagueId;
+          break;
         default:
           this.sleeperLeagueIdInput = this.leagueService.selectedLeague.leagueId;
       }
@@ -129,6 +145,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     this.usernameInput = localStorage.getItem(LocalStorageDictionary.SLEEPER_USERNAME_ITEM) || '';
     this.fleaflickerEmail = localStorage.getItem(LocalStorageDictionary.FF_USERNAME_ITEM) || '';
     this.mflUsernameInput = localStorage.getItem(LocalStorageDictionary.MFL_USERNAME_ITEM) || '';
+    this.ffpcEmail = localStorage.getItem(LocalStorageDictionary.FFPC_USERNAME_ITEM) || '';
   }
 
   ngAfterViewInit(): void {
@@ -138,6 +155,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   /**
    * Wraps refresh call to twitter for pulling timeline
    */
+
   loadTwitterTimeline(): void {
     this.dynastyDaddySocials = 'twitter';
     (<any>window)?.twttr?.widgets?.load();
@@ -164,6 +182,11 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         this.leagueService.loadNewUser$(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
         localStorage.setItem(LocalStorageDictionary.FF_USERNAME_ITEM, this.fleaflickerEmail)
         break;
+      case LeaguePlatform.FFPC:
+        this.ffpcLeagueId = '';
+        this.leagueService.loadNewUser$(this.ffpcEmail, this.selectedYear, LeaguePlatform.FFPC);
+        localStorage.setItem(LocalStorageDictionary.FFPC_USERNAME_ITEM, this.ffpcEmail)
+        break;
       default:
         console.error(`${platform} is not a supported platform for user login.`)
     }
@@ -177,6 +200,17 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    */
   loginWithESPNLeagueId(year?: string, leagueId?: string): void {
     this.espnService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.espnLeagueId).subscribe(leagueData => {
+      this.leagueSwitchService.loadLeague(leagueData);
+    });
+  }
+
+  /**
+   * loads ffpc data for user
+   * @param year season
+   * @param leagueId ffpc league id
+   */
+  loginWithFFPCLeagueId(year?: string, leagueId?: string): void {
+    this.ffpcService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.ffpcLeagueId).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(leagueData);
     });
   }
@@ -223,6 +257,9 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         break;
       case LeaguePlatform.FLEAFLICKER:
         this.loginWithFleaflickerLeagueId((Number(this.selectedYear) - 1).toString(), this.leagueService.selectedLeague.prevLeagueId);
+        break;
+      case LeaguePlatform.FFPC:
+        this.loginWithFFPCLeagueId((Number(this.selectedYear) - 1).toString(), this.leagueService.selectedLeague.prevLeagueId);
         break;
       default:
         this.loginWithSleeperLeagueId(this.leagueService.selectedLeague.prevLeagueId)
@@ -292,9 +329,21 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         return 'Fleaflicker';
       case LeaguePlatform.SLEEPER:
         return 'Sleeper';
+      case LeaguePlatform.FFPC:
+        return 'FFPC';
       default:
         return 'League';
     }
+  }
+
+  /** mat menu for mobile doesn't update without wrapper function */
+  getSelectedImage(): string {
+    return this.displayService.getImageForPlatform(Number(this.selectedTab));
+  }
+
+  /** mat menu for mobile doesn't update without wrapper function */
+  getSelectedPlatformName(): string {
+    return this.displayService.getDisplayNameForPlatform(Number(this.selectedTab));
   }
 
   /**

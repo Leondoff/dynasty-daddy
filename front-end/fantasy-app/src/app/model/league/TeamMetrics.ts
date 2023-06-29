@@ -3,15 +3,15 @@ export class TeamMetrics {
   constructor() {
   }
 
-  wins: number;
-  waiverPosition: number;
-  rank: number;
-  ppts: number;
-  losses: number;
-  ties: number;
-  fptsAgainst: number;
-  fpts: number;
-  division: number;
+  wins: number = 0;
+  waiverPosition: number = 0;
+  rank: number = 0;
+  ppts: number = 0;
+  losses: number = 0;
+  ties: number = 0;
+  fptsAgainst: number = 0;
+  fpts: number = 0;
+  division: number = 0;
 
   fromSleeper(settings: any): TeamMetrics {
     this.wins = settings?.wins || 0;
@@ -54,6 +54,15 @@ export class TeamMetrics {
     this.wins = Number(settings.recordOverall?.wins || 0);
     this.losses = Number(settings.recordOverall?.losses || 0);
     this.rank = Number(settings.recordOverall?.rank || 0);
+    return this;
+  }
+
+  fromFFPC(settings: any): TeamMetrics {
+    this.division = Number(settings?.divisionId || 0);
+    this.fpts = Number(settings?.points || 0);
+    this.wins = Number(settings?.wins || 0);
+    this.losses = Number(settings?.losses || 0);
+    this.rank = Number(settings?.rank || 0);
     return this;
   }
 }

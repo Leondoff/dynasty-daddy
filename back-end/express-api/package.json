@@ -22,7 +22,8 @@
     "express": "~4.18.2",
     "http-errors": "~2.0.0",
     "morgan": "~1.9.1",
-    "pg": "^8.9.0"
+    "pg": "^8.9.0",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",

@@ -30,9 +30,9 @@ export const LocalStorageDictionary = {
   PORTFOLIO_MFL_USER_ID_ITEM: 'portfolioMFLUserId',
   SLEEPER_USERNAME_ITEM: 'sleeper_username',
   MFL_USERNAME_ITEM: 'mfl_username',
-  FF_USERNAME_ITEM:'ff_username'
+  FF_USERNAME_ITEM:'ff_username',
+  FFPC_USERNAME_ITEM: 'ffpc_username'
 } as const;
-
 
 @Injectable({
   providedIn: 'root'

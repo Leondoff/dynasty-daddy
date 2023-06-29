@@ -1,6 +1,6 @@
 import { SleeperApiService } from '../../services/api/sleeper/sleeper-api.service';
 import { LeagueService } from '../../services/league.service';
-import { PowerRankingsService } from './power-rankings.service';
+import { PowerRankingsService, PowerRankingTableView } from './power-rankings.service';
 import { PlayerService } from '../../services/player.service';
 import { DraftService } from './draft.service';
 import { MatchupService } from './matchup.service';
@@ -15,10 +15,11 @@ import { TradeService } from './trade.service';
 import { TradeFinderService } from './trade-finder.service';
 import { MflService } from '../../services/api/mfl/mfl.service';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
-import { LeagueDTO } from '../../model/league/LeagueDTO';
+import { LeagueDTO, LeagueType } from '../../model/league/LeagueDTO';
 import { PlayerValueService } from './player-value.service';
 import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
 import { ESPNService } from 'src/app/services/api/espn/espn.service';
+import { FFPCService } from 'src/app/services/api/ffpc/ffpc.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,7 @@ export class LeagueSwitchService extends BaseComponent {
     private mockDraftService: DraftService,
     private matchupService: MatchupService,
     private nflService: NflService,
+    private ffpcService: FFPCService,
     private espnService: ESPNService,
     private playoffCalculatorService: PlayoffCalculatorService,
     private tradeFinderService: TradeFinderService,
@@ -155,6 +157,8 @@ export class LeagueSwitchService extends BaseComponent {
         return this.fleaflickerService.loadLeagueFromId$(year, leagueId);
       case LeaguePlatform.ESPN.valueOf():
         return this.espnService.loadLeagueFromId$(year, leagueId);
+      case LeaguePlatform.FFPC.valueOf():
+        return this.ffpcService.loadLeagueFromId$(year, leagueId);
       default:
         return this.sleeperApiService.getSleeperLeagueByLeagueId(leagueId);
     }

@@ -11,5 +11,6 @@ export enum LeaguePlatform {
   SLEEPER,
   MFL,
   FLEAFLICKER,
-  ESPN
+  ESPN,
+  FFPC
 }

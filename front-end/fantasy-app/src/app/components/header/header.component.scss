@@ -13,3 +13,9 @@ a {
 .header-info {
   background-color: mat.get-color-from-palette($mat-accent, darker);
 }
+
+.header-img {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+}

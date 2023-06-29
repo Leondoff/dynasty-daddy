@@ -10,6 +10,7 @@ export class LeagueDTO {
   totalRosters: number;
   rosterPositions: string[] = [];
   rosterSize: number = 0;
+  starters: number = 0;
   prevLeagueId: string;
   divisionNames: string[] = [];
   divisions: number;
@@ -184,6 +185,38 @@ export class LeagueDTO {
     this.leaguePlatform = LeaguePlatform.ESPN;
     return this;
   }
+
+  fromFFPC(name: string,
+    leagueId: string,
+    rosterSize: number,
+    leagueType: LeagueType,
+    totalRosters: number,
+    starters: number,
+    rosterPositions: string[],
+    status: string,
+    isSuperflex: boolean,
+    season: string
+    ): LeagueDTO {
+      this.name = name;
+      this.leagueId = leagueId;
+      this.rosterSize = rosterSize;
+      this.totalRosters = totalRosters;
+      this.type = leagueType;
+      this.starters = starters;
+      this.rosterPositions = rosterPositions;
+      this.status = status;
+      this.isSuperflex = isSuperflex;
+      this.leaguePlatform = LeaguePlatform.FFPC;
+      this.season = season;
+      // TODO These values we do not have a way to determine currently
+      this.playoffStartWeek = 15;
+      this.playoffTeams = 6;
+      this.medianWins = false;
+      this.playoffRoundType = 1;
+      this.startWeek = 1;
+      this.draftRounds = 5;
+      return this;
+    }
 
   /**
    * Set the division and division length for a league

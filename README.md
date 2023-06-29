@@ -2,7 +2,7 @@
 
 *This project is currently in Beta and is deployed to https://dynasty-daddy.com.*
 
-Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes fantasy market (KeepTradeCut, FantasyCalc, DynastyProcess) player evaluations to create metrics on each owner's fantasy league (Sleeper, MFL, Fleaflicker, ESPN).
+Dynasty Daddy is a webapp that integrates with fantasy platform apis and scrapes fantasy market (KeepTradeCut, FantasyCalc, DynastyProcess, DynastySuperflex) player evaluations to create metrics on each owner's fantasy league (Sleeper, MFL, Fleaflicker, ESPN, FFPC).
 
 ## Goal
 
@@ -10,31 +10,31 @@ The goal is to provide users with a frictionless way to see player value, team v
 
 ### Supported Platforms
 
-| Tool | <img src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw" alt="Sleeper" title="Sleeper" width="50px"> | <img src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif" alt="MyFantasyLeague" title="MyFantasyLeague" width="50px"/> | <img src="https://d1h60c43tcq0zx.cloudfront.net/static/images/icons/apple-touch-icon-f3d0ad2586e334ad16152ed2ea83733c.png" alt="Fleaflicker" title="Fleaflicker" width="50px"/> | <img src="https://espnpressroom.com/us/files/2018/03/App-Icon-iOS-mic-flag-cut-to-shape.png" alt="ESPN" title="ESPN" width="50px"/> |
+| Tool | <img src="https://play-lh.googleusercontent.com/Ox2yWLWnOTu8x2ZWVQuuf0VqK_27kEqDMnI91fO6-1HHkvZ24wTYCZRbVZfRdx3DXn4=w480-h960-rw" alt="Sleeper" title="Sleeper" width="50px"> | <img src="http://myfantasyleague.com/images/mfl_logo/updates/new_mfl_logo_80x80.gif" alt="MyFantasyLeague" title="MyFantasyLeague" width="50px"/> | <img src="https://d1h60c43tcq0zx.cloudfront.net/static/images/icons/apple-touch-icon-f3d0ad2586e334ad16152ed2ea83733c.png" alt="Fleaflicker" title="Fleaflicker" width="50px"/> | <img src="https://espnpressroom.com/us/files/2018/03/App-Icon-iOS-mic-flag-cut-to-shape.png" alt="ESPN" title="ESPN" width="50px"/> | <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/28/c1/ba/28c1baf1-b1b1-f3c1-e5fe-185b41eff3b9/AppIcon-1x_U007emarketing-0-7-85-220.png/492x0w.webp" alt="FFPC" title="FFPC" width="50px"/> |
 | --- | --- | --- | --- | --- |
-| Power Rankings | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Playoff Calculator | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Trade Finder | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Standings | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Trade Calculator | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Player Values | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Player Comparison | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Positional Statistics | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Team Pages | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Player Pages | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Mock Draft Tool | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
-| Draft Recap | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Portfolio | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
-| Username Login | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
-| League Id Login | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Transactions | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
-| Future Draft Capital | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
-| Wrapped | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Automated Id Mapping | &#x2714; | &#x2714; | &#x274C; | &#x274C; |
+| Power Rankings | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Playoff Calculator | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Trade Finder | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Standings | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Trade Calculator | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Player Values | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Player Comparison | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Positional Statistics | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Team Pages | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Player Pages | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Mock Draft Tool | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x2714; |
+| Draft Recap | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Portfolio | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x274C; |
+| Username Login | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x2714; |
+| League Id Login | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Transactions | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x274C; |
+| Future Draft Capital | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x2714; |
+| Wrapped | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Automated Id Mapping | &#x2714; | &#x2714; | &#x274C; | &#x274C; | &#x274C; |
 
 ## Architecture
 
-Dynasty Daddy's front end is an angular 14 web application with an node express api connected to a postgres database. This database is populated using a python cron job that scrapes KeepTradeCut & FantasyCalc player rankings once a day. For Sleeper & MFL's data, we use their public apis found in their documentation.
+Dynasty Daddy's front end is an angular 14 web application with an node express api connected to a postgres database. This database is populated using a python cron job that scrapes fantasy trade values & player rankings once a day. For the fantasy platform's data, we use their public apis found in their documentation.
 
 ## How to run locally
 
@@ -70,7 +70,7 @@ First, clone repo and open up in your preferred IDE.
 - Better draft predictor based on team needs
 - More team analytics
 - Better responsive/mobile experience
-- More value calculations
+- More Fantasy Markets
 
 ## Packages
 

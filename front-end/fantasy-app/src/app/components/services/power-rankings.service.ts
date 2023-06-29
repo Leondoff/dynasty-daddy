@@ -172,15 +172,11 @@ export class PowerRankingsService {
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
           team.futureDraftCapital.map(pick => {
             for (const pickValue of pickValues) {
-              let matchFound = false;
               const pickRanges = { EARLY: 'Early', MID: 'Mid', LATE: 'Late' }
               if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year
                 && (pick.pick <= earlyPickThreshold && pickValue.last_name.includes(pickRanges.EARLY) ||
                   pick.pick >= latePickThreshold && pickValue.last_name.includes(pickRanges.LATE) ||
                   pick.pick > earlyPickThreshold && pick.pick < latePickThreshold && pickValue.last_name.includes(pickRanges.MID))) {
-                matchFound = true;
-              }
-              if (matchFound) {
                 sfPickTradeValue += pickValue.sf_trade_value;
                 pickTradeValue += pickValue.trade_value;
                 sfTradeValueTotal += pickValue.sf_trade_value;

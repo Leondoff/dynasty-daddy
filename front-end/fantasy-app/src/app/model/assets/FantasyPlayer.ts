@@ -9,6 +9,7 @@ export class FantasyPlayer {
   ff_id: string;
   espn_id: string;
   yahoo_id: string;
+  ffpc_id: string;
   full_name: string;
   first_name: string;
   last_name: string;
@@ -63,6 +64,8 @@ export class FantasyPlayer {
         return this.ff_id;
       case LeaguePlatform.ESPN: 
         return this.espn_id;
+      case LeaguePlatform.FFPC:
+        return this.ffpc_id;
       default:
         return this.sleeper_id;
     }

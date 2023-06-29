@@ -30,6 +30,7 @@ import {
   GetMFLLeaguesForUserEndpoint,
   PostMFLWaiverEndpoint,
 } from '../controllers';
+import { GetFFPCDraftEndpoint, GetFFPCLeagueEndpoint, GetFFPCLeagueTransactionsEndpoint, GetFFPCRostersEndpoint, GetFFPCScheduleEndpoint, GetFFPCStandingsEndpoint, GetFFPCUserLeaguesEndpoint } from '../controllers/ffpc_wrapper_controller';
 
 const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
@@ -67,5 +68,14 @@ indexRouter.get('/ff/draftResults', GetFFDraftEndpoint);
 indexRouter.get('/ff/futureDraftPicks', GetFFTeamDraftPicksEndpoint);
 indexRouter.get('/ff/trades', GetFFTradesEndpoint);
 indexRouter.get('/ff/user', GetUserLeaguesEndpoint);
+
+// FFPC Wrapper Endpoints
+indexRouter.get('/ffpc/league', GetFFPCLeagueEndpoint);
+indexRouter.get('/ffpc/rosters', GetFFPCRostersEndpoint);
+indexRouter.get('/ffpc/transactions', GetFFPCLeagueTransactionsEndpoint);
+indexRouter.get('/ffpc/schedule', GetFFPCScheduleEndpoint);
+indexRouter.get('/ffpc/leagueStandings', GetFFPCStandingsEndpoint);
+indexRouter.get('/ffpc/draftResults', GetFFPCDraftEndpoint);
+indexRouter.get('/ffpc/user', GetFFPCUserLeaguesEndpoint);
 
 export default indexRouter;

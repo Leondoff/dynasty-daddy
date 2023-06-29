@@ -20,6 +20,7 @@ import { FleaflickerService } from './api/fleaflicker/fleaflicker.service';
 import { LeagueTeamMatchUpDTO } from '../model/league/LeagueTeamMatchUpDTO';
 import { NflService } from './utilities/nfl.service';
 import { ESPNService } from './api/espn/espn.service';
+import { FFPCService } from './api/ffpc/ffpc.service';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +58,7 @@ export class LeagueService {
     private mflApiService: MflApiService,
     private nflService: NflService,
     private espnService: ESPNService,
+    private ffpcService: FFPCService,
     private fleaflickerService: FleaflickerService,
     private mflService: MflService) {
   }
@@ -94,6 +96,12 @@ export class LeagueService {
         return this.espnService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
           this.setServiceFromLeagueWrapper(league);
           this.platformPlayersMap = this.espnService.playerIdMap;
+          return of(league);
+        }));
+      case LeaguePlatform.FFPC:
+        return this.ffpcService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {
+          this.setServiceFromLeagueWrapper(league);
+          this.platformPlayersMap = this.ffpcService.playerIdMap;
           return of(league);
         }));
       default:
@@ -148,6 +156,13 @@ export class LeagueService {
         }
         case LeaguePlatform.MFL: {
           this.mflService.loadMFLUser$(username, password, year).subscribe(leagueUser => {
+            this.leagueUser = leagueUser;
+            return of(leagueUser);
+          });
+          break
+        }
+        case LeaguePlatform.FFPC: {
+          this.ffpcService.loadFFPCUser$(username, year).subscribe(leagueUser => {
             this.leagueUser = leagueUser;
             return of(leagueUser);
           });
@@ -382,6 +397,9 @@ export class LeagueService {
         break;
       case LeaguePlatform.ESPN:
         window.open('https://fantasy.espn.com/football/team?leagueId=' + selectedLeagueId + '&seasonId=' + leagueYear, '_blank');
+        break;
+      case LeaguePlatform.FFPC:
+        window.open('https://myffpc.com/account/Login.aspx', '_blank');
         break;
       default:
         console.error('Unsupported League Platform', selectedPlatform);

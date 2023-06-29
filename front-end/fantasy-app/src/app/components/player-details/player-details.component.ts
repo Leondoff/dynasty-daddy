@@ -35,6 +35,9 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
   /** Player Profile updated date */
   profileUpdatedDate: string = '';
 
+  /** is superflex toggle for when league isn't selected */
+  isSuperflex: boolean = true;
+
   /** name id url param for player to load */
   NAME_ID_URL_PARAM: string = 'playerNameId';
 
