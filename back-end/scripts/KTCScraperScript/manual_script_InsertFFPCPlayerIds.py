@@ -51,12 +51,14 @@ def updateFFPCPlayerIds(leagueId = '10471'):
     freeAgentPlayers = processXMLPlayers(waiver_xml)
 
     player_data = rosteredPlayers + freeAgentPlayers
+    iter = 0
     for player in player_data:
         playerIdsStatement = ''' UPDATE player_ids
                     SET
                     ffpc_id = %s,
                     updated_at = now() where name_id = %s'''
         cursor.execute(playerIdsStatement, (player['ffpcId'], player['nameId']))
+        print('(' + str(iter) + '/' + str(len(player_data)) + ') ' + player['nameId'] + ' processed ')
     conn.commit()
 
 updateFFPCPlayerIds()

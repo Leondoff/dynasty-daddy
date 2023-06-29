@@ -20,7 +20,7 @@ def updateESPNPlayerIds():
 
     # Creating a cursor object using the cursor() method
     cursor = conn.cursor()
-    
+    iter = 0
     for player in players.json()[0]['players']:
         if player['player']['defaultPositionId'] in espnPosMap.keys():
             playerId = PlayerService.cleanPlayerIdString(player['player']['fullName'] + espnPosMap[player['player']['defaultPositionId']])
@@ -30,6 +30,8 @@ def updateESPNPlayerIds():
                     espn_id = %s,
                     updated_at = now() where name_id = %s'''
             cursor.execute(playerIdsStatement, (espn_id, playerId))
+            print('(' + str(iter) + '/' + str(len(players.json()[0]['players'])) + ') ' + playerId + ' processed ')
+
     conn.commit()
 
 updateESPNPlayerIds()

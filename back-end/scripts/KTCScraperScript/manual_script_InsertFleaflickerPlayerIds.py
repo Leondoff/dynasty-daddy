@@ -17,7 +17,7 @@ def fetchFromFleaFlickerCsv():
 
         # Creating a cursor object using the cursor() method
         cursor = conn.cursor()
-
+        iter = 0
         for row in csvreader:
             playerId = PlayerService.cleanPlayerIdString(row[3] + row[4])
             fleaflicker_id = row[2]
@@ -26,6 +26,7 @@ def fetchFromFleaFlickerCsv():
                         ff_id = %s,
                         updated_at = now() where name_id = %s'''
             cursor.execute(playerIdsStatement, (fleaflicker_id, playerId))
+            print('(' + str(iter) + '/' + str(len(csvreader)) + ') ' + playerId + ' processed ')
         
         # update the materialized view for the player ids   
         cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')
