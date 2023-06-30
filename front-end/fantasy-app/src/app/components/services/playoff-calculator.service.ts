@@ -694,36 +694,48 @@ export class PlayoffCalculatorService {
    * @private
    */
   private simulatePlayoffs(playoffTeams: SimulatedTeamInfo[], numOfBye: number): void {
-
-    // remove teams with byes
-    const divRdTeams = playoffTeams.slice(numOfBye);
-
-    // simulate round and back bye week teams
-    const confRdTeams = playoffTeams.slice(0, numOfBye).concat(this.simulateRoundOfPlayoffs(divRdTeams));
-
-    // assign wins for conference
-    for (const team of confRdTeams) {
-      this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeConfRd =
-        (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeConfRd || 0) + 1;
+    // generate teams that advance each round
+    const rounds = [];
+    let teamsLeft = playoffTeams
+    while(teamsLeft.length > 1) {
+      // if first rd process byes
+      if (teamsLeft.length === playoffTeams.length) {
+        teamsLeft = playoffTeams.slice(0, numOfBye).concat(this.simulateRoundOfPlayoffs(teamsLeft.slice(numOfBye)))
+      } else {
+        teamsLeft = this.simulateRoundOfPlayoffs(teamsLeft)
+      }
+      rounds.push(teamsLeft)
     }
 
-    // simulate championship teams
-    const championshipTeams = this.simulateRoundOfPlayoffs(confRdTeams);
-
-    // assign championships to teams
-    for (const team of championshipTeams) {
-      this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeChampionship =
-        (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeChampionship || 0) + 1;
-    }
-
-    // simulate championship game
-    const winChampionship = this.simulateRoundOfPlayoffs(championshipTeams);
-
-    // assign championship
-    for (const team of winChampionship) {
-      this.teamPlayoffOdds[team.team.roster.rosterId].timesWinChampionship =
-        (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinChampionship || 0) + 1;
-    }
+    // award points for how far teams made
+    rounds.reverse().forEach((teams, ind) => {
+      switch(ind) {
+        case 0: {
+          for (const team of teams) {
+            this.teamPlayoffOdds[team.team.roster.rosterId].timesWinChampionship =
+              (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesWinChampionship || 0) + 1;
+          }
+          break;
+        }
+        case 1: {
+          for (const team of teams) {
+            this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeChampionship =
+              (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeChampionship || 0) + 1;
+          }
+          break;
+        }
+        case 2: {
+          for (const team of teams) {
+            this.teamPlayoffOdds[team.team.roster.rosterId].timesMakeConfRd =
+              (this.teamPlayoffOdds[team.team.roster.rosterId]?.timesMakeConfRd || 0) + 1;
+          }
+          break;
+        }
+        default: {
+          // do nothing but might want to add another round
+        }
+      }
+    });
   }
 
   /**
@@ -743,7 +755,8 @@ export class PlayoffCalculatorService {
     this.teamPlayoffOdds[bestTeam.team.roster.rosterId].timesWithBestRecord += 1;
 
     // determine number of bye weeks
-    const numOfByeWeeks = this.leagueService.selectedLeague.playoffTeams % 4;
+    const numOfByeWeeks = this.leagueService.selectedLeague.playoffTeams % 2 === 0 ?
+      this.leagueService.selectedLeague.playoffTeams % 4 : this.leagueService.selectedLeague.playoffTeams % 2;
 
     // number of spots available
     let numOfPlayoffSpotsLeft = this.leagueService.selectedLeague.playoffTeams;
