@@ -1,0 +1,35 @@
+@import "../../../styles.scss";
+
+.top-left-cell {
+  text-align-last: center;
+  width: clamp(20px, 12vw, 180px);;
+  height: clamp(20px, 12vw, 200px);;
+}
+
+.team-grid-img {
+  text-align-last: center;
+  width: clamp(20px, 12vw, 180px);;
+  height: clamp(20px, 12vw, 200px);;
+}
+
+.player-grid-img {
+  text-align-last: center;
+  width: clamp(20px, 12vw, 180px);;
+  // height: clamp(20px, 12vw, 180px);;
+}
+
+.middle-cell {
+  width: clamp(20px, 12vw, 180px);
+  height: clamp(20px, 12vw, 200px);;
+  background-color: $dark-bg-lighter-10;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.middle-cell:hover {
+  background-color: $dark-bg-lighter-30;
+  cursor: pointer;
+}

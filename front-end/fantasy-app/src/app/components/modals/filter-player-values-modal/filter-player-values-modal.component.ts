@@ -1,6 +1,4 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { PlayerService } from '../../../services/player.service';
-import { FantasyPlayer } from '../../../model/assets/FantasyPlayer';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { LeagueService } from '../../../services/league.service';
 import { ConfigService } from '../../../services/init/config.service';

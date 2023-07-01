@@ -8,6 +8,7 @@ from PlayerService import cleanPlayerIdString
 from FantasyCalcService import fetchSuperFlexPlayerDict, fetchStandardPlayerDict
 from DynastyProcessService import fetchDynastyProcessPlayerValues
 from DynastySuperflexService import fetchDynastySuperflexPlayerValues
+from PlayerGridService import SetNewPlayerGrid
 
 # API calls to sleeper
 players = Players()
@@ -312,3 +313,6 @@ try:
     conn.close()
 except Exception as error:
     print("ERROR IN CONNECTION", error)
+
+# load daily puzzle
+SetNewPlayerGrid()

@@ -144,3 +144,26 @@ UPDATE
 CREATE TRIGGER player_info_updated_at BEFORE
 UPDATE
     ON player_info FOR EACH ROW EXECUTE PROCEDURE trigger_get_current_timestamp();
+
+-- player gamelogs table
+CREATE TABLE player_gamelogs (
+  season INTEGER NOT NULL,
+  week INTEGER NOT NULL,
+  gamelog_json jsonb,
+  PRIMARY KEY (season, week)
+);
+
+-- player grid for NFL gridiron data
+CREATE TABLE player_grid (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    jersey_numbers TEXT[],
+    teams TEXT[],
+    headshot_url VARCHAR(255),
+    pos VARCHAR(5),
+    college VARCHAR(100),
+    sleeper_id VARCHAR(10),
+    awards_json jsonb
+);
+
+create index player_grid_uindex on player_grid (name);

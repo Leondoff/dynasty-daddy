@@ -5,6 +5,7 @@ import { ConfigOption } from '../../model/config/ConfigOption';
 import { ConfigApiService } from '../api/config/config-api.service';
 import { BaseComponent } from '../../components/base-component.abstract';
 import { DisplayService } from '../utilities/display.service';
+import { Subject } from 'rxjs';
 
 /**
  * dictionary of constant config value keys
@@ -48,6 +49,8 @@ export class ConfigService extends BaseComponent {
   private _headerInfoURL: string = '';
 
   private _preferredCreators: PreferredCreatorSlide[] = [];
+
+  configValuesLoaded$: Subject<void> = new Subject<void>();
 
   /** config options list for application */
   configOptions: ConfigOption[] = [];
@@ -93,7 +96,7 @@ export class ConfigService extends BaseComponent {
       this._headerInfoText = this.getConfigOptionByKey(ConfigKeyDictionary.HEADER_INFO_TEXT)?.configValue;
       this._headerInfoURL = this.getConfigOptionByKey(ConfigKeyDictionary.HEADER_INFO_URL)?.configValue;
       this._preferredCreators = this.formatPreferredCreators();
-      
+      this.configValuesLoaded$.next();
     }
     ));
   }
@@ -102,8 +105,8 @@ export class ConfigService extends BaseComponent {
    * format preferred creators and return them randomized
    */
   formatPreferredCreators(): PreferredCreatorSlide[] {
-    const rawCreators = JSON.parse(this.getConfigOptionByKey(ConfigKeyDictionary.PREFERRED_CREATORS).configValue);
-    return [...this.displayService.shuffle(rawCreators.slice(0, rawCreators.length - 1)), ...[rawCreators[rawCreators.length - 1]]];
+    const rawCreators = JSON.parse(this.getConfigOptionByKey(ConfigKeyDictionary.PREFERRED_CREATORS)?.configValue) || [];
+    return [...this.displayService.shuffle(rawCreators?.slice(0, rawCreators.length - 1)), ...[rawCreators[rawCreators.length - 1]]];
   }
 
   /**
