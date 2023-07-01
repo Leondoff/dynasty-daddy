@@ -34,6 +34,10 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             this.gridGameService.status = Status.DONE;
             this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey('daily_grid')?.configValue)
         })
+        if (this.configService.getConfigOptionByKey('daily_grid')?.configValue) {
+            this.gridGameService.status = Status.DONE;
+            this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey('daily_grid')?.configValue)
+        }
     }
 
     getTeamImg(teamAcc: string): string {
