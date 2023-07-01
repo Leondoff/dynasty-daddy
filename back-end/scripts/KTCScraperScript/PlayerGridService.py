@@ -1,6 +1,7 @@
 
 import random
 import json
+import os
 import psycopg2
 
 SupportedTypes = ['team']
