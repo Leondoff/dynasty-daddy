@@ -59,7 +59,7 @@
           (error)="image.hidden = true" [hidden]="image.hidden" style="width: 20px;">{{team.owner.teamName | truncate: 20}}</a>
     </mat-nav-list>
 </mat-expansion-panel>
-  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="false" *ngIf="searchVal == ''">
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="false" *ngIf="searchVal == '' && playerService.playerValues.length > 0">
     <mat-expansion-panel-header>
       Trending Players
     </mat-expansion-panel-header>
@@ -83,6 +83,8 @@
         <span class="player-item-left">{{player.position}} • {{player.first_name.substring(0,1)}}. {{player.last_name}}</span><span class="player-item-right">{{this.isSuperflex ? player.sf_trade_value: player.trade_value}}</span></a>
   </mat-nav-list>
 </mat-expansion-panel>
+<a mat-list-item [routerLink]="['./gridiron']" *ngIf="searchVal == '' || isInSearch('NFL Gridiron')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_gridiron" gaCategory="page_nav">
+  <mat-icon>grid_view</mat-icon>NFL Gridiron</a>
   <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent"></mat-progress-bar>
   </mat-list-item>
@@ -98,8 +100,6 @@
   <mat-list-item *ngIf="searchVal == '' || isInSearch('Roster Review')" (click)="openUrl()" gaEvent="click_roster_review" gaCategory="nav_sponsor">
     <mat-icon>paid</mat-icon><span> Roster Review</span>
   </mat-list-item>
-  <!-- <a mat-list-item [routerLink]="['./gridiron']" *ngIf="searchVal == '' || isInSearch('NFL Gridiron')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_gridiron" gaCategory="page_nav">
-    <mat-icon>grid_view</mat-icon>NFL Gridiron</a> -->
   <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="searchVal != '' ? true : false" *ngIf="filteredCreators.length > 0">
     <mat-expansion-panel-header>
         Preferred Creators
