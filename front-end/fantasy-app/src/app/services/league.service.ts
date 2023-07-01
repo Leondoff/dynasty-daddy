@@ -107,6 +107,7 @@ export class LeagueService {
       default:
         return this.sleeperService.loadLeague$(new LeagueWrapper(this.selectedLeague)).pipe(map((league) => {
           this.setServiceFromLeagueWrapper(league);
+          console.log(this.selectedLeague.scoringSettings);
           this.sleeperApiService.fetchAllSleeperPlayers().subscribe((players) => {
             this.platformPlayersMap = players;
             return of(league);

@@ -98,6 +98,8 @@
   <mat-list-item *ngIf="searchVal == '' || isInSearch('Roster Review')" (click)="openUrl()" gaEvent="click_roster_review" gaCategory="nav_sponsor">
     <mat-icon>paid</mat-icon><span> Roster Review</span>
   </mat-list-item>
+  <!-- <a mat-list-item [routerLink]="['./gridiron']" *ngIf="searchVal == '' || isInSearch('NFL Gridiron')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_gridiron" gaCategory="page_nav">
+    <mat-icon>grid_view</mat-icon>NFL Gridiron</a> -->
   <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="searchVal != '' ? true : false" *ngIf="filteredCreators.length > 0">
     <mat-expansion-panel-header>
         Preferred Creators

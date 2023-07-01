@@ -28,9 +28,19 @@ import {
   GetPlayerDetailsEndpoint,
   GetPlayerPortfolioEndpoint,
   GetMFLLeaguesForUserEndpoint,
+  GetWORPForLeague,
   PostMFLWaiverEndpoint,
 } from '../controllers';
-import { GetFFPCDraftEndpoint, GetFFPCLeagueEndpoint, GetFFPCLeagueTransactionsEndpoint, GetFFPCRostersEndpoint, GetFFPCScheduleEndpoint, GetFFPCStandingsEndpoint, GetFFPCUserLeaguesEndpoint } from '../controllers/ffpc_wrapper_controller';
+import {
+  GetFFPCDraftEndpoint,
+  GetFFPCLeagueEndpoint,
+  GetFFPCLeagueTransactionsEndpoint,
+  GetFFPCRostersEndpoint,
+  GetFFPCScheduleEndpoint,
+  GetFFPCStandingsEndpoint,
+  GetFFPCUserLeaguesEndpoint
+} from '../controllers/ffpc_wrapper_controller';
+import { FetchAllGridPlayersEndpoint, ValidateGridSelectionEndpoint } from '../controllers/gridController';
 
 const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
@@ -43,6 +53,9 @@ indexRouter.get('/player/:id', GetHistoricalPlayerValueByIdEndpoint);
 indexRouter.get('/player/details/:id', GetPlayerDetailsEndpoint);
 indexRouter.post('/portfolio', GetPlayerPortfolioEndpoint);
 indexRouter.get('/config/all', GetConfigValuesEndpoint);
+indexRouter.post('/worp', GetWORPForLeague);
+indexRouter.post('/grid/validate', ValidateGridSelectionEndpoint);
+indexRouter.get('/grid/players', FetchAllGridPlayersEndpoint);
 
 // MFL Wrapper Endpoints
 indexRouter.post('/mfl/league', GetMFLLeagueEndpoint);

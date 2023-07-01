@@ -156,4 +156,28 @@ export class FantasyPlayerApiService {
         return this.fantasyPortfolioCache;
       }));
   }
+
+  /**
+  * validate grid player is correct
+  * @param playerId player id for the grid game
+  * @param categories grid categories to evaluate on
+  */
+  validateGridGameSelectedPlayer(playerId: number, categories: any[]): Observable<{ isValid: boolean, img: string }> {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this.http.post<{ isValid: boolean, img: string }>(this.fantasyPlayerApiConfigService.validateSelectedPlayerEndpoint, { playerId, categories }, { headers: headers })
+      .pipe(map(res => {
+        return res;
+      }));
+  }
+
+  /**
+  * return all players in grid game based on search
+  * @param search string to search on
+  */
+  getGridGamePlayersFromSearch(search: String): Observable<{ playerId: boolean, name: string, pos: string }[]> {
+    return this.http.get<{ playerId: boolean, name: string, pos: string }[]>(this.fantasyPlayerApiConfigService.getGridPlayersEndpoint + `?search=${search}`)
+      .pipe(map(res => {
+        return res;
+      }));
+  }
 }

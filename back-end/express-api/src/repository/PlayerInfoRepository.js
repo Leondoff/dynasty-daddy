@@ -73,7 +73,8 @@ export const GetCurrentPlayerValues = async () => {
 export const GetHistoricalPlayerValuesDatapoint = async (id, isAllTime) => {
   // updated where to include all time data if specified
   const sqlClause = isAllTime === 'false' ? ` WHERE pv.name_id = '${id}' AND pv.created_at::date >= now()::date - 180` : ` WHERE pv.name_id = '${id}'`;
-  const data = await playersModel.selectQuery(`
+  const data = await playersModel.selectQuery(
+    `
   SELECT
       player_info.name_id    as name_id,
       player_info.full_name  as full_name,
@@ -92,7 +93,7 @@ export const GetHistoricalPlayerValuesDatapoint = async (id, isAllTime) => {
       player_info
   LEFT JOIN
       player_values pv on player_info.name_id = pv.name_id`,
-  sqlClause
+    sqlClause
   );
   return data;
 };
@@ -102,7 +103,8 @@ export const GetHistoricalPlayerValuesDatapoint = async (id, isAllTime) => {
  * @param {*} intervalDays number of days in the past
  */
 export const GetHistoricalPlayerValuesDatapointByDays = async (intervalDays) => {
-  const data = await playersModel.selectQuery(`
+  const data = await playersModel.selectQuery(
+    `
   SELECT
       player_info.name_id    as name_id,
       player_info.full_name  as full_name,
@@ -121,7 +123,7 @@ export const GetHistoricalPlayerValuesDatapointByDays = async (intervalDays) => 
       player_info
   LEFT JOIN
       player_values pv on player_info.name_id = pv.name_id`,
-  ` WHERE pv.created_at::date = now()::date - ${intervalDays} order by pv.sf_trade_value desc `
+    ` WHERE pv.created_at::date = now()::date - ${intervalDays} order by pv.sf_trade_value desc `
   );
   return data;
 };
@@ -224,6 +226,25 @@ export const GetFantasyPortfolioForInterval = async (intervalDays, playerList) =
         AND created_at::date >= current_date - interval '${intervalDays} days'
     GROUP BY
         name_id
+    `);
+  return data;
+};
+
+export const GetPlayersInfoWithIds = async () => {
+  const data = await playersModel.selectQuery(`
+  SELECT
+      mp.name_id,
+      mp.sleeper_id,
+      mp.mfl_id,
+      mp.ff_id,
+      mp.espn_id,
+      mp.yahoo_id,
+      pi.position
+  FROM
+      player_ids mp
+  INNER JOIN
+      player_info pi ON pi.name_id = mp.name_id
+  WHERE pi.position != 'PI';
     `);
   return data;
 };

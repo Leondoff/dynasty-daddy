@@ -114,6 +114,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FilterPortfolioModalComponent } from './components/modals/filter-portfolio-modal/filter-portfolio-modal.component';
 import { TradeCenterPlayerValuesComponent } from './components/trade-center/trade-center-player-values/trade-center-player-values.component';
 import { ConfirmationDialogModal } from './components/modals/confirmation-dialog/confirmation-dialog.component';
+import { SearchGridPlayerModal } from './components/modals/search-grid-player-modal/search-grid-player-modal.component';
+import { GridGameComponent } from './components/grid-game/grid-game.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -164,6 +166,7 @@ let UniversalDeviceDetectorService;
     FilterPortfolioModalComponent,
     WeeklyMedianChartComponent,
     TeamTransactionsChartComponent,
+    GridGameComponent,
     HighLightSearchPipe,
     HighLightSearchPipe,
     TradeCenterComponent,
@@ -194,6 +197,7 @@ let UniversalDeviceDetectorService;
     FantasyPortfolioTableComponent,
     FantasyPortfolioChartComponent,
     LeagueLoginModalComponent,
+    SearchGridPlayerModal,
     ConfirmationDialogModal,
     TruncatePipe,
   ],

@@ -1,0 +1,36 @@
+<div class="margin-top-10 large-bold-header-text center-text">NFL Gridiron</div>
+<div class="center-text margin-top-10">
+    Test your NFL player knowledge with NFL Gridiron. Similar to the popular game immaculate grid, you must guess player who meet the two criteria that intersect on the grid. Player data is from 1999-2022 and a new puzzle is created every day at 8:00 AM EST.
+  </div>
+
+<div *ngIf="gridGameService.status === 1"class="margin-top-25">
+    <table>
+        <tbody>
+            <ng-container *ngFor="let row of gridGameService.gridResults; let i = index">
+                <tr>
+                    <td *ngFor="let col of row; let j = index" (click)="j !== 0 && i !== 0 && !gridGameService.gridResults[j][i] && gridGameService.guessesLeft > 0 ? openPlayerSearch(j-1, i-1) : ''" [ngStyle]="gridGameService.gridResults[j][i] ? {'background-color': '#008f51'} : {}"
+                        [ngClass]="{'top-left-cell': i === 0 || j === 0, 'middle-cell': i > 0 && j > 0}">
+                        <div *ngIf="i === 0 && j !== 0">
+                            <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1]?.value)" class="team-grid-img">
+                        </div>
+                        <div *ngIf="j === 0 && i !== 0">
+                            <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1]?.value)" class="team-grid-img">
+                        </div>
+                        <div *ngIf="j !== 0 && i !== 0" style="text-align-last: center;">
+                            <img [src]="gridGameService.gridResults[j][i]" class="player-grid-img" *ngIf="gridGameService.gridResults[j][i]">
+                        </div>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+
+    <div class="margin-top-25 center-text">
+        <div class="light_bg_color">Guesses Left:</div>
+        <div class="large-bold-header-text">{{gridGameService.guessesLeft}}</div>
+    </div>
+</div>
+
+<div class="center-spinner margin-top-120" *ngIf="gridGameService.status === 0">
+    <mat-spinner></mat-spinner>
+</div>
