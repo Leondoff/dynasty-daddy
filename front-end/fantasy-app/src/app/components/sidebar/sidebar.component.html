@@ -84,7 +84,7 @@
   </mat-nav-list>
 </mat-expansion-panel>
 <a mat-list-item [routerLink]="['./gridiron']" *ngIf="searchVal == '' || isInSearch('NFL Gridiron')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_gridiron" gaCategory="page_nav">
-  <mat-icon>grid_view</mat-icon>NFL Gridiron</a>
+  <mat-icon>grid_view</mat-icon>NFL Immaculate Gridiron</a>
   <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent"></mat-progress-bar>
   </mat-list-item>
