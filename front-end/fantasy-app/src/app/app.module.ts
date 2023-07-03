@@ -116,6 +116,7 @@ import { TradeCenterPlayerValuesComponent } from './components/trade-center/trad
 import { ConfirmationDialogModal } from './components/modals/confirmation-dialog/confirmation-dialog.component';
 import { SearchGridPlayerModal } from './components/modals/search-grid-player-modal/search-grid-player-modal.component';
 import { GridGameComponent } from './components/grid-game/grid-game.component';
+import { GridResultModalComponent } from './components/modals/grid-result-modal/grid-result-modal.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -176,6 +177,7 @@ let UniversalDeviceDetectorService;
     TeamTiersChartComponent,
     EloTeamComparisonModalComponent,
     SidebarComponent,
+    GridResultModalComponent,
     EditLeagueSettingsModalComponent,
     FilterPlayerValuesModalComponent,
     FantasyMarketDropdown,

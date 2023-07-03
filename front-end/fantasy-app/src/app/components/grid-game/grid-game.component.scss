@@ -12,12 +12,6 @@
   height: clamp(20px, 12vw, 200px);;
 }
 
-.player-grid-img {
-  text-align-last: center;
-  width: clamp(20px, 12vw, 180px);;
-  // height: clamp(20px, 12vw, 180px);;
-}
-
 .middle-cell {
   width: clamp(20px, 12vw, 180px);
   height: clamp(20px, 12vw, 200px);;
@@ -32,4 +26,23 @@
 .middle-cell:hover {
   background-color: $dark-bg-lighter-30;
   cursor: pointer;
+}
+
+.player-name-text {
+  z-index: 100;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: -20px;
+}
+
+.player-name-text-mobile {
+  z-index: 100;
+  font-size: 8px;
+  margin-top: -10px;
+}
+
+.player-grid-img {
+  text-align-last: center;
+  width: clamp(20px, 12vw, 180px);;
+  // height: clamp(20px, 12vw, 180px);;
 }

@@ -16,8 +16,9 @@
                         <div *ngIf="j === 0 && i !== 0">
                             <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1]?.value)" class="team-grid-img">
                         </div>
-                        <div *ngIf="j !== 0 && i !== 0" style="text-align-last: center;">
-                            <img [src]="gridGameService.gridResults[j][i]" class="player-grid-img" *ngIf="gridGameService.gridResults[j][i]">
+                        <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">
+                            <img [src]="gridGameService.gridResults[j][i].img" class="player-grid-img">
+                            <div [ngClass]="{'player-name-text-mobile': configService.isMobile, 'player-name-text': !configService.isMobile}" class="center-text">{{gridGameService.gridResults[j][i]?.name}}</div>
                         </div>
                     </td>
                 </tr>
