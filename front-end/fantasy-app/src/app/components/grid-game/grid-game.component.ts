@@ -19,7 +19,9 @@ export class GridGameComponent extends BaseComponent implements OnInit {
 
     teamImgURL = 'https://a.espncdn.com/i/teamlogos/nfl/500/TEAM_ACC.png';
 
-    constructor(private configService: ConfigService,
+    collegeImgURL = 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/TEAM_ACC.png'
+
+    constructor(public configService: ConfigService,
         private leagueService: LeagueService,
         private dialog: MatDialog,
         public gridGameService: GridGameService) {
@@ -56,14 +58,20 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
             this.gridGameService.guessesLeft = gridCache.guesses;
             this.gridGameService.gridResults = gridCache.results;
+            this.gridGameService.alreadyUsedPlayers = gridCache.alreadyUsedPlayers;
         } else {
             localStorage.removeItem(LocalStorageDictionary.GRIDIRON_ITEM)
         }
         this.gridGameService.status = Status.DONE;
     } 
 
-    getTeamImg(teamAcc: string): string {
-        return this.teamImgURL.replace(this.TEAM_ACC_PLACEHOLDER, teamAcc)
+    getTeamImg(row: any): string {
+        switch(row.type) {
+            case 'college':
+                return this.collegeImgURL.replace(this.TEAM_ACC_PLACEHOLDER, this.gridGameService.collegeLogoMap[row?.value])
+            default:
+                return this.teamImgURL.replace(this.TEAM_ACC_PLACEHOLDER, row?.value)
+        }
     }
 
     openPlayerSearch(x: number, y: number): void {
