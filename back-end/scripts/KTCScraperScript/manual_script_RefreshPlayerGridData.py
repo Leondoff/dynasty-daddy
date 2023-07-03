@@ -23,33 +23,32 @@ TeamACCException = {
 
 def refreshPlayerGridTable():
     playerMap = {}
-    with open('C:\\Users\\Jeremy\\Desktop\\test.csv', 'r') as file:
+    with open('C:\\Users\\Jeremy\\Desktop\\roster_all_years.csv', 'r') as file:
         csvreader = csv.reader(file)
 
         for row in csvreader:
-            if row[3] not in ['depth_chart_position']:
-                if row[13] not in playerMap:
-                    playerMap[row[13]] = {}
-                playerMap[row[13]]['name'] = row[6]
-                if 'jerseyNumbers' not in playerMap[row[13]]:
-                    playerMap[row[13]]['jerseyNumbers'] = []
-                playerMap[row[13]]['jerseyNumbers'].append(row[4])
-                playerMap[row[13]]['jerseyNumbers'] = list(
-                    set(playerMap[row[13]]['jerseyNumbers']))
-                if 'teams' not in playerMap[row[13]]:
-                    playerMap[row[13]]['teams'] = []
-                playerMap[row[13]]['teams'].append(
-                    row[1] if row[1] not in TeamACCException else TeamACCException[row[1]]
+            if row[6] not in ['gsis_id']:
+                if row[6] not in playerMap:
+                    playerMap[row[6]] = {}
+                playerMap[row[6]]['name'] = row[2]
+                if 'jerseyNumbers' not in playerMap[row[6]]:
+                    playerMap[row[6]]['jerseyNumbers'] = []
+                playerMap[row[6]]['jerseyNumbers'].append(row[8])
+                playerMap[row[6]]['jerseyNumbers'] = list(
+                    set(playerMap[row[6]]['jerseyNumbers']))
+                if 'teams' not in playerMap[row[6]]:
+                    playerMap[row[6]]['teams'] = []
+                playerMap[row[6]]['teams'].append(
+                    row[3] if row[3] not in TeamACCException else TeamACCException[row[3]]
                 )
-                playerMap[row[13]]['teams'] = list(
-                    set(playerMap[row[13]]['teams']))
-                playerMap[row[13]]['headshot_url'] = row[23]
-                playerMap[row[13]]['pos'] = row[2] if row[3] == 'NA' else row[3]
-                playerMap[row[13]
-                          ]['college'] = None if row[12] == 'NA' else row[12]
-                playerMap[row[13]
-                          ]['sleeperId'] = None if row[21] == 'NA' else row[21]
-                playerMap[row[13]]['awards'] = None
+                playerMap[row[6]]['teams'] = list(
+                    set(playerMap[row[6]]['teams']))
+                if 'headshot_url' not in playerMap[row[6]] or playerMap[row[6]]['headshot_url'] is None:
+                    playerMap[row[6]]['headshot_url'] = row[7]
+                playerMap[row[6]]['pos'] = row[4] if row[5] == 'NA' else row[5]
+                playerMap[row[6]]['college'] = None if row[11] == 'NA' else row[11]
+                playerMap[row[6]]['sleeperId'] = None if row[9] == 'NA' else row[9]
+                playerMap[row[6]]['awards'] = None
 
     with open('C:\\Users\\Jeremy\\Documents\\Development\\dynasty-daddy\\back-end\\scripts\\resources\\nflAwards.csv', 'r') as awards:
         awardsReader = csv.reader(awards)

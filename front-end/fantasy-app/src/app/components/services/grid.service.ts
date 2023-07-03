@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Status } from "../model/status";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { Subject } from "rxjs";
+import { LocalStorageDictionary } from "src/app/services/init/config.service";
 
 @Injectable({
   providedIn: 'root'
@@ -33,8 +34,9 @@ export class GridGameService {
         if (res.isValid) {
           const x = coords[0] + 1;
           const y = coords[1] + 1;
-          this.gridResults[x][y] = {name, img: res.img};
+          this.gridResults[x][y] = { name, img: res.img };
         }
+        localStorage.setItem(LocalStorageDictionary.GRIDIRON_ITEM, JSON.stringify({ grid: this.gridDict, guesses: this.guessesLeft, results: this.gridResults }))
         this.validateGridSelection$.next();
       });
   }
