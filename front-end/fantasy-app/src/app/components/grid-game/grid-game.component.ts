@@ -6,6 +6,7 @@ import { LeagueService } from "src/app/services/league.service";
 import { GridGameService } from "../services/grid.service";
 import { MatDialog } from "@angular/material/dialog";
 import { SearchGridPlayerModal } from "../modals/search-grid-player-modal/search-grid-player-modal.component";
+import { GridResultModalComponent } from "../modals/grid-result-modal/grid-result-modal.component";
 
 @Component({
     selector: 'grid-game',
@@ -30,10 +31,21 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             this.gridGameService.status = Status.LOADING;
             this.leagueService.leagueStatus = 'NONE';
         }
-        this.configService.configValuesLoaded$.subscribe(_ => {
-            this.gridGameService.status = Status.DONE;
-            this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey('daily_grid')?.configValue)
-        })
+        this.addSubscriptions(
+            this.configService.configValuesLoaded$.subscribe(_ => {
+                this.gridGameService.status = Status.DONE;
+                this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey('daily_grid')?.configValue)
+            }),
+            this.gridGameService.validateGridSelection$.subscribe(_ => {
+                if (this.gridGameService.guessesLeft === 0) {
+                    this.dialog.open(GridResultModalComponent
+                        , {
+                            minHeight: '350px',
+                            minWidth: this.configService.isMobile ? '200px' : '500px'
+                        }
+                    );
+                }
+            }));
         if (this.configService.getConfigOptionByKey('daily_grid')?.configValue) {
             this.gridGameService.status = Status.DONE;
             this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey('daily_grid')?.configValue)

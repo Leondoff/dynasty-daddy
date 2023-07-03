@@ -37,8 +37,8 @@ export class SearchGridPlayerModal implements OnInit {
         });
     }
 
-    selectPlayer(playerId: number): void {
-        this.gridGameService.isSelectedPlayerCorrect(playerId, this.data.coords);
+    selectPlayer(player: any): void {
+        this.gridGameService.isSelectedPlayerCorrect(player.name, player.id, this.data.coords);
         this.close();
     }
 

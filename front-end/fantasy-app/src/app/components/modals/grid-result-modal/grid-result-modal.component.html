@@ -1,0 +1,31 @@
+<div class="center-text">
+    <span class="large-bold-header-text">Results</span>
+      <span class="button-right">
+        <button mat-icon-button color="accent" class="button-right" (click)="close()"><mat-icon>close</mat-icon></button>
+      </span>
+</div>
+
+<div class="margin-top-50">
+    <table>
+        <tbody>
+            <ng-container *ngFor="let row of resultGrid; let i = index">
+                <tr>
+                    <td *ngFor="let col of row; let j = index" class="result-grid" [ngStyle]="resultGrid[j][i] ? {'background-color': '#008f51'} : {'background-color': '#1d1d28'}">
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>
+
+<div class="center-text light_bg_color margin-top-25">
+    Score
+</div>
+<div class="center-text large-bold-header-text">
+    {{score}}
+</div>
+
+
+<div class="margin-top-25 center-text">
+    <button mat-raised-button color="accent" (click)="copyResults()">Copy Results</button>
+</div>

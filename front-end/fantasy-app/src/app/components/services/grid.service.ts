@@ -25,7 +25,7 @@ export class GridGameService {
 
   constructor(private fantasyPlayersAPIService: FantasyPlayerApiService) { }
 
-  isSelectedPlayerCorrect(playerId: number, coords: number[]): void {
+  isSelectedPlayerCorrect(name: string, playerId: number, coords: number[]): void {
     this.fantasyPlayersAPIService
       .validateGridGameSelectedPlayer(playerId, [this.gridDict['xAxis'][coords[0]], this.gridDict['yAxis'][coords[1]]])
       .subscribe(res => {
@@ -33,9 +33,9 @@ export class GridGameService {
         if (res.isValid) {
           const x = coords[0] + 1;
           const y = coords[1] + 1;
-          this.gridResults[x][y] = res.img;
+          this.gridResults[x][y] = {name, img: res.img};
         }
-        this.validateGridSelection$;
+        this.validateGridSelection$.next();
       });
   }
 }
