@@ -31,11 +31,12 @@ def SetNewPlayerGrid():
     
     cursor.execute('SELECT * FROM player_grid;')
     rows = cursor.fetchall()
-    
-    while True:
+    iter = 0
+    while True and iter < 100:
         selectedTeams = random.sample(SupportedTeams, 6)
         formattedGrid = [{"type": "team", "value": value} for value in selectedTeams]
-        if (random.choice([True, False])):
+        # Y axis wild card
+        if (random.choice([True])):
             selectedWildcard = random.choice(SupportedTypes)
             if selectedWildcard is 'college':
                 selectedCollege = random.choice(SupportedColleges)
@@ -45,6 +46,7 @@ def SetNewPlayerGrid():
                 formattedGrid[5] = {"type": "jersey_number", "value": selectedNumber}
         xAxis = formattedGrid[0:3]
         yAxis = formattedGrid[3:6]
+        iter = iter + 1
         if ValidateActualSolutionExists(rows, xAxis, yAxis):
             break
     
@@ -63,17 +65,17 @@ def SetNewPlayerGrid():
 
 
 def ValidateActualSolutionExists(rows, xAxis, yAxis):
+    isComboValid = 0
     for x in xAxis:
         for y in yAxis:
-            isComboValid = False
             for row in rows:
                 yValue = getValueToValidate(row, y['type'])
                 xValue = getValueToValidate(row, x['type'])
                 if y['value'] in yValue and x['value'] in xValue:
-                    isComboValid = True
+                    isComboValid = isComboValid + 1
                     break
-        if isComboValid is False:
-            return False
+    if isComboValid < 9:
+        return False
     return True
 
 def getValueToValidate(row, type):
