@@ -11,10 +11,14 @@
                     <td *ngFor="let col of row; let j = index" (click)="j !== 0 && i !== 0 && !gridGameService.gridResults[j][i] && gridGameService.guessesLeft > 0 ? openPlayerSearch(j-1, i-1) : ''" [ngStyle]="gridGameService.gridResults[j][i] ? {'background-color': '#008f51'} : {}"
                         [ngClass]="{'top-left-cell': i === 0 || j === 0, 'middle-cell': i > 0 && j > 0}">
                         <div *ngIf="i === 0 && j !== 0">
-                            <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1]?.value)" class="team-grid-img">
+                            <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1])" class="team-grid-img">
                         </div>
                         <div *ngIf="j === 0 && i !== 0">
-                            <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1]?.value)" class="team-grid-img">
+                            <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type != 'jersey_number'">
+                            <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'jersey_number'">
+                                <div class="light_bg_color">{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
+                                <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{gridGameService.gridDict['yAxis'][i-1]?.value}}</div>
+                            </div>
                         </div>
                         <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">
                             <img [src]="gridGameService.gridResults[j][i].img" class="player-grid-img">
@@ -30,6 +34,25 @@
         <div class="light_bg_color">Guesses Left:</div>
         <div class="large-bold-header-text">{{gridGameService.guessesLeft}}</div>
     </div>
+
+    <div class="margin-top-50 center-text">
+        <div class="large-bold-header-text center-text margin-bot-20">
+          Additional Rules
+        </div>
+        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
+            You cannot use a player more than once. Once a player is locked in, they will be removed from the search results.
+        </div>
+        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
+            For NFL teams, our data has the team they finished the season on. For certain cases, players that were traded mid season after joining a new team might not be counted. I am working on covering that edge case. 
+        </div>
+        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
+            For college teams, it is the college the player was draft from. If they transferred from one school to another it would be the school they transferred to.
+        </div>
+        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
+            For jersey numbers, any jersey number they wore on any team works. It doesn't have to be the jersey number they use on the grid team.
+        </div>
+      </div>
+    
 </div>
 
 <div class="center-spinner margin-top-120" *ngIf="gridGameService.status === 0">

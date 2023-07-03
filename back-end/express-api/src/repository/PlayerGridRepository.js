@@ -11,13 +11,14 @@ export const GetPlayerForGrid = async (playerId) => {
   return data.rows[0];
 };
 
-export const GetAllPlayersInGrid = async (search) => {
+export const GetSearchPlayersInGrid = async (search) => {
+  const searchEscaped = search.replace('\'', '\'\'');
   const data = await playersModel.selectQuery(`
   SELECT
     id,
     name,
     pos
-  from player_grid WHERE name ILIKE '%${search}%' LIMIT 10;
+  from player_grid WHERE name ILIKE '%${searchEscaped}%' LIMIT 10;
 `);
   return data.rows;
 };

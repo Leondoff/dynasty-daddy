@@ -15,12 +15,35 @@ export class GridGameService {
 
   validateGridSelection$: Subject<string> = new Subject<string>();
 
+  alreadyUsedPlayers = [];
+
   gridResults: any[][] = [
     [null, null, null, null],
     [null, null, null, null],
     [null, null, null, null],
     [null, null, null, null]
   ];
+
+  collegeLogoMap = {
+    'Michigan': 130,
+    'Texas Christian': 2628,
+    'Georgia': 61,
+    'Ohio State': 194,
+    'Florida': 57,
+    'Alabama': 333,
+    'Southern California': 30,
+    'Louisiana State': 99,
+    'Clemson': 228,
+    'South Carolina': 2579,
+    'North Carolina State': 152,
+    'North Carolina': 153,
+    'Wisconsin': 275,
+    'Oregon': 2483,
+    'Florida State': 52,
+    'Texas': 251,
+    'Oklahoma': 201,
+    'Notre Dame': 87
+  }
 
   guessesLeft: number = 9;
 
@@ -35,8 +58,9 @@ export class GridGameService {
           const x = coords[0] + 1;
           const y = coords[1] + 1;
           this.gridResults[x][y] = { name, img: res.img };
+          this.alreadyUsedPlayers.push(playerId);
         }
-        localStorage.setItem(LocalStorageDictionary.GRIDIRON_ITEM, JSON.stringify({ grid: this.gridDict, guesses: this.guessesLeft, results: this.gridResults }))
+        localStorage.setItem(LocalStorageDictionary.GRIDIRON_ITEM, JSON.stringify({ grid: this.gridDict, guesses: this.guessesLeft, results: this.gridResults, alreadyUsedPlayers: this.alreadyUsedPlayers }))
         this.validateGridSelection$.next();
       });
   }
