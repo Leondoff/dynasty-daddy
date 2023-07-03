@@ -20,7 +20,8 @@ export const ConfigKeyDictionary = {
   PREFERRED_CREATORS: 'preferred_creators',
   SHOW_HEADER_INFO: 'show_header_info',
   HEADER_INFO_TEXT: 'header_info_text',
-  HEADER_INFO_URL: 'header_info_url'
+  HEADER_INFO_URL: 'header_info_url',
+  GRIDIRON_GRID: 'daily_grid'
 } as const;
 
 /**
@@ -32,7 +33,8 @@ export const LocalStorageDictionary = {
   SLEEPER_USERNAME_ITEM: 'sleeper_username',
   MFL_USERNAME_ITEM: 'mfl_username',
   FF_USERNAME_ITEM:'ff_username',
-  FFPC_USERNAME_ITEM: 'ffpc_username'
+  FFPC_USERNAME_ITEM: 'ffpc_username',
+  GRIDIRON_ITEM: 'gridiron'
 } as const;
 
 @Injectable({

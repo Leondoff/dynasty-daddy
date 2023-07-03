@@ -26,7 +26,7 @@ export class GridResultModalComponent implements OnInit {
         const targetDate = new Date(this.startDate);
         const currentDate = new Date();
         const timeDiff = currentDate.getTime() - targetDate.getTime();
-        this.puzzleNum = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        this.puzzleNum = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
         this.resultGrid = this.slice4x4To3x3(this.gridGameService.gridResults);
     }
 
@@ -43,14 +43,14 @@ export class GridResultModalComponent implements OnInit {
             const emojiRow = [];
             for (let i = 0; i < this.resultGrid.length; i++) {
                 if (this.resultGrid[i][j]) {
-                    emojiRow.push('green_square:')
+                    emojiRow.push('🟩')
                 } else {
-                    emojiRow.push('black_large_square:')
+                    emojiRow.push('⬛')
                 }
             }
-            emojis.push(':' + emojiRow.join(':'))
+            emojis.push(emojiRow.join(''))
         }
-        const resultStr = `Immaculate Gridiron ${this.puzzleNum}\n\n` + emojis.join('\n') + '\n\n:point_right: https://dynasty-daddy.com/gridiron';
+        const resultStr = `Immaculate Gridiron ${this.puzzleNum}\n\n` + emojis.join('\n') + '\n\n👉 https://dynasty-daddy.com/gridiron';
         this.clipboard.copy(resultStr);
     }
 
