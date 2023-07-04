@@ -174,8 +174,8 @@ export class FantasyPlayerApiService {
   * return all players in grid game based on search
   * @param search string to search on
   */
-  getGridGamePlayersFromSearch(search: String): Observable<{ id: boolean, name: string, pos: string, start_date: string, end_date: string }[]> {
-    return this.http.get<{ id: boolean, name: string, pos: string, start_date: string, end_date: string }[]>(this.fantasyPlayerApiConfigService.getGridPlayersEndpoint + `?search=${search}`)
+  getGridGamePlayersFromSearch(search: String): Observable<{ id: boolean, name: string, pos: string, start_year: string, end_year: string }[]> {
+    return this.http.get<{ id: boolean, name: string, pos: string, start_year: string, end_year: string }[]>(this.fantasyPlayerApiConfigService.getGridPlayersEndpoint + `?search=${search}`)
       .pipe(map(res => {
         return res;
       }));
