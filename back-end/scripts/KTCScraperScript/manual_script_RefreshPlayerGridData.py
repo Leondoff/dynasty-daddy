@@ -23,7 +23,7 @@ TeamACCException = {
 
 def refreshPlayerGridTable():
     playerMap = {}
-    with open('C:\\Users\\Jeremy\\Desktop\\roster_all_years.csv', 'r') as file:
+    with open('C:\\Users\\Jeremy\\Desktop\\test.csv', 'r') as file:
         csvreader = csv.reader(file)
 
         for row in csvreader:
@@ -48,7 +48,12 @@ def refreshPlayerGridTable():
                 playerMap[row[6]]['pos'] = row[4] if row[5] == 'NA' else row[5]
                 playerMap[row[6]]['college'] = None if row[11] == 'NA' else row[11]
                 playerMap[row[6]]['sleeperId'] = None if row[9] == 'NA' else row[9]
+                if 'end_year' not in playerMap[row[6]] or playerMap[row[6]]['end_year'] < row[1]:
+                    playerMap[row[6]]['end_year'] = row[1]
+                if 'start_year' not in playerMap[row[6]] or playerMap[row[6]]['start_year'] > row[1]:
+                    playerMap[row[6]]['start_year'] = row[1]
                 playerMap[row[6]]['awards'] = None
+                playerMap[row[6]]['stats'] = None
 
     with open('C:\\Users\\Jeremy\\Documents\\Development\\dynasty-daddy\\back-end\\scripts\\resources\\nflAwards.csv', 'r') as awards:
         awardsReader = csv.reader(awards)
@@ -58,6 +63,19 @@ def refreshPlayerGridTable():
                     'roty': row[2],
                     'mvp': row[3],
                     's_mvp': row[4]
+                }
+    
+    with open('C:\\Users\\Jeremy\\Desktop\\stats.csv', 'r') as statsFile:
+        stats = csv.reader(statsFile)
+        for row in stats:
+            if row[0] in playerMap:
+                playerMap[row[0]]['stats'] = {
+                    'rushYd1000': int(row[2]) > 999,
+                    'recYd1000': int(row[4]) > 999,
+                    'passYd4000': int(row[7]) > 3999,
+                    'rushTds10': int(row[3]) > 9,
+                    'recTds10': int(row[5]) > 9,
+                    'passingTds40': int(row[8]) > 39
                 }
 
         # Connect to local test database
@@ -76,14 +94,13 @@ def refreshPlayerGridTable():
         for _, value in playerMap.items():
             print('(' + str(iter) + '/' + str(len(playerMap)) + ') ' +
                   value['name'] + ' processed ')
-            playerGridStatement = '''INSERT INTO player_grid (name, jersey_numbers, teams, headshot_url, pos, sleeper_id, college, awards_json)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);'''
+            playerGridStatement = '''INSERT INTO player_grid (name, jersey_numbers, teams, headshot_url, pos, sleeper_id, college, awards_json, start_year, end_year, stats_json)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
             cursor.execute(playerGridStatement, (value['name'], value['jerseyNumbers'],
-                                                 value['teams'], value['headshot_url'], value['pos'], value['sleeperId'], value['college'], json.dumps(value['awards'], indent=4)))
+                                                 value['teams'], value['headshot_url'], value['pos'], value['sleeperId'], value['college'], json.dumps(value['awards'], indent=4), value['start_year'], value['end_year'], json.dumps(value['stats'], indent=4)))
             iter = iter + 1
 
     conn.commit()
 
 
 refreshPlayerGridTable()
-# update LeGarrette Blount and add PIT

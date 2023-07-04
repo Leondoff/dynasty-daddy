@@ -8,6 +8,7 @@
       </span>
 </div>
 
-<div *ngFor="let player of searchPlayers" style="min-height: 30px; line-height: 30px;" class="select-player" (click)="selectPlayer(player)">
+<div *ngFor="let player of searchPlayers" style="min-height: 40px;" class="select-player" (click)="selectPlayer(player)">
   {{player.name}} <span class="light_bg_color" style="padding-left: 5px;">{{player.pos}}</span>
+  <div class="light_bg_color">{{player.start_date}} - {{player.end_date == '2022' ? 'Present' : player.end_date}}</div>
 </div>

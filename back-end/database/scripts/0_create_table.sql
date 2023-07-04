@@ -163,7 +163,10 @@ CREATE TABLE player_grid (
     pos VARCHAR(5),
     college VARCHAR(100),
     sleeper_id VARCHAR(10),
-    awards_json jsonb
+    awards_json jsonb,
+    start_date VARCHAR(5),
+    end_date VARCHAR(5),
+    stats_json jsonb
 );
 
 create index player_grid_uindex on player_grid (name);
