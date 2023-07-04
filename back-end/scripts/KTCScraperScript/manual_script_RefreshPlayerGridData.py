@@ -53,7 +53,14 @@ def refreshPlayerGridTable():
                 if 'start_year' not in playerMap[row[6]] or playerMap[row[6]]['start_year'] > row[1]:
                     playerMap[row[6]]['start_year'] = row[1]
                 playerMap[row[6]]['awards'] = None
-                playerMap[row[6]]['stats'] = None
+                playerMap[row[6]]['stats'] = {
+                    'rushYd1000': False,
+                    'recYd1000':False,
+                    'passYd4000': False,
+                    'rushTds10': False,
+                    'recTds10': False,
+                    'passingTds40': False
+                }
 
     with open('C:\\Users\\Jeremy\\Documents\\Development\\dynasty-daddy\\back-end\\scripts\\resources\\nflAwards.csv', 'r') as awards:
         awardsReader = csv.reader(awards)
@@ -70,12 +77,12 @@ def refreshPlayerGridTable():
         for row in stats:
             if row[0] in playerMap:
                 playerMap[row[0]]['stats'] = {
-                    'rushYd1000': int(row[2]) > 999,
-                    'recYd1000': int(row[4]) > 999,
-                    'passYd4000': int(row[7]) > 3999,
-                    'rushTds10': int(row[3]) > 9,
-                    'recTds10': int(row[5]) > 9,
-                    'passingTds40': int(row[8]) > 39
+                    'rushYd1000': int(row[2]) > 999 or playerMap[row[0]]['stats']['rushYd1000'] is True,
+                    'recYd1000': int(row[4]) > 999 or playerMap[row[0]]['stats']['recYd1000'] is True,
+                    'passYd4000': int(row[7]) > 3999 or playerMap[row[0]]['stats']['passYd4000'] is True,
+                    'rushTds10': int(row[3]) > 9 or playerMap[row[0]]['stats']['rushTds10'] is True,
+                    'recTds10': int(row[5]) > 9 or playerMap[row[0]]['stats']['recTds10'] is True,
+                    'passingTds40': int(row[8]) > 39 or playerMap[row[0]]['stats']['passingTds40'] is True
                 }
 
         # Connect to local test database

@@ -10,7 +10,7 @@ SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NY
 
 SupportedColleges = ['Michigan', 'Texas Christian', 'Georgia', 'Ohio State', 'Florida', 'Alabama', 'Southern California', 'Louisiana State', 'Clemson', 'South Carolina', 'North Carolina State', 'North Carolina', 'Wisconsin', 'Oregon', 'Florida State', 'Texas', 'Oklahoma', 'Notre Dame']
 
-SupportedJerseyNumbers = ['12', '18', '89', '85', '26', '22', '27', '95', '97', '98', '91', '90', '23', '25', '2']
+SupportedJerseyNumbers = ['12', '18', '89', '85', '26', '22', '27', '95', '97', '98', '91', '90', '23', '25', '2', '35', '30', '38', '59', '69']
 
 def SetNewPlayerGrid():
     

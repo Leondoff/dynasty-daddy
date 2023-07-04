@@ -58,7 +58,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
             this.gridGameService.guessesLeft = gridCache.guesses;
             this.gridGameService.gridResults = gridCache.results;
-            this.gridGameService.alreadyUsedPlayers = gridCache.alreadyUsedPlayers;
+            this.gridGameService.alreadyUsedPlayers = gridCache.alreadyUsedPlayers || [];
         } else {
             localStorage.removeItem(LocalStorageDictionary.GRIDIRON_ITEM)
         }
