@@ -17,7 +17,9 @@ export const GetSearchPlayersInGrid = async (search) => {
   SELECT
     id,
     name,
-    pos
+    pos,
+    start_date,
+    end_date
   from player_grid WHERE name ILIKE '%${searchEscaped}%' LIMIT 10;
 `);
   return data.rows;
