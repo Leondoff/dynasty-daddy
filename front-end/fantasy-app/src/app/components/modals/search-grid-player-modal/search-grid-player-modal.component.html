@@ -1,7 +1,7 @@
 <div class="center-text">
     <mat-form-field color="accent" [ngStyle]="configService.isMobile ? {'width': '120px;'} : {'width': '200px;'}">
         <mat-label>Search Player</mat-label>
-        <input matInput [(ngModel)]="searchVal" (keyup)="filterPlayers()">
+        <input matInput [(ngModel)]="searchVal" (keyup)="searchSubject$.next(this.searchVal);">
       </mat-form-field>
       <span class="button-right">
         <button mat-icon-button color="accent" class="button-right" (click)="close()"><mat-icon>close</mat-icon></button>
