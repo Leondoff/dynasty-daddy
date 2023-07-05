@@ -44,22 +44,26 @@ def refreshPlayerGridTable():
                 playerMap[row[6]]['teams'] = list(
                     set(playerMap[row[6]]['teams']))
                 if 'headshot_url' not in playerMap[row[6]] or playerMap[row[6]]['headshot_url'] is None:
-                    playerMap[row[6]]['headshot_url'] = row[7]
+                    playerMap[row[6]]['headshot_url'] = row[7] if row[7] != 'NA' else 'https://static.www.nfl.com/image/private/f_auto,q_auto/league/y9boy7grhaidqmrckryz'
                 playerMap[row[6]]['pos'] = row[4] if row[5] == 'NA' else row[5]
-                playerMap[row[6]]['college'] = None if row[11] == 'NA' else row[11]
+                if 'college' not in playerMap[row[6]]:
+                    playerMap[row[6]]['college'] = None
+                if row[11] != 'NA':
+                    playerMap[row[6]]['college'] = row[11]
                 playerMap[row[6]]['sleeperId'] = None if row[9] == 'NA' else row[9]
                 if 'end_year' not in playerMap[row[6]] or playerMap[row[6]]['end_year'] < row[1]:
                     playerMap[row[6]]['end_year'] = row[1]
                 if 'start_year' not in playerMap[row[6]] or playerMap[row[6]]['start_year'] > row[1]:
                     playerMap[row[6]]['start_year'] = row[1]
-                playerMap[row[6]]['awards'] = None
+                playerMap[row[6]]['awards'] = {}
                 playerMap[row[6]]['stats'] = {
                     'rushYd1000': False,
                     'recYd1000':False,
                     'passYd4000': False,
                     'rushTds10': False,
                     'recTds10': False,
-                    'passingTds40': False
+                    'passingTds40': False,
+                    'ints10': False
                 }
 
     with open('C:\\Users\\Jeremy\\Documents\\Development\\dynasty-daddy\\back-end\\scripts\\resources\\nflAwards.csv', 'r') as awards:
@@ -82,7 +86,8 @@ def refreshPlayerGridTable():
                     'passYd4000': int(row[7]) > 3999 or playerMap[row[0]]['stats']['passYd4000'] is True,
                     'rushTds10': int(row[3]) > 9 or playerMap[row[0]]['stats']['rushTds10'] is True,
                     'recTds10': int(row[5]) > 9 or playerMap[row[0]]['stats']['recTds10'] is True,
-                    'passingTds40': int(row[8]) > 39 or playerMap[row[0]]['stats']['passingTds40'] is True
+                    'passingTds40': int(row[8]) > 39 or playerMap[row[0]]['stats']['passingTds40'] is True,
+                    'ints10': int(row[6]) > 9 or playerMap[row[0]]['stats']['ints10'] is True
                 }
 
         # Connect to local test database
@@ -98,13 +103,13 @@ def refreshPlayerGridTable():
         cursor.execute('TRUNCATE TABLE player_grid;')
 
         iter = 1
-        for _, value in playerMap.items():
+        for key, value in playerMap.items():
             print('(' + str(iter) + '/' + str(len(playerMap)) + ') ' +
                   value['name'] + ' processed ')
-            playerGridStatement = '''INSERT INTO player_grid (name, jersey_numbers, teams, headshot_url, pos, sleeper_id, college, awards_json, start_year, end_year, stats_json)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
+            playerGridStatement = '''INSERT INTO player_grid (name, jersey_numbers, teams, headshot_url, pos, sleeper_id, college, awards_json, start_year, end_year, stats_json, gsis_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
             cursor.execute(playerGridStatement, (value['name'], value['jerseyNumbers'],
-                                                 value['teams'], value['headshot_url'], value['pos'], value['sleeperId'], value['college'], json.dumps(value['awards'], indent=4), value['start_year'], value['end_year'], json.dumps(value['stats'], indent=4)))
+                                                 value['teams'], value['headshot_url'], value['pos'], value['sleeperId'], value['college'], json.dumps(value['awards'], indent=4), value['start_year'], value['end_year'], json.dumps(value['stats'], indent=4), key))
             iter = iter + 1
 
     conn.commit()

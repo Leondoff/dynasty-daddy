@@ -11,6 +11,7 @@
             <ng-container *ngFor="let row of resultGrid; let i = index">
                 <tr>
                     <td *ngFor="let col of row; let j = index" class="result-grid" [ngStyle]="resultGrid[j][i] ? {'background-color': '#008f51'} : {'background-color': '#1d1d28'}">
+                        <div *ngIf="toggleAnswers && !resultGrid[j][i]">{{getAnswerForLocation(j, i)}}</div>
                     </td>
                 </tr>
             </ng-container>
@@ -22,10 +23,15 @@
     Score
 </div>
 <div class="center-text large-bold-header-text">
-    {{score}}
+    {{score}}/9
+</div>
+
+<div class="margin-top-25 center-text" *ngIf="score != 9">
+    <button mat-button (click)="toggleAnswers = !toggleAnswers">Toggle Answers</button>
 </div>
 
 
 <div class="margin-top-25 center-text">
-    <button mat-raised-button color="accent" (click)="copyResults()">Copy Results</button>
+    <button mat-button (click)="copyResults()">Copy Results</button>
+    <button mat-raised-button color="accent" (click)="makeTweet()">Tweet</button>
 </div>

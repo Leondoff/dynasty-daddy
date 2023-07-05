@@ -63,10 +63,10 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             localStorage.removeItem(LocalStorageDictionary.GRIDIRON_ITEM)
         }
         this.gridGameService.status = Status.DONE;
-    } 
+    }
 
     getTeamImg(row: any): string {
-        switch(row.type) {
+        switch (row.type) {
             case 'college':
                 return this.collegeImgURL.replace(this.TEAM_ACC_PLACEHOLDER, this.gridGameService.collegeLogoMap[row?.value])
             default:
@@ -84,5 +84,60 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 }
             }
         );
+    }
+
+    openResults(): void {
+        this.dialog.open(GridResultModalComponent
+            , {
+                minHeight: '350px',
+                minWidth: this.configService.isMobile ? '200px' : '500px'
+            }
+        );
+    }
+
+    openTwitter(): void {
+        window.open('https://twitter.com/nflgridirongame', '_blank');
+    }
+
+    getAwardDisplay(award: string): string {
+        switch (award) {
+            case 'roty':
+                return 'ROTY';
+            case 's_mvp':
+                return 'Super Bowl MVP';
+            default:
+                return 'MVP';
+        }
+    }
+
+    getStatThresholdDisplay(stat: string): string {
+        if (stat.includes('1000')) {
+            return '1000+';
+        } else if (stat.includes('10')) {
+            return '10+';
+        } else if (stat.includes('40')) {
+            return '40+';
+        } else {
+            return '4000+'
+        }
+    }
+
+    getStatCategory(stat: string): string {
+        switch (stat) {
+            case 'rushTds10':
+                return this.configService.isMobile ? 'Rush Tds' : 'Rushing Tds';
+            case 'recTds10':
+                return this.configService.isMobile ? 'Rec Tds' : 'Receiving Tds';
+            case 'passTds40':
+                return this.configService.isMobile ? 'Pass Tds' : 'Passing Tds';
+            case 'rushYd1000':
+                return this.configService.isMobile ? 'Rush Yds' : 'Rushing Yards';
+            case 'recYd1000':
+                return this.configService.isMobile ? 'Rec Yds' : 'Receiving Yards';
+            case 'passYd4000':
+                return this.configService.isMobile ? 'Pass Yds' : 'Passing Yards';
+            default:
+                return this.configService.isMobile ? 'Int' : 'Passing Ints';
+        }
     }
 }
