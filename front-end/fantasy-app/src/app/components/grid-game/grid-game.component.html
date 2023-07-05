@@ -11,7 +11,17 @@
                     <td *ngFor="let col of row; let j = index" (click)="j !== 0 && i !== 0 && !gridGameService.gridResults[j][i] && gridGameService.guessesLeft > 0 ? openPlayerSearch(j-1, i-1) : ''" [ngStyle]="gridGameService.gridResults[j][i] ? {'background-color': '#008f51'} : {}"
                         [ngClass]="{'top-left-cell': i === 0 || j === 0, 'middle-cell': i > 0 && j > 0}">
                         <div *ngIf="i === 0 && j !== 0">
-                            <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1])" class="team-grid-img">
+                            <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'team'">
+                            <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'award'">
+                                <div class="light_bg_color" *ngIf="!configService.isMobile">Won Award</div>
+                                <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}" style="text-align: center;">{{getAwardDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                <div class="light_bg_color">Since 1999</div>
+                            </div>
+                            <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'stat'">
+                                <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                <div class="light_bg_color">{{getStatCategory(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                <div class="light_bg_color">{{!configService.isMobile ? 'in a ' : ''}}season</div>
+                            </div>
                         </div>
                         <div *ngIf="j === 0 && i !== 0">
                             <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type != 'jersey_number'">
@@ -33,6 +43,10 @@
     <div class="margin-top-25 center-text">
         <div class="light_bg_color">Guesses Left:</div>
         <div class="large-bold-header-text">{{gridGameService.guessesLeft}}</div>
+        <div class="margin-top-10">
+            <button mat-button (click)="openResults()" *ngIf="gridGameService.guessesLeft === 0">View Results</button>
+            <button mat-button (click)="openTwitter()">Twitter</button>
+        </div>
     </div>
 
     <div class="margin-top-50 center-text">
@@ -50,6 +64,9 @@
         </div>
         <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
             For jersey numbers, any jersey number they wore on any team works. It doesn't have to be the jersey number they use on the grid team.
+        </div>
+        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
+            For stats & awards, each criteria must be hit in a single season and since 1999.
         </div>
       </div>
     

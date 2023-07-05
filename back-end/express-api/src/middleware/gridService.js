@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-import { GetPlayerForGrid, GetSearchPlayersInGrid } from '../repository/PlayerGridRepository';
+import { GetPlayerForGrid, GetSearchPlayersInGrid, GetAllPlayersInGrid } from '../repository/PlayerGridRepository';
 
 export const ValidateGridSelection = async (playerId, categories) => {
   const player = await GetPlayerForGrid(playerId);
@@ -12,6 +12,14 @@ export const ValidateGridSelection = async (playerId, categories) => {
       }
       case 'college': {
         isValid = player.college === category.value && isValid;
+        break;
+      }
+      case 'award': {
+        isValid = JSON.stringify(player.awards_json) !== JSON.stringify({}) && player.awards_json[category.value] !== '' && isValid;
+        break;
+      }
+      case 'stat': {
+        isValid = player.stats_json[category.value] && isValid;
         break;
       }
       default: {
@@ -27,3 +35,6 @@ export const ValidateGridSelection = async (playerId, categories) => {
 
 export const SearchGridPlayers = async (search) =>
   GetSearchPlayersInGrid(search);
+
+export const FetchAllGridPlayers = async (search) =>
+  GetAllPlayersInGrid(search);

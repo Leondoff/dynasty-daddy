@@ -21,7 +21,8 @@ export const ConfigKeyDictionary = {
   SHOW_HEADER_INFO: 'show_header_info',
   HEADER_INFO_TEXT: 'header_info_text',
   HEADER_INFO_URL: 'header_info_url',
-  GRIDIRON_GRID: 'daily_grid'
+  GRIDIRON_GRID: 'daily_grid',
+  GRIDIRON_GRID_ANSWER: 'daily_grid_answer'
 } as const;
 
 /**

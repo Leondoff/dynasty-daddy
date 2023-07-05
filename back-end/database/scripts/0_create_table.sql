@@ -166,7 +166,8 @@ CREATE TABLE player_grid (
     awards_json jsonb,
     start_date VARCHAR(5),
     end_date VARCHAR(5),
-    stats_json jsonb
+    stats_json jsonb,
+    gsis_id VARCHAR(10),
 );
 
 create index player_grid_uindex on player_grid (name);

@@ -24,3 +24,16 @@ export const GetSearchPlayersInGrid = async (search) => {
 `);
   return data.rows;
 };
+
+export const GetAllPlayersInGrid = async (playerId) => {
+  const data = await playersModel.selectQuery(`
+  SELECT
+    id,
+    name,
+    pos,
+    start_year,
+    end_year
+  from player_grid WHERE id = ${playerId};
+`);
+  return data.rows[0];
+};

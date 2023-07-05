@@ -57,7 +57,18 @@
                 }
               ]
             },
-            "development": {}
+            "development": {
+              "optimization": false,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": false,
+              "statsJson": false,
+              "progress": true,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            }
           },
           "defaultConfiguration": "production"
         },
