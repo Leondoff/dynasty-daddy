@@ -75,9 +75,9 @@ export class GridGameService {
       });
   }
 
-  fetchGridPlayers(): void {
-    this.fantasyPlayersAPIService.getAllGridGamePlayers().subscribe(res => {
-      this.gridPlayers = res;
-    })
-  }
+  // fetchGridPlayers(): void {
+  //   this.fantasyPlayersAPIService.getAllGridGamePlayers().subscribe(res => {
+  //     this.gridPlayers = res;
+  //   })
+  // }
 }
