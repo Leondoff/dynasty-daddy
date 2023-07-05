@@ -25,7 +25,7 @@ export const GetSearchPlayersInGrid = async (search) => {
   return data.rows;
 };
 
-export const GetAllPlayersInGrid = async (playerId) => {
+export const GetAllPlayersInGrid = async () => {
   const data = await playersModel.selectQuery(`
   SELECT
     id,
@@ -33,7 +33,7 @@ export const GetAllPlayersInGrid = async (playerId) => {
     pos,
     start_year,
     end_year
-  from player_grid WHERE id = ${playerId};
+  from player_grid;
 `);
-  return data.rows[0];
+  return data.rows;
 };

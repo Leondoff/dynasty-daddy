@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FantasyPlayerApiConfigService } from './fantasy-player-api-config.service';
 import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
+import { GridPlayer } from 'src/app/components/model/gridPlayer';
 
 
 @Injectable({
@@ -175,7 +176,17 @@ export class FantasyPlayerApiService {
   * @param search string to search on
   */
   getGridGamePlayersFromSearch(search: String): Observable<{ id: boolean, name: string, pos: string, start_year: string, end_year: string }[]> {
-    return this.http.get<{ id: boolean, name: string, pos: string, start_year: string, end_year: string }[]>(this.fantasyPlayerApiConfigService.getGridPlayersEndpoint + `?search=${search}`)
+    return this.http.get<{ id: boolean, name: string, pos: string, start_year: string, end_year: string }[]>(this.fantasyPlayerApiConfigService.searchGridPlayersEndpoint + `?search=${search}`)
+      .pipe(map(res => {
+        return res;
+      }));
+  }
+
+  /**
+  * return all players in grid game
+  */
+  getAllGridGamePlayers(): Observable<GridPlayer[]> {
+    return this.http.get<GridPlayer[]>(this.fantasyPlayerApiConfigService.getAllGridPlayersEndpoint)
       .pipe(map(res => {
         return res;
       }));

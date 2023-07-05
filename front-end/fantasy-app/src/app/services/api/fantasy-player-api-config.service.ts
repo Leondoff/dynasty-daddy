@@ -18,7 +18,9 @@ export class FantasyPlayerApiConfigService {
 
   private _getFantasyPortfolioEndpoint = '';
 
-  private _getGridPlayersEndpoint = '';
+  private _searchGridPlayersEndpoint = '';
+
+  private _getAllGridPlayersEndpoint = '';
 
   private _validateSelectedPlayerEndpoint = '';
 
@@ -70,12 +72,20 @@ export class FantasyPlayerApiConfigService {
     this._getFantasyPortfolioEndpoint = value;
   }
 
-  get getGridPlayersEndpoint(): string {
-    return this._getGridPlayersEndpoint;
+  get searchGridPlayersEndpoint(): string {
+    return this._searchGridPlayersEndpoint;
   }
 
-  set getGridPlayersEndpoint(value: string) {
-    this._getGridPlayersEndpoint = value;
+  set searchGridPlayersEndpoint(value: string) {
+    this._searchGridPlayersEndpoint = value;
+  }
+
+  get getAllGridPlayersEndpoint(): string {
+    return this._getAllGridPlayersEndpoint;
+  }
+
+  set getAllGridPlayersEndpoint(value: string) {
+    this._getAllGridPlayersEndpoint = value;
   }
 
   get validateSelectedPlayerEndpoint(): string {

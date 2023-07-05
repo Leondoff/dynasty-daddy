@@ -22,8 +22,7 @@ export const FetchSearchedPlayersEndpoint = async (req, res) => {
 
 export const FetchAllGridPlayersEndpoint = async (req, res) => {
   try {
-    const searchValue = req.query.search;
-    const allPlayers = await FetchAllGridPlayers(searchValue);
+    const allPlayers = await FetchAllGridPlayers();
     res.status(200).json(allPlayers);
   } catch (err) {
     res.status(500).json(err.stack);

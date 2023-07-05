@@ -53,6 +53,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     }
 
     private initGridGame(): void {
+        this.gridGameService.fetchGridPlayers();
         this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue)
         const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}')
         if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
