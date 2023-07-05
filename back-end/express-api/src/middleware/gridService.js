@@ -36,5 +36,5 @@ export const ValidateGridSelection = async (playerId, categories) => {
 export const SearchGridPlayers = async (search) =>
   GetSearchPlayersInGrid(search);
 
-export const FetchAllGridPlayers = async (search) =>
-  GetAllPlayersInGrid(search);
+export const FetchAllGridPlayers = async () =>
+  GetAllPlayersInGrid();

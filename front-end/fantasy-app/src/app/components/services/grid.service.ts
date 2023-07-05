@@ -3,6 +3,7 @@ import { Status } from "../model/status";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { Subject } from "rxjs";
 import { LocalStorageDictionary } from "src/app/services/init/config.service";
+import { GridPlayer } from "../model/gridPlayer";
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +12,19 @@ export class GridGameService {
 
   status: Status = Status.LOADING;
 
+  /** grid info from the db */
   gridDict = {};
 
+  /** validation subject */
   validateGridSelection$: Subject<string> = new Subject<string>();
 
+  /** already used player ids */
   alreadyUsedPlayers = [];
 
+  /** all players to choose from */
+  gridPlayers: GridPlayer[] = [];
+
+  /** selected results grid */
   gridResults: any[][] = [
     [null, null, null, null],
     [null, null, null, null],
@@ -24,6 +32,7 @@ export class GridGameService {
     [null, null, null, null]
   ];
 
+  /** dict of college to espn id for img */
   collegeLogoMap = {
     'Michigan': 130,
     'Texas Christian': 2628,
@@ -45,6 +54,7 @@ export class GridGameService {
     'Notre Dame': 87
   }
 
+  /** guesses left to make */
   guessesLeft: number = 9;
 
   constructor(private fantasyPlayersAPIService: FantasyPlayerApiService) { }
@@ -63,5 +73,11 @@ export class GridGameService {
         localStorage.setItem(LocalStorageDictionary.GRIDIRON_ITEM, JSON.stringify({ grid: this.gridDict, guesses: this.guessesLeft, results: this.gridResults, alreadyUsedPlayers: this.alreadyUsedPlayers }))
         this.validateGridSelection$.next();
       });
+  }
+
+  fetchGridPlayers(): void {
+    this.fantasyPlayersAPIService.getAllGridGamePlayers().subscribe(res => {
+      this.gridPlayers = res;
+    })
   }
 }
