@@ -66,9 +66,6 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     private pageService: PageService,
     public configService: ConfigService) {
     super();
-    this.pageService.setUpPageSEO(this.selectedTeam.owner.teamName,
-      ['team page', this.selectedTeam.owner.ownerName, this.selectedTeam.owner.teamName],
-      `Fantasy football team page for ${this.selectedTeam.owner.teamName}. Dive into team specific analytics and statistics.`)
   }
 
   ngOnInit(): void {
@@ -109,6 +106,9 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     // get selected team from sleeper data
     const teamIndex = this.leagueService.leagueTeamDetails.map(e => e.owner?.ownerName).indexOf(ownerName);
     this.selectedTeam = this.leagueService.leagueTeamDetails[teamIndex];
+    this.pageService.setUpPageSEO(this.selectedTeam.owner.teamName,
+      ['team page', this.selectedTeam.owner.ownerName, this.selectedTeam.owner.teamName],
+      `Fantasy football team page for ${this.selectedTeam.owner.teamName}. Dive into team specific analytics and statistics.`)
     // generate roster and sort
     for (const playerPlatformId of this.selectedTeam.roster.players) {
       const player = this.playerService.getPlayerByPlayerPlatformId(playerPlatformId, this.leagueService.selectedLeague.leaguePlatform);
