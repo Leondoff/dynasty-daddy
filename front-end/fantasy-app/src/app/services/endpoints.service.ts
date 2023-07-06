@@ -41,6 +41,7 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.validateSelectedPlayerEndpoint = this.baseUrl + '/v1/grid/validate';
     this.fantasyPlayerApiConfigService.searchGridPlayersEndpoint = this.baseUrl + '/v1/grid/players';
     this.fantasyPlayerApiConfigService.getAllGridPlayersEndpoint = this.baseUrl + '/v1/grid/players/all';
+    this.fantasyPlayerApiConfigService.getHistoricalGridironsEndpoint = this.baseUrl + '/v1/grid/archive';
 
     // Sleeper Endpoints
     this.sleeperApiConfigService.getSleeperUsernameEndpoint = 'https://api.sleeper.app/v1/user/';

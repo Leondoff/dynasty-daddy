@@ -1,6 +1,6 @@
 import Model from '../models/model';
 
-const playersModel = new Model('players_ids');
+const playersModel = new Model('player_grid');
 
 export const GetPlayerForGrid = async (playerId) => {
   const data = await playersModel.selectQuery(`

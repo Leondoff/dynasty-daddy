@@ -27,9 +27,8 @@
 </div>
 
 <div class="margin-top-25 center-text" *ngIf="score != 9">
-    <button mat-button (click)="toggleAnswers = !toggleAnswers">Toggle Answers</button>
+    <button mat-stroked-button (click)="toggleAnswers = !toggleAnswers">Toggle Answers</button>
 </div>
-
 
 <div class="margin-top-25 center-text">
     <button mat-button (click)="copyResults()">Copy Results</button>

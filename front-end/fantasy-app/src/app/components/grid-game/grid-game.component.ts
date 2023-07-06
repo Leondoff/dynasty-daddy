@@ -7,8 +7,8 @@ import { GridGameService } from "../services/grid.service";
 import { MatDialog } from "@angular/material/dialog";
 import { SearchGridPlayerModal } from "../modals/search-grid-player-modal/search-grid-player-modal.component";
 import { GridResultModalComponent } from "../modals/grid-result-modal/grid-result-modal.component";
-import { Meta, Title } from '@angular/platform-browser';
 import { PageService } from "src/app/services/utilities/page.service";
+import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 
 @Component({
     selector: 'grid-game',
@@ -31,7 +31,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         private pageService: PageService,
         public gridGameService: GridGameService) {
         super();
-        this.pageService.setUpPageSEO('NFL Immaculate Grid',
+        this.pageService.setUpPageSEO('NFL Immaculate Gridiron',
             ['nfl', 'immaculate', 'grid', 'trivia'],
             this.pageDescription)
     }
@@ -61,7 +61,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     }
 
     private initGridGame(): void {
-        this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue)
+        this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue);
         const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}')
         if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
             this.gridGameService.guessesLeft = gridCache.guesses;

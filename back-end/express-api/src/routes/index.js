@@ -40,7 +40,12 @@ import {
   GetFFPCStandingsEndpoint,
   GetFFPCUserLeaguesEndpoint
 } from '../controllers/ffpc_wrapper_controller';
-import { FetchAllGridPlayersEndpoint, FetchSearchedPlayersEndpoint, ValidateGridSelectionEndpoint } from '../controllers/gridController';
+import {
+  FetchAllGridPlayersEndpoint,
+  FetchAllHistoricalGridsEndpoint,
+  FetchSearchedPlayersEndpoint,
+  ValidateGridSelectionEndpoint
+} from '../controllers/gridController';
 
 const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
@@ -57,6 +62,7 @@ indexRouter.post('/worp', GetWORPForLeague);
 indexRouter.post('/grid/validate', ValidateGridSelectionEndpoint);
 indexRouter.get('/grid/players', FetchSearchedPlayersEndpoint);
 indexRouter.get('/grid/players/all', FetchAllGridPlayersEndpoint);
+indexRouter.get('/grid/archive', FetchAllHistoricalGridsEndpoint);
 
 // MFL Wrapper Endpoints
 indexRouter.post('/mfl/league', GetMFLLeagueEndpoint);

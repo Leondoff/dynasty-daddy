@@ -24,6 +24,8 @@ export class FantasyPlayerApiConfigService {
 
   private _validateSelectedPlayerEndpoint = '';
 
+  private _getHistoricalGridironsEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
@@ -94,5 +96,13 @@ export class FantasyPlayerApiConfigService {
 
   set validateSelectedPlayerEndpoint(value: string) {
     this._validateSelectedPlayerEndpoint = value;
+  }
+
+  get getHistoricalGridironsEndpoint(): string {
+    return this._getHistoricalGridironsEndpoint;
+  }
+
+  set getHistoricalGridironsEndpoint(value: string) {
+    this._getHistoricalGridironsEndpoint = value;
   }
 }

@@ -1,4 +1,5 @@
 /* eslint-disable consistent-return */
+import { GetAllHistoricalGridirons } from '../repository/HistoricalGridironsRepository';
 import { GetPlayerForGrid, GetSearchPlayersInGrid, GetAllPlayersInGrid } from '../repository/PlayerGridRepository';
 
 export const ValidateGridSelection = async (playerId, categories) => {
@@ -38,3 +39,6 @@ export const SearchGridPlayers = async (search) =>
 
 export const FetchAllGridPlayers = async () =>
   GetAllPlayersInGrid();
+
+export const FetchAllHistoricalGrids = async () =>
+  GetAllHistoricalGridirons();

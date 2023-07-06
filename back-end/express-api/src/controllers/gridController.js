@@ -1,4 +1,4 @@
-import { ValidateGridSelection, SearchGridPlayers, FetchAllGridPlayers } from '../middleware/gridService';
+import { ValidateGridSelection, SearchGridPlayers, FetchAllGridPlayers, FetchAllHistoricalGrids } from '../middleware/gridService';
 
 export const ValidateGridSelectionEndpoint = async (req, res) => {
   try {
@@ -23,6 +23,15 @@ export const FetchSearchedPlayersEndpoint = async (req, res) => {
 export const FetchAllGridPlayersEndpoint = async (req, res) => {
   try {
     const allPlayers = await FetchAllGridPlayers();
+    res.status(200).json(allPlayers);
+  } catch (err) {
+    res.status(500).json(err.stack);
+  }
+};
+
+export const FetchAllHistoricalGridsEndpoint = async (req, res) => {
+  try {
+    const allPlayers = await FetchAllHistoricalGrids();
     res.status(200).json(allPlayers);
   } catch (err) {
     res.status(500).json(err.stack);
