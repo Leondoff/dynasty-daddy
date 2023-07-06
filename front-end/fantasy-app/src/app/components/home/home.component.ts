@@ -14,6 +14,7 @@ import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker
 import { ESPNService } from 'src/app/services/api/espn/espn.service';
 import { FFPCService } from 'src/app/services/api/ffpc/ffpc.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,8 @@ import { DisplayService } from 'src/app/services/utilities/display.service';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent extends BaseComponent implements OnInit, AfterViewInit {
+
+  pageDescription = 'Dynasty Daddy is a free dynasty fantasy football tool that leverages fantasy market player values and fantasy League data to help users make quicker, more well informed fantasy football decisions.'
 
   /** What dynasty daddy social media is toggled to show */
   dynastyDaddySocials: string = 'twitter';
@@ -89,9 +92,13 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     private espnService: ESPNService,
     private ffpcService: FFPCService,
     private dialog: MatDialog,
+    private pageService: PageService,
     private fleaflickerService: FleaflickerService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
+    this.pageService.setUpPageSEO('Home',
+      ['Dynasty', 'fantasy', 'football', 'ranker', 'trade'],
+      this.pageDescription);
   }
 
   ngOnInit(): void {

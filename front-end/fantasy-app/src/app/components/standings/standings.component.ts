@@ -13,6 +13,7 @@ import {ActivatedRoute} from '@angular/router';
 import {NflService} from '../../services/utilities/nfl.service';
 import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
 import {PlayerService} from "../../services/player.service";
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-standings',
@@ -20,6 +21,8 @@ import {PlayerService} from "../../services/player.service";
   styleUrls: ['./standings.component.css']
 })
 export class StandingsComponent extends BaseComponent implements OnInit {
+
+  pageDescription = 'Team standings from the league with points for and realized points. Realized points is calculated by dividing the actual points for and the max potential points for.';
 
   /** no league selected error message */
   noLeagueErrMsg = 'Unable to generate standings. Please select a league.';
@@ -35,9 +38,13 @@ export class StandingsComponent extends BaseComponent implements OnInit {
               public powerRankingsService: PowerRankingsService,
               private playerService: PlayerService,
               private nflService: NflService,
+              private pageService: PageService,
               public leagueSwitchService: LeagueSwitchService,
               public transactionService: TransactionsService) {
     super();
+    this.pageService.setUpPageSEO('League Standings',
+    ['League Standings', 'fantasy football stats', 'fantasy league stats'],
+    this.pageDescription)
   }
 
   divisionTableCols = ['teamName', 'record', 'pf', 'ppf', 'pot'];

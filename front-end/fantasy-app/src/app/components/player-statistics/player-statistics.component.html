@@ -1,6 +1,6 @@
-<div class="margin-top-10 large-bold-header-text center-text">Current Player Statistics</div>
+<h1 class="margin-top-10 large-bold-header-text center-text">Fantasy Player Statistics</h1>
 <div class="center-text margin-top-10">
-  Player statistics come from the Sleeper APIs. The following are tables have custom views for each position group with relevant fantasy related stats for the season.
+  {{pageDescription}}
 </div>
 
 <div [ngClass]="{'pos-table-container': !configService.isMobile}" *ngIf="playerService.playerStats[playerService.playerValues[0]?.sleeper_id]">

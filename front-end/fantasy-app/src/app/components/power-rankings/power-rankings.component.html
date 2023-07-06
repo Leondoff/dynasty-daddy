@@ -1,6 +1,6 @@
-<div class="margin-top-10 large-bold-header-text center-text">Team Power Rankings</div>
+<h1 class="margin-top-10 large-bold-header-text center-text">League Power Rankings</h1>
 <div class="center-text margin-top-10">
-  Team power rankings are determined by fantasy market player values and yearly player average ADP.
+  {{pageDescription}}
 </div>
 
 <div *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0" class="power-ranking-container">

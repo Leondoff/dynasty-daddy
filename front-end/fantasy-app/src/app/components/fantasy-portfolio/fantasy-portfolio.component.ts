@@ -16,6 +16,7 @@ import { DownloadService } from 'src/app/services/utilities/download.service';
 import { FilterPortfolioModalComponent } from '../modals/filter-portfolio-modal/filter-portfolio-modal.component';
 import { QueryService } from 'src/app/services/utilities/query.service';
 import { Portfolio } from '../model/portfolio';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
     selector: 'app-fantasy-portfolio',
@@ -23,6 +24,8 @@ import { Portfolio } from '../model/portfolio';
     styleUrls: ['./fantasy-portfolio.component.css']
 })
 export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
+
+    pageDescription = 'Measure your player rostership and exposure across multiple leagues to diversify risk.';
 
     /** Loading status for the portfolio tool */
     portfolioStatus: Status = Status.LOADING;
@@ -53,8 +56,12 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         public configService: ConfigService,
         private queryService: QueryService,
         private downloadService: DownloadService,
+        private pageService: PageService,
         public portfolioService: PortfolioService) {
         super();
+        this.pageService.setUpPageSEO('Fantasy Portfolio',
+        ['fantasy portfolio', 'fantasy rostership', 'fantasy dynastygm', 'dynasty portfolio'],
+        this.pageDescription)
     }
 
     ngOnInit(): void {

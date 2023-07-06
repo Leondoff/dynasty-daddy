@@ -10,6 +10,7 @@ import { ConfigService } from 'src/app/services/init/config.service';
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 import { PowerRankingsService } from '../services/power-rankings.service';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-draft',
@@ -17,6 +18,8 @@ import { PowerRankingsService } from '../services/power-rankings.service';
   styleUrls: ['./draft.component.css']
 })
 export class DraftComponent extends BaseComponent implements OnInit {
+
+  pageDescription = 'View past drafts with current day values, or create a mock draft for upcoming draft with the new rookie class.';
 
   /** rerender table when refreshed */
   resetTrigger: boolean = true;
@@ -36,9 +39,13 @@ export class DraftComponent extends BaseComponent implements OnInit {
     public configService: ConfigService,
     private route: ActivatedRoute,
     private powerRankingsService: PowerRankingsService,
+    private pageService: PageService,
     private downloadService: DownloadService,
     public mockDraftService: DraftService) {
     super();
+    this.pageService.setUpPageSEO('Draft Center',
+    ['mock draft tool', 'fantasy football mock draft', 'fantasy draft simulator', 'fantasy draft'],
+    this.pageDescription)
   }
 
   ngOnInit(): void {

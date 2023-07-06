@@ -7,6 +7,7 @@ import { LeagueService } from '../../services/league.service';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { ActivatedRoute } from '@angular/router';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-player-statistics',
@@ -14,6 +15,8 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./player-statistics.component.css']
 })
 export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
+
+  pageDescription = 'NFL Player statistics with customizable visualizations and filtering. The following are tables have custom views for each position group with relevant fantasy related stats for the season.';
 
   /** is season or per game table stats */
   isPerGame: boolean = false;
@@ -140,8 +143,12 @@ export class PlayerStatisticsComponent extends BaseComponent implements OnInit {
     public configService: ConfigService,
     public leagueSwitchService: LeagueSwitchService,
     private route: ActivatedRoute,
+    private pageService: PageService,
     public leagueService: LeagueService) {
     super();
+    this.pageService.setUpPageSEO('Player Statistics',
+      ['fantasy football stats', 'fantasy stats', 'positional stats'],
+      this.pageDescription)
   }
 
   ngOnInit(): void {

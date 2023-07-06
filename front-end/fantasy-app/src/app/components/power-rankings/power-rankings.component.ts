@@ -8,6 +8,7 @@ import { delay } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-power-rankings',
@@ -15,6 +16,8 @@ import { DisplayService } from 'src/app/services/utilities/display.service';
   styleUrls: ['./power-rankings.component.css']
 })
 export class PowerRankingsComponent extends BaseComponent implements OnInit {
+
+  pageDescription = 'Team power rankings are determined by fantasy market player values and yearly player average ADP.'
 
   /** Error generating power rankings message */
   creatingPRErrMsg = 'Error creating Power Rankings. Try again.'
@@ -28,9 +31,12 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     private downloadService: DownloadService,
     private displayService: DisplayService,
     private route: ActivatedRoute,
+    private pageService: PageService,
     public leagueSwitchService: LeagueSwitchService) {
-
     super();
+    this.pageService.setUpPageSEO('League Power Rankings', 
+    ['fantasy league ranker', 'fantasy football rankings', 'league power ranker', 'fantasy power rankings'],
+    this.pageDescription)
   }
 
   ngOnInit(): void {
