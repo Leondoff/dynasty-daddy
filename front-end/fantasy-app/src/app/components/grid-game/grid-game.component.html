@@ -28,6 +28,7 @@
                             <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'jersey_number'">
                                 <div class="light_bg_color">{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
                                 <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{gridGameService.gridDict['yAxis'][i-1]?.value}}</div>
+                                <div class="light_bg_color">Since 1999</div>
                             </div>
                         </div>
                         <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">
@@ -69,7 +70,6 @@
             For stats & awards, each criteria must be hit in a single season and since 1999.
         </div>
       </div>
-    
 </div>
 
 <div class="center-spinner margin-top-120" *ngIf="gridGameService.status === 0">

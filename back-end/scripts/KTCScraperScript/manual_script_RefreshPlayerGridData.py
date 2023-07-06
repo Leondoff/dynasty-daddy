@@ -1,6 +1,9 @@
 import csv
 import json
 import psycopg2
+import requests
+import PlayerService
+import re
 
 TeamACCException = {
     'SFO': 'SF',
@@ -20,6 +23,24 @@ TeamACCException = {
     'STL': 'LA',
     'SL': 'LA'
 }
+
+posExpMap = {
+    'SS': 'DB',
+    'CB': 'DB',
+    'NT': 'DT',
+    'OLB': 'LB',
+    'MLB': 'LB',
+    'S': 'DB',
+    'FS': 'DB',
+    'FB': 'RB',
+    'C': 'OG',
+    'T': 'OG',
+    'DT': 'DE',
+    'ILB': 'LB',
+    'G': 'OG',
+    'DE': 'DT'
+}
+
 
 def refreshPlayerGridTable():
     playerMap = {}
@@ -58,7 +79,7 @@ def refreshPlayerGridTable():
                 playerMap[row[6]]['awards'] = {}
                 playerMap[row[6]]['stats'] = {
                     'rushYd1000': False,
-                    'recYd1000':False,
+                    'recYd1000': False,
                     'passYd4000': False,
                     'rushTds10': False,
                     'recTds10': False,
@@ -75,7 +96,7 @@ def refreshPlayerGridTable():
                     'mvp': row[3],
                     's_mvp': row[4]
                 }
-    
+
     with open('C:\\Users\\Jeremy\\Desktop\\stats.csv', 'r') as statsFile:
         stats = csv.reader(statsFile)
         for row in stats:
@@ -115,4 +136,105 @@ def refreshPlayerGridTable():
     conn.commit()
 
 
-refreshPlayerGridTable()
+# refreshPlayerGridTable()
+
+def ExtraCollegeMappings(disablePos=False):
+
+    conn = psycopg2.connect(
+        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
+    )
+
+    # Setting auto commit false
+    conn.autocommit = True
+
+    data = requests.get('https://www.crossovergrid.com/fblargecsv.csv')
+    # print(data.content)
+    csv_data = data.text
+
+    # Create a CSV reader
+    csv_reader = csv.reader(csv_data.splitlines())
+
+    csvList = list(csv_reader)
+    cursor = conn.cursor()
+    playerStatement = '''select name, gsis_id, pos
+                from player_grid
+                where college is null'''
+    cursor.execute(playerStatement)
+    result_set = cursor.fetchall()
+    for row in result_set:
+        print(row[0])
+        for player in csvList:
+            if row[0].lower().strip() in player[0].lower().strip() and (disablePos or (row[2] in player[1] or (row[2] in posExpMap and posExpMap[row[2]] in player[1]))):
+                print('->' + player[2])
+                playerGridStatement = '''UPDATE player_grid
+                                SET
+                                college = %s
+                                WHERE gsis_id = %s;'''
+                cursor.execute(playerGridStatement, (player[2], row[1]))
+    playerStatement = '''select name, gsis_id, pos
+                from player_grid
+                where college is null'''
+    cursor.execute(playerStatement)
+    result_set2 = cursor.fetchall()
+    print('=====Colleges Added======')
+    print(len(result_set) - len(result_set2))
+    print('=====Players without colleges======')
+    print(len(result_set2))
+
+# ExtraCollegeMappings(False)
+# ExtraCollegeMappings(True)
+
+
+def ExtraTeamsPlayedFor():
+
+    conn = psycopg2.connect(
+        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
+    )
+
+    # Setting auto commit false
+    conn.autocommit = True
+
+    data = requests.get('https://www.crossovergrid.com/fblargecsv.csv')
+    # print(data.content)
+    csv_data = data.text
+
+    # Create a CSV reader
+    csv_reader = csv.reader(csv_data.splitlines())
+
+    # Read the headers row
+    headers = next(csv_reader)
+
+    # Map headers to dictionary
+    headers_dict = {index: value for index, value in enumerate(headers)}
+    csvList = list(csv_reader)
+    playerDict = {}
+    for player in csvList:
+        teams = []
+        for num in range(5, 36):
+            try:
+                if player[num] == '1':
+                    teams.append(headers_dict[num])
+            except IndexError:
+                print("Index out of range, continuing...")
+                continue
+
+        playerDict[PlayerService.cleanPlayerIdString(
+            re.sub(r'\s*\(.*?\)', '', player[0].strip()) + player[1])] = teams
+    
+    playerStatement = '''select name, gsis_id, pos, teams
+                from player_grid'''
+    cursor = conn.cursor()
+    cursor.execute(playerStatement)
+    result_set = cursor.fetchall()
+    for player in result_set:
+        nameId = PlayerService.cleanPlayerIdString(player[0] + (player[2] if player[2] not in posExpMap else posExpMap[player[2]]))
+        if nameId in playerDict:
+            if len(playerDict[nameId]) != len(player[3]):
+                result = list(set(playerDict[nameId]) | set(player[3]))
+                playerGridStatement = '''UPDATE player_grid
+                    SET
+                    teams = %s
+                    WHERE gsis_id = %s;'''
+                cursor.execute(playerGridStatement, (result, player[1]))
+
+# ExtraTeamsPlayedFor()

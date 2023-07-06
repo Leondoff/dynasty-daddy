@@ -85,7 +85,10 @@ def SetNewPlayerGrid():
         config_value = %s WHERE config_key = \'daily_grid_answer\';'''
     cursor.execute(setTodaysGridAnswerStatement, (str(AnswerGrid),))
     
-
+    archiveGridironStatement = '''INSERT INTO historical_gridirons (daily_grid, daily_grid_answer)
+                    VALUES (%s, %s)'''
+    cursor.execute(archiveGridironStatement, (str(jsonGrid), str(AnswerGrid)))
+    
 def ValidateActualSolutionExists(rows, xAxis, yAxis):
     global AnswerGrid
     playerIds = []
