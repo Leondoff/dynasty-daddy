@@ -55,9 +55,6 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
     private pageService: PageService,
     public configService: ConfigService) {
     super();
-    this.pageService.setUpPageSEO(this.selectedPlayer.full_name,
-      [this.selectedPlayer.full_name, 'player page', 'fantasy player info'],
-      this.pageDescription)
   }
 
   ngOnInit(): void {
@@ -69,6 +66,9 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
       this.playersLoaded = (this.playerService.playerValues.length > 0);
       if (this.playersLoaded) {
         this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
+        this.pageService.setUpPageSEO(this.selectedPlayer?.full_name,
+          [this.selectedPlayer?.full_name, 'player page', 'fantasy player info'],
+          this.pageDescription)
         this.selectedPlayerInsights = this.playerService.getPlayerInsights(this.selectedPlayer,
           this.leagueService?.selectedLeague?.isSuperflex);
       }
@@ -78,6 +78,9 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
       this.addSubscriptions(this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
         this.playersLoaded = true;
         this.selectedPlayer = this.playerService.getPlayerByNameId(nameId);
+        this.pageService.setUpPageSEO(this.selectedPlayer.full_name,
+          [this.selectedPlayer?.full_name, 'player page', 'fantasy player info'],
+          this.pageDescription)
       }),
         this.fantasyPlayerApiService.getPlayerDetailsByNameId(nameId).subscribe((data) => {
           this.historicalTradeValue = data.historicalData;
