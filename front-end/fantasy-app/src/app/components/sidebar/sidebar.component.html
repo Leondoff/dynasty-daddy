@@ -42,8 +42,8 @@
             <mat-icon>compare_arrows</mat-icon>Trade Calculator</a>
           <a mat-list-item [routerLink]="['./players/statistics']" *ngIf="searchVal == '' || isInSearch('Positional Statistics')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_positional_statistics" gaCategory="page_nav">
             <mat-icon>topic</mat-icon>Positional Statistics</a>
-          <a mat-list-item [routerLink]="['./players/comparison']" *ngIf="searchVal == '' || isInSearch('Value Comparisons')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">
-            <mat-icon>insights</mat-icon>Value Comparisons</a>
+          <a mat-list-item [routerLink]="['./players/comparison']" *ngIf="searchVal == '' || isInSearch('Player Comparison Tool')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">
+            <mat-icon>insights</mat-icon>Player Comparison Tool</a>
       </mat-nav-list>
   </mat-expansion-panel>
   <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">

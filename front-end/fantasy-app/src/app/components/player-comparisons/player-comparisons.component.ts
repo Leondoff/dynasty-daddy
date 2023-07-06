@@ -1,15 +1,16 @@
-import {AfterViewInit, Component} from '@angular/core';
-import {PlayerService} from '../../services/player.service';
-import {BaseComponent} from '../base-component.abstract';
-import {MatDialog} from '@angular/material/dialog';
-import {AddPlayerComparisonModalComponent} from '../modals/add-player-comparison-modal/add-player-comparison-modal.component';
-import {PlayerComparisonService} from '../services/player-comparison.service';
-import {LeagueService} from '../../services/league.service';
-import {moveItemInArray} from '@angular/cdk/drag-drop';
-import {ConfigService} from '../../services/init/config.service';
-import {FantasyPlayer} from '../../model/assets/FantasyPlayer';
-import {ActivatedRoute} from '@angular/router';
-import {LeagueSwitchService} from '../services/league-switch.service';
+import { AfterViewInit, Component } from '@angular/core';
+import { PlayerService } from '../../services/player.service';
+import { BaseComponent } from '../base-component.abstract';
+import { MatDialog } from '@angular/material/dialog';
+import { AddPlayerComparisonModalComponent } from '../modals/add-player-comparison-modal/add-player-comparison-modal.component';
+import { PlayerComparisonService } from '../services/player-comparison.service';
+import { LeagueService } from '../../services/league.service';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { ConfigService } from '../../services/init/config.service';
+import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { ActivatedRoute } from '@angular/router';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-player-comparisons',
@@ -18,14 +19,20 @@ import {LeagueSwitchService} from '../services/league-switch.service';
 })
 export class PlayerComparisonsComponent extends BaseComponent implements AfterViewInit {
 
+  pageDescription = 'Compare fantasy player values over time to get a better view of player value trends.'
+
   constructor(public playerService: PlayerService,
-              public leagueService: LeagueService,
-              private dialog: MatDialog,
-              public playerComparisonService: PlayerComparisonService,
-              private route: ActivatedRoute,
-              public leagueSwitchService: LeagueSwitchService,
-              public configService: ConfigService) {
+    public leagueService: LeagueService,
+    private dialog: MatDialog,
+    public playerComparisonService: PlayerComparisonService,
+    private route: ActivatedRoute,
+    public leagueSwitchService: LeagueSwitchService,
+    private pageService: PageService,
+    public configService: ConfigService) {
     super();
+    this.pageService.setUpPageSEO('Fantasy Player Comparison Tool',
+      ['player comparison', 'fantasy player comparison', 'fantasy comparison tool'],
+      this.pageDescription)
   }
 
   /**

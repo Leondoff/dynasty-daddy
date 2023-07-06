@@ -48,5 +48,4 @@ export class SearchGridPlayerModal implements OnInit {
     close(): void {
         this.dialog.closeAll();
     }
-
 }

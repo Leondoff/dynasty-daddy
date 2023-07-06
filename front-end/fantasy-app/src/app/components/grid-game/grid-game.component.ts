@@ -7,6 +7,8 @@ import { GridGameService } from "../services/grid.service";
 import { MatDialog } from "@angular/material/dialog";
 import { SearchGridPlayerModal } from "../modals/search-grid-player-modal/search-grid-player-modal.component";
 import { GridResultModalComponent } from "../modals/grid-result-modal/grid-result-modal.component";
+import { Meta, Title } from '@angular/platform-browser';
+import { PageService } from "src/app/services/utilities/page.service";
 
 @Component({
     selector: 'grid-game',
@@ -14,6 +16,8 @@ import { GridResultModalComponent } from "../modals/grid-result-modal/grid-resul
     styleUrls: ['./grid-game.component.scss']
 })
 export class GridGameComponent extends BaseComponent implements OnInit {
+
+    pageDescription = 'Test your NFL player knowledge with NFL Immaculate Gridiron. Similar to the popular game immaculate grid, you must guess player who meet the two criteria that intersect on the grid. Player data is from 1999-2022 and a new puzzle is created every day at 8:00 AM EST.'
 
     TEAM_ACC_PLACEHOLDER = 'TEAM_ACC';
 
@@ -24,8 +28,12 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     constructor(public configService: ConfigService,
         private leagueService: LeagueService,
         private dialog: MatDialog,
+        private pageService: PageService,
         public gridGameService: GridGameService) {
         super();
+        this.pageService.setUpPageSEO('NFL Immaculate Grid',
+            ['nfl', 'immaculate', 'grid', 'trivia'],
+            this.pageDescription)
     }
 
     ngOnInit(): void {
@@ -53,7 +61,6 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     }
 
     private initGridGame(): void {
-        // this.gridGameService.fetchGridPlayers();
         this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue)
         const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}')
         if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {

@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from '../../services/init/config.service';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
 import { UntypedFormControl } from '@angular/forms';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-trade-finder',
@@ -18,6 +19,8 @@ import { UntypedFormControl } from '@angular/forms';
   styleUrls: ['./trade-finder.component.css']
 })
 export class TradeFinderComponent extends BaseComponent implements OnInit {
+
+  pageDescription = 'Find fantasy football trades across your league and bulk analyze what trades to pursue. Filter what positions and teams to include in the results.'
 
   /**
    * list of currently generated trade packages
@@ -55,9 +58,13 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     private powerRankingsService: PowerRankingsService,
     private route: ActivatedRoute,
     public tradeFinderService: TradeFinderService,
+    private pageService: PageService,
     public configService: ConfigService
   ) {
     super();
+    this.pageService.setUpPageSEO('Trade Finder',
+      ['fantasy trade analyzer', 'fantasy trade calculator', 'fantasy trade finder', 'dynasty trade calculator'],
+      this.pageDescription)
   }
 
   ngOnInit(): void {
@@ -100,8 +107,8 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
   generateTradeOffers(): void {
     this.tradeList = [];
     const excludedTeams = this.availableTeams
-    .filter(team => !this.includedTeams.value.includes(team))
-    .map(team => team.userId)
+      .filter(team => !this.includedTeams.value.includes(team))
+      .map(team => team.userId)
     const trades = this.tradeFinderService.generateTradeFinderResults(
       this.tradeFinderService.selectedPlayers,
       this.tradeFinderService.selectedTeamUserId,

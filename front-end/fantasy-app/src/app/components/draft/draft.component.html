@@ -1,6 +1,6 @@
-<div class="margin-top-10 large-bold-header-text center-text">Draft Center</div>
+<h1 class="margin-top-10 large-bold-header-text center-text">Draft Center</h1>
 <div class="center-text margin-top-10">
-  View past drafts with current day values, or create a mock draft for upcoming draft with the new rookie class.
+  {{pageDescription}}
 </div>
 <div *ngIf="leagueService.isLeagueLoaded()" class="grid-100 margin-top-10" [ngClass]="{'center-text': configService.isMobile, 'button-right': !configService.isMobile}">
   <mat-form-field appearance="outline" color="accent">

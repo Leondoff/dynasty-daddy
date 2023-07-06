@@ -9,6 +9,7 @@ import { PlayerComparisonService } from '../services/player-comparison.service';
 import { ConfigService } from '../../services/init/config.service';
 import { PlayerInsights } from '../model/playerInsights';
 import { LeagueSwitchService } from '../services/league-switch.service';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-player-details',
@@ -17,7 +18,9 @@ import { LeagueSwitchService } from '../services/league-switch.service';
 })
 export class PlayerDetailsComponent extends BaseComponent implements OnInit {
 
-  /** did players load */ 
+  pageDescription = 'An in depth look into a player from fantasy stats to player trade values to athletic profiles.';
+
+  /** did players load */
   playersLoaded: boolean;
 
   /** selected player */
@@ -49,8 +52,12 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private playerComparisonService: PlayerComparisonService,
     public leagueSwitchService: LeagueSwitchService,
+    private pageService: PageService,
     public configService: ConfigService) {
     super();
+    this.pageService.setUpPageSEO(this.selectedPlayer.full_name,
+      [this.selectedPlayer.full_name, 'player page', 'fantasy player info'],
+      this.pageDescription)
   }
 
   ngOnInit(): void {
@@ -75,14 +82,14 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
         this.fantasyPlayerApiService.getPlayerDetailsByNameId(nameId).subscribe((data) => {
           this.historicalTradeValue = data.historicalData;
           this.playerProfile = data.profile[0]
-          this.profileUpdatedDate = data.profile[0]?.last_updated?.substring(0,10);
+          this.profileUpdatedDate = data.profile[0]?.last_updated?.substring(0, 10);
         }
         ),
         this.route.queryParams.subscribe(params => {
           this.leagueSwitchService.loadFromQueryParams(params);
         })
       );
-  });
+    });
   }
 
   /**

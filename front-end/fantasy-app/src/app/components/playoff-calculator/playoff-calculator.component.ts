@@ -14,6 +14,7 @@ import { EloTeamComparisonModalComponent } from "../modals/elo-team-comparison-m
 import { MatDialog } from "@angular/material/dialog";
 import { PlayerService } from "../../services/player.service";
 import { DownloadService } from 'src/app/services/utilities/download.service';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-playoff-calculator',
@@ -21,6 +22,8 @@ import { DownloadService } from 'src/app/services/utilities/download.service';
   styleUrls: ['./playoff-calculator.component.css']
 })
 export class PlayoffCalculatorComponent extends BaseComponent implements OnInit {
+
+  pageDescription = 'Calculate game probability and playoff odds based on current week. Updated every week to be more accurate.';
 
   /** upcoming match ups prob */
   upcomingMatchUps: MatchUpProbability[][] = [];
@@ -79,8 +82,12 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     private downloadService: DownloadService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
+    private pageService: PageService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
+    this.pageService.setUpPageSEO('Playoff Simulator',
+      ['fantasy league simulator', 'playoff calculator', 'fantasy playoff calculator', 'league simulator'],
+      this.pageDescription)
   }
 
   ngOnInit(): void {

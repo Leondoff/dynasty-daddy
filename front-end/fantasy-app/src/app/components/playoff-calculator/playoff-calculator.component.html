@@ -1,6 +1,6 @@
-<div class="margin-top-10 large-bold-header-text center-text">Playoff Calculator</div>
+<h1 class="margin-top-10 large-bold-header-text center-text">Playoff Calculator</h1>
 <div class="center-text margin-top-10">
-  Calculate game probability and playoff odds based on current week. Updated every week to be more accurate.
+  {{pageDescription}}
 </div>
 <div *ngIf="leagueService.isLeagueLoaded() && playoffCalculatorService.matchUpsWithProb.length != 0 && playoffCalculatorService.divisions.length > 0 && (leagueService.selectedLeague?.status !== 'pre_draft' && leagueService.selectedLeague?.status !== 'drafting')" class="margin-top-10 table-container">
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">

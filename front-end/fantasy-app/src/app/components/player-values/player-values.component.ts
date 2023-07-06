@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FilterPlayerValuesModalComponent } from '../modals/filter-player-values-modal/filter-player-values-modal.component';
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-player-values',
@@ -17,6 +18,8 @@ import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
   styleUrls: ['./player-values.component.css']
 })
 export class PlayerValuesComponent extends BaseComponent implements OnInit {
+
+  pageDescription = 'Current fantasy player rankings and trade values. Select what trade values or ADP to sort the table by.';
 
   /** are players loaded */
   playersLoaded: boolean;
@@ -28,8 +31,12 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
     private downloadService: DownloadService,
     public playerValueService: PlayerValueService,
     public leagueSwitchService: LeagueSwitchService,
+    private pageService: PageService,
     private route: ActivatedRoute) {
     super();
+    this.pageService.setUpPageSEO('Player Rankings',
+      ['fantasy football rankings', 'dynasty player rankings', 'player trade values', 'dynasty trade values', 'dynasty fantasy rankings'],
+      this.pageDescription);
   }
 
   ngOnInit(): void {
@@ -44,9 +51,9 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
       this.playersLoaded = true;
       this.playerValueService.filteredPlayers = this.playerService.cleanOldPlayerData().slice();
     }),
-    this.leagueSwitchService.leagueChanged$.subscribe(league => {
-      this.playerValueService.applyFilters();
-    }),
+      this.leagueSwitchService.leagueChanged$.subscribe(league => {
+        this.playerValueService.applyFilters();
+      }),
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
       })
@@ -101,9 +108,9 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
       if (this.playerValueService.filterPosGroup[3]) postionGroupString += 'TE '
       if (this.playerValueService.filterPosGroup[4]) postionGroupString += 'Picks'
       filterRow.push(postionGroupString);
-      if (this.playerValueService.showFreeAgents) {filterRow.push('Free Agents Only')};
-      if (this.playerValueService.showRookies) {filterRow.push('Rookies Only')};
-      if (this.playerValueService.isAdvancedFiltered) {filterRow.push(JSON.stringify(this.playerValueService.query))}
+      if (this.playerValueService.showFreeAgents) { filterRow.push('Free Agents Only') };
+      if (this.playerValueService.showRookies) { filterRow.push('Rookies Only') };
+      if (this.playerValueService.isAdvancedFiltered) { filterRow.push(JSON.stringify(this.playerValueService.query)) }
       playerData.push(filterRow);
       playerData.push([]);
       playerData.push([
@@ -130,7 +137,7 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
         this.playerValueService?.isSuperFlex ?
           playerValues[2][player?.name_id]?.sf_change || 0 :
           playerValues[2][player?.name_id]?.standard_change || 0,
-          this.playerValueService?.isSuperFlex ?
+        this.playerValueService?.isSuperFlex ?
           playerValues[3][player?.name_id]?.sf_trade_value || 0 :
           playerValues[3][player?.name_id]?.trade_value || 0,
         this.playerValueService?.isSuperFlex ?

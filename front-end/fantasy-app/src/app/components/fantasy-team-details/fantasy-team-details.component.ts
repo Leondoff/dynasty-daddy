@@ -15,6 +15,7 @@ import { DisplayService } from '../../services/utilities/display.service';
 import { MatchupService } from '../services/matchup.service';
 import { NflService } from 'src/app/services/utilities/nfl.service';
 import { standardDeviation, variance } from 'simple-statistics';
+import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
   selector: 'app-fantasy-team-details',
@@ -62,8 +63,12 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     public transactionsService: TransactionsService,
     public displayService: DisplayService,
     private playersService: PlayerService,
+    private pageService: PageService,
     public configService: ConfigService) {
     super();
+    this.pageService.setUpPageSEO(this.selectedTeam.owner.teamName,
+      ['team page', this.selectedTeam.owner.ownerName, this.selectedTeam.owner.teamName],
+      `Fantasy football team page for ${this.selectedTeam.owner.teamName}. Dive into team specific analytics and statistics.`)
   }
 
   ngOnInit(): void {
