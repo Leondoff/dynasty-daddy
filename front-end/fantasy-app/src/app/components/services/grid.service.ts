@@ -87,23 +87,23 @@ export class GridGameService {
     categories.forEach(category => {
       switch (category.type) {
         case 'jersey_number': {
-          isValid = player.jersey_numbers.includes(category.value) && isValid;
+          isValid = player?.jersey_numbers?.includes(category.value) && isValid;
           break;
         }
         case 'college': {
-          isValid = player.college === category.value && isValid;
+          isValid = player?.college === category.value && isValid;
           break;
         }
         case 'award': {
-          isValid = JSON.stringify(player.awards_json) !== JSON.stringify({}) && player.awards_json[category.value] !== '' && isValid;
+          isValid = JSON.stringify(player?.awards_json) !== JSON.stringify({}) && player?.awards_json?.[category.value] !== '' && isValid;
           break;
         }
         case 'stat': {
-          isValid = player.stats_json[category.value] && isValid;
+          isValid = player?.stats_json?.[category.value] && isValid;
           break;
         }
         default: {
-          isValid = player.teams.includes(category.value) && isValid;
+          isValid = player?.teams?.includes(category.value) && isValid;
         }
       }
     });

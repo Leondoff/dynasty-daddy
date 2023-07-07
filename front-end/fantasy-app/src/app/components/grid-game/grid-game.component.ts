@@ -137,7 +137,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case 'passYd4000':
                 return this.configService.isMobile ? 'Pass Yds' : 'Passing Yards';
             default:
-                return this.configService.isMobile ? 'Int' : 'Passing Ints';
+                return this.configService.isMobile ? 'Pass Ints' : 'Passing Ints';
         }
     }
 }

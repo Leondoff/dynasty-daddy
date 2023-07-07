@@ -219,22 +219,87 @@ def ExtraTeamsPlayedFor():
                 continue
 
         playerDict[PlayerService.cleanPlayerIdString(
-            re.sub(r'\s*\(.*?\)', '', player[0].strip()) + player[1])] = teams
+            re.sub(r'\s*\(.*?\)', '', player[0].strip()) + player[1])] = {"teams": teams, "startYear": player[3].split('-')[0]}
     
-    playerStatement = '''select name, gsis_id, pos, teams
+    playerStatement = '''select name, gsis_id, pos, teams, start_year
                 from player_grid'''
     cursor = conn.cursor()
     cursor.execute(playerStatement)
     result_set = cursor.fetchall()
     for player in result_set:
-        nameId = PlayerService.cleanPlayerIdString(player[0] + (player[2] if player[2] not in posExpMap else posExpMap[player[2]]))
+        nameId = PlayerService.cleanPlayerIdString(player[0] + player[2])
+        if nameId not in playerDict and player[2] in posExpMap:
+            nameId = PlayerService.cleanPlayerIdString(player[0] + posExpMap[player[2]])
         if nameId in playerDict:
-            if len(playerDict[nameId]) != len(player[3]):
-                result = list(set(playerDict[nameId]) | set(player[3]))
-                playerGridStatement = '''UPDATE player_grid
-                    SET
-                    teams = %s
-                    WHERE gsis_id = %s;'''
-                cursor.execute(playerGridStatement, (result, player[1]))
+            result = list(set(playerDict[nameId]["teams"]) | set(player[3]))
+            startYear = playerDict[nameId]["startYear"] if len(playerDict[nameId]["startYear"]) == 4 else player[4]
+            playerGridStatement = '''UPDATE player_grid
+                SET
+                teams = %s,
+                start_year = %s
+                WHERE gsis_id = %s;'''
+            cursor.execute(playerGridStatement, (result, startYear, player[1]))
 
 # ExtraTeamsPlayedFor()
+
+def AddPre1999Players():
+
+    conn = psycopg2.connect(
+        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
+    )
+
+    # Setting auto commit false
+    conn.autocommit = True
+
+    data = requests.get('https://www.crossovergrid.com/fblargecsv.csv')
+    # print(data.content)
+    csv_data = data.text
+
+    # Create a CSV reader
+    csv_reader = csv.reader(csv_data.splitlines())
+
+    # Read the headers row
+    headers = next(csv_reader)
+    cursor = conn.cursor()
+
+    # Map headers to dictionary
+    headers_dict = {index: value for index, value in enumerate(headers)}
+    csvList = list(csv_reader)
+    playerList = []
+    for player in csvList:
+        date_split = player[3].split('-')
+        playerObj = {}
+        if len(date_split) > 1 and len(date_split[1]) <= 4 and int(date_split[1]) < 1999:
+            playerObj['end_year'] = date_split[1]
+            playerObj['start_year'] = date_split[0] 
+            playerObj['teams'] = []
+            for num in range(5, 36):
+                try:
+                    if player[num] == '1':
+                        teamACC = headers_dict[num]
+                        if teamACC in TeamACCException:
+                            teamACC = TeamACCException[teamACC]
+                        playerObj['teams'].append(teamACC)
+                except IndexError:
+                    print("Index out of range, continuing...")
+            playerObj['name'] = re.sub(r'\s*\(.*?\)', '', player[0].strip())
+            playerObj["pos"] = player[1]
+            playerObj['college'] = player[2]
+            playerObj["jerseyNumbers"] = []
+            playerObj['headshot_url'] = player[4]
+            playerObj['awards'] = {}
+            playerObj['stats'] = {}
+            playerList.append(playerObj)
+    # print(len(playerList))
+    
+    iter = 1
+    for value in playerList:
+        print('(' + str(iter) + '/' + str(len(playerList)) + ') ' +
+              value['name'] + ' processed ')
+        playerGridStatement = '''INSERT INTO player_grid (name, jersey_numbers, teams, headshot_url, pos, sleeper_id, college, awards_json, start_year, end_year, stats_json, gsis_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
+        cursor.execute(playerGridStatement, (value['name'], value['jerseyNumbers'],
+                                                 value['teams'], value['headshot_url'], value['pos'], None, value['college'], json.dumps(value['awards'], indent=4), value['start_year'], value['end_year'], json.dumps(value['stats'], indent=4), None))
+        iter = iter + 1
+
+# AddPre1999Players()
