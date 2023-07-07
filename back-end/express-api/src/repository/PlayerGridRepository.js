@@ -19,7 +19,13 @@ export const GetSearchPlayersInGrid = async (search) => {
     name,
     pos,
     start_year,
-    end_year
+    end_year,
+    teams,
+    jersey_numbers,
+    college,
+    stats_json,
+    awards_json,
+    headshot_url
   from player_grid WHERE name ILIKE '%${searchEscaped}%' LIMIT 10;
 `);
   return data.rows;
@@ -32,7 +38,13 @@ export const GetAllPlayersInGrid = async () => {
     name,
     pos,
     start_year,
-    end_year
+    end_year,
+    teams,
+    jersey_numbers,
+    college,
+    stats_json,
+    awards_json,
+    headshot_url
   from player_grid;
 `);
   return data.rows;
