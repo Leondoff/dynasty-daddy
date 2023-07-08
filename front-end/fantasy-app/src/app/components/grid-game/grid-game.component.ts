@@ -8,7 +8,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { SearchGridPlayerModal } from "../modals/search-grid-player-modal/search-grid-player-modal.component";
 import { GridResultModalComponent } from "../modals/grid-result-modal/grid-result-modal.component";
 import { PageService } from "src/app/services/utilities/page.service";
-import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 
 @Component({
     selector: 'grid-game',
@@ -46,17 +45,19 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 this.initGridGame();
             }),
             this.gridGameService.validateGridSelection$.subscribe(_ => {
-                if (this.gridGameService.guessesLeft === 0) {
-                    this.dialog.open(GridResultModalComponent
-                        , {
-                            minHeight: '350px',
-                            minWidth: this.configService.isMobile ? '200px' : '500px'
-                        }
-                    );
-                }
+                this.openResults();
             }));
         if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue) {
             this.initGridGame()
+        }
+    }
+
+    private openResults(): void {
+        if (this.gridGameService.guessesLeft === 0) {
+            this.dialog.open(GridResultModalComponent, {
+                minHeight: '350px',
+                minWidth: this.configService.isMobile ? '200px' : '500px',
+            });
         }
     }
 
@@ -90,15 +91,6 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 data: {
                     coords: [x, y]
                 }
-            }
-        );
-    }
-
-    openResults(): void {
-        this.dialog.open(GridResultModalComponent
-            , {
-                minHeight: '350px',
-                minWidth: this.configService.isMobile ? '200px' : '500px'
             }
         );
     }
@@ -145,7 +137,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case 'passYd4000':
                 return this.configService.isMobile ? 'Pass Yds' : 'Passing Yards';
             default:
-                return this.configService.isMobile ? 'Int' : 'Passing Ints';
+                return this.configService.isMobile ? 'Pass Ints' : 'Passing Ints';
         }
     }
 }
