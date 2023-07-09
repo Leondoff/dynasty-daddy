@@ -12,23 +12,28 @@ export const GetPlayerForGrid = async (playerId) => {
 };
 
 export const GetSearchPlayersInGrid = async (search) => {
-  const searchEscaped = search.replace('\'', '\'\'').replace('`', '\'\'');
-  const data = await playersModel.selectQuery(`
-  SELECT
-    id,
-    name,
-    pos,
-    start_year,
-    end_year,
-    teams,
-    jersey_numbers,
-    college,
-    stats_json,
-    awards_json,
-    headshot_url
-  from player_grid WHERE name ILIKE '%${searchEscaped}%' LIMIT 10;
-`);
-  return data.rows;
+  const query = `
+    SELECT
+      id,
+      name,
+      pos,
+      start_year,
+      end_year,
+      teams,
+      jersey_numbers,
+      college,
+      stats_json,
+      awards_json,
+      headshot_url
+    FROM player_grid
+    WHERE name ILIKE $1
+    LIMIT 10;
+  `;
+  const searchString = `%${search}%`;
+  const values = [ searchString ];
+
+  const { rows } = await playersModel.pool.query(query, values);
+  return rows;
 };
 
 export const GetAllPlayersInGrid = async () => {
