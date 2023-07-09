@@ -29,7 +29,8 @@ export const GetSearchPlayersInGrid = async (search) => {
     WHERE name ILIKE $1
     LIMIT 10;
   `;
-  const searchString = `%${search}%`;
+  const formattedSearch = search.replace(/‘/g, '\'');
+  const searchString = `%${formattedSearch}%`;
   const values = [ searchString ];
 
   const { rows } = await playersModel.pool.query(query, values);
