@@ -360,8 +360,8 @@ def AddPre1999Players():
 # UpdatePFRId()
 
 def generatePFRId(name_parts):
-    first_name = name_parts[0]
-    last_name = name_parts[1]
+    first_name = name_parts[0].replace("'", "")
+    last_name = name_parts[1].replace("'", "")
 
     # Use 'x' as a placeholder if the last name is less than 4 characters
     if len(last_name) < 4:
@@ -396,7 +396,6 @@ def UpdateMissingPFRIds():
         name_split = player[0].split()
         if len(name_split) > 1:
             pfrId = generatePFRId(name_split)
-            print(name_split, pfrId)
             playerGridStatement = '''UPDATE player_grid
                     SET
                     pfr_id = %s
