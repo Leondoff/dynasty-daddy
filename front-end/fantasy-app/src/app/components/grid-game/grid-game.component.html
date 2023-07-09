@@ -20,7 +20,8 @@
                             <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'stat'">
                                 <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
                                 <div class="light_bg_color">{{getStatCategory(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                <div class="light_bg_color">{{!configService.isMobile ? 'in a ' : ''}}season</div>
+                                <div class="light_bg_color">{{!configService.isMobile ? 'in a s' : 'S'}}eason</div>
+                                <div class="light_bg_color">Since 1999</div>
                             </div>
                         </div>
                         <div *ngIf="j === 0 && i !== 0">
@@ -50,29 +51,9 @@
         </div>
     </div>
 
-    <div class="margin-top-50 center-text">
-        <div class="large-bold-header-text center-text margin-bot-20">
-          Additional Rules
-        </div>
-        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
-            The player must have suited up in the regular season for the team to count. Players cut in the offseason/practice squad don't count.
-        </div>
-        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
-            You cannot use a player more than once. Once a player is locked in, they will be removed from the search results.
-        </div>
-        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
-            For NFL teams, the player must have suited up one week for the team in order for it to count.
-        </div>
-        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
-            For college teams, it is the college the player was drafted from. If they transferred from one school to another it would be the school they transferred to.
-        </div>
-        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
-            For jersey numbers, any jersey number they wore on any team works. It doesn't have to be the jersey number they use on the grid team.
-        </div>
-        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 15px">
-            For stats & awards, each criteria must be hit in a single season and since 1999.
-        </div>
-      </div>
+    <div class="margin-top-15 center-text">
+        <button mat-button (click)="openHowToPlay()"><mat-icon>help</mat-icon> How to Play</button>
+    </div>
 </div>
 
 <div class="center-spinner margin-top-120" *ngIf="gridGameService.status === 0">

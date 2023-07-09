@@ -117,6 +117,7 @@ import { ConfirmationDialogModal } from './components/modals/confirmation-dialog
 import { SearchGridPlayerModal } from './components/modals/search-grid-player-modal/search-grid-player-modal.component';
 import { GridGameComponent } from './components/grid-game/grid-game.component';
 import { GridResultModalComponent } from './components/modals/grid-result-modal/grid-result-modal.component';
+import { SimpleTextModal } from './components/sub-components/simple-text-modal/simple-text-modal.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -201,6 +202,7 @@ let UniversalDeviceDetectorService;
     LeagueLoginModalComponent,
     SearchGridPlayerModal,
     ConfirmationDialogModal,
+    SimpleTextModal,
     TruncatePipe,
   ],
   imports: [

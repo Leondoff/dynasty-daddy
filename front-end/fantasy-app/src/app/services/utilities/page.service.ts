@@ -24,7 +24,6 @@ export class PageService {
             url = 'gridiron';
             img = this.GRIDIRON_IMG;
         }
-        console.log(window.location.href)
         if (this.meta.getTag('keywords')) {
             this.meta.updateTag({ name: 'keywords', content: keywords.join(', ') });
             this.meta.updateTag({ name: 'description', content: description });
