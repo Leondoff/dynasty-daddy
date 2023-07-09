@@ -12,7 +12,7 @@ export const GetPlayerForGrid = async (playerId) => {
 };
 
 export const GetSearchPlayersInGrid = async (search) => {
-  const searchEscaped = search.replace('\'', '\'\'');
+  const searchEscaped = search.replace('\'', '\'\'').replace('`', '\'\'');
   const data = await playersModel.selectQuery(`
   SELECT
     id,

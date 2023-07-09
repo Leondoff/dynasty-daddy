@@ -287,6 +287,13 @@ def AddPre1999Players():
             playerObj['college'] = player[2]
             playerObj["jerseyNumbers"] = []
             playerObj['headshot_url'] = player[4]
+            pattern = r"headshots/(.*?)\.jpg"
+            playerObj['pfr_id'] = None
+            match = re.search(pattern, player[4])
+            if match:
+                match_split = match.group(1).split('_')
+                if len(match_split) > 0:
+                    playerObj['pfr_id'] = match_split[0]
             playerObj['awards'] = {}
             playerObj['stats'] = {}
             playerList.append(playerObj)
@@ -296,10 +303,106 @@ def AddPre1999Players():
     for value in playerList:
         print('(' + str(iter) + '/' + str(len(playerList)) + ') ' +
               value['name'] + ' processed ')
-        playerGridStatement = '''INSERT INTO player_grid (name, jersey_numbers, teams, headshot_url, pos, sleeper_id, college, awards_json, start_year, end_year, stats_json, gsis_id)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
+        playerGridStatement = '''INSERT INTO player_grid (name, jersey_numbers, teams, headshot_url, pos, sleeper_id, college, awards_json, start_year, end_year, stats_json, gsis_id, pfr_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
         cursor.execute(playerGridStatement, (value['name'], value['jerseyNumbers'],
-                                                 value['teams'], value['headshot_url'], value['pos'], None, value['college'], json.dumps(value['awards'], indent=4), value['start_year'], value['end_year'], json.dumps(value['stats'], indent=4), None))
+                                                 value['teams'], value['headshot_url'], value['pos'], None, value['college'], json.dumps(value['awards'], indent=4), value['start_year'], value['end_year'], json.dumps(value['stats'], indent=4), None, value['pfr_id']))
         iter = iter + 1
 
 # AddPre1999Players()
+
+# def UpdatePFRId():
+
+#     conn = psycopg2.connect(
+#         database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
+#     )
+
+#     # Setting auto commit false
+#     conn.autocommit = True
+
+#     data = requests.get('https://www.crossovergrid.com/fblargecsv.csv')
+#     # print(data.content)
+#     csv_data = data.text
+
+#     # Create a CSV reader
+#     csv_reader = csv.reader(csv_data.splitlines())
+
+#     csvList = list(csv_reader)
+#     cursor = conn.cursor()
+#     playerMap = {}
+#     for player in csvList:
+#         pattern = r"headshots/(.*?)\.jpg"
+#         pfrId = None
+#         match = re.search(pattern, player[4])
+#         if match:
+#             pfrId = match.group(1)
+#             nameId = PlayerService.cleanPlayerIdString(PlayerService.cleanPlayerIdString(
+#                 re.sub(r'\s*\(.*?\)', '', player[0].strip()) + player[1]) + player[2])
+#             playerMap[nameId] = pfrId
+    
+#     playerStatement = '''select name, gsis_id, pos, college
+#                 from player_grid
+#                 where gsis_id is not null'''
+#     cursor.execute(playerStatement)
+#     result_set = cursor.fetchall()
+#     for player in result_set:
+#         nameId = PlayerService.cleanPlayerIdString(player[0] + player[2])
+#         if nameId not in playerMap and player[2] in posExpMap:
+#             nameId = PlayerService.cleanPlayerIdString(player[0] + posExpMap[player[2]])
+#         if nameId in playerMap:
+#             print(nameId)
+#             playerGridStatement = '''UPDATE player_grid
+#                                             SET
+#                                             pfr_id = %s
+#                                             WHERE gsis_id = %s;'''
+#             cursor.execute(playerGridStatement, (playerMap[nameId], player[1]))
+
+# UpdatePFRId()
+
+def generatePFRId(name_parts):
+    first_name = name_parts[0]
+    last_name = name_parts[1]
+
+    # Use 'x' as a placeholder if the last name is less than 4 characters
+    if len(last_name) < 4:
+        last_name += 'x' * (4 - len(last_name))
+
+    # Extract the first two characters of the last name
+    last_name_initials = last_name[:4]
+
+    # Extract the first two characters of the first name
+    first_name_initials = first_name[:2]
+
+    # Combine the last name initials, first name initials, and '00' to form the output
+    output = last_name_initials + first_name_initials + '00'
+
+    return output
+
+def UpdateMissingPFRIds():
+
+    conn = psycopg2.connect(
+        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
+    )
+
+    # Setting auto commit false
+    conn.autocommit = True
+
+    playerStatement = '''select name, id
+                from player_grid'''
+    cursor = conn.cursor()
+    cursor.execute(playerStatement)
+    result_set = cursor.fetchall()
+    for player in result_set:
+        name_split = player[0].split()
+        if len(name_split) > 1:
+            pfrId = generatePFRId(name_split)
+            print(name_split, pfrId)
+            playerGridStatement = '''UPDATE player_grid
+                    SET
+                    pfr_id = %s
+                    WHERE id = %s;'''
+            cursor.execute(playerGridStatement, (pfrId, player[1]))
+        else:
+            print(name_split)
+        
+UpdateMissingPFRIds()
