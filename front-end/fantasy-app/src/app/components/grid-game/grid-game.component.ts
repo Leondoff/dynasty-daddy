@@ -66,7 +66,9 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 this.initGridGame();
             }),
             this.gridGameService.validateGridSelection$.subscribe(_ => {
-                this.openResults();
+                if (this.gridGameService.guessesLeft === 0) {
+                    this.openResults();
+                }
             }));
         if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue) {
             this.initGridGame()
@@ -77,18 +79,17 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      * Open results modal
      */
     private openResults(): void {
-        if (this.gridGameService.guessesLeft === 0) {
-            this.dialog.open(GridResultModalComponent, {
-                minHeight: '350px',
-                minWidth: this.configService.isMobile ? '200px' : '500px',
-            });
-        }
+        this.dialog.open(GridResultModalComponent, {
+            minHeight: '350px',
+            minWidth: this.configService.isMobile ? '200px' : '500px',
+        });
     }
 
     /**
      * Init immaculate gridiron
      */
     private initGridGame(): void {
+        this.gridGameService.calculateTotalSelections();
         this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue);
         const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}');
         if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
