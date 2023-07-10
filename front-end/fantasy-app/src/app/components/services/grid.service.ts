@@ -13,6 +13,8 @@ export class GridGameService {
 
   status: Status = Status.LOADING;
 
+  isHistoricalGrid: boolean = false;
+
   /** grid info from the db */
   gridDict = {};
 
@@ -84,7 +86,7 @@ export class GridGameService {
         const x = coords[0] + 1;
         const y = coords[1] + 1;
         const cellNum = (coords[1] * 3) + coords[0];
-        const percent = this.getPercentForPlayerSelected(player.id, cellNum);
+        const percent = this.isHistoricalGrid ? null : this.getPercentForPlayerSelected(player.id, cellNum);
         this.gridResults[x][y] = { name: player.name, img: player.headshot_url, id: player.id, percent: percent };
         this.alreadyUsedPlayers.push(player.id);
       }
@@ -160,13 +162,13 @@ export class GridGameService {
     this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
       res.forEach(p => {
         if (p.player_id === playerId && p.cellnum === cellNum) {
-          percent = p.guesses / this.globalSelectionMapping[cellNum];
+          percent = (p.guesses + 1) / (this.globalSelectionMapping[cellNum] + 1);
           return;
         }
       })
     });
     if (percent === 0) {
-      percent = 1 / this.globalSelectionMapping[cellNum];
+      percent = 1 / (this.globalSelectionMapping[cellNum] + 1);
     }
     return percent;
   }
@@ -184,7 +186,7 @@ export class GridGameService {
         }
       }
     }
-    if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true') {
+    if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true' && !this.isHistoricalGrid) {
       this.fantasyPlayersAPIService.postCorrectGridironAnswer(playerList).subscribe(_ => {
         // do nothing
       })
