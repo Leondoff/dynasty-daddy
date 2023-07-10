@@ -108,6 +108,6 @@ export class GridGameService {
       }
     });
     // need a delay otherwise results component wont load for some reason
-    return of(isValid).pipe(delay(1000));
+    return of(isValid).pipe(delay(500));
   }
 }
