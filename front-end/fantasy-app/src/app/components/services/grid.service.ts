@@ -79,12 +79,11 @@ export class GridGameService {
         const y = coords[1] + 1;
         const cellNum = (coords[1] * 3) + coords[0];
         const percent = this.getPercentForPlayerSelected(player.id, cellNum);
-        console.log(percent)
         this.gridResults[x][y] = { name: player.name, img: player.headshot_url, id: player.id, percent: percent };
         this.alreadyUsedPlayers.push(player.name);
-        this.fantasyPlayersAPIService.postCorrectGridironAnswer(player.id, cellNum, player.name).subscribe(_=> {
+        // this.fantasyPlayersAPIService.postCorrectGridironAnswer(player.id, cellNum, player.name).subscribe(_=> {
           // do nothing
-        })
+        // })
       }
       localStorage.setItem(LocalStorageDictionary.GRIDIRON_ITEM, JSON.stringify({ grid: this.gridDict, guesses: this.guessesLeft, results: this.gridResults, alreadyUsedPlayers: this.alreadyUsedPlayers }))
       this.validateGridSelection$.next();
