@@ -1,14 +1,14 @@
-<div class="center-text">
-    <mat-form-field color="accent" [ngStyle]="configService.isMobile ? {'width': '120px;'} : {'width': '200px;'}">
+<div class="dialog-header">
+    <mat-form-field color="accent" [ngStyle]="configService.isMobile ? {'width': '120px;'} : {'width': '200px;'}" mat-dialog-title>
         <mat-label>Search Player</mat-label>
         <input matInput [(ngModel)]="searchVal" (keyup)="searchSubject$.next(this.searchVal);">
       </mat-form-field>
-      <span class="button-right">
-        <button mat-icon-button color="accent" class="button-right" (click)="close()"><mat-icon>close</mat-icon></button>
-      </span>
+        <button mat-icon-button mat-dialog-close color="accent" (click)="close()"><mat-icon>close</mat-icon></button>
 </div>
 
-<div *ngFor="let player of searchPlayers" style="min-height: 40px;" class="select-player" (click)="selectPlayer(player)">
-  {{player.name}} <span class="light_bg_color" style="padding-left: 5px;">{{player.pos}}</span>
-  <div class="light_bg_color">{{player.start_year}} - {{player.end_year == '2022' ? 'Present' : player.end_year}}</div>
-</div>
+<mat-dialog-content>
+  <div *ngFor="let player of searchPlayers" class="select-player" (click)="selectPlayer(player)">
+    {{player.name}} <span class="light_bg_color" style="padding-left: 5px;">{{player.pos}}</span>
+    <div class="light_bg_color">{{player.start_year}} - {{player.end_year == '2022' ? 'Present' : player.end_year}}</div>
+  </div>  
+</mat-dialog-content>
