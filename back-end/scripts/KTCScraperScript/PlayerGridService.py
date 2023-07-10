@@ -38,7 +38,7 @@ def SetNewPlayerGrid():
 
     # Creating a cursor object using the cursor() method
     cursor = conn.cursor()
-    
+    cursor.execute('TRUNCATE TABLE grid_results;')
     cursor.execute('SELECT * FROM player_grid;')
     rows = cursor.fetchall()
     iter = 0
@@ -54,7 +54,7 @@ def SetNewPlayerGrid():
             if selectedWildcard is 'jersey_number':
                 selectedNumber = random.choice(SupportedJerseyNumbers)
                 formattedGrid[5] = {"type": "jersey_number", "value": selectedNumber}
-        if (random.choice(EightyPercentArray)):
+        if (random.choice([True])):
             selectedWildcard = random.choice(SupportedXTypes)
             if selectedWildcard is 'stat':
                 selectedStat = random.choice(SupportedStats)
@@ -79,11 +79,6 @@ def SetNewPlayerGrid():
         SET
         config_value = %s WHERE config_key = \'daily_grid\';'''
     cursor.execute(setTodaysGridStatement, (str(jsonGrid),))
-    
-    setTodaysGridAnswerStatement = '''UPDATE config
-        SET
-        config_value = %s WHERE config_key = \'daily_grid_answer\';'''
-    cursor.execute(setTodaysGridAnswerStatement, (str(AnswerGrid),))
     
     archiveGridironStatement = '''INSERT INTO historical_gridirons (daily_grid, daily_grid_answer)
                     VALUES (%s, %s)'''

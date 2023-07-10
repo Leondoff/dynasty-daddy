@@ -2,19 +2,24 @@
 
 .top-left-cell {
   text-align-last: center;
-  width: clamp(20px, 12vw, 180px);;
-  height: clamp(20px, 12vw, 200px);;
+  width: clamp(20px, 12vw, 180px);
+  ;
+  height: clamp(20px, 12vw, 200px);
+  ;
 }
 
 .team-grid-img {
   text-align-last: center;
-  width: clamp(20px, 12vw, 180px);;
-  height: clamp(20px, 12vw, 200px);;
+  width: clamp(20px, 12vw, 180px);
+  ;
+  height: clamp(20px, 12vw, 200px);
+  ;
 }
 
 .middle-cell {
   width: clamp(20px, 12vw, 180px);
-  height: clamp(20px, 12vw, 200px);;
+  height: clamp(20px, 12vw, 200px);
+  ;
   background-color: $dark-bg-lighter-10;
   border: none;
   border-radius: 5px;
@@ -30,20 +35,31 @@
 
 .player-name-text {
   z-index: 100;
-  font-size: 12px;
+  font-size: 24px;
   font-weight: bold;
-  margin-top: -20px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: $dark-bg-lighter-30;
+  text-align: center;
 }
 
 .player-name-text-mobile {
   z-index: 100;
   font-size: 8px;
-  margin-top: -10px;
+  position: absolute;
+  background-color: $dark-bg-lighter-30;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
 }
 
 .player-grid-img {
   text-align-last: center;
-  width: clamp(20px, 12vw, 180px);;
+  width: clamp(20px, 12vw, 180px);
+  ;
   // height: clamp(20px, 12vw, 180px);;
 }
 
@@ -58,4 +74,23 @@
 
 .subtext-mobile {
   font-size: 8px;
+}
+
+.percent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: $dark-bg-lighter-30;
+  color: white;
+  padding: 5px;
+}
+
+.percent-mobile {
+  font-size: 8px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: $dark-bg-lighter-30;
+  color: white;
+  padding: 1px;
 }

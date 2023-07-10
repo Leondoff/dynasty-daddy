@@ -1,6 +1,28 @@
+@import "../../../../styles.scss";
 
 .result-grid {
-    text-align-last: center;
-    width: clamp(20px, 5vw, 60px);;
-    height: clamp(20px, 5vw, 60px);;
-  }
+  text-align-last: center;
+  width: clamp(20px, 5vw, 60px);
+  height: clamp(20px, 5vw, 60px);
+}
+
+.player-name-text {
+  z-index: 100;
+  font-size: 8px;
+  position: absolute;
+  background-color: $dark-bg-lighter-30;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.player-percent {
+  font-size: 8px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: $dark-bg-lighter-30;
+  color: white;
+  padding: 1px;
+}

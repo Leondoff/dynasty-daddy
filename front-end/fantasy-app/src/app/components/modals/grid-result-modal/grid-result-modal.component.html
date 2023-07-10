@@ -10,8 +10,8 @@
         <tbody>
             <ng-container *ngFor="let row of resultGrid; let i = index">
                 <tr>
-                    <td *ngFor="let col of row; let j = index" class="result-grid" [ngStyle]="resultGrid[j][i] ? {'background-color': '#008f51'} : {'background-color': '#1d1d28'}">
-                        <div *ngIf="toggleAnswers && !resultGrid[j][i]">{{getAnswerForLocation(j, i)}}</div>
+                    <td *ngFor="let col of row; let j = index" class="result-grid" [ngStyle]="resultGrid[j][i] ? {'background-color': '#008f51'} : {'background-color': '#1d1d28'}" style="position: relative;">
+                        <div *ngIf="toggleAnswers">{{gridGameService.globalCommonAnsMapping[i * 3 + j]?.name || '--'}}</div>
                     </td>
                 </tr>
             </ng-container>
@@ -20,10 +20,10 @@
 </div>
 
 <div class="center-text light_bg_color margin-top-25">
-    Score
+    Rarity Rating
 </div>
 <div class="center-text large-bold-header-text">
-    {{score}}/9
+    {{uniScore}}
 </div>
 
 <div class="margin-top-25 center-text" *ngIf="score != 9">

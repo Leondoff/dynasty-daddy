@@ -42,8 +42,10 @@ import {
 } from '../controllers/ffpc_wrapper_controller';
 import {
   FetchAllGridPlayersEndpoint,
+  FetchAllGridResultsEndpoint,
   FetchAllHistoricalGridsEndpoint,
   FetchSearchedPlayersEndpoint,
+  UpdateGridResultsEndpoint,
   ValidateGridSelectionEndpoint
 } from '../controllers/gridController';
 
@@ -63,6 +65,8 @@ indexRouter.post('/grid/validate', ValidateGridSelectionEndpoint);
 indexRouter.get('/grid/players', FetchSearchedPlayersEndpoint);
 indexRouter.get('/grid/players/all', FetchAllGridPlayersEndpoint);
 indexRouter.get('/grid/archive', FetchAllHistoricalGridsEndpoint);
+indexRouter.post('/grid/results/add', UpdateGridResultsEndpoint);
+indexRouter.get('/grid/results', FetchAllGridResultsEndpoint);
 
 // MFL Wrapper Endpoints
 indexRouter.post('/mfl/league', GetMFLLeagueEndpoint);

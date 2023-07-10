@@ -1,4 +1,5 @@
 /* eslint-disable consistent-return */
+import { GetCurrentResults, PersistGridResult } from '../repository/GridResultRepository';
 import { GetAllHistoricalGridirons } from '../repository/HistoricalGridironsRepository';
 import { GetPlayerForGrid, GetSearchPlayersInGrid, GetAllPlayersInGrid } from '../repository/PlayerGridRepository';
 
@@ -42,3 +43,9 @@ export const FetchAllGridPlayers = async () =>
 
 export const FetchAllHistoricalGrids = async () =>
   GetAllHistoricalGridirons();
+
+export const FetchAllGridResults = async () =>
+  GetCurrentResults();
+
+export const UpdateGridResultsWithAnswer = async (playerId, cellNum, name) =>
+  PersistGridResult(playerId, cellNum, name);

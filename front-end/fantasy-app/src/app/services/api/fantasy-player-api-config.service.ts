@@ -26,6 +26,10 @@ export class FantasyPlayerApiConfigService {
 
   private _getHistoricalGridironsEndpoint = '';
 
+  private _postCorrectAnswerEndpoint = '';
+
+  private _getAllGridResultsEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
@@ -104,5 +108,21 @@ export class FantasyPlayerApiConfigService {
 
   set getHistoricalGridironsEndpoint(value: string) {
     this._getHistoricalGridironsEndpoint = value;
+  }
+
+  get postCorrectAnswerEndpoint(): string {
+    return this._postCorrectAnswerEndpoint;
+  }
+
+  set postCorrectAnswerEndpoint(value: string) {
+    this._postCorrectAnswerEndpoint = value;
+  }
+
+  get getAllGridResultsEndpoint(): string {
+    return this._getAllGridResultsEndpoint;
+  }
+
+  set getAllGridResultsEndpoint(value: string) {
+    this._getAllGridResultsEndpoint = value;
   }
 }

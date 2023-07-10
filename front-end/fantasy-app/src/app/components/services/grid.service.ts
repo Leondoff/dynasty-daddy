@@ -33,6 +33,12 @@ export class GridGameService {
     [null, null, null, null]
   ];
 
+  /** how many guesses have been correct for each cell */
+  globalSelectionMapping = {};
+
+  /** most common answers for each spot on the grid */
+  globalCommonAnsMapping = [];
+
   /** dict of college to espn id for img */
   collegeLogoMap = {
     'Michigan': 130,
@@ -60,28 +66,36 @@ export class GridGameService {
 
   constructor(private fantasyPlayersAPIService: FantasyPlayerApiService) { }
 
+  /** 
+   * verifying wrapper that handles the results of a guess
+   * @param player gridplayer
+   * @param coors number array for grid coors
+   */
   isSelectedPlayerCorrect(player: GridPlayer, coords: number[]): void {
-    this.verifySelectedPlayer(player, [this.gridDict['xAxis'][coords[0]], this.gridDict['yAxis'][coords[1]]]).subscribe(res =>{
+    this.verifySelectedPlayer(player, [this.gridDict['xAxis'][coords[0]], this.gridDict['yAxis'][coords[1]]]).subscribe(res => {
       this.guessesLeft--;
       if (res) {
         const x = coords[0] + 1;
         const y = coords[1] + 1;
-        this.gridResults[x][y] = { name: player.name, img: player.headshot_url };
+        const cellNum = (coords[1] * 3) + coords[0];
+        const percent = this.getPercentForPlayerSelected(player.id, cellNum);
+        console.log(percent)
+        this.gridResults[x][y] = { name: player.name, img: player.headshot_url, id: player.id, percent: percent };
         this.alreadyUsedPlayers.push(player.name);
+        this.fantasyPlayersAPIService.postCorrectGridironAnswer(player.id, cellNum, player.name).subscribe(_=> {
+          // do nothing
+        })
       }
       localStorage.setItem(LocalStorageDictionary.GRIDIRON_ITEM, JSON.stringify({ grid: this.gridDict, guesses: this.guessesLeft, results: this.gridResults, alreadyUsedPlayers: this.alreadyUsedPlayers }))
       this.validateGridSelection$.next();
     })
   }
 
-  loadGridPlayers(): void {
-    if (this.gridPlayers.length === 0) {
-      this.fantasyPlayersAPIService.getAllGridGamePlayers().subscribe(res => {
-        this.gridPlayers = res;
-      });
-    }
-  }
-
+  /**
+   * Verify if selection in correct
+   * @param player GridPlayer
+   * @param categories categories to verify on
+   */
   verifySelectedPlayer(player: GridPlayer, categories: any[]): Observable<boolean> {
     let isValid = true;
     categories.forEach(category => {
@@ -109,5 +123,43 @@ export class GridGameService {
     });
     // need a delay otherwise results component wont load for some reason
     return of(isValid).pipe(delay(500));
+  }
+
+  /**
+   * calculate total selections for all grids
+   */
+  calculateTotalSelections(): void {
+    this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
+      res.forEach(obj => {
+        const { cellnum } = obj;
+        if (this.globalSelectionMapping[cellnum]) {
+          this.globalSelectionMapping[cellnum] += obj.guesses;
+          if (this.globalCommonAnsMapping[cellnum].guesses < obj.guesses) {
+            this.globalCommonAnsMapping[cellnum] = obj;
+          }
+        } else {
+          this.globalSelectionMapping[cellnum] = obj.guesses;
+          this.globalCommonAnsMapping[cellnum] = obj;
+        }
+      });
+    })
+  }
+
+  /**
+   * Get percent for a player being selected
+   * @param playerId player id
+   * @param cellNum cell number
+   */
+  getPercentForPlayerSelected(playerId: number, cellNum: number): number {
+    let percent = 0.0001
+    this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
+      res.forEach(p => {
+        if (p.player_id === playerId && p.cellnum === cellNum) {
+          percent = p.guesses / this.globalSelectionMapping[cellNum];
+          return;
+        }
+      })
+    })
+    return percent;
   }
 }

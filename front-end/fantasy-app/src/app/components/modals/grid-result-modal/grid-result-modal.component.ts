@@ -15,24 +15,21 @@ export class GridResultModalComponent implements OnInit {
 
     score: number = 0;
 
+    uniScore: number = 0;
+
     startDate: string = '2023-07-01T08:00:00-05:00';
 
     puzzleNum: number;
 
     toggleAnswers: boolean = false;
 
-    answerList: string[] = null;
-
     constructor(public gridGameService: GridGameService,
-        private configService: ConfigService,
         public dialog: MatDialog,
         public clipboard: Clipboard) { }
 
     ngOnInit(): void {
         const targetDate = new Date(this.startDate);
         const currentDate = new Date();
-        const arrStr = this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID_ANSWER)?.configValue || '[]';
-        this.answerList = JSON.parse(arrStr.replace(/'/g, '"'));
         const timeDiff = currentDate.getTime() - targetDate.getTime();
         this.puzzleNum = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
         this.resultGrid = this.slice4x4To3x3(this.gridGameService.gridResults);
@@ -61,6 +58,7 @@ export class GridResultModalComponent implements OnInit {
             for (let j = 1; j < 4; j++) {
                 if (matrix4x4[i][j]) {
                     this.score += 1;
+                    this.uniScore += Math.round(100 - (100 * matrix4x4[i][j].percent))
                 }
                 newRow.push(matrix4x4[i][j]);
             }
@@ -85,7 +83,7 @@ export class GridResultModalComponent implements OnInit {
         }
         let resultStr = `Immaculate Gridiron ${this.puzzleNum} ${this.score}/9${newline}${newline}`
         if (this.score === 9) {
-            resultStr += 'IMMACULATE' + newline
+            resultStr += 'IMMACULATE!' + newline
         }
         resultStr += emojis.join(newline) + `${newline}${newline}👉 https://dynasty-daddy.com/gridiron`;
         return resultStr;
@@ -94,6 +92,4 @@ export class GridResultModalComponent implements OnInit {
     makeTweet = () =>
         window.open('https://twitter.com/share?text=' + this.formatMessage(true).replace('\n', '%0A'), '_blank')
 
-    getAnswerForLocation = (x: number, y: number) => 
-        this.answerList[(x * 3) + y]
 }
