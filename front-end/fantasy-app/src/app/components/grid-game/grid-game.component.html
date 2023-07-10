@@ -35,7 +35,7 @@
                         <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">
                             <img [src]="gridGameService.gridResults[j][i].img" class="player-grid-img">
                             <div [ngClass]="{'player-name-text-mobile': configService.isMobile, 'player-name-text': !configService.isMobile}" class="center-text">{{gridGameService.gridResults[j][i]?.name}}</div>
-                            <div [ngClass]="{'percent-mobile': configService.isMobile, 'percent': !configService.isMobile}">{{gridGameService.gridResults[j][i].percent | percent:'1.2-2' || '--'}}</div>
+                            <div [ngClass]="{'percent-mobile': configService.isMobile, 'percent': !configService.isMobile}" *ngIf="gridGameService.gridResults[j][i].percent">{{gridGameService.gridResults[j][i].percent | percent:'1.2-2'}}</div>
                         </div>
                     </td>
                 </tr>
@@ -58,7 +58,22 @@
     </div>
 
     <div class="margin-top-15 center-text">
+        <button mat-button [matMenuTriggerFor]="menu" (click)="openMenu()">Play Previous Grids</button>
+        <mat-menu #menu="matMenu" matMenuPosition="above">
+            <ng-container *ngIf="menuItems | async as items; else loading">
+              <button mat-menu-item *ngFor="let item of items;  let i = index" (click)="selectHistoricalGrid(item, i !== 0)">Immaculate Gridiron {{ item.id }}</button>
+            </ng-container>
+            <ng-template #loading>
+              <div class="spinner-container">
+                <mat-spinner diameter="30"></mat-spinner>
+              </div>
+            </ng-template>
+        </mat-menu>
+    </div>
+
+    <div class="margin-top-15 center-text">
         <button mat-button (click)="toggleUnlimitedMode()"><mat-icon>all_inclusive</mat-icon> {{gridGameService.unlimitedMode ? 'Disable': 'Enable'}} "Mr. Unlimited" Mode</button>
+        <button mat-button (click)="resetGrid()"><mat-icon>restart_alt</mat-icon> Reset Grid</button>
     </div>
 </div>
 

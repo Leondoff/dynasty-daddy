@@ -9,6 +9,8 @@ import { SearchGridPlayerModal } from "../modals/search-grid-player-modal/search
 import { GridResultModalComponent } from "../modals/grid-result-modal/grid-result-modal.component";
 import { PageService } from "src/app/services/utilities/page.service";
 import { SimpleTextModal } from "../sub-components/simple-text-modal/simple-text-modal.component";
+import { Observable } from "rxjs";
+import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 
 @Component({
     selector: 'grid-game',
@@ -29,8 +31,10 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     /** college url */
     collegeImgURL = 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/TEAM_ACC.png';
 
+    menuItems: Observable<any[]>;
+
     /** help menu bullet points */
-    helpBullets =  [
+    helpBullets = [
         "Select a player for each cell that matches the criteria for that cell's row and column",
         "For a player to be considered valid for a team, he must've suited up for one NFL regular season game for that team",
         "If a cell is for a team and an award, the award must have been won after 1999 but doesn't have to be on the team",
@@ -49,6 +53,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         private leagueService: LeagueService,
         private dialog: MatDialog,
         private pageService: PageService,
+        private fantasyPlayerApiService: FantasyPlayerApiService,
         public gridGameService: GridGameService) {
         super();
         this.pageService.setUpPageSEO('NFL Immaculate Gridiron',
@@ -89,9 +94,12 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     /**
      * Init immaculate gridiron
      */
-    private initGridGame(): void {
-        this.gridGameService.calculateTotalSelections();
-        this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue);
+    private initGridGame(isHistorical: boolean = false): void {
+        this.gridGameService.isHistoricalGrid = isHistorical;
+        if (!isHistorical) {
+            this.gridGameService.calculateTotalSelections();
+            this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue);
+        }
         const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}');
         if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
             this.gridGameService.guessesLeft = gridCache.guesses;
@@ -216,5 +224,39 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     /** toggle mr unlimited mode */
     toggleUnlimitedMode(): void {
         this.gridGameService.unlimitedMode = !this.gridGameService.unlimitedMode
+    }
+
+    /**
+     * Reset grid and progress
+     * @param isHistorical is historical grid or not
+     */
+    resetGrid(isHistorical: boolean = false): void {
+        localStorage.removeItem(LocalStorageDictionary.GRIDIRON_ITEM);
+        this.gridGameService.guessesLeft = 9;
+        this.gridGameService.gridResults = [
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null]
+        ];
+        this.gridGameService.alreadyUsedPlayers = [];
+        this.initGridGame(isHistorical);
+    }
+
+    /**
+     * Open up historical grids menu
+     */
+    openMenu(): void {
+        this.menuItems = this.fantasyPlayerApiService.fetchHistoricalGridirons()
+    }
+
+    /**
+     * Select historical grid to play
+     * @param oldGrid old grid string json
+     * @param isHistorical boolean if it is historical
+     */
+    selectHistoricalGrid(oldGrid: any, isHistorical: boolean): void {
+        this.gridGameService.gridDict = JSON.parse(oldGrid.daily_grid);
+        this.resetGrid(isHistorical);
     }
 }

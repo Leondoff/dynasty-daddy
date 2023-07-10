@@ -222,7 +222,7 @@ export class FantasyPlayerApiService {
    * return all players in grid game
    */
   private getHistoricalGridirons(): Observable<GridPlayer[]> {
-    return this.http.get<GridPlayer[]>(this.fantasyPlayerApiConfigService.getAllGridPlayersEndpoint)
+    return this.http.get<GridPlayer[]>(this.fantasyPlayerApiConfigService.getHistoricalGridironsEndpoint)
       .pipe(map(res => {
         this.historicalGridirons = res;
         return res;
