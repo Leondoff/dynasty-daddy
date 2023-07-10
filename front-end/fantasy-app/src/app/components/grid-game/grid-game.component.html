@@ -45,7 +45,8 @@
 
     <div class="margin-top-25 center-text">
         <div class="light_bg_color">Guesses Left:</div>
-        <div class="large-bold-header-text">{{gridGameService.guessesLeft}}</div>
+        <div class="large-bold-header-text" *ngIf="!gridGameService.unlimitedMode">{{gridGameService.guessesLeft}}</div>
+        <div class="large-bold-header-text" *ngIf="gridGameService.unlimitedMode"><mat-icon>all_inclusive</mat-icon> </div>
         <div class="margin-top-10">
             <button mat-button (click)="openResults()" *ngIf="gridGameService.guessesLeft === 0">View Results</button>
             <button mat-button (click)="openTwitter()">Twitter</button>
@@ -54,6 +55,10 @@
 
     <div class="margin-top-15 center-text">
         <button mat-button (click)="openHowToPlay()"><mat-icon>help</mat-icon> How to Play</button>
+    </div>
+
+    <div class="margin-top-15 center-text">
+        <button mat-button (click)="toggleUnlimitedMode()"><mat-icon>all_inclusive</mat-icon> {{gridGameService.unlimitedMode ? 'Disable': 'Enable'}} "Mr. Unlimited" Mode</button>
     </div>
 </div>
 

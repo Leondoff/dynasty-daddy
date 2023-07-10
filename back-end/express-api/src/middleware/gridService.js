@@ -47,5 +47,5 @@ export const FetchAllHistoricalGrids = async () =>
 export const FetchAllGridResults = async () =>
   GetCurrentResults();
 
-export const UpdateGridResultsWithAnswer = async (playerId, cellNum, name) =>
-  PersistGridResult(playerId, cellNum, name);
+export const UpdateGridResultsWithAnswer = async (playerList) =>
+  PersistGridResult(playerList);

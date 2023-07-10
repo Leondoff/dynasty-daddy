@@ -56,8 +56,9 @@ export const FetchAllGridResultsEndpoint = async (req, res) => {
 
 export const UpdateGridResultsEndpoint = async (req, res) => {
   try {
-    const { playerId, cellNum, name } = req.body;
-    await UpdateGridResultsWithAnswer(playerId, cellNum, name);
+    // const { playerId, cellNum, name } = req.body;
+    const { playerList } = req.body;
+    await UpdateGridResultsWithAnswer(playerList);
     res.status(200);
   } catch (err) {
     res.status(500).json(err.stack);

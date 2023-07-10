@@ -26,24 +26,15 @@ export class SearchGridPlayerModal implements OnInit {
         private fantasyPlayerAPIService: FantasyPlayerApiService) { }
 
     ngOnInit(): void {
-        const condition = this.configService.getConfigOptionByKey('daily_grid_client')?.configValue == 'true'
         this.searchSubject$.pipe(
           debounceTime(300),
           distinctUntilChanged(),
           switchMap((searchVal: string) => {
-            return !condition ? this.fantasyPlayerAPIService.getGridGamePlayersFromSearch(searchVal) : of([]);
+            return this.fantasyPlayerAPIService.getGridGamePlayersFromSearch(searchVal);
           })
         ).subscribe(res => {
-          if (!condition) {
             this.searchPlayers = res.filter(p => !this.gridGameService.alreadyUsedPlayers?.includes(p.id));
-          } else {
-            this.searchPlayers = this.gridGameService.gridPlayers.filter(p => p.name.toLowerCase().includes(this.searchVal.toLowerCase()) && !this.gridGameService.alreadyUsedPlayers?.includes(p.id)).slice(0, 20);
-          }
         });
-        
-        // this.searchSubject$.subscribe(_ => {
-        //     this.searchPlayers = this.gridGameService.gridPlayers.filter(p => p.name.toLowerCase().includes(this.searchVal.toLowerCase()) && !this.gridGameService.alreadyUsedPlayers?.includes(p.id)).slice(0, 20)
-        // })
     }
 
     selectPlayer(player: any): void {
