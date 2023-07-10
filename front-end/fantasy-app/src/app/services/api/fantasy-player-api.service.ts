@@ -40,6 +40,9 @@ export class FantasyPlayerApiService {
   /** gridiron results cache */
   private gridironResults;
 
+  /** gridiron players*/
+  private gridironPlayers;
+
   constructor(private http: HttpClient, private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService) {
   }
 
@@ -189,11 +192,20 @@ export class FantasyPlayerApiService {
   }
 
   /**
+ * get historical gridirons
+ */
+  fetchGridironPlayers(): Observable<any[]> {
+    return this.gridironPlayers ? of(this.gridironPlayers) : this.getAllGridGamePlayers();
+  }
+
+
+  /**
   * return all players in grid game
   */
-  getAllGridGamePlayers(): Observable<GridPlayer[]> {
+  private getAllGridGamePlayers(): Observable<GridPlayer[]> {
     return this.http.get<GridPlayer[]>(this.fantasyPlayerApiConfigService.getAllGridPlayersEndpoint)
       .pipe(map(res => {
+        this.gridironPlayers = res;
         return res;
       }));
   }
@@ -239,7 +251,7 @@ export class FantasyPlayerApiService {
   * return all players in grid game
   */
   postCorrectGridironAnswer(playerId: number, cellNum: number, name: string): Observable<GridPlayer[]> {
-    return this.http.post<any>(this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint, {playerId, cellNum, name})
+    return this.http.post<any>(this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint, { playerId, cellNum, name })
       .pipe(map(res => {
         return res;
       }));

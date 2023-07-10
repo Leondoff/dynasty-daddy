@@ -63,15 +63,18 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         }
         this.addSubscriptions(
             this.configService.configValuesLoaded$.subscribe(_ => {
-                this.initGridGame();
+                this.gridGameService.loadGridPlayers();
             }),
             this.gridGameService.validateGridSelection$.subscribe(_ => {
                 if (this.gridGameService.guessesLeft === 0) {
                     this.openResults();
                 }
+            }),
+            this.gridGameService.gridPlayersLoaded$.subscribe(_ => {
+                this.initGridGame();
             }));
         if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue) {
-            this.initGridGame()
+            this.gridGameService.loadGridPlayers();
         }
     }
 

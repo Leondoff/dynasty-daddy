@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GridGameService } from '../../services/grid.service';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, take } from 'rxjs/operators';
 import { FantasyPlayerApiService } from 'src/app/services/api/fantasy-player-api.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ConfigService } from 'src/app/services/init/config.service';
@@ -26,15 +26,24 @@ export class SearchGridPlayerModal implements OnInit {
         private fantasyPlayerAPIService: FantasyPlayerApiService) { }
 
     ngOnInit(): void {
+        const condition = this.configService.getConfigOptionByKey('daily_grid_client')?.configValue == 'true'
         this.searchSubject$.pipe(
-            debounceTime(300),
-            distinctUntilChanged(),
-            switchMap((searchVal: string) => {
-                return this.fantasyPlayerAPIService.getGridGamePlayersFromSearch(searchVal)
-            })
+          debounceTime(300),
+          distinctUntilChanged(),
+          switchMap((searchVal: string) => {
+            return !condition ? this.fantasyPlayerAPIService.getGridGamePlayersFromSearch(searchVal) : of([]);
+          })
         ).subscribe(res => {
+          if (!condition) {
             this.searchPlayers = res.filter(p => !this.gridGameService.alreadyUsedPlayers?.includes(p.id));
+          } else {
+            this.searchPlayers = this.gridGameService.gridPlayers.filter(p => p.name.toLowerCase().includes(this.searchVal.toLowerCase()) && !this.gridGameService.alreadyUsedPlayers?.includes(p.id)).slice(0, 20);
+          }
         });
+        
+        // this.searchSubject$.subscribe(_ => {
+        //     this.searchPlayers = this.gridGameService.gridPlayers.filter(p => p.name.toLowerCase().includes(this.searchVal.toLowerCase()) && !this.gridGameService.alreadyUsedPlayers?.includes(p.id)).slice(0, 20)
+        // })
     }
 
     selectPlayer(player: any): void {

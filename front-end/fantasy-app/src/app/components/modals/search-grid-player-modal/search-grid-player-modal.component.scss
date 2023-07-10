@@ -4,3 +4,13 @@
   background-color: $dark-bg-lighter-30;
   cursor: pointer;
 }
+
+.select-player {
+  padding: 5px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

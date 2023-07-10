@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Status } from "../model/status";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { Observable, Subject, of } from "rxjs";
-import { LocalStorageDictionary } from "src/app/services/init/config.service";
+import { ConfigKeyDictionary, ConfigService, LocalStorageDictionary } from "src/app/services/init/config.service";
 import { GridPlayer } from "../model/gridPlayer";
 import { delay } from "rxjs/operators";
 
@@ -18,6 +18,9 @@ export class GridGameService {
 
   /** validation subject */
   validateGridSelection$: Subject<string> = new Subject<string>();
+
+  /** players loaded subject */
+  gridPlayersLoaded$: Subject<string> = new Subject<string>();
 
   /** already used player ids */
   alreadyUsedPlayers = [];
@@ -64,7 +67,8 @@ export class GridGameService {
   /** guesses left to make */
   guessesLeft: number = 9;
 
-  constructor(private fantasyPlayersAPIService: FantasyPlayerApiService) { }
+  constructor(private fantasyPlayersAPIService: FantasyPlayerApiService,
+    private configService: ConfigService) { }
 
   /** 
    * verifying wrapper that handles the results of a guess
@@ -80,10 +84,12 @@ export class GridGameService {
         const cellNum = (coords[1] * 3) + coords[0];
         const percent = this.getPercentForPlayerSelected(player.id, cellNum);
         this.gridResults[x][y] = { name: player.name, img: player.headshot_url, id: player.id, percent: percent };
-        this.alreadyUsedPlayers.push(player.name);
-        // this.fantasyPlayersAPIService.postCorrectGridironAnswer(player.id, cellNum, player.name).subscribe(_=> {
-          // do nothing
-        // })
+        this.alreadyUsedPlayers.push(player.id);
+        if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true') {
+          this.fantasyPlayersAPIService.postCorrectGridironAnswer(player.id, cellNum, player.name).subscribe(_ => {
+            // do nothing
+          })
+        }
       }
       localStorage.setItem(LocalStorageDictionary.GRIDIRON_ITEM, JSON.stringify({ grid: this.gridDict, guesses: this.guessesLeft, results: this.gridResults, alreadyUsedPlayers: this.alreadyUsedPlayers }))
       this.validateGridSelection$.next();
@@ -142,6 +148,18 @@ export class GridGameService {
         }
       });
     })
+  }
+
+  loadGridPlayers(): void {
+    const condition = this.configService.getConfigOptionByKey('daily_grid_client')?.configValue == 'true';
+    if (condition) {
+      this.fantasyPlayersAPIService.fetchGridironPlayers().subscribe(res => {
+        this.gridPlayers = res;
+        this.gridPlayersLoaded$.next();
+      })
+    } else {
+      this.gridPlayersLoaded$.next();
+    }
   }
 
   /**
