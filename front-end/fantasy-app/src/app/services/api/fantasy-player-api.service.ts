@@ -250,8 +250,8 @@ export class FantasyPlayerApiService {
   /**
   * return all players in grid game
   */
-  postCorrectGridironAnswer(playerId: number, cellNum: number, name: string): Observable<GridPlayer[]> {
-    return this.http.post<any>(this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint, { playerId, cellNum, name })
+  postCorrectGridironAnswer(playerList: {playerId: number, cellNum: number, name: string}[]): Observable<GridPlayer[]> {
+    return this.http.post<any>(this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint, { playerList })
       .pipe(map(res => {
         return res;
       }));

@@ -19,9 +19,6 @@ export class GridGameService {
   /** validation subject */
   validateGridSelection$: Subject<string> = new Subject<string>();
 
-  /** players loaded subject */
-  gridPlayersLoaded$: Subject<string> = new Subject<string>();
-
   /** already used player ids */
   alreadyUsedPlayers = [];
 
@@ -67,6 +64,9 @@ export class GridGameService {
   /** guesses left to make */
   guessesLeft: number = 9;
 
+  /** toggle for mr unlimited mode */
+  unlimitedMode: boolean = false;
+
   constructor(private fantasyPlayersAPIService: FantasyPlayerApiService,
     private configService: ConfigService) { }
 
@@ -77,7 +77,9 @@ export class GridGameService {
    */
   isSelectedPlayerCorrect(player: GridPlayer, coords: number[]): void {
     this.verifySelectedPlayer(player, [this.gridDict['xAxis'][coords[0]], this.gridDict['yAxis'][coords[1]]]).subscribe(res => {
-      this.guessesLeft--;
+      if (!this.unlimitedMode) {
+        this.guessesLeft--;
+      }
       if (res) {
         const x = coords[0] + 1;
         const y = coords[1] + 1;
@@ -85,11 +87,6 @@ export class GridGameService {
         const percent = this.getPercentForPlayerSelected(player.id, cellNum);
         this.gridResults[x][y] = { name: player.name, img: player.headshot_url, id: player.id, percent: percent };
         this.alreadyUsedPlayers.push(player.id);
-        if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true') {
-          this.fantasyPlayersAPIService.postCorrectGridironAnswer(player.id, cellNum, player.name).subscribe(_ => {
-            // do nothing
-          })
-        }
       }
       localStorage.setItem(LocalStorageDictionary.GRIDIRON_ITEM, JSON.stringify({ grid: this.gridDict, guesses: this.guessesLeft, results: this.gridResults, alreadyUsedPlayers: this.alreadyUsedPlayers }))
       this.validateGridSelection$.next();
@@ -150,25 +147,13 @@ export class GridGameService {
     })
   }
 
-  loadGridPlayers(): void {
-    const condition = this.configService.getConfigOptionByKey('daily_grid_client')?.configValue == 'true';
-    if (condition) {
-      this.fantasyPlayersAPIService.fetchGridironPlayers().subscribe(res => {
-        this.gridPlayers = res;
-        this.gridPlayersLoaded$.next();
-      })
-    } else {
-      this.gridPlayersLoaded$.next();
-    }
-  }
-
   /**
    * Get percent for a player being selected
    * @param playerId player id
    * @param cellNum cell number
    */
   getPercentForPlayerSelected(playerId: number, cellNum: number): number {
-    let percent = 0.0001
+    let percent = 0;
     if (!this.globalSelectionMapping[cellNum]) {
       return 1;
     }
@@ -179,7 +164,30 @@ export class GridGameService {
           return;
         }
       })
-    })
+    });
+    if (percent === 0) {
+      percent = 1 / this.globalSelectionMapping[cellNum];
+    }
     return percent;
+  }
+
+  /**
+   * batch persist results for grid
+   */
+  batchPersistGridResults(): void {
+    const playerList = [];
+    for (let i = 0; i < this.gridResults.length; i++) {
+      const innerArray = this.gridResults[i];
+      for (let j = 0; j < this.gridResults.length; j++) {
+        if (innerArray[j]) {
+          playerList.push({playerId: innerArray[j].id, cellNum: (j-1) * 3 + (i-1), name: innerArray[j].name})
+        }
+      }
+    }
+    if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true') {
+      this.fantasyPlayersAPIService.postCorrectGridironAnswer(playerList).subscribe(_ => {
+        // do nothing
+      })
+    }
   }
 }

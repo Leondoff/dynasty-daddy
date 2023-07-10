@@ -11,12 +11,19 @@ export const GetCurrentResults = async () => {
   return data.rows;
 };
 
-export const PersistGridResult = async (playerId, cellNum, name) => {
-  const data = await playersModel.selectQuery(`
-  INSERT INTO grid_results (player_id, cellNum, name, guesses)
-    VALUES (${playerId}, ${cellNum}, '${name}', 1)
+export const PersistGridResult = async (batchData) => {
+  const placeholders = batchData.map((_, index) =>
+    `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3}, 1)`).join(', ');
+  const values = batchData.flatMap(item =>
+    [ item.playerId, item.cellNum, item.name ]);
+
+  const query = `
+    INSERT INTO grid_results (player_id, cellNum, name, guesses)
+    VALUES ${placeholders}
     ON CONFLICT (player_id, cellNum)
     DO UPDATE SET guesses = grid_results.guesses + 1;
-`);
+  `;
+
+  const data = await playersModel.pool.query(query, values);
   return data.rows;
 };

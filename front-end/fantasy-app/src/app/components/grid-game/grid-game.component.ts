@@ -63,18 +63,16 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         }
         this.addSubscriptions(
             this.configService.configValuesLoaded$.subscribe(_ => {
-                this.gridGameService.loadGridPlayers();
+                this.initGridGame();
             }),
             this.gridGameService.validateGridSelection$.subscribe(_ => {
                 if (this.gridGameService.guessesLeft === 0) {
+                    this.gridGameService.batchPersistGridResults();
                     this.openResults();
                 }
-            }),
-            this.gridGameService.gridPlayersLoaded$.subscribe(_ => {
-                this.initGridGame();
             }));
         if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue) {
-            this.gridGameService.loadGridPlayers();
+            this.initGridGame();
         }
     }
 
@@ -213,5 +211,10 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 }
             }
         );
+    }
+
+    /** toggle mr unlimited mode */
+    toggleUnlimitedMode(): void {
+        this.gridGameService.unlimitedMode = !this.gridGameService.unlimitedMode
     }
 }
