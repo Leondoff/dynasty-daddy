@@ -15,13 +15,13 @@
                             <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'award'">
                                 <div class="light_bg_color" *ngIf="!configService.isMobile">Won Award</div>
                                 <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}" style="text-align: center;">{{getAwardDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                <div class="light_bg_color">Since 1999</div>
+                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                             </div>
                             <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'stat'">
                                 <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
                                 <div class="light_bg_color">{{getStatCategory(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                <div class="light_bg_color">{{!configService.isMobile ? 'in a s' : 'S'}}eason</div>
-                                <div class="light_bg_color">Since 1999</div>
+                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{!configService.isMobile ? 'in a s' : 'S'}}eason</div>
+                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                             </div>
                         </div>
                         <div *ngIf="j === 0 && i !== 0">
@@ -29,7 +29,7 @@
                             <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'jersey_number'">
                                 <div class="light_bg_color">{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
                                 <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{gridGameService.gridDict['yAxis'][i-1]?.value}}</div>
-                                <div class="light_bg_color">Since 1999</div>
+                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                             </div>
                         </div>
                         <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">

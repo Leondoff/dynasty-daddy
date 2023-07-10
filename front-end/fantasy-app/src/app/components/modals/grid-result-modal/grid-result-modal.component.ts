@@ -15,7 +15,7 @@ export class GridResultModalComponent implements OnInit {
 
     score: number = 0;
 
-    startDate: string = '2023-07-01';
+    startDate: string = '2023-07-01T08:00:00-05:00';
 
     puzzleNum: number;
 
