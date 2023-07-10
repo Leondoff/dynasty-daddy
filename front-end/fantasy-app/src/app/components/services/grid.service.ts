@@ -152,6 +152,9 @@ export class GridGameService {
    */
   getPercentForPlayerSelected(playerId: number, cellNum: number): number {
     let percent = 0.0001
+    if (!this.globalSelectionMapping[cellNum]) {
+      return 1;
+    }
     this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
       res.forEach(p => {
         if (p.player_id === playerId && p.cellnum === cellNum) {
