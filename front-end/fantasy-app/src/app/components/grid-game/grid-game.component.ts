@@ -49,6 +49,16 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         "There is a new grid every day at 5 AM EST"
     ];
 
+    seasonStats = ['rushYd1000',
+        'recYd1000',
+        'passYd4000',
+        'rushTds10',
+        'recTds10',
+        'passingTds30',
+        'ints10',
+        'rec100',
+        'specialTds2']
+
     constructor(public configService: ConfigService,
         private leagueService: LeagueService,
         private dialog: MatDialog,
@@ -167,18 +177,51 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     }
 
     /**
+     * Return the season or game text string
+     * @param stat string of stat
+     */
+    getStatScopeString(stat: string): string {
+        if (this.seasonStats.includes(stat)) {
+            return !this.configService.isMobile ? 'in a season' : 'Season'
+        }
+        return !this.configService.isMobile ? 'in one game' : 'in 1 game'
+    }
+
+    /**
      * Get number string for stat
      * @param stat string stat
      */
     getStatThresholdDisplay(stat: string): string {
         if (stat.includes('1000')) {
             return '1000+';
+        } else if (stat == '3Pass1RushG') {
+            return '3+/1+';
+        } else if (stat == '80Rush200PassG') {
+            return '80+/200+';
+        } else if (stat.includes('200')) {
+            return '200+';
+        } else if (stat.includes('100')) {
+            return '100+';
         } else if (stat.includes('10')) {
             return '10+';
-        } else if (stat.includes('40')) {
-            return '40+';
+        } else if (stat.includes('30')) {
+            return '30+';
+        } else if (stat.includes('70')) {
+            return '70+';
+        } else if (stat.includes('80')) {
+            return '80+';
+        } else if (stat.includes('12')) {
+            return '12+';
+        } else if (stat.includes('5')) {
+            return '5+';
+        } else if (stat.includes('4')) {
+            return '4+';
+        } else if (stat.includes('3')) {
+            return '3+';
+        } else if (stat.includes('2')) {
+            return '2+';
         } else {
-            return '4000+'
+            return '1+'
         }
     }
 
@@ -189,17 +232,38 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     getStatCategory(stat: string): string {
         switch (stat) {
             case 'rushTds10':
+            case'maxTdRush3':
                 return this.configService.isMobile ? 'Rush Tds' : 'Rushing Tds';
             case 'recTds10':
+            case 'maxTdRec3':
                 return this.configService.isMobile ? 'Rec Tds' : 'Receiving Tds';
-            case 'passTds40':
+            case 'passTds30':
+            case 'maxTdPass5':
                 return this.configService.isMobile ? 'Pass Tds' : 'Passing Tds';
             case 'rushYd1000':
+            case 'maxYdRush200':
                 return this.configService.isMobile ? 'Rush Yds' : 'Rushing Yards';
             case 'recYd1000':
+            case 'maxYdRec200':
                 return this.configService.isMobile ? 'Rec Yds' : 'Receiving Yards';
-            case 'passYd4000':
+            case 'passYd4000': 
+            case 'maxYdPass300':
                 return this.configService.isMobile ? 'Pass Yds' : 'Passing Yards';
+            case 'rec100':
+            case 'maxRec12':
+                return 'Receptions';
+            case 'specialTds2':
+                return this.configService.isMobile ? 'Return Tds' : 'Return Tds';
+            case '1Pass1RecG':
+                return 'Pass & Rec Tds';
+            case '1Rush1RecG':
+                return 'Rush & Rec Tds';
+            case '3Pass1RushG':
+                return 'Pass & Rush Tds';
+            case '70RushRecG':
+                return 'Rush & Rec Yds'
+            case '80Rush200PassG':
+                return 'Rush & Pass Tds'
             default:
                 return this.configService.isMobile ? 'Int Thrown' : 'Ints Thrown';
         }

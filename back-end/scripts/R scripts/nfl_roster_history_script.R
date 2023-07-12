@@ -22,33 +22,49 @@ library(dplyr)
 # }
 
 # load weekly roster stats for players
-aaa <- load_rosters_weekly(season = 2002:2022)
+# aaa <- load_rosters_weekly(season = 2002:2022)
 
-selected_columns <- aaa[, c("season", "season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college")]
+# selected_columns <- aaa[, c("season", "season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college")]
 
 
-# write rostered players to csv
-write.csv(selected_columns, "C:\\Users\\Jeremy\\Desktop\\test.csv", row.names=FALSE)
+# # write rostered players to csv
+# write.csv(selected_columns, "C:\\Users\\Jeremy\\Desktop\\test.csv", row.names=FALSE)
 
 #manually add in 1999-2001 from the commented out section above
 
 # NFL Stats spreadsheet for thresholds
-# player_data <- load_player_stats(season = 1999:2022)
+player_data <- load_player_stats(season = 1999:2022)
 
-# # Group the filtered data by season and calculate the sum of passing yards and passing TDs
-# grouped_data <- player_data %>% group_by(player_id, season)
-# summed_data <- grouped_data %>% summarise(rushing_yards = sum(rushing_yards, na.rm = TRUE),
-#                                           rushing_tds = sum(rushing_tds, na.rm = TRUE),
-#                                           receiving_yards = sum(receiving_yards, na.rm = TRUE),
-#                                           receiving_tds = sum(receiving_tds, na.rm = TRUE),
-#                                           interceptions = sum(interceptions, na.rm = TRUE),
-#                                           passing_yards = sum(passing_yards, na.rm = TRUE),
-#                                           passing_tds = sum(passing_tds, na.rm = TRUE))
+# Group the filtered data by season and calculate the sum of passing yards and passing TDs
+grouped_data <- player_data %>% group_by(player_id, season)
+summed_data <- grouped_data %>% 
+  summarise(
+    sum_rushing_yards = sum(rushing_yards, na.rm = TRUE),
+    sum_rushing_tds = sum(rushing_tds, na.rm = TRUE),
+    sum_receiving_yards = sum(receiving_yards, na.rm = TRUE),
+    sum_receiving_tds = sum(receiving_tds, na.rm = TRUE),
+    sum_interceptions = sum(interceptions, na.rm = TRUE),
+    sum_passing_yards = sum(passing_yards, na.rm = TRUE),
+    sum_passing_tds = sum(passing_tds, na.rm = TRUE),
+    sum_receptions = sum(receptions, na.rm = TRUE),
+    sum_special_teams_tds = sum(special_teams_tds, na.rm = TRUE),
+    max_passing_tds = max(passing_tds, na.rm = TRUE),
+    max_rushing_tds = max(rushing_tds, na.rm = TRUE),
+    max_receiving_tds = max(receiving_tds, na.rm = TRUE),
+    max_interceptions = max(interceptions, na.rm = TRUE),
+    max_passing_yds = max(passing_yards, na.rm = TRUE),
+    max_rushing_yds = max(rushing_yards, na.rm = TRUE),
+    max_receiving_yds = max(receiving_yards, na.rm = TRUE),
+    max_receptions = max(receptions, na.rm = TRUE),
+    has_70_rushing_receiving = any(rushing_yards >= 70 & receiving_yards >= 70),
+    has_50_rushing_200_passing = any(rushing_yards >= 50 & passing_yards >= 200),
+    has_1_rushing_receiving_td = any(rushing_tds >= 1 & receiving_tds >= 1),
+    has_1_passing_receiving_td = any(receiving_tds >= 1 & passing_tds >= 1),
+    has_3_passing_1_rushing_td = any(rushing_tds >= 1 & passing_tds >= 3),
+  )
 
-# write.csv(summed_data, "C:\\Users\\Jeremy\\Desktop\\stats.csv", row.names=FALSE)
 
-#
-
+write.csv(summed_data, "C:\\Users\\Jeremy\\Desktop\\stats.csv", row.names=FALSE)
 
 # Create super bowl data
 # superbowlData <- data.frame(

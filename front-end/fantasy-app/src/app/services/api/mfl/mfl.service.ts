@@ -447,8 +447,8 @@ export class MflService {
           teamMatchUps.push(this.marshalMatchUpForTeam(matchUps?.matchup?.franchise[0], matchUpId));
           teamMatchUps.push(this.marshalMatchUpForTeam(matchUps?.matchup?.franchise[1], matchUpId));
         }
+        matchUpsDict[week] = teamMatchUps;
       }
-      matchUpsDict[week] = teamMatchUps;
     });
     return matchUpsDict;
   }

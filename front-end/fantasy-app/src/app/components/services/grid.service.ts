@@ -146,6 +146,7 @@ export class GridGameService {
           this.globalCommonAnsMapping[cellnum] = obj;
         }
       });
+      this.refreshPercents();
     })
   }
 
@@ -182,14 +183,28 @@ export class GridGameService {
       const innerArray = this.gridResults[i];
       for (let j = 0; j < this.gridResults.length; j++) {
         if (innerArray[j]) {
-          playerList.push({playerId: innerArray[j].id, cellNum: (j-1) * 3 + (i-1), name: innerArray[j].name})
+          playerList.push({ playerId: innerArray[j].id, cellNum: (j - 1) * 3 + (i - 1), name: innerArray[j].name })
         }
       }
     }
     if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true' && !this.isHistoricalGrid) {
-      this.fantasyPlayersAPIService.postCorrectGridironAnswer(playerList).subscribe(_ => {
+      this.fantasyPlayersAPIService.postCorrectGridironAnswer(playerList, this.gridDict['id']).subscribe(_ => {
         // do nothing
       })
+    }
+  }
+
+  /**
+   * Refresh percents when loading players
+   */
+  private refreshPercents(): void {
+    for (let i = 0; i < this.gridResults.length; i++) {
+      const innerArray = this.gridResults[i];
+      for (let j = 0; j < this.gridResults.length; j++) {
+        if (innerArray[j]) {
+          innerArray[j].percent = this.getPercentForPlayerSelected(innerArray[j].id, (j - 1) * 3 + (i - 1))
+        }
+      }
     }
   }
 }
