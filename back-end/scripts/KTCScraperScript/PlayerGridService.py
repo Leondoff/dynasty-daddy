@@ -1,34 +1,62 @@
 
+from datetime import date
 import random
 import json
 import os
 import psycopg2
 
-SupportedYTypes = ['college', 'team', 'stat', 'stat', 'stat', 'stat', 'stat', 'stat']
+SupportedYTypes = ['college', 'team', 'team', 'team', 'stat',
+                   'stat', 'stat', 'stat', 'stat', 'stat']
 
-SupportedXTypes = ['award', 'stat']
+SupportedXTypes = ['award', 'stat', 'stat']
 
-SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET', 'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']
+SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET',
+                  'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']
 
-SupportedColleges = ['Michigan', 'Texas Christian', 'Georgia', 'Ohio State', 'Florida', 'Alabama', 'Southern California', 'Louisiana State', 'Clemson', 'South Carolina', 'North Carolina State', 'North Carolina', 'Wisconsin', 'Oregon', 'Florida State', 'Texas', 'Oklahoma', 'Notre Dame']
+SupportedColleges = ['Michigan', 'Texas Christian', 'Georgia', 'Ohio State', 'Florida', 'Alabama', 'Southern California', 'Louisiana State',
+                     'Clemson', 'South Carolina', 'North Carolina State', 'North Carolina', 'Wisconsin', 'Oregon', 'Florida State', 'Texas', 'Oklahoma', 'Notre Dame']
 
-SupportedJerseyNumbers = ['12', '18', '89', '85', '26', '22', '27', '95', '97', '98', '91', '90', '23', '25', '2', '35', '30', '38', '59', '69']
+SupportedJerseyNumbers = ['12', '18', '89', '85', '26', '22', '27', '95',
+                          '97', '98', '91', '90', '23', '25', '2', '35', '30', '38', '59', '69']
 
 SupportedAwards = ['roty', 'mvp', 's_mvp']
 
-SupportedStats = ['rushYd1000', 'recYd1000', 'passYd4000', 'rushTds10', 'recTds10', 'passingTds40', 'ints10']
+SupportedStats = ['rushYd1000',
+                  'recYd1000',
+                  'passYd4000',
+                  'rushTds10',
+                  'recTds10',
+                  'passingTds30',
+                  'ints10',
+                  '1Pass1RecG',
+                  '1Rush1RecG',
+                  '3Pass1RushG',
+                  '70RushRecG',
+                  '80Rush200PassG',
+                  'maxInt4',
+                  'maxRec12',
+                  'maxTdPass5',
+                  'maxTdRec3',
+                  'maxTdRush3',
+                  'maxYdRec200',
+                  'maxYdRush200',
+                  'maxYdPass300',
+                  'rec100',
+                  'specialTds2']
 
 AnswerGrid = []
 
+
 def SetNewPlayerGrid():
-    
+
     # Connect to local test database
     # conn = psycopg2.connect(
     #     database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
     # )
-    
+
     conn = psycopg2.connect(
-        database=os.environ['DO_DATABASE'], user=os.environ['DO_DB_USER'], password=os.environ['DO_DB_PASSWORD'], host=os.environ['DO_DB_HOST'], port=os.environ['DO_DB_PORT']
+        database=os.environ['DO_DATABASE'], user=os.environ['DO_DB_USER'], password=os.environ[
+            'DO_DB_PASSWORD'], host=os.environ['DO_DB_HOST'], port=os.environ['DO_DB_PORT']
     )
 
     # Setting auto commit false
@@ -68,26 +96,31 @@ def SetNewPlayerGrid():
         xAxis = formattedGrid[0:3]
         yAxis = formattedGrid[3:6]
         iter = iter + 1
-        print(xAxis, yAxis)
         if ValidateActualSolutionExists(rows, xAxis, yAxis):
             break
-    
+
+    current_date = date.today()
+    target_date = date(2023, 7, 1)
+
+    gridNumber = (current_date - target_date).days + 1
+
     output_dict = {
         'xAxis': xAxis,
-        'yAxis': yAxis
+        'yAxis': yAxis,
+        'id': gridNumber
     }
-    
+
     jsonGrid = json.dumps(output_dict)
-            
+
     setTodaysGridStatement = '''UPDATE config
         SET
         config_value = %s WHERE config_key = \'daily_grid\';'''
     cursor.execute(setTodaysGridStatement, (str(jsonGrid),))
-    
+
     archiveGridironStatement = '''INSERT INTO historical_gridirons (daily_grid, daily_grid_answer)
                     VALUES (%s, %s)'''
     cursor.execute(archiveGridironStatement, (str(jsonGrid), str(AnswerGrid)))
-    
+
 def ValidateActualSolutionExists(rows, xAxis, yAxis):
     global AnswerGrid
     playerIds = []

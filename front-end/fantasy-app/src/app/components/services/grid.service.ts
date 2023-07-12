@@ -188,7 +188,7 @@ export class GridGameService {
       }
     }
     if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true' && !this.isHistoricalGrid) {
-      this.fantasyPlayersAPIService.postCorrectGridironAnswer(playerList).subscribe(_ => {
+      this.fantasyPlayersAPIService.postCorrectGridironAnswer(playerList, this.gridDict['id']).subscribe(_ => {
         // do nothing
       })
     }
