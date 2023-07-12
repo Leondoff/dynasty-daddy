@@ -85,8 +85,11 @@ export class GridResultModalComponent implements OnInit {
         if (this.score === 9) {
             resultStr += 'IMMACULATE!' + newline
         }
-        resultStr += this.uniScore + ' Rarity' + newline;
-        resultStr += emojis.join(newline) + `${newline}${newline}👉 https://dynasty-daddy.com/gridiron`;
+        resultStr += this.uniScore + ' Rarity ';
+        if (this.uniScore / this.score < 25) {
+            resultStr += this.uniScore / this.score < 10 ? '💎' : '🏆'
+        }
+        resultStr += newline + emojis.join(newline) + `${newline}${newline}👉 https://dynasty-daddy.com/gridiron`;
         return resultStr;
     }
 
