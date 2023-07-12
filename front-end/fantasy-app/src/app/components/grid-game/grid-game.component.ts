@@ -20,7 +20,7 @@ import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api
 export class GridGameComponent extends BaseComponent implements OnInit {
 
     /** page description */
-    pageDescription = 'Test your NFL player knowledge with NFL Immaculate Gridiron. Similar to the popular game immaculate grid, you must guess player who meet the two criteria that intersect on the grid. Player data is from 1999-2022 and a new puzzle is created every day at 8:00 AM EST.'
+    pageDescription = 'Test your NFL player knowledge with NFL Immaculate Gridiron. Similar to the popular game immaculate grid, you must guess player who meet the two criteria that intersect on the grid. Player data is from 1999-2022 and a new puzzle is created every day at 5:00 AM EST.'
 
     /** team acc placeholder */
     TEAM_ACC_PLACEHOLDER = 'TEAM_ACC';
@@ -46,7 +46,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         "You have 9 guesses to fill out the grid",
         "Each guess, whether correct or incorrect, counts as a guess",
         "You can guess active or inactive NFL players",
-        "There is a new grid every day at 8 AM"
+        "There is a new grid every day at 5 AM EST"
     ];
 
     constructor(public configService: ConfigService,

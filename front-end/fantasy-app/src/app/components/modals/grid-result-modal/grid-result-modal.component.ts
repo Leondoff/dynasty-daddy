@@ -58,7 +58,7 @@ export class GridResultModalComponent implements OnInit {
             for (let j = 1; j < 4; j++) {
                 if (matrix4x4[i][j]) {
                     this.score += 1;
-                    this.uniScore += Math.round(100 - (100 * matrix4x4[i][j].percent))
+                    this.uniScore += Math.round(100 * matrix4x4[i][j].percent)
                 }
                 newRow.push(matrix4x4[i][j]);
             }
@@ -85,6 +85,7 @@ export class GridResultModalComponent implements OnInit {
         if (this.score === 9) {
             resultStr += 'IMMACULATE!' + newline
         }
+        resultStr += this.uniScore + ' Rarity' + newline;
         resultStr += emojis.join(newline) + `${newline}${newline}👉 https://dynasty-daddy.com/gridiron`;
         return resultStr;
     }
