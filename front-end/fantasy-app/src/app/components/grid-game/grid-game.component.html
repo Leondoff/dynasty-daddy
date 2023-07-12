@@ -25,10 +25,16 @@
                             </div>
                         </div>
                         <div *ngIf="j === 0 && i !== 0">
-                            <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type != 'jersey_number'">
+                            <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'team' || gridGameService.gridDict['yAxis'][i-1]?.type == 'college'">
                             <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'jersey_number'">
                                 <div class="light_bg_color">{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
                                 <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{gridGameService.gridDict['yAxis'][i-1]?.value}}</div>
+                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                            </div>
+                            <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'stat'">
+                                <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
+                                <div class="light_bg_color">{{getStatCategory(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
+                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{!configService.isMobile ? 'in a s' : 'S'}}eason</div>
                                 <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                             </div>
                         </div>

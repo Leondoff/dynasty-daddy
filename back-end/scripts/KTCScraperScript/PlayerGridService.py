@@ -4,7 +4,7 @@ import json
 import os
 import psycopg2
 
-SupportedYTypes = ['college', 'jersey_number']
+SupportedYTypes = ['college', 'team', 'stat', 'stat', 'stat', 'stat', 'stat', 'stat']
 
 SupportedXTypes = ['award', 'stat']
 
@@ -17,8 +17,6 @@ SupportedJerseyNumbers = ['12', '18', '89', '85', '26', '22', '27', '95', '97', 
 SupportedAwards = ['roty', 'mvp', 's_mvp']
 
 SupportedStats = ['rushYd1000', 'recYd1000', 'passYd4000', 'rushTds10', 'recTds10', 'passingTds40', 'ints10']
-
-EightyPercentArray = [False, True, True, True, True]
 
 AnswerGrid = []
 
@@ -46,7 +44,7 @@ def SetNewPlayerGrid():
         selectedTeams = random.sample(SupportedTeams, 6)
         formattedGrid = [{"type": "team", "value": value} for value in selectedTeams]
         # Y axis wild card
-        if (random.choice(EightyPercentArray)):
+        if (random.choice([True])):
             selectedWildcard = random.choice(SupportedYTypes)
             if selectedWildcard is 'college':
                 selectedCollege = random.choice(SupportedColleges)
@@ -54,10 +52,15 @@ def SetNewPlayerGrid():
             if selectedWildcard is 'jersey_number':
                 selectedNumber = random.choice(SupportedJerseyNumbers)
                 formattedGrid[5] = {"type": "jersey_number", "value": selectedNumber}
+            if selectedWildcard is 'stat':
+                selectedStat = random.choice(SupportedStats)
+                formattedGrid[5] = {"type": "stat", "value": selectedStat}
         if (random.choice([True])):
             selectedWildcard = random.choice(SupportedXTypes)
             if selectedWildcard is 'stat':
                 selectedStat = random.choice(SupportedStats)
+                while selectedStat == formattedGrid[5]['value']:
+                    selectedStat = random.choice(SupportedStats)
                 formattedGrid[2] = {"type": "stat", "value": selectedStat}
             if selectedWildcard is 'award':
                 selectedAward = random.choice(SupportedAwards)
@@ -65,6 +68,7 @@ def SetNewPlayerGrid():
         xAxis = formattedGrid[0:3]
         yAxis = formattedGrid[3:6]
         iter = iter + 1
+        print(xAxis, yAxis)
         if ValidateActualSolutionExists(rows, xAxis, yAxis):
             break
     
