@@ -144,6 +144,15 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
           }
         }
       });
+      // Rank Contenders Flex
+      if (PowerRankingTableView.Starters) {
+        this.powerRankingCache[team.team.roster.rosterId].rosters['FLEX'] = {
+          value: team.flexStarterValue,
+          rank: team.flexStarterRank,
+          isRed: team.flexStarterRank > this.alertThreshold * 2,
+          isGreen: team.flexStarterRank < this.alertThreshold
+        }
+      }
       this.powerRankingCache[team.team.roster.rosterId].rosters[team.picks.position] = {
         value: this.isSuperFlex ? team.picks.sfTradeValue : team.picks.tradeValue,
         rank: team.picks.rank,
@@ -310,6 +319,8 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         return item.roster[2].starterRank;
       } else if (property === 'teStarterRank') {
         return item.roster[3].starterRank;
+      } else if (property === 'flexStarterRank') {
+        return item.flexStarterRank;
       } else if (property === 'draftRank') {
         return item.picks.rank;
       } else if (property === 'overallRank') {
@@ -357,7 +368,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     let newColumns = [];
     switch (this.powerRankingsService.powerRankingsTableView) {
       case PowerRankingTableView.Starters: {
-        newColumns = ['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank'];
+        newColumns = ['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank'];
         this.powerRankingsService.rankingMarket = PowerRankingMarket.ADP;
         break;
       }

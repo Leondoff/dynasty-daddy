@@ -14,6 +14,8 @@ export class TeamPowerRanking {
   eloAdpValueStarter: number = 0;
   eloAdpValueChange: number = 0;
   eloADPValueStarterHistory: number[] = [];
+  flexStarterValue: number = 0;
+  flexStarterRank: number;
   tier: number;
 
   constructor(team: LeagueTeam, players: PositionPowerRanking[], sfTradeValue: number, tradeValue: number, picks: PositionPowerRanking) {

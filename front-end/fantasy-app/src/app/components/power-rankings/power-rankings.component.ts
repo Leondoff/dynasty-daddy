@@ -76,7 +76,8 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
         'Starter Value', 'QB Rank', 'QB Value', 'RB Rank', 'RB Value', 'WR Rank',
         'WR Value', 'TE Rank', 'TE Value', 'Draft Capital Rank', 'Draft Capital Value',
         'QB Starter Rank', 'QB Starter Value', 'RB Starter Rank', 'RB Starter Value',
-        'WR Starter Rank', 'WR Starter Value', 'TE Starter Rank', 'TE Starter Value'],
+        'WR Starter Rank', 'WR Starter Value', 'TE Starter Rank', 'TE Starter Value',
+        'FLEX Starter Rank', 'FLEX Starter Value'],
     ]);
 
     this.powerRankingService.powerRankings.forEach(team => {
@@ -106,6 +107,8 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
         Math.round(team.roster[2].starterValue * 10) / 10,
         team.roster[3].starterRank,
         Math.round(team.roster[3].starterValue * 10) / 10,
+        team.flexStarterRank,
+        Math.round(team.flexStarterValue * 10) / 10,
       ]);
     });
 
