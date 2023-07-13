@@ -56,11 +56,14 @@ export const FetchAllGridResultsEndpoint = async (req, res) => {
 
 export const UpdateGridResultsEndpoint = async (req, res) => {
   try {
-    // const { playerId, cellNum, name } = req.body;
-    const { playerList } = req.body;
-    await UpdateGridResultsWithAnswer(playerList);
-    res.status(200);
+    const { playerList, id = -1 } = req.body;
+    await UpdateGridResultsWithAnswer(playerList, id);
+    res.sendStatus(200);
   } catch (err) {
-    res.status(500).json(err.stack);
+    if (err.message === 'ERROR - INVALID ID') {
+      res.sendStatus(400);
+    } else {
+      res.status(500).json(err.stack);
+    }
   }
 };

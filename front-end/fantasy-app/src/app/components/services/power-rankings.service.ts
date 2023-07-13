@@ -264,6 +264,12 @@ export class PowerRankingsService {
         team.roster[index].starterRank = teamIndex + 1;
       });
     })
+    teams.sort((teamA, teamB) => {
+      return teamA.flexStarterValue - teamB.flexStarterValue;
+    });
+    teams.forEach((team, teamIndex) => {
+      team.flexStarterRank = teamIndex + 1;
+    });
     // rank overall points
     teams.sort((teamA, teamB) => {
       return !this.leagueService.selectedLeague.isSuperflex ? teamB.tradeValueOverall - teamA.tradeValueOverall : teamB.sfTradeValueOverall - teamA.sfTradeValueOverall;
@@ -533,7 +539,7 @@ export class PowerRankingsService {
       const activeFlex = this.getHealthyPlayersFromList([flexPlayer], 1, team.starters);
       if (activeFlex.length > 0) {
         team.starters.push(flexPlayer);
-        team.roster[PositionGroup[flexPlayer.position.toUpperCase()]].starterValue += flexPlayer.avg_adp;
+        team.flexStarterValue += flexPlayer.avg_adp
         teamRosterCount[this.positionGroups.indexOf(flexPlayer.position)]++;
         selectedCount++;
       }

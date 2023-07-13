@@ -35,7 +35,7 @@
         <mat-label>Table View</mat-label>
         <mat-select [(ngModel)]="powerRankingsService.powerRankingsTableView" (selectionChange)="setUpTableView()">
         <mat-option [value]="0">Trade Values</mat-option>
-        <mat-option [value]="1">Redraft</mat-option>
+        <mat-option [value]="1">Contender</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -126,23 +126,28 @@
       </ng-container>
 
       <ng-container matColumnDef="qbStarterRank">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>QB Redraft Rank</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>QB Contender Rank</th>
         <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['QB'].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="rbStarterRank">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>RB Redraft Rank</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>RB Contender Rank</th>
         <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['RB'].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="wrStarterRank">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>WR Redraft Rank</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>WR Contender Rank</th>
         <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['WR'].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="teStarterRank">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>TE Redraft Rank</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>TE Contender Rank</th>
         <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['TE'].rank}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="flexStarterRank">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>FLEX Contender Rank</th>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['FLEX'].rank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="draftRank">
