@@ -47,17 +47,5 @@ export const FetchAllHistoricalGrids = async () =>
 export const FetchAllGridResults = async () =>
   GetCurrentResults();
 
-export const UpdateGridResultsWithAnswer = async (playerList, id) => {
-  const currentDate = new Date();
-  const targetDate = new Date('2023-07-01');
-
-  // Calculate the difference in milliseconds
-  const timeDiff = currentDate - targetDate;
-
-  // Convert milliseconds to days
-  const daysSinceJuly1st = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
-  if (daysSinceJuly1st === id) {
-    await PersistGridResult(playerList);
-  }
-  return [];
-};
+export const UpdateGridResultsWithAnswer = async (playerList) =>
+  PersistGridResult(playerList);
