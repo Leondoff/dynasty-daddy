@@ -17,8 +17,6 @@ export class GridResultModalComponent implements OnInit {
 
     uniScore: number = 0;
 
-    startDate: string = '2023-07-01T08:00:00-05:00';
-
     puzzleNum: number;
 
     toggleAnswers: boolean = false;
@@ -28,10 +26,7 @@ export class GridResultModalComponent implements OnInit {
         public clipboard: Clipboard) { }
 
     ngOnInit(): void {
-        const targetDate = new Date(this.startDate);
-        const currentDate = new Date();
-        const timeDiff = currentDate.getTime() - targetDate.getTime();
-        this.puzzleNum = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+        this.puzzleNum = this.gridGameService.gridDict['id'];
         this.resultGrid = this.slice4x4To3x3(this.gridGameService.gridResults);
     }
 

@@ -3,7 +3,7 @@ import { LeaguePlatform } from './FantasyPlatformDTO';
 import { LeagueScoringDTO } from './LeagueScoringDTO';
 
 export class LeagueDTO {
-  
+
   isSuperflex: boolean = true;
   name: string;
   leagueId: string;
@@ -50,7 +50,12 @@ export class LeagueDTO {
     this.name = name;
     this.leagueId = league_id;
     this.totalRosters = total_rosters;
-    this.rosterPositions = roster_positions;
+    this.rosterPositions = roster_positions.map(p => {
+      if (p === 'WRRB_FLEX') {
+        return 'FLEX';
+      }
+      return p
+    });
     this.rosterSize = (roster_positions?.length || 0) + (settings?.reserve_slots || 0) + (settings?.taxi_slots || 0);
     this.prevLeagueId = previous_league_id;
     this.status = status;
@@ -196,27 +201,27 @@ export class LeagueDTO {
     status: string,
     isSuperflex: boolean,
     season: string
-    ): LeagueDTO {
-      this.name = name;
-      this.leagueId = leagueId;
-      this.rosterSize = rosterSize;
-      this.totalRosters = totalRosters;
-      this.type = leagueType;
-      this.starters = starters;
-      this.rosterPositions = rosterPositions;
-      this.status = status;
-      this.isSuperflex = isSuperflex;
-      this.leaguePlatform = LeaguePlatform.FFPC;
-      this.season = season;
-      // TODO These values we do not have a way to determine currently
-      this.playoffStartWeek = 15;
-      this.playoffTeams = 6;
-      this.medianWins = false;
-      this.playoffRoundType = 1;
-      this.startWeek = 1;
-      this.draftRounds = 5;
-      return this;
-    }
+  ): LeagueDTO {
+    this.name = name;
+    this.leagueId = leagueId;
+    this.rosterSize = rosterSize;
+    this.totalRosters = totalRosters;
+    this.type = leagueType;
+    this.starters = starters;
+    this.rosterPositions = rosterPositions;
+    this.status = status;
+    this.isSuperflex = isSuperflex;
+    this.leaguePlatform = LeaguePlatform.FFPC;
+    this.season = season;
+    // TODO These values we do not have a way to determine currently
+    this.playoffStartWeek = 15;
+    this.playoffTeams = 6;
+    this.medianWins = false;
+    this.playoffRoundType = 1;
+    this.startWeek = 1;
+    this.draftRounds = 5;
+    return this;
+  }
 
   /**
    * Set the division and division length for a league

@@ -26,7 +26,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   pageDescription = 'Dynasty Daddy is a free dynasty fantasy football tool that leverages fantasy market player values and fantasy League data to help users make quicker, more well informed fantasy football decisions.'
 
   /** What dynasty daddy social media is toggled to show */
-  dynastyDaddySocials: string = 'twitter';
+  dynastyDaddySocials: string = 'discord';
 
   /** sleeper username input */
   usernameInput: string = '';
@@ -156,7 +156,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   }
 
   ngAfterViewInit(): void {
-    this.loadTwitterTimeline();
+    // this.loadTwitterTimeline();
   }
 
   /**

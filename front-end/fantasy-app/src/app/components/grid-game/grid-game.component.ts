@@ -39,7 +39,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         "For a player to be considered valid for a team, he must've suited up for one NFL regular season game for that team",
         "If a cell is for a team and an award, the award must have been won after 1999 but doesn't have to be on the team",
         "If a cell is for a team and a season stat, the player you select must have recorded that stat after 1999 but doesn't have to be on the team",
-        "If you select a player for a cell with a stat, that player must've accumulated that stat in a completed season from 1999 or later",
+        "If you select a player for a cell with a stat, that player must've accumulated that stat in a completed season/game from 1999 or later",
         "If you select a player for a cell with a college, that player must have been drafted from that college. If a player transfers colleges, the college they transfer to is the college.",
         "If a cell is for a college and a season stat, the player you select must have graduated from that college and accumulated that stat in the NFL (not in college).",
         "A player cannot be used twice",

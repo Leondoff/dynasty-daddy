@@ -138,31 +138,30 @@ export class SleeperService {
             league.leagueTeamDetails.push(new LeagueTeam(owner, roster));
           });
           return this.sleeperApiService.getSleeperDraftbyLeagueId(league.selectedLeague.leagueId)
-  .pipe(
-    mergeMap((draftIds: string[]) => {
-      const draftObservables = draftIds.map((draftId: string) => {
-        return this.loadDrafts$(draftId, league);
-      });
+            .pipe(
+              mergeMap((draftIds: string[]) => {
+                const draftObservables = draftIds.map((draftId: string) => {
+                  return this.loadDrafts$(draftId, league);
+                });
 
-      return forkJoin(draftObservables).pipe(
-        tap((leagues: LeagueWrapper[]) => {
-          leagues.forEach((league: LeagueWrapper) => {
-            league.leagueTeamDetails.forEach(team => {
-              team.upcomingDraftOrder.forEach(pick => {
-                const ind = team.futureDraftCapital.findIndex(p => p.pick === 6 && p.round === pick.round && p.year === pick.year);
-                if (ind >= 0) {
-                  team.futureDraftCapital[ind].pick = pick.pick;
-                  pick.originalRosterId = team.futureDraftCapital[ind].originalRosterId;
-                }
-              });
-            });
-          });
-        }),
-        mergeMap(() => this.generateFutureDraftCapital$(league))
-      );
-    })
-  );
-
+                return forkJoin(draftObservables).pipe(
+                  tap((leagues: LeagueWrapper[]) => {
+                    leagues.forEach((league: LeagueWrapper) => {
+                      league.leagueTeamDetails.forEach(team => {
+                        team.upcomingDraftOrder.forEach(pick => {
+                          const ind = team.futureDraftCapital.findIndex(p => p.pick === 6 && p.round === pick.round && p.year === pick.year);
+                          if (ind >= 0) {
+                            team.futureDraftCapital[ind].pick = pick.pick;
+                            pick.originalRosterId = team.futureDraftCapital[ind].originalRosterId;
+                          }
+                        });
+                      });
+                    });
+                  }),
+                  mergeMap(() => this.generateFutureDraftCapital$(league))
+                );
+              })
+            );
         })
         );
     })
@@ -186,7 +185,7 @@ export class SleeperService {
               console.error('Failed to fetch data:', error);
               return of([]);
             }),
-            concatMap(rosters=> {
+            concatMap(rosters => {
               const team = rosters.find(it => it.ownerId === leagueUser?.userData?.user_id);
               league.metadata['roster'] = team?.players?.concat(...team.reserve, ...team.taxi) || [];
               league.metadata['status'] = Status.DONE;
