@@ -168,6 +168,7 @@ CREATE TABLE player_grid (
     end_date VARCHAR(5),
     stats_json jsonb,
     gsis_id VARCHAR(10),
+    pfr_id varchar(10)
 );
 
 create index player_grid_uindex on player_grid (name);

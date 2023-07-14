@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                             <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">
-                                <img [src]="gridGameService.gridResults[j][i].img" class="player-grid-img">
+                                <img [src]="gridGameService.gridResults[j][i].img" onerror="this.src='https://static.www.nfl.com/image/private/f_auto,q_auto/league/y9boy7grhaidqmrckryz'" class="player-grid-img">
                                 <div [ngClass]="{'player-name-text-mobile': configService.isMobile, 'player-name-text': !configService.isMobile}" class="center-text">{{gridGameService.gridResults[j][i]?.name}}</div>
                                 <div [ngClass]="{'percent-mobile': configService.isMobile, 'percent': !configService.isMobile}" *ngIf="gridGameService.gridResults[j][i].percent">{{gridGameService.gridResults[j][i].percent | percent:'1.2-2'}}</div>
                             </div>
