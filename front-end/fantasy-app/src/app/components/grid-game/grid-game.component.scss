@@ -1,31 +1,44 @@
 @import "../../../styles.scss";
 
+.grid-table {
+  border-collapse: separate;
+}
+
+.grid-row {
+  display: flex;
+  justify-content: center;
+}
+
 .top-left-cell {
   text-align-last: center;
-  width: clamp(20px, 12vw, 180px);
-  ;
-  height: clamp(20px, 12vw, 200px);
-  ;
+  width: clamp(60px, 12vw, 200px);
+  height: clamp(60px, 12vw, 200px);
+  margin: clamp(0.25px, 0.5vw, 4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .team-grid-img {
   text-align-last: center;
-  width: clamp(20px, 12vw, 180px);
-  ;
-  height: clamp(20px, 12vw, 200px);
-  ;
+  width: clamp(60px, 12vw, 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .middle-cell {
-  width: clamp(20px, 12vw, 180px);
-  height: clamp(20px, 12vw, 200px);
-  ;
+  width: clamp(60px, 12vw, 200px);
+  height: clamp(60px, 12vw, 200px);
   background-color: $dark-bg-lighter-10;
   border: none;
+  margin: clamp(0.25px, 0.5vw, 4px);
   border-radius: 5px;
-  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .middle-cell:hover {
@@ -33,9 +46,44 @@
   cursor: pointer;
 }
 
+@media (max-width: 800px) {
+  .player-name-text {
+    font-size: clamp(12px, 2vw, 16px);
+  }
+
+  .jersey-num {
+    font-size: clamp(16px, 2vw, 24px);
+  }
+
+  .subtext {
+    font-size: clamp(8px, 2vw, 12px);
+  }
+
+  .percent {
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 800px) {
+  .player-name-text {
+    font-size: clamp(18px, 2vw, 24px); 
+  }
+
+  .jersey-num {
+    font-size: clamp(34px, 2vw, 48px); 
+  }
+
+  .subtext {
+    font-size: 14px;
+  }
+  
+  .percent {
+    font-size: clamp(14px, 2vw, 20px); 
+  }
+}
+
 .player-name-text {
   z-index: 100;
-  font-size: 24px;
   font-weight: bold;
   position: absolute;
   bottom: 0;
@@ -43,28 +91,32 @@
   width: 100%;
   background-color: $dark-bg-lighter-30;
   text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 .player-name-text-mobile {
   z-index: 100;
-  font-size: 8px;
+  font-size: clamp(8px, 2vw, 10px);
   position: absolute;
   background-color: $dark-bg-lighter-30;
   bottom: 0;
   left: 0;
   width: 100%;
   text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 .player-grid-img {
   text-align-last: center;
-  width: clamp(20px, 12vw, 180px);
-  ;
-  // height: clamp(20px, 12vw, 180px);;
+  width: clamp(60px, 12vw, 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .jersey-num {
-  font-size: 45px;
   font-weight: bold;
 }
 
@@ -82,17 +134,21 @@
   right: 0;
   background-color: $dark-bg-lighter-30;
   color: white;
-  padding: 5px;
+  padding: clamp(2px, 0.5vw, 5px);
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .percent-mobile {
-  font-size: 8px;
   position: absolute;
   top: 0;
   right: 0;
+  font-size: clamp(8px, 1vw, 10px);
   background-color: $dark-bg-lighter-30;
   color: white;
   padding: 1px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .subtext-desc-mobile {

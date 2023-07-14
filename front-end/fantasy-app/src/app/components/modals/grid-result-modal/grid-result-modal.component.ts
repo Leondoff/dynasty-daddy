@@ -3,6 +3,8 @@ import { GridGameService } from '../../services/grid.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ConfigKeyDictionary, ConfigService } from 'src/app/services/init/config.service';
+import { FantasyPlayerApiService } from 'src/app/services/api/fantasy-player-api.service';
+import { ColorService } from 'src/app/services/utilities/color.service';
 
 @Component({
     selector: 'grid-result-modal',
@@ -13,21 +15,38 @@ export class GridResultModalComponent implements OnInit {
 
     resultGrid: any[][] = [];
 
+    /** number of correct guesses */
     score: number = 0;
 
+    /** rarity score */
     uniScore: number = 0;
 
+    /** puzzle number */
     puzzleNum: number;
 
+    /** toggle stats */
     toggleAnswers: boolean = false;
 
+    /** selected cell stat to view */
+    selectedCellStat: number = -1;
+
+    /** cell stat list */
+    cellStatList: any[] = [];
+
+    /** probability gradient for percents */
+    probGradient: string[] = [];
+
     constructor(public gridGameService: GridGameService,
+        private fantasyPlayersAPIService: FantasyPlayerApiService,
+        private colorService: ColorService,
         public dialog: MatDialog,
+        public configService: ConfigService,
         public clipboard: Clipboard) { }
 
     ngOnInit(): void {
         this.puzzleNum = this.gridGameService.gridDict['id'];
         this.resultGrid = this.slice4x4To3x3(this.gridGameService.gridResults);
+        this.probGradient = this.colorService.getColorGradientArray(101, '#28283c', '#3f7bfb');
     }
 
     /**
@@ -91,4 +110,29 @@ export class GridResultModalComponent implements OnInit {
     makeTweet = () =>
         window.open('https://twitter.com/share?text=' + this.formatMessage(true).replace('\n', '%0A'), '_blank')
 
+    /**
+     * Loads stats for specific cell number
+     * @param cellNum cell number to load
+     */
+    openStatsForCell(cellNum: number): void {
+        this.cellStatList = [];
+        this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
+            res.forEach(obj => {
+                if (obj['cellnum'] == cellNum) {
+                    obj.percent = this.gridGameService.getPercentForPlayerSelected(obj.player_id, obj['cellnum'])
+                    this.cellStatList.push(obj)
+                }
+            })
+        });
+        this.cellStatList.sort((a, b) => b.guesses - a.guesses);
+        this.selectedCellStat = cellNum;
+    }
+
+    /**
+     * return probability color for table
+     * @param prob percent
+     */
+    getProbColor(prob: number): string {
+        return this.probGradient[Math.round(prob * 100)];
+    }
 }

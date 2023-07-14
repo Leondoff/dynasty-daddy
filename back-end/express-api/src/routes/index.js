@@ -45,8 +45,7 @@ import {
   FetchAllGridResultsEndpoint,
   FetchAllHistoricalGridsEndpoint,
   FetchSearchedPlayersEndpoint,
-  UpdateGridResultsEndpoint,
-  ValidateGridSelectionEndpoint
+  UpdateGridResultsEndpoint
 } from '../controllers/gridController';
 
 const indexRouter = express.Router();
@@ -61,7 +60,6 @@ indexRouter.get('/player/details/:id', GetPlayerDetailsEndpoint);
 indexRouter.post('/portfolio', GetPlayerPortfolioEndpoint);
 indexRouter.get('/config/all', GetConfigValuesEndpoint);
 indexRouter.post('/worp', GetWORPForLeague);
-indexRouter.post('/grid/validate', ValidateGridSelectionEndpoint);
 indexRouter.get('/grid/players', FetchSearchedPlayersEndpoint);
 indexRouter.get('/grid/players/all', FetchAllGridPlayersEndpoint);
 indexRouter.get('/grid/archive', FetchAllHistoricalGridsEndpoint);

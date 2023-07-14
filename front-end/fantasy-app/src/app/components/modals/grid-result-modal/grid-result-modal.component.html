@@ -1,36 +1,65 @@
-<div class="center-text">
-    <span class="large-bold-header-text">Results</span>
-      <span class="button-right">
-        <button mat-icon-button color="accent" class="button-right" (click)="close()"><mat-icon>close</mat-icon></button>
-      </span>
+<div class="dialog-header" *ngIf="selectedCellStat == -1">
+        <span class="large-bold-header-text">Results</span>
+        <button mat-icon-button mat-dialog-close style="align-self: baseline"
+            (click)="close()"><mat-icon>close</mat-icon></button>
+</div>
+<div *ngIf="selectedCellStat != -1">
+    <button mat-icon-button style="align-self: baseline"
+        (click)="selectedCellStat = -1"><mat-icon>arrow_back</mat-icon></button>
+        <span class="mid-bold-text">Back</span>
 </div>
 
-<div class="margin-top-50">
-    <table>
-        <tbody>
-            <ng-container *ngFor="let row of resultGrid; let i = index">
-                <tr>
-                    <td *ngFor="let col of row; let j = index" class="result-grid" [ngStyle]="resultGrid[j][i] ? {'background-color': '#008f51'} : {'background-color': '#1d1d28'}" style="position: relative;">
-                        <div *ngIf="toggleAnswers">{{gridGameService.globalCommonAnsMapping[i * 3 + j]?.name || '--'}}</div>
-                    </td>
-                </tr>
-            </ng-container>
-        </tbody>
-    </table>
-</div>
+<div mat-dialog-content style="max-height: 76vh !important;">
+    <div *ngIf="selectedCellStat == -1">
+        <table class="result-table">
+            <tbody>
+                <ng-container *ngFor="let row of resultGrid; let i = index">
+                    <tr class="result-row">
+                        <td *ngFor="let col of row; let j = index" class="result-grid" style="position: relative;"
+                            [ngStyle]="resultGrid[j][i] || toggleAnswers ? {'background-color': '#008f51'} : {'background-color': '#1d1d28'}">
+                            <div *ngIf="toggleAnswers && selectedCellStat == -1" style="cursor: pointer;" (click)="openStatsForCell([i * 3 + j])">
+                                <img [src]="gridGameService.globalCommonAnsMapping[i * 3 + j]?.img" class="player-grid-img">
+                                <div class="center-text player-name-text ">{{gridGameService.globalCommonAnsMapping[i * 3 + j]?.name}}</div>
+                                <div class="player-percent">{{gridGameService.globalCommonAnsMapping[i * 3 + j]?.percent | percent:'1.2-2'}}</div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+        <div class="center-text light_bg_color small-text__light"  *ngIf="toggleAnswers">
+            Click cell to see rarity of each player
+        </div>
 
-<div class="center-text light_bg_color margin-top-25">
-    Rarity Rating
+        <div class="center-text light_bg_color margin-top-10">
+            Rarity Rating
+        </div>
+        <div class="center-text large-bold-header-text">
+            {{uniScore}}
+        </div>
+        
+        <div class="margin-top-10 center-text">
+            <button mat-stroked-button (click)="toggleAnswers = !toggleAnswers">View Stats</button>
+        </div>
+    </div>
+    <div *ngIf="toggleAnswers && selectedCellStat != -1" style="text-align: -webkit-center;">
+        <table class="player-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let player of cellStatList">
+                <td class="player-name-table"> <img [src]="player.img" alt="{{player.name}}" class="player-image-table">{{ player.name }}</td>
+                <td class="player-percent-table" style="background: {{getProbColor(player.percent)}}">{{ player.percent | percent:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-<div class="center-text large-bold-header-text">
-    {{uniScore}}
-</div>
-
-<div class="margin-top-25 center-text" *ngIf="score != 9">
-    <button mat-stroked-button (click)="toggleAnswers = !toggleAnswers">Toggle Answers</button>
-</div>
-
-<div class="margin-top-25 center-text">
-    <button mat-button (click)="copyResults()">Copy Results</button>
+<div class="margin-top-10 center-text">
+    <button mat-button (click)="copyResults()">Copy Score</button>
     <button mat-raised-button color="accent" (click)="makeTweet()">Tweet</button>
-</div>
+</div>    
