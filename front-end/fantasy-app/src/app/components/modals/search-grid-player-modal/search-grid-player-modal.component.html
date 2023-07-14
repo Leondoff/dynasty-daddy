@@ -6,7 +6,7 @@
         <button mat-icon-button mat-dialog-close (click)="close()" style="align-self: baseline"><mat-icon>close</mat-icon></button>
 </div>
 
-<mat-dialog-content>
+<div mat-dialog-content>
   <div *ngIf="searchPlayers.length == 0" class="light_bg_color">
     Players must have played one regular season game in order to count for the team.
     <div>The only exception is for players changing teams in the 2023 offseason.</div>
@@ -15,4 +15,4 @@
     {{player.name}} <span class="light_bg_color" style="padding-left: 5px;">{{player.pos}}</span>
     <div class="light_bg_color">{{player.start_year}} - {{player.end_year == '2022' ? 'Present' : player.end_year}}</div>
   </div>  
-</mat-dialog-content>
+</div>

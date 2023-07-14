@@ -138,66 +138,6 @@ def refreshPlayerGridTable():
 
 # refreshPlayerGridTable()
 
-def ExtraTeamsPlayedFor():
-
-    conn = psycopg2.connect(
-        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
-    )
-
-    # Setting auto commit false
-    conn.autocommit = True
-
-    data = requests.get('https://www.crossovergrid.com/fblargecsv.csv')
-    # print(data.content)
-    csv_data = data.text
-
-    # Create a CSV reader
-    csv_reader = csv.reader(csv_data.splitlines())
-
-    # Read the headers row
-    headers = next(csv_reader)
-
-    # Map headers to dictionary
-    headers_dict = {index: value for index, value in enumerate(headers)}
-    csvList = list(csv_reader)
-    playerDict = {}
-    for player in csvList:
-        teams = []
-        for num in range(5, 36):
-            try:
-                if player[num] == '1':
-                    teams.append(headers_dict[num])
-            except IndexError:
-                print("Index out of range, continuing...")
-                continue
-
-        playerDict[PlayerService.cleanPlayerIdString(
-            re.sub(r'\s*\(.*?\)', '', player[0].strip()) + player[1])] = {"teams": teams, "startYear": player[3].split('-')[0]}
-
-    playerStatement = '''select name, gsis_id, pos, teams, start_year
-                from player_grid'''
-    cursor = conn.cursor()
-    cursor.execute(playerStatement)
-    result_set = cursor.fetchall()
-    for player in result_set:
-        nameId = PlayerService.cleanPlayerIdString(player[0] + player[2])
-        if nameId not in playerDict and player[2] in posExpMap:
-            nameId = PlayerService.cleanPlayerIdString(
-                player[0] + posExpMap[player[2]])
-        if nameId in playerDict:
-            result = list(set(playerDict[nameId]["teams"]) | set(player[3]))
-            startYear = playerDict[nameId]["startYear"] if len(
-                playerDict[nameId]["startYear"]) == 4 else player[4]
-            playerGridStatement = '''UPDATE player_grid
-                SET
-                teams = %s,
-                start_year = %s
-                WHERE gsis_id = %s;'''
-            cursor.execute(playerGridStatement, (result, startYear, player[1]))
-
-# ExtraTeamsPlayedFor()
-
-
 def AddPre1999Players():
 
     conn = psycopg2.connect(
@@ -207,7 +147,7 @@ def AddPre1999Players():
     # Setting auto commit false
     conn.autocommit = True
 
-    data = requests.get('https://www.crossovergrid.com/fblargecsv.csv')
+    data = requests.get()
     # print(data.content)
     csv_data = data.text
 
@@ -276,7 +216,7 @@ def AddPre1999Players():
 #     # Setting auto commit false
 #     conn.autocommit = True
 
-#     data = requests.get('https://www.crossovergrid.com/fblargecsv.csv')
+#     data = requests.get()
 #     # print(data.content)
 #     csv_data = data.text
 
