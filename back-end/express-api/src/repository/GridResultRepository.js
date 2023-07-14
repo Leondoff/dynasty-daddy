@@ -13,12 +13,12 @@ export const GetCurrentResults = async () => {
 
 export const PersistGridResult = async (batchData) => {
   const placeholders = batchData.map((_, index) =>
-    `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3}, 1)`).join(', ');
+    `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, 1, $${index * 4 + 4})`).join(', ');
   const values = batchData.flatMap(item =>
-    [ item.playerId, item.cellNum, item.name ]);
+    [ item.playerId, item.cellNum, item.name, item.img ]);
 
   const query = `
-    INSERT INTO grid_results (player_id, cellNum, name, guesses)
+    INSERT INTO grid_results (player_id, cellNum, name, guesses, img)
     VALUES ${placeholders}
     ON CONFLICT (player_id, cellNum)
     DO UPDATE SET guesses = grid_results.guesses + 1;

@@ -3,7 +3,7 @@
         <mat-label>Search Player</mat-label>
         <input matInput [(ngModel)]="searchVal" (keyup)="searchSubject$.next(this.searchVal);">
       </mat-form-field>
-        <button mat-icon-button mat-dialog-close color="accent" (click)="close()"><mat-icon>close</mat-icon></button>
+        <button mat-icon-button mat-dialog-close (click)="close()" style="align-self: baseline"><mat-icon>close</mat-icon></button>
 </div>
 
 <mat-dialog-content>

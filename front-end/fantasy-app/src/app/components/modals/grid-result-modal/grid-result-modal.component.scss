@@ -1,28 +1,83 @@
 @import "../../../../styles.scss";
 
+.result-table {
+  border-collapse: separate;
+}
+
+.result-row {
+  display: flex;
+  justify-content: center;
+}
+
 .result-grid {
-  text-align-last: center;
-  width: clamp(20px, 5vw, 60px);
-  height: clamp(20px, 5vw, 60px);
+  text-align: center;
+  width: clamp(60px, 5vw, 100px);
+  height: clamp(60px, 5vw, 100px);
+  margin: clamp(0.25px, 0.5vw, 4px);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .player-name-text {
   z-index: 100;
-  font-size: 8px;
   position: absolute;
-  background-color: $dark-bg-lighter-30;
   bottom: 0;
   left: 0;
   width: 100%;
+  background-color: $dark-bg-lighter-30;
   text-align: center;
+  font-size: clamp(8px, 0.75vw, 16px);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 .player-percent {
-  font-size: 8px;
   position: absolute;
   top: 0;
   right: 0;
   background-color: $dark-bg-lighter-30;
   color: white;
-  padding: 1px;
+  padding: clamp(2px, 0.5vw, 5px);
+  font-size: clamp(8px, 0.75vw, 16px);
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.player-grid-img {
+  text-align-last: center;
+  width: clamp(60px, 5vw, 100px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-table {
+  width: 200px;
+  border-collapse: collapse;
+}
+
+.player-table th, .player-table td {
+  padding: 2px;
+  text-align: left;
+  border-bottom: 2px;
+}
+
+.player-image-table  {
+  width: 20px;
+}
+
+.player-name-table  {
+  width: 150px;
+}
+
+.player-percent-table  {
+  text-align: right;
 }

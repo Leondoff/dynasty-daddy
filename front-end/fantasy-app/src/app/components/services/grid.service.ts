@@ -86,7 +86,7 @@ export class GridGameService {
         const x = coords[0] + 1;
         const y = coords[1] + 1;
         const cellNum = (coords[1] * 3) + coords[0];
-        const percent = this.isHistoricalGrid ? null : this.getPercentForPlayerSelected(player.id, cellNum);
+        const percent = this.isHistoricalGrid ? null : this.getPercentForPlayerSelected(player.id, cellNum, true);
         this.gridResults[x][y] = { name: player.name, img: player.headshot_url, id: player.id, percent: percent };
         this.alreadyUsedPlayers.push(player.id);
       }
@@ -147,6 +147,11 @@ export class GridGameService {
         }
       });
       this.refreshPercents();
+      for (let i = 0; i < 9; i++) {
+        if (this.globalCommonAnsMapping[i]) {
+          this.globalCommonAnsMapping[i].percent = this.getPercentForPlayerSelected(this.globalCommonAnsMapping[i].player_id, i);
+        }
+      }
     })
   }
 
@@ -155,21 +160,22 @@ export class GridGameService {
    * @param playerId player id
    * @param cellNum cell number
    */
-  getPercentForPlayerSelected(playerId: number, cellNum: number): number {
+  getPercentForPlayerSelected(playerId: number, cellNum: number, includePlayer: boolean = false): number {
     let percent = 0;
+    const playerInc = includePlayer ? 1 : 0;
     if (!this.globalSelectionMapping[cellNum]) {
       return 1;
     }
     this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
       res.forEach(p => {
         if (p.player_id === playerId && p.cellnum === cellNum) {
-          percent = (p.guesses + 1) / (this.globalSelectionMapping[cellNum] + 1);
+          percent = (p.guesses + playerInc) / (this.globalSelectionMapping[cellNum] + playerInc);
           return;
         }
       })
     });
     if (percent === 0) {
-      percent = 1 / (this.globalSelectionMapping[cellNum] + 1);
+      percent = playerInc / (this.globalSelectionMapping[cellNum] + playerInc);
     }
     return percent;
   }
@@ -183,7 +189,7 @@ export class GridGameService {
       const innerArray = this.gridResults[i];
       for (let j = 0; j < this.gridResults.length; j++) {
         if (innerArray[j]) {
-          playerList.push({ playerId: innerArray[j].id, cellNum: (j - 1) * 3 + (i - 1), name: innerArray[j].name })
+          playerList.push({ playerId: innerArray[j].id, cellNum: (j - 1) * 3 + (i - 1), name: innerArray[j].name, img: innerArray[j].img })
         }
       }
     }

@@ -35,18 +35,18 @@ export class GridGameComponent extends BaseComponent implements OnInit {
 
     /** help menu bullet points */
     helpBullets = [
-        "Select a player for each cell that matches the criteria for that cell's row and column",
-        "For a player to be considered valid for a team, he must've suited up for one NFL regular season game for that team",
-        "If a cell is for a team and an award, the award must have been won after 1999 but doesn't have to be on the team",
-        "If a cell is for a team and a season stat, the player you select must have recorded that stat after 1999 but doesn't have to be on the team",
-        "If you select a player for a cell with a stat, that player must've accumulated that stat in a completed season/game from 1999 or later",
+        "Select a player for each cell that matches the criteria for that cell's row and column.",
+        "For a player to be considered valid for a team, he must've suited up for one NFL regular season game for that team.",
+        "If a cell is for a team and an award, the award must have been won after 1999 but didn't have to be on the team when winning the award.",
+        "If a cell is for a team and a season stat, the player you select must have recorded that stat after 1999 but didn't have to be on the team when recording that stat.",
+        "If you select a player for a cell with a stat, that player must've accumulated that stat in a completed season/game from 1999 or later.",
         "If you select a player for a cell with a college, that player must have been drafted from that college. If a player transfers colleges, the college they transfer to is the college.",
         "If a cell is for a college and a season stat, the player you select must have graduated from that college and accumulated that stat in the NFL (not in college).",
-        "A player cannot be used twice",
-        "You have 9 guesses to fill out the grid",
-        "Each guess, whether correct or incorrect, counts as a guess",
-        "You can guess active or inactive NFL players",
-        "There is a new grid every day at 5 AM EST"
+        "A player cannot be used twice.",
+        "You have 9 guesses to fill out the grid.",
+        "Each guess, whether correct or incorrect, counts as a guess.",
+        "You can guess active or inactive NFL players.",
+        "There is a new grid every day at 5 AM EST."
     ];
 
     seasonStats = ['rushYd1000',
@@ -96,8 +96,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      */
     private openResults(): void {
         this.dialog.open(GridResultModalComponent, {
-            minHeight: '350px',
-            minWidth: this.configService.isMobile ? '200px' : '500px',
+            minHeight: '400px',
+            minWidth: this.configService.isMobile ? '240px' : '500px'
         });
     }
 

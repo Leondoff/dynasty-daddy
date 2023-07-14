@@ -4,50 +4,52 @@
   </div>
 
 <div *ngIf="gridGameService.status === 1"class="margin-top-25">
-    <table>
-        <tbody>
-            <ng-container *ngFor="let row of gridGameService.gridResults; let i = index">
-                <tr>
-                    <td *ngFor="let col of row; let j = index" (click)="j !== 0 && i !== 0 && !gridGameService.gridResults[j][i] && gridGameService.guessesLeft > 0 ? openPlayerSearch(j-1, i-1) : ''" [ngStyle]="gridGameService.gridResults[j][i] ? {'background-color': '#008f51'} : {}" style="position: relative;"
-                        [ngClass]="{'top-left-cell': i === 0 || j === 0, 'middle-cell': i > 0 && j > 0}">
-                        <div *ngIf="i === 0 && j !== 0">
-                            <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'team'">
-                            <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'award'">
-                                <div class="light_bg_color" *ngIf="!configService.isMobile">Won Award</div>
-                                <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}" style="text-align: center;">{{getAwardDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+    <div style="overflow-x: auto;">
+        <table class="grid-table">
+            <tbody>
+                <ng-container *ngFor="let row of gridGameService.gridResults; let i = index">
+                    <tr class="grid-row">
+                        <td *ngFor="let col of row; let j = index" (click)="j !== 0 && i !== 0 && !gridGameService.gridResults[j][i] && gridGameService.guessesLeft > 0 ? openPlayerSearch(j-1, i-1) : ''" [ngStyle]="gridGameService.gridResults[j][i] ? {'background-color': '#008f51'} : {}" style="position: relative;"
+                            [ngClass]="{'top-left-cell': i === 0 || j === 0, 'middle-cell': i > 0 && j > 0}">
+                            <div *ngIf="i === 0 && j !== 0">
+                                <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'team'">
+                                <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'award'">
+                                    <div class="light_bg_color" *ngIf="!configService.isMobile">Won Award</div>
+                                    <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}" style="text-align: center;">{{getAwardDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                    <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                                </div>
+                                <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'stat'" class="center-text">
+                                    <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                    <div class="light_bg_color subtext" [ngClass]="{'subtext-desc-mobile': configService.isMobile}">{{getStatCategory(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                    <div class="light_bg_color subtext" [ngClass]="{'subtext-mobile': configService.isMobile}">{{getStatScopeString(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                    <div class="light_bg_color subtext" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                                </div>
                             </div>
-                            <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'stat'" class="center-text">
-                                <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                <div class="light_bg_color" [ngClass]="{'subtext-desc-mobile': configService.isMobile}">{{getStatCategory(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{getStatScopeString(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                            <div *ngIf="j === 0 && i !== 0">
+                                <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'team' || gridGameService.gridDict['yAxis'][i-1]?.type == 'college'">
+                                <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'jersey_number'">
+                                    <div class="light_bg_color">{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
+                                    <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{gridGameService.gridDict['yAxis'][i-1]?.value}}</div>
+                                    <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                                </div>
+                                <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'stat'" class="center-text">
+                                    <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
+                                    <div class="light_bg_color" [ngClass]="{'subtext-desc-mobile': configService.isMobile}">{{getStatCategory(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
+                                    <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{getStatScopeString(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
+                                    <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                                </div>
                             </div>
-                        </div>
-                        <div *ngIf="j === 0 && i !== 0">
-                            <img [src]="getTeamImg(gridGameService.gridDict['yAxis'][i-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'team' || gridGameService.gridDict['yAxis'][i-1]?.type == 'college'">
-                            <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'jersey_number'">
-                                <div class="light_bg_color">{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
-                                <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{gridGameService.gridDict['yAxis'][i-1]?.value}}</div>
-                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                            <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">
+                                <img [src]="gridGameService.gridResults[j][i].img" class="player-grid-img">
+                                <div [ngClass]="{'player-name-text-mobile': configService.isMobile, 'player-name-text': !configService.isMobile}" class="center-text">{{gridGameService.gridResults[j][i]?.name}}</div>
+                                <div [ngClass]="{'percent-mobile': configService.isMobile, 'percent': !configService.isMobile}" *ngIf="gridGameService.gridResults[j][i].percent">{{gridGameService.gridResults[j][i].percent | percent:'1.2-2'}}</div>
                             </div>
-                            <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'stat'" class="center-text">
-                                <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
-                                <div class="light_bg_color" [ngClass]="{'subtext-desc-mobile': configService.isMobile}">{{getStatCategory(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
-                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{getStatScopeString(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
-                                <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
-                            </div>
-                        </div>
-                        <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">
-                            <img [src]="gridGameService.gridResults[j][i].img" class="player-grid-img">
-                            <div [ngClass]="{'player-name-text-mobile': configService.isMobile, 'player-name-text': !configService.isMobile}" class="center-text">{{gridGameService.gridResults[j][i]?.name}}</div>
-                            <div [ngClass]="{'percent-mobile': configService.isMobile, 'percent': !configService.isMobile}" *ngIf="gridGameService.gridResults[j][i].percent">{{gridGameService.gridResults[j][i].percent | percent:'1.2-2'}}</div>
-                        </div>
-                    </td>
-                </tr>
-            </ng-container>
-        </tbody>
-    </table>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
 
     <div class="margin-top-25 center-text">
         <div class="light_bg_color">Guesses Left:</div>
