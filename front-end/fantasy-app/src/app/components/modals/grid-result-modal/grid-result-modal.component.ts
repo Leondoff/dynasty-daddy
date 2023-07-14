@@ -33,6 +33,9 @@ export class GridResultModalComponent implements OnInit {
     /** cell stat list */
     cellStatList: any[] = [];
 
+    /** selected player for cell to highlight */
+    cellStatSelectedPlayerId: number;
+
     /** probability gradient for percents */
     probGradient: string[] = [];
 
@@ -112,9 +115,12 @@ export class GridResultModalComponent implements OnInit {
 
     /**
      * Loads stats for specific cell number
-     * @param cellNum cell number to load
+     * @param i row num
+     * @param j col num
      */
-    openStatsForCell(cellNum: number): void {
+    openStatsForCell(i: number, j: number): void {
+        this.cellStatSelectedPlayerId = this.resultGrid[j]?.[i]?.id
+        const cellNum = (i * 3) + j;
         this.cellStatList = [];
         this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
             res.forEach(obj => {
