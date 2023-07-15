@@ -156,7 +156,7 @@ export class PortfolioService {
         ddPlayer = new FantasyPlayer();
         // For team defense, they don't set full name
         ddPlayer.full_name = playerInfo.full_name ? playerInfo.full_name : `${playerInfo.first_name} ${playerInfo.last_name}`
-        ddPlayer.name_id = (playerInfo?.full_name + playerInfo?.position)
+        ddPlayer.name_id = (ddPlayer?.full_name + playerInfo?.position)
           .replace("'", "").replace(".", "").replace(" ", "").toLowerCase();
         ddPlayer.sf_trade_value = 0;
         ddPlayer.trade_value = 0;
