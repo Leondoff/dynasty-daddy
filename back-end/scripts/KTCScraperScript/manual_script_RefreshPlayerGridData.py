@@ -346,7 +346,7 @@ def UpdateStatsJson():
                 'maxYdRec200': False,
                 'maxRec12': False,
                 '70RushRecG': False,
-                '80Rush200PassG': False,
+                '50Rush200PassG': False,
                 '1Rush1RecG': False,
                 '1Pass1RecG': False,
                 '3Pass1RushG': False
@@ -372,7 +372,7 @@ def UpdateStatsJson():
                         'maxYdRec200': int(row[17]) >= 200 or statsDict[row[0]]['maxYdRec200'] is True,
                         'maxRec12': int(row[18]) >= 12 or statsDict[row[0]]['maxRec12'] is True,
                         '70RushRecG': row[19] == 'TRUE' or statsDict[row[0]]['70RushRecG'] is True,
-                        '80Rush200PassG': row[20] == 'TRUE' or statsDict[row[0]]['80Rush200PassG'] is True,
+                        '50Rush200PassG': row[20] == 'TRUE' or statsDict[row[0]]['50Rush200PassG'] is True,
                         '1Rush1RecG': row[21] == 'TRUE' or statsDict[row[0]]['1Rush1RecG'] is True,
                         '1Pass1RecG': row[22] == 'TRUE' or statsDict[row[0]]['1Pass1RecG'] is True,
                         '3Pass1RushG': row[23] == 'TRUE' or statsDict[row[0]]['3Pass1RushG'] is True,
