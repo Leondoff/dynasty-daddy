@@ -197,7 +197,9 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         } else if (stat == '3Pass1RushG') {
             return '3+/1+';
         } else if (stat == '80Rush200PassG') {
-            return '80+/200+';
+            return '50+/200+';
+        } else if (stat == '50Rush200PassG') {
+            return '50+/200+';
         } else if (stat.includes('200')) {
             return '200+';
         } else if (stat.includes('100')) {
@@ -263,6 +265,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case '70RushRecG':
                 return 'Rush & Rec Yds'
             case '80Rush200PassG':
+            case '50Rush200PassG':
                 return 'Rush & Pass Yds'
             default:
                 return this.configService.isMobile ? 'Int Thrown' : 'Ints Thrown';
