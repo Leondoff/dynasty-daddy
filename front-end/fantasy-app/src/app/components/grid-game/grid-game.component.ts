@@ -263,7 +263,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case '70RushRecG':
                 return 'Rush & Rec Yds'
             case '80Rush200PassG':
-                return 'Rush & Pass Tds'
+                return 'Rush & Pass Yds'
             default:
                 return this.configService.isMobile ? 'Int Thrown' : 'Ints Thrown';
         }
