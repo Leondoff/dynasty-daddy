@@ -85,7 +85,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
 
   ngOnChanges(): void {
     this.dataSource.data = this.powerRankings;
-    this.setUpTableView();
     this.refreshPowerRankingCache();
   }
 

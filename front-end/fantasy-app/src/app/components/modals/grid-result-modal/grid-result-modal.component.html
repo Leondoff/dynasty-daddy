@@ -11,7 +11,14 @@
 
 <div mat-dialog-content style="max-height: 76vh !important;">
     <div *ngIf="selectedCellStat == -1">
-        <table class="result-table">
+        <div class="center-text light_bg_color margin-top-10">
+            Games Completed
+        </div>
+        <div class="center-text large-bold-header-text">
+            {{gridGameService.gamesPlayed + 1}}
+        </div>
+        
+        <table class="result-table margin-top-10">
             <tbody>
                 <ng-container *ngFor="let row of resultGrid; let i = index">
                     <tr class="result-row">
@@ -30,6 +37,22 @@
         <div class="center-text light_bg_color small-text__light"  *ngIf="toggleAnswers">
             Click cell to see rarity of each player
         </div>
+        <div *ngIf="selectedCellStat == -1 && toggleAnswers" class="margin-top-15">
+            <table class="result-table">
+                <tbody>
+                    <ng-container *ngFor="let row of resultGrid; let i = index">
+                        <tr class="result-row">
+                            <td *ngFor="let col of row; let j = index" class="result-grid" style="position: relative; background-color: #1d1d28;">
+                                <div class="total-percent">{{(gridGameService.globalSelectionMapping[i * 3 + j] / (gridGameService.gamesPlayed + 1)) | percent:'1.2-2'}}</div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+        <div class="center-text light_bg_color small-text__light"  *ngIf="toggleAnswers">
+            Percent of players that got each cell right
+        </div>
 
         <div class="center-text light_bg_color margin-top-10">
             Rarity Rating
@@ -39,7 +62,7 @@
         </div>
         
         <div class="margin-top-10 center-text">
-            <button mat-stroked-button (click)="toggleAnswers = !toggleAnswers">View Stats</button>
+            <button mat-stroked-button (click)="toggleAnswers = !toggleAnswers">{{toggleAnswers ? 'Close' : 'Open'}} Stats</button>
         </div>
     </div>
     <div *ngIf="toggleAnswers && selectedCellStat != -1" style="text-align: -webkit-center;">

@@ -1,4 +1,5 @@
 /* eslint-disable consistent-return */
+import { IncrementGridGamesPlayed } from '../repository/ConfigRepository';
 import { GetCurrentResults, PersistGridResult } from '../repository/GridResultRepository';
 import { GetAllHistoricalGridirons } from '../repository/HistoricalGridironsRepository';
 import { GetSearchPlayersInGrid, GetAllPlayersInGrid } from '../repository/PlayerGridRepository';
@@ -33,5 +34,6 @@ export const UpdateGridResultsWithAnswer = async (playerList, id) => {
   }
 
   await PersistGridResult(validPlayerList);
+  await IncrementGridGamesPlayed();
   return id;
 };

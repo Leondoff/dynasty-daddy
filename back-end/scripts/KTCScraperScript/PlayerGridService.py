@@ -5,8 +5,8 @@ import json
 import os
 import psycopg2
 
-SupportedYTypes = ['college', 'team', 'team', 'team', 'stat',
-                   'stat', 'stat', 'stat', 'stat', 'stat']
+SupportedYTypes = ['college', 'team', 'team', 'team', 'team', 'stat',
+                   'stat', 'stat', 'stat']
 
 SupportedXTypes = ['award', 'stat', 'stat']
 
@@ -67,19 +67,29 @@ def SetNewPlayerGrid():
     cursor.execute('TRUNCATE TABLE grid_results;')
     cursor.execute('SELECT * FROM player_grid;')
     rows = cursor.fetchall()
+
+    # filter out yesterdays teams from teams
+    cursor.execute(
+        'SELECT config_value FROM config WHERE config_key = \'daily_grid\';')
+    yesterdaysGridStr = cursor.fetchall()
+    yesterdaysGrid = json.loads(yesterdaysGridStr[0][0])
+    todaysSupportedTeams = filterOutTeams(yesterdaysGrid)
     iter = 0
     while True and iter < 100:
-        selectedTeams = random.sample(SupportedTeams, 6)
-        formattedGrid = [{"type": "team", "value": value} for value in selectedTeams]
+        selectedTeams = random.sample(todaysSupportedTeams, 6)
+        formattedGrid = [{"type": "team", "value": value}
+                         for value in selectedTeams]
         # Y axis wild card
         if (random.choice([True])):
             selectedWildcard = random.choice(SupportedYTypes)
             if selectedWildcard is 'college':
                 selectedCollege = random.choice(SupportedColleges)
-                formattedGrid[5] = {"type": "college", "value": selectedCollege}
+                formattedGrid[5] = {
+                    "type": "college", "value": selectedCollege}
             if selectedWildcard is 'jersey_number':
                 selectedNumber = random.choice(SupportedJerseyNumbers)
-                formattedGrid[5] = {"type": "jersey_number", "value": selectedNumber}
+                formattedGrid[5] = {
+                    "type": "jersey_number", "value": selectedNumber}
             if selectedWildcard is 'stat':
                 selectedStat = random.choice(SupportedStats)
                 formattedGrid[5] = {"type": "stat", "value": selectedStat}
@@ -116,6 +126,11 @@ def SetNewPlayerGrid():
         SET
         config_value = %s WHERE config_key = \'daily_grid\';'''
     cursor.execute(setTodaysGridStatement, (str(jsonGrid),))
+
+    resetGridsPlayedCount = '''UPDATE config
+        SET
+        config_value = 1 WHERE config_key = \'daily_grid_completed\';'''
+    cursor.execute(resetGridsPlayedCount)
 
     archiveGridironStatement = '''INSERT INTO historical_gridirons (daily_grid, daily_grid_answer)
                     VALUES (%s, %s)'''
@@ -160,3 +175,10 @@ def getValueToValidate(row, type):
         return stats
     else:
         return row[3]
+
+def filterOutTeams(json_data):
+    yesterdayTeams = [item['value'] for item in json_data['xAxis'] +
+                      json_data['yAxis'] if item['type'] == 'team']
+    todaysTeams = [
+        team for team in SupportedTeams if team not in yesterdayTeams]
+    return todaysTeams
