@@ -109,6 +109,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         if (!isHistorical) {
             this.gridGameService.calculateTotalSelections();
             this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue);
+            this.gridGameService.gamesPlayed = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID_COMPLETED)?.configValue || 1);
         }
         const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}');
         if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
@@ -170,7 +171,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case 'roty':
                 return 'ROTY';
             case 's_mvp':
-                return 'Super Bowl MVP';
+                return 'SB MVP';
             default:
                 return 'MVP';
         }

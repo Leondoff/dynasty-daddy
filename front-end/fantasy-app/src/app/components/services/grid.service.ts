@@ -69,6 +69,9 @@ export class GridGameService {
   /** toggle for mr unlimited mode */
   unlimitedMode: boolean = false;
 
+  /** total games played from config table */
+  gamesPlayed: number = 1;
+
   constructor(private fantasyPlayersAPIService: FantasyPlayerApiService,
     private configService: ConfigService) { }
 

@@ -85,3 +85,8 @@
 .selected_player_stats {
   background-color: $dark-bg-lighter-30;
 }
+
+.total-percent {
+  font-weight: bold;
+  font-size: clamp(12px, 1vw, 24px);
+}
