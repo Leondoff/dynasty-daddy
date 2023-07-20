@@ -9,7 +9,7 @@
             <tbody>
                 <ng-container *ngFor="let row of gridGameService.gridResults; let i = index">
                     <tr class="grid-row">
-                        <td *ngFor="let col of row; let j = index" (click)="j !== 0 && i !== 0 && !gridGameService.gridResults[j][i] && gridGameService.guessesLeft > 0 ? openPlayerSearch(j-1, i-1) : ''" [ngStyle]="gridGameService.gridResults[j][i] ? {'background-color': '#008f51'} : {}" style="position: relative;"
+                        <td *ngFor="let col of row; let j = index" (click)="j !== 0 && i !== 0 && !gridGameService.gridResults[j][i] && gridGameService.guessesLeft > 0 ? openPlayerSearch(j-1, i-1) : ''" [ngStyle]="gridGameService.gridResults[j][i] ? {'background': gridGameService.getCellColor(gridGameService.gridResults[j][i]?.percent)} : {}" style="position: relative;"
                             [ngClass]="{'top-left-cell': i === 0 || j === 0, 'middle-cell': i > 0 && j > 0}">
                             <div *ngIf="i === 0 && j !== 0">
                                 <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'team'">

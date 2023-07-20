@@ -216,4 +216,24 @@ export class GridGameService {
       }
     }
   }
+
+  /**
+   * Return grid color based on rarity
+   * @param percent percent to get cell color for
+   */
+  getCellColor(percent: number = 100): string {
+    if (percent < 0.01) {
+      return 'linear-gradient(to bottom right, #ADD8E6, #CC7DFF, #ADD8E6);'
+    }
+    if (percent < 0.05) {
+      return 'linear-gradient(to bottom right, #FFD700, white, #FFD700);'
+    }
+    if (percent < 0.10) {
+      return 'linear-gradient(to bottom right, silver, white, silver);'
+    }
+    if (percent < 0.15) {
+      return 'linear-gradient(to bottom right, #cd7f32, white, #cd7f32);'
+    }
+    return '#008f51';
+  }
 }
