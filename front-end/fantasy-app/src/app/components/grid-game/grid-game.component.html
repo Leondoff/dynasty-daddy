@@ -83,6 +83,14 @@
         <button mat-button (click)="toggleUnlimitedMode()"><mat-icon>all_inclusive</mat-icon> {{gridGameService.unlimitedMode ? 'Disable': 'Enable'}} "Mr. Unlimited" Mode</button>
         <button mat-button (click)="resetGrid()"><mat-icon>restart_alt</mat-icon> Reset Grid</button>
     </div>
+
+    <div class="margin-top-25 mid-bold-text center-text">
+        Grid Partners
+        <div class="margin-top-10">
+            <button mat-stroked-button (click)="openPuckdoku()"><mat-icon>sports_hockey</mat-icon>Puckdoku</button>
+        </div>
+    </div>
+
 </div>
 
 <div class="center-spinner margin-top-120" *ngIf="gridGameService.status === 0">

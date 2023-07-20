@@ -327,4 +327,11 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         this.gridGameService.gridDict = JSON.parse(oldGrid.daily_grid);
         this.resetGrid(isHistorical);
     }
+
+    /**
+     * opens puckduko in a new tab
+     */
+    openPuckdoku(): void {
+        window.open('https://www.puckdoku.com/', '_blank');
+    }
 }
