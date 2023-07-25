@@ -451,7 +451,8 @@ export class PowerRankingsService {
     // get max rating
     const maxRating = max(ratings);
     // determine number of bins
-    const binCount = Math.ceil(Math.sqrt(ratings.length));
+    // const binCount = Math.ceil(Math.sqrt(ratings.length));
+    const binCount = 4;
     // calculate the bin width
     const binWidth = (maxRating - minRating) / binCount;
     // set up loop with floor & ceiling
