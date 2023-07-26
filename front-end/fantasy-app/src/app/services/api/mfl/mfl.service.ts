@@ -136,12 +136,13 @@ export class MflService {
         leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
         // get future pick year since it will filter out current year picks
         const pickYear = year === new Date().getFullYear().toString() &&
-          ((leagueWrapper.completedDrafts.length === 0 && new Date().getMonth() < 7) || leagueWrapper.completedDrafts[0].draft?.status !== 'completed') ?
+          ((leagueWrapper.completedDrafts.length === 0 && new Date().getMonth() < 5) ||
+            (leagueWrapper.completedDrafts.length > 0 && leagueWrapper.completedDrafts[0]?.draft?.status !== 'completed')) ?
           this.nflService.getYearForStats() : year
         const observable = leagueWrapper.selectedLeague.type === LeagueType.DYNASTY ?
           this.mflApiService.getMFLFutureDraftPicks(pickYear, leagueId, this.mflUserId, baseURL).pipe(
             map(draftPicks => {
-              const teamDraftCapital = this.marshalFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise);
+              const teamDraftCapital = this.marshalFutureDraftCapital(draftPicks?.futureDraftPicks?.franchise, leagueWrapper?.selectedLeague?.totalRosters);
               return teamDraftCapital;
             })
           ) :
@@ -410,15 +411,17 @@ export class MflService {
   /**
    * format json response to future draft picks dictionary
    * @param picks json of picks
+   * @param totalRosters number of rosters
    */
-  private marshalFutureDraftCapital(picks: any): {} {
+  private marshalFutureDraftCapital(picks: any, totalRosters: number = 6): {} {
+    const midPick = totalRosters / 2;
     const picksDict = {};
     picks?.forEach(team => {
       if (Array.isArray(team.futureDraftPick)) {
         picksDict[team.id] = team.futureDraftPick?.map(pick =>
-          new DraftCapital(Number(pick.round), 6, pick.year, this.formatRosterId(pick.originalPickFor)));
+          new DraftCapital(Number(pick.round), midPick, pick.year, this.formatRosterId(pick.originalPickFor)));
       } else if (team.futureDraftPick) {
-        picksDict[team.id] = picks ? [new DraftCapital(Number(picks.round), 6, picks.year, this.formatRosterId(picks.originalPickFor))] : [];
+        picksDict[team.id] = picks ? [new DraftCapital(Number(picks.round), midPick, picks.year, this.formatRosterId(picks.originalPickFor))] : [];
       } else {
         picksDict[team.id] = [];
       }
