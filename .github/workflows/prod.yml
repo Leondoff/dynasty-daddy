@@ -53,5 +53,5 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: jmtimper/dynasty-daddy-cron
-          dockerfile: ./back-end/scripts/KTCScraperScript/Dockerfile
+          dockerfile: ./back-end/scripts/PlayerScripts/Dockerfile
           tags: latest
