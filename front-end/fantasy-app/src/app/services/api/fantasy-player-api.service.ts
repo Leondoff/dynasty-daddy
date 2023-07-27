@@ -5,6 +5,7 @@ import { FantasyPlayerApiConfigService } from './fantasy-player-api-config.servi
 import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { GridPlayer } from 'src/app/components/model/gridPlayer';
+import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
 
 
 @Injectable({
@@ -42,6 +43,12 @@ export class FantasyPlayerApiService {
 
   /** gridiron players*/
   private gridironPlayers;
+
+  /** league format cache */
+  private leagueFormatCache;
+
+  /** non offense players loaded */
+  private nonOffensePlayers;
 
   constructor(private http: HttpClient, private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService) {
   }
@@ -250,9 +257,58 @@ export class FantasyPlayerApiService {
   /**
   * return all players in grid game
   */
-  postCorrectGridironAnswer(playerList: {playerId: number, cellNum: number, name: string, img: string}[], id: number = -1): Observable<GridPlayer[]> {
+  postCorrectGridironAnswer(playerList: { playerId: number, cellNum: number, name: string, img: string }[], id: number = -1): Observable<GridPlayer[]> {
     return this.http.post<any>(this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint, { playerList, id })
       .pipe(map(res => {
+        return res;
+      }));
+  }
+
+  /**
+   * get league format for league
+   */
+  fetchLeagueFormatForLeague(leagueId: string, season: number, format: any, settings: LeagueScoringDTO): Observable<any[]> {
+    return this.leagueFormatCache?.[leagueId]?.[season] ? of(this.leagueFormatCache[leagueId][season]) : this.getFetchLeagueFormatForLeague(leagueId, season, format, settings);
+  }
+
+  /**
+   * return all players advance format metrics for league
+   */
+  private getFetchLeagueFormatForLeague(leagueId: string, season: number, format: any, settings: LeagueScoringDTO): Observable<any[]> {
+    return this.http.post<any[]>(this.fantasyPlayerApiConfigService.getLeagueFormatEndpoint, { season, format, settings })
+      .pipe(map(res => {
+        if (!this.leagueFormatCache) {
+          this.leagueFormatCache = {};
+        }
+        if (!this.leagueFormatCache[leagueId]) {
+          this.leagueFormatCache[leagueId] = {};
+        }
+        this.leagueFormatCache[leagueId][season] = res;
+        return res;
+      }));
+  }
+
+  /**
+   * get non offense players
+   * @param type players to fetch
+   */
+  fetchNonOffensePlayers(type: number): Observable<{}> {
+    return this.nonOffensePlayers?.[type] ? of(this.nonOffensePlayers[type]) : this.getNonOffensePlayers(type);
+  }
+
+  /**
+   * return non offense players
+   */
+  private getNonOffensePlayers(type: number): Observable<{}> {
+    return this.http.get<any[]>(this.fantasyPlayerApiConfigService.getNonOffensePlayersEndpoint + `?type=${type}`)
+      .pipe(map(res => {
+        if (!this.nonOffensePlayers) {
+          this.nonOffensePlayers = {};
+        }
+        if (!this.nonOffensePlayers[type]) {
+          this.nonOffensePlayers[type] = {};
+        }
+        this.nonOffensePlayers[type] = res;
         return res;
       }));
   }

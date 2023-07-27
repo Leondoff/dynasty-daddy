@@ -34,6 +34,7 @@ export class EndpointsService {
     // Dynasty Daddy Endpoints
     this.fantasyPlayerApiConfigService.getPlayerValuesForTodayEndpoint = this.baseUrl + '/v1/player/all/today';
     this.fantasyPlayerApiConfigService.getPlayerValuesForMarketEndpoint = this.baseUrl + '/v1/player/all/market/';
+    this.fantasyPlayerApiConfigService.getNonOffensePlayersEndpoint = this.baseUrl + '/v1/player/all/special';
     this.fantasyPlayerApiConfigService.getPrevPlayerValuesEndpoint = this.baseUrl + '/v1/player/all/prev/';
     this.fantasyPlayerApiConfigService.getHistoricalPlayerValuesEndpoint = this.baseUrl + '/v1/player/';
     this.fantasyPlayerApiConfigService.getPlayerDetailsEndpoint = this.baseUrl + '/v1/player/details/';
@@ -44,6 +45,7 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.getHistoricalGridironsEndpoint = this.baseUrl + '/v1/grid/archive';
     this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint = this.baseUrl + '/v1/grid/results/add';
     this.fantasyPlayerApiConfigService.getAllGridResultsEndpoint = this.baseUrl + '/v1/grid/results';
+    this.fantasyPlayerApiConfigService.getLeagueFormatEndpoint = this.baseUrl + '/v1/league/format';
 
     // Sleeper Endpoints
     this.sleeperApiConfigService.getSleeperUsernameEndpoint = 'https://api.sleeper.app/v1/user/';

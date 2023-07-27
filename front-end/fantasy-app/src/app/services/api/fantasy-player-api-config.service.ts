@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +30,24 @@ export class FantasyPlayerApiConfigService {
 
   private _getAllGridResultsEndpoint = '';
 
+  private _getLeagueFormatEndpoint = '';
+
+  private _getNonOffensePlayersEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
 
   set getPlayerValuesForTodayEndpoint(value: string) {
     this._getPlayerValuesForTodayEndpoint = value;
+  }
+
+  get getNonOffensePlayersEndpoint(): string {
+    return this._getNonOffensePlayersEndpoint;
+  }
+
+  set getNonOffensePlayersEndpoint(value: string) {
+    this._getNonOffensePlayersEndpoint = value;
   }
 
   get getPlayerValuesForMarketEndpoint(): string {
@@ -124,5 +136,13 @@ export class FantasyPlayerApiConfigService {
 
   set getAllGridResultsEndpoint(value: string) {
     this._getAllGridResultsEndpoint = value;
+  }
+
+  get getLeagueFormatEndpoint(): string {
+    return this._getLeagueFormatEndpoint;
+  }
+
+  set getLeagueFormatEndpoint(value: string) {
+    this._getLeagueFormatEndpoint= value;
   }
 }

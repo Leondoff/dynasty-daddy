@@ -251,6 +251,7 @@ From
             left join lastMonthValue on lastMonthValue.name_id = player_info.name_id
         where
             player_info.active is not false
+            and player_info.position in ('QB', 'WR', 'TE', 'RB') 
         order by
             player_info.name_id,
             pv.id desc

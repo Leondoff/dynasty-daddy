@@ -6,6 +6,8 @@ import Gradient from 'javascript-color-gradient';
 })
 export class ColorService {
 
+  probGradient: string[] = [];
+
   /**
    * returns array of hexs in a gradient between two colors
    * @param length number of colors
@@ -17,6 +19,17 @@ export class ColorService {
     colorGradient.setMidpoint(length);
     colorGradient.setColorGradient(color1, color2);
     return colorGradient.getColors();
+  }
+
+  /**
+   * Get Probability gradient and cache it in color service
+   * @returns color gradient from 0 - 100
+   */
+  getProbGradient(): string[] {
+    if (this.probGradient.length == 0) {
+      this.probGradient = this.getColorGradientArray(101, '#28283c', '#3f7bfb');
+    }
+    return this.probGradient;
   }
 
   /**

@@ -1,0 +1,22 @@
+table {
+    width: 100%;
+}
+
+.mat-column-worp,
+.mat-column-worppg,
+.mat-column-winP,
+.mat-column-tradeValue,
+.mat-column-spikeHigh,
+.mat-column-spikeMid,
+.mat-column-spikeLow,
+.mat-column-spikeHighP,
+.mat-column-spikeMidP,
+.mat-column-spikeLowP,
+.mat-column-week {
+    max-width: 52px;
+    text-align: center;
+}
+
+.mat-column-actions {
+    max-width: 24px;
+}

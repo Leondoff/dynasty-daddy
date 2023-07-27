@@ -82,7 +82,7 @@ export class PlayerService {
           return player;
         }
       });
-      this.loadPlayerStatsForSeason$().subscribe((playerStatsResponse) => {
+      this.loadPlayerStatsForSeason$().subscribe((_) => {
         this.currentPlayerValuesLoaded$.next();
       }, sleeperError => {
         console.error(`Could Not Load Player Points from sleeper - ${sleeperError}`);
@@ -583,5 +583,38 @@ export class PlayerService {
       marketObservables.push(this.fantasyPlayerApiService.getPlayerValueForFantasyMarket(market as FantasyMarket))
     }
     return forkJoin(marketObservables);
+  }
+
+  /**
+   * Fetch all non offense players based on league format.
+   * TODO what about idp and K leagues
+   */
+  fetchAllNonOffensePlayers(rosterPositions: string[]): Observable<{}> {
+    if (
+      rosterPositions.includes('LB') || rosterPositions.includes('DB') ||
+      rosterPositions.includes('DL') || rosterPositions.includes('IDP_FLEX')
+    ) {
+      this.fantasyPlayerApiService.fetchNonOffensePlayers(1).subscribe(players => {
+        this.addNonOffensePlayersToValues(players);
+        return of(players);
+      });
+    }
+    if (rosterPositions.includes('DF') || rosterPositions.includes('K')) {
+      this.fantasyPlayerApiService.fetchNonOffensePlayers(0).subscribe(players => {
+        this.addNonOffensePlayersToValues(players);
+        return of(players);
+      });
+    }
+    return of({});
+  }
+
+  /**
+   * Helper function that adds new players to player values
+   * @param players dict of new players to add
+   */
+  private addNonOffensePlayersToValues(players: {}): void {
+    for (const key of Object.keys(players)) {
+      this.playerValues.push(players[key] as FantasyPlayer);
+    }
   }
 }

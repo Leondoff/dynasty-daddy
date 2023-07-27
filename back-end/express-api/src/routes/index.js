@@ -28,25 +28,22 @@ import {
   GetPlayerDetailsEndpoint,
   GetPlayerPortfolioEndpoint,
   GetMFLLeaguesForUserEndpoint,
-  GetWORPForLeague,
+  GetLeagueFormatForLeague,
   PostMFLWaiverEndpoint,
-} from '../controllers';
-import {
   GetFFPCDraftEndpoint,
   GetFFPCLeagueEndpoint,
   GetFFPCLeagueTransactionsEndpoint,
   GetFFPCRostersEndpoint,
   GetFFPCScheduleEndpoint,
   GetFFPCStandingsEndpoint,
-  GetFFPCUserLeaguesEndpoint
-} from '../controllers/ffpc_wrapper_controller';
-import {
+  GetFFPCUserLeaguesEndpoint,
   FetchAllGridPlayersEndpoint,
   FetchAllGridResultsEndpoint,
   FetchAllHistoricalGridsEndpoint,
   FetchSearchedPlayersEndpoint,
-  UpdateGridResultsEndpoint
-} from '../controllers/gridController';
+  UpdateGridResultsEndpoint,
+  GetNonOffensePlayersEndpoint
+} from '../controllers';
 
 const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
@@ -57,9 +54,10 @@ indexRouter.get('/player/all/market/:market', GetPlayerValueForMarketEndpoint);
 indexRouter.get('/player/all/prev/:intervalDays', GetPrevPlayerValuesByDaysEndpoint);
 indexRouter.get('/player/:id', GetHistoricalPlayerValueByIdEndpoint);
 indexRouter.get('/player/details/:id', GetPlayerDetailsEndpoint);
+indexRouter.get('/player/all/special', GetNonOffensePlayersEndpoint);
 indexRouter.post('/portfolio', GetPlayerPortfolioEndpoint);
 indexRouter.get('/config/all', GetConfigValuesEndpoint);
-indexRouter.post('/worp', GetWORPForLeague);
+indexRouter.post('/league/format', GetLeagueFormatForLeague);
 indexRouter.get('/grid/players', FetchSearchedPlayersEndpoint);
 indexRouter.get('/grid/players/all', FetchAllGridPlayersEndpoint);
 indexRouter.get('/grid/archive', FetchAllHistoricalGridsEndpoint);
