@@ -3,9 +3,10 @@ import {
   GetHistoricalPlayerValuesDatapoint,
   GetHistoricalPlayerValuesDatapointByDays,
   GetFantasyPortfolioForInterval,
-  GetPlayerValuesForMarket
-} from '../repository/PlayerInfoRepository';
-import { GetPlayerMetadataByNameId } from '../repository/PlayerMetadataRepository';
+  GetPlayerValuesForMarket,
+  GetSpecialPlayers,
+  GetPlayerMetadataByNameId
+} from '../repository';
 
 /**
  * Get current player values
@@ -107,6 +108,24 @@ export const GetPlayerPortfolioEndpoint = async (req, res) => {
     const sqlList = '(' + portfolioList.map(str => `'${str.replace('\'', '')}'`).join(', ') + ')';
     const valueData = await GetFantasyPortfolioForInterval(intervalDays, sqlList);
     res.status(200).json(valueData.rows);
+  } catch (err) {
+    res.status(500).json(err.stack);
+  }
+};
+
+/**
+ * Get special player information for a league if K, DEF, or IDP players are needed
+ * @param {*} req
+ * @param {*} res
+ */
+export const GetNonOffensePlayersEndpoint = async (req, res) => {
+  try {
+    const { type } = req.query;
+    const whereClause = type === '1'
+      ? 'mp.position IN (\'LB\', \'DL\', \'DB\')'
+      : 'mp.position IN (\'K\', \'DF\')';
+    const data = await GetSpecialPlayers(whereClause);
+    res.status(200).json(data.rows);
   } catch (err) {
     res.status(500).json(err.stack);
   }

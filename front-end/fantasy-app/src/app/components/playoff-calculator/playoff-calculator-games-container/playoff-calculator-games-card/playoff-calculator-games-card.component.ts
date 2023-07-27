@@ -41,7 +41,7 @@ export class PlayoffCalculatorGamesCardComponent implements OnInit {
   ngOnInit(): void {
     this.team1 = this.leagueService.getTeamByRosterId(this.game?.matchUpDetails.team1RosterId);
     this.team2 = this.leagueService.getTeamByRosterId(this.game?.matchUpDetails.team2RosterId);
-    this.probGradient = this.colorService.getColorGradientArray(101, '#28283c', '#3f7bfb');
+    this.probGradient = this.colorService.getProbGradient();
   }
 
   /** get color for percent */

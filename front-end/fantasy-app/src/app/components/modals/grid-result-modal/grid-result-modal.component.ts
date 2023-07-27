@@ -91,7 +91,6 @@ export class GridResultModalComponent implements OnInit {
             const emojiRow = [];
             for (let i = 0; i < this.resultGrid.length; i++) {
                 if (this.resultGrid[i][j]) {
-                    console.log(this.resultGrid[i][j])
                     if (this.resultGrid[i][j]?.percent < 0.01) {
                         emojiRow.push('🟪');
                     } else if (this.resultGrid[i][j]?.percent < 0.05) {

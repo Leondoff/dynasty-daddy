@@ -1,8 +1,12 @@
 /* eslint-disable consistent-return */
-import { IncrementGridGamesPlayed } from '../repository/ConfigRepository';
-import { GetCurrentResults, PersistGridResult } from '../repository/GridResultRepository';
-import { GetAllHistoricalGridirons } from '../repository/HistoricalGridironsRepository';
-import { GetSearchPlayersInGrid, GetAllPlayersInGrid } from '../repository/PlayerGridRepository';
+import {
+  GetSearchPlayersInGrid,
+  GetAllPlayersInGrid,
+  GetAllHistoricalGridirons,
+  GetCurrentResults,
+  PersistGridResult,
+  IncrementGridGamesPlayed
+} from '../repository';
 
 export const SearchGridPlayers = async (search) =>
   GetSearchPlayersInGrid(search);

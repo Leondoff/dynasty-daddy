@@ -143,7 +143,6 @@ export class SleeperService {
                 const draftObservables = draftIds.map((draftId: string) => {
                   return this.loadDrafts$(draftId, league);
                 });
-
                 return forkJoin(draftObservables).pipe(
                   tap((leagues: LeagueWrapper[]) => {
                     leagues.forEach((league: LeagueWrapper) => {
