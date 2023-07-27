@@ -248,3 +248,31 @@ export const GetPlayersInfoWithIds = async () => {
     `);
   return data;
 };
+
+/**
+ * Returns current player values from the database
+ */
+export const GetSpecialPlayers = async (whereClause) => {
+  const data = await playersModel.selectQuery(`
+  SELECT
+      mp.name_id,
+      mp.sleeper_id,
+      mp.mfl_id,
+      mp.ff_id,
+      mp.espn_id,
+      mp.yahoo_id,
+      mp.ffpc_id,
+      mp.full_name,
+      mp.first_name,
+      mp.last_name,
+      mp.team,
+      mp."position",
+      mp.age,
+      mp.experience,
+      mp.injury_status
+  FROM
+      mat_vw_def_players mp
+  WHERE ${whereClause}
+`);
+  return data;
+};

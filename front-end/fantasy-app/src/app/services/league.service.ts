@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SleeperApiService } from './api/sleeper/sleeper-api.service';
-import { Observable, of } from 'rxjs';
+import { Observable, merge, of } from 'rxjs';
 import { map, delay } from 'rxjs/operators';
 import { LeagueWrapper } from '../model/league/LeagueWrapper';
 import { SleeperService } from './api/sleeper/sleeper.service';
@@ -21,6 +21,7 @@ import { LeagueTeamMatchUpDTO } from '../model/league/LeagueTeamMatchUpDTO';
 import { NflService } from './utilities/nfl.service';
 import { ESPNService } from './api/espn/espn.service';
 import { FFPCService } from './api/ffpc/ffpc.service';
+import { FantasyPlayerApiService } from './api/fantasy-player-api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +52,11 @@ export class LeagueService {
   /** dict of sleeper player ids */
   platformPlayersMap = {};
 
+  /** playoff match ups list */
   playoffMatchUps: LeaguePlayoffMatchUpDTO[] = [];
+
+  /** advanced league format dict */
+  leagueFormatMetrics = {};
 
   constructor(private sleeperApiService: SleeperApiService,
     private sleeperService: SleeperService,
@@ -60,6 +65,7 @@ export class LeagueService {
     private espnService: ESPNService,
     private ffpcService: FFPCService,
     private fleaflickerService: FleaflickerService,
+    private fantasyPlayerApiService: FantasyPlayerApiService,
     private mflService: MflService) {
   }
 
@@ -187,6 +193,7 @@ export class LeagueService {
     this.completedDrafts = [];
     this.upcomingDrafts = [];
     this.playoffMatchUps = [];
+    this.leagueFormatMetrics = {};
   }
 
   /**
@@ -403,6 +410,34 @@ export class LeagueService {
         break;
       default:
         console.error('Unsupported League Platform', selectedPlatform);
+    }
+  }
+
+  /**
+   * Load fantasy football league format metrics for league
+   * @param season number of season to load
+   */
+  loadLeagueFormat$(season: number): Observable<{}> {
+    if (this.selectedLeague) {
+      const format = {
+        'teamCount': this.selectedLeague.totalRosters,
+        'QB': this.selectedLeague.rosterPositions.filter(p => p == 'QB').length,
+        'RB': this.selectedLeague.rosterPositions.filter(p => p == 'RB').length,
+        'WR': this.selectedLeague.rosterPositions.filter(p => p == 'WR').length,
+        'TE': this.selectedLeague.rosterPositions.filter(p => p == 'TE').length,
+        'FLEX': this.selectedLeague.rosterPositions.filter(p => p == 'FLEX').length,
+        'SUPER_FLEX': this.selectedLeague.rosterPositions.filter(p => p == 'SUPER_FLEX').length,
+        'K': this.selectedLeague.rosterPositions.filter(p => p == 'K').length,
+        'DF': this.selectedLeague.rosterPositions.filter(p => p == 'DEF').length,
+        'LB': this.selectedLeague.rosterPositions.filter(p => p == 'LB').length,
+        'DB': this.selectedLeague.rosterPositions.filter(p => p == 'DB').length,
+        'DL': this.selectedLeague.rosterPositions.filter(p => p == 'DL').length,
+        'IDP_FLEX': this.selectedLeague.rosterPositions.filter(p => p == 'IDP_FLEX').length,
+      }
+      return this.fantasyPlayerApiService.fetchLeagueFormatForLeague(this.selectedLeague.leagueId, season, format, this.selectedLeague.scoringSettings).pipe(map(res => {
+        this.leagueFormatMetrics[season] = res;
+        return of(res);
+      }));
     }
   }
 }

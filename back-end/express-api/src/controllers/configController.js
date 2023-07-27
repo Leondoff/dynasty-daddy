@@ -1,4 +1,4 @@
-import { GetConfigTableData } from '../repository/ConfigRepository';
+import { GetConfigTableData } from '../repository';
 
 /**
  * fetch all config options for application

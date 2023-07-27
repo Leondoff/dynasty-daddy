@@ -304,7 +304,6 @@ def UpdateMissingPFRIds():
 
 # UpdateMissingPFRIds()
 
-
 def UpdateStatsJson():
 
     # Connect to local test database

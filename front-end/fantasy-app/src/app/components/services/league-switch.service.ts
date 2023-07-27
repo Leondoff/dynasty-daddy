@@ -75,7 +75,8 @@ export class LeagueSwitchService extends BaseComponent {
     this.transactionService.reset();
     this.tradeService.reset();
     console.time('Fetch League Data');
-    this.addSubscriptions(this.leagueService.loadNewLeague$(this.selectedLeague).subscribe(_ => {
+    this.addSubscriptions(this.leagueService.loadNewLeague$(this.selectedLeague).subscribe(res => {
+      console.log(this.leagueService.selectedLeague.scoringSettings)
       this.leagueService.leagueTeamDetails.map((team) => {
         this.playersService.generateRoster(team, this.selectedLeague.leaguePlatform);
       });
@@ -89,7 +90,8 @@ export class LeagueSwitchService extends BaseComponent {
             this.playersService.playerValues,
             this.leagueService.selectedLeague.leaguePlatform
           ),
-          this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
+          this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails),
+          this.playersService.fetchAllNonOffensePlayers(this.selectedLeague.rosterPositions)]).subscribe(() => {
             this.leagueService.selectedLeague = this.selectedLeague;
             this.playerValueService.isSuperFlex = this.selectedLeague.isSuperflex;
             this.leagueService.leagueStatus = 'DONE';

@@ -117,7 +117,10 @@ import { ConfirmationDialogModal } from './components/modals/confirmation-dialog
 import { SearchGridPlayerModal } from './components/modals/search-grid-player-modal/search-grid-player-modal.component';
 import { GridGameComponent } from './components/grid-game/grid-game.component';
 import { GridResultModalComponent } from './components/modals/grid-result-modal/grid-result-modal.component';
+import { LeagueFormatComponent } from './components/league-format/league-format.component';
 import { SimpleTextModal } from './components/sub-components/simple-text-modal/simple-text-modal.component';
+import { LeagueFormatChartComponent } from './components/league-format/league-format-chart/league-format-chart.component';
+import { LeagueFormatTableComponent } from './components/league-format/league-format-table/league-format-table.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -201,9 +204,12 @@ let UniversalDeviceDetectorService;
     FantasyPortfolioChartComponent,
     LeagueLoginModalComponent,
     SearchGridPlayerModal,
+    LeagueFormatComponent,
     ConfirmationDialogModal,
     SimpleTextModal,
     TruncatePipe,
+    LeagueFormatChartComponent,
+    LeagueFormatTableComponent
   ],
   imports: [
     CommonModule,

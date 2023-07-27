@@ -17,6 +17,7 @@ import { WrappedComponent } from './components/wrapped/wrapped.component';
 import { StandardPageComponent } from './components/standard-page/standard-page.component';
 import { FantasyPortfolioComponent } from './components/fantasy-portfolio/fantasy-portfolio.component';
 import { GridGameComponent } from './components/grid-game/grid-game.component';
+import { LeagueFormatComponent } from './components/league-format/league-format.component';
 
 const routes: Routes = [
   {
@@ -68,6 +69,10 @@ const routes: Routes = [
     {
       path: 'league/portfolio',
       component: FantasyPortfolioComponent
+    },
+    {
+      path: 'league/format',
+      component: LeagueFormatComponent
     },
     {
       path: 'gridiron',
