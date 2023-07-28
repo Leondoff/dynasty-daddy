@@ -13,9 +13,7 @@ def getSleeperData():
     temp = {}
     for playerId, value in sleeperData.items():
         if value['position'] not in ['QB', 'RB', 'WR', 'TE', 'FB', 'OT', 'RG', 'G', 'OL', 'T', 'LS', 'OT', 'C', 'OG', 'P'] and value['fantasy_positions'] is not None:
-            # pos = str(value['position'][0])
-            # value['position'] = pos
-            pos = value['position']
+            pos = 'DL' if 'DL' in value['fantasy_positions'] else value['position']
             if pos in DDPlayerMap:
                 pos = DDPlayerMap[pos]
                 value['position'] = pos
@@ -82,8 +80,7 @@ def InsertNonOffensePlayers(cursor):
                                 name_id = %s,
                                 sleeper_id = COALESCE(player_ids.sleeper_id, %s),
                                 updated_at = now(); '''
-                cursor.execute(playerIdsStatement, (nameId,
-                                                sleeperPlayer['sleeper_id'], nameId, sleeperPlayer['sleeper_id']))
+                cursor.execute(playerIdsStatement, (nameId, sleeperPlayer['sleeper_id'], nameId, sleeperPlayer['sleeper_id']))
             if nameId in mflDict and mflDict[nameId] is not None:
                 # player id linking table insert
                 playerIdsStatement = '''INSERT INTO player_ids (name_id, mfl_id) VALUES (%s, %s)
@@ -96,3 +93,17 @@ def InsertNonOffensePlayers(cursor):
     
     # update mat view for non-offense players
     cursor.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_def_players;')
+
+
+# # Connect to local test database
+# conn = psycopg2.connect(
+#     database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
+# )
+
+# # Setting auto commit false
+# conn.autocommit = True
+
+# # Creating a cursor object using the cursor() method
+# cursor = conn.cursor()
+
+# InsertNonOffensePlayers(cursor)

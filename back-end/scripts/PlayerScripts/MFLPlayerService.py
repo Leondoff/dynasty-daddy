@@ -19,7 +19,8 @@ DDPlayerMap = {
     'Def': 'DF',
     'DEF': 'DF',
     'SS': 'DB',
-    'FS': 'DB'
+    'FS': 'DB',
+    'DL/LB': 'DL'
 }
 
 
