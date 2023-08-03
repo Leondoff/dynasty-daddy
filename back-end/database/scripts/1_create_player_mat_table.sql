@@ -50,7 +50,7 @@ From
             and pa.updated_at > now() :: date - 1
         where
             player_info.active is not false
-            and player_info.position in ('QB', 'WR', 'TE', 'RB') 
+            and player_info.position in ('QB', 'WR', 'TE', 'RB', 'PI') 
         order by
             player_info.name_id,
             pv.id desc

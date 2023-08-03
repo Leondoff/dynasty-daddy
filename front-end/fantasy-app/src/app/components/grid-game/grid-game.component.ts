@@ -195,6 +195,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     getStatThresholdDisplay(stat: string): string {
         if (stat.includes('1000')) {
             return '1000+';
+        } else if (stat.includes('4000')) {
+            return '4000+';
         } else if (stat == '3Pass1RushG') {
             return '3+/1+';
         } else if (stat == '80Rush200PassG') {
@@ -264,7 +266,9 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case '3Pass1RushG':
                 return 'Pass & Rush Tds';
             case '70RushRecG':
-                return 'Rush & Rec Yds'
+                return 'Rush & Rec Yds';
+            case '4PassTds':
+                return 'Pass Tds';
             case '80Rush200PassG':
             case '50Rush200PassG':
                 return 'Rush & Pass Yds'

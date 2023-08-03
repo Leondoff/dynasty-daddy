@@ -38,7 +38,7 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
     const sortedPlayers = players.filter(p =>
       weeklyPointsDict[Number(p.sleeper_id)])
       .sort((a, b) =>
-        weeklyPointsDict[Number(b.sleeper_id)] - weeklyPointsDict[Number(a.sleeper_id)]);
+        weeklyPointsDict[Number(b.sleeper_id)].pts - weeklyPointsDict[Number(a.sleeper_id)].pts);
 
     SUPPORTED_STARTERS.forEach(pos => {
       const avgDepth = format[pos] * teamCount;
@@ -73,7 +73,7 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
       posPlayerList.forEach(player => {
         processedNameIds.push(player.name_id);
         // console.log(pos, player.name_id, weeklyPointsDict[Number(player.sleeper_id)]);
-        pointsForStartersList.push(weeklyPointsDict[Number(player.sleeper_id)]);
+        pointsForStartersList.push(weeklyPointsDict[Number(player.sleeper_id)].pts);
       });
       pointsPerPostionArray[pos] = {
         avg: pointsForStartersList.length > 0
@@ -92,7 +92,7 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
         .slice(0, avgDepth);
       replacementLevelDict[pos] = replacementPlayers.length > 0
         ? mean(replacementPlayers.map(p =>
-          weeklyPointsDict[Number(p.sleeper_id)] || 0)) : 0;
+          weeklyPointsDict[Number(p.sleeper_id)].pts || 0)) : 0;
       // console.log(pos, avgDepth, replacementLevelDict[pos]);
     });
 
@@ -195,7 +195,7 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
     Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
       const posPointsPerWeek = teamPointDict[week].posGroups[p.position];
       const playerPointsPerWeek = weeklyPointsDict[p.sleeper_id]
-        ? weeklyPointsDict[p.sleeper_id] : teamPointDict[week].repLevel[p.position];
+        ? weeklyPointsDict[p.sleeper_id].pts : teamPointDict[week].repLevel[p.position];
       const valueAddedTotal = teamPointDict[week].total
         - posPointsPerWeek.avg + playerPointsPerWeek;
       const playerZ = zScore(

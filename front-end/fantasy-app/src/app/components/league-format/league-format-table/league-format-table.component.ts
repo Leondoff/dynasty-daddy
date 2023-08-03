@@ -33,7 +33,8 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
     /** columns to display in table */
-    columnsToDisplay = ['player', 'pos', 'team', 'worp', 'worppg', 'tradeValue', 'winP', 'week', 'spikeHigh', 'spikeMid', 'spikeLow', 'spikeHighP', 'spikeMidP', 'spikeLowP'];
+    @Input()
+    columnsToDisplay: string[];
 
     /** color gradient */
     perGradient: string[] = [];
@@ -71,6 +72,11 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
                 spikeHighP: this.playerFormatDict[p?.name_id]?.c?.spikeHigh / this.playerFormatDict[p?.name_id]?.c?.week,
                 spikeMidP: this.playerFormatDict[p?.name_id]?.c?.spikeMid / this.playerFormatDict[p?.name_id]?.c?.week,
                 spikeLowP: this.playerFormatDict[p?.name_id]?.c?.spikeLow / this.playerFormatDict[p?.name_id]?.c?.week,
+                opp: this.playerFormatDict[p?.name_id]?.c?.opp,
+                oppg: this.playerFormatDict[p?.name_id]?.c?.week != 0 ?
+                    this.playerFormatDict[p?.name_id]?.c?.opp / this.playerFormatDict[p?.name_id]?.c?.week : 0,
+                ppo: this.playerFormatDict[p?.name_id]?.c?.opp != 0 ?
+                    this.playerFormatDict[p?.name_id]?.c?.pts / this.playerFormatDict[p?.name_id]?.c?.opp : 0,
             }
         });
         this.dataSource.paginator = this.paginator;

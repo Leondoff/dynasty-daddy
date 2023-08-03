@@ -23,6 +23,21 @@
                 <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.winP | percent:'1.1' || '-'}}</td>
             </ng-container>
 
+            <ng-container matColumnDef="ppo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Pts Per Opp</th>
+                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.ppo | number:'1.1-2' || '-'}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="oppg">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Opp Per Game</th>
+                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.oppg | number:'1.1-2' || '-'}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="opp">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Opp</th>
+                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.opp || '-'}}</td>
+            </ng-container>
+
             <ng-container matColumnDef="worp">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>WoRP</th>
                 <td mat-cell *matCellDef="let element"><mat-chip-list><mat-chip  style="background: {{getWoRPColor(tableCache[element?.name_id]?.worp)}}">{{tableCache[element?.name_id]?.worp}}</mat-chip></mat-chip-list></td>

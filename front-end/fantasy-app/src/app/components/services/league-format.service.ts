@@ -13,6 +13,8 @@ export class LeagueFormatService {
 
     filterPosGroup: any[] = [];
 
+    columnsToDisplay = ['player', 'pos', 'team', 'worp', 'worppg', 'tradeValue', 'ppo', 'week', 'spikeHigh', 'spikeMid', 'spikeLow', 'spikeHighP', 'spikeMidP', 'spikeLowP'];
+
     constructor(private leagueService: LeagueService) { }
 
 }
