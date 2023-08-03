@@ -1,7 +1,6 @@
 /* eslint-disable consistent-return */
 import {
   GetSearchPlayersInGrid,
-  GetAllPlayersInGrid,
   GetAllHistoricalGridirons,
   GetCurrentResults,
   PersistGridResult,
@@ -10,9 +9,6 @@ import {
 
 export const SearchGridPlayers = async (search) =>
   GetSearchPlayersInGrid(search);
-
-export const FetchAllGridPlayers = async () =>
-  GetAllPlayersInGrid();
 
 export const FetchAllHistoricalGrids = async () =>
   GetAllHistoricalGridirons();

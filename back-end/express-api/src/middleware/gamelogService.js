@@ -114,7 +114,7 @@ export const FetchPointsPerWeekInSeason = async (season, settings) => {
       if (!pointsDict[gamelogs.week]) {
         pointsDict[gamelogs.week] = {};
       }
-      pointsDict[gamelogs.week][key] = pointsForWeek;
+      pointsDict[gamelogs.week][key] = { pts: pointsForWeek, gamelog: value };
     });
   });
   return pointsDict;

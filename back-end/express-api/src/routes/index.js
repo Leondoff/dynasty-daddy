@@ -37,7 +37,6 @@ import {
   GetFFPCScheduleEndpoint,
   GetFFPCStandingsEndpoint,
   GetFFPCUserLeaguesEndpoint,
-  FetchAllGridPlayersEndpoint,
   FetchAllGridResultsEndpoint,
   FetchAllHistoricalGridsEndpoint,
   FetchSearchedPlayersEndpoint,
@@ -59,7 +58,6 @@ indexRouter.post('/portfolio', GetPlayerPortfolioEndpoint);
 indexRouter.get('/config/all', GetConfigValuesEndpoint);
 indexRouter.post('/league/format', GetLeagueFormatForLeague);
 indexRouter.get('/grid/players', FetchSearchedPlayersEndpoint);
-indexRouter.get('/grid/players/all', FetchAllGridPlayersEndpoint);
 indexRouter.get('/grid/archive', FetchAllHistoricalGridsEndpoint);
 indexRouter.post('/grid/results/add', UpdateGridResultsEndpoint);
 indexRouter.get('/grid/results', FetchAllGridResultsEndpoint);
