@@ -4,24 +4,23 @@
 </div>
 
 <div class="format-container">
-        <!-- <mat-form-field appearance="standard" color="accent">
-            <mat-label>Selected Season</mat-label>
-            <mat-select [(ngModel)]="leagueFormatService.selectedSeason">
-              <mat-option *ngFor="let season of selectableSeasons" [value]="season">{{season}}</mat-option>
-            </mat-select>
-        </mat-form-field> -->
-
     <div *ngIf="leagueFormatService.filteredPlayers.length > 0 && leagueFormatStatus == 1" class="margin-top-25">
       <div>
       <span [ngClass]="{'button-left': !configService.isMobile}">
-        <button mat-raised-button [matMenuTriggerFor]="menu">
-          <mat-icon>insert_chart</mat-icon> Load View
+        <button mat-raised-button [matMenuTriggerFor]="menu" style="margin-right: 10px;">
+          <mat-icon>insert_chart</mat-icon> Load Preset
         </button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item *ngFor="let menu of formatPresetOptions" (click)="loadPreset(menu.type)">
             <span>{{menu.display}}</span>
           </button>
         </mat-menu>
+        <mat-form-field appearance="standard" color="accent">
+            <mat-label>Selected Season</mat-label>
+            <mat-select [(ngModel)]="leagueFormatService.selectedSeason" (selectionChange)="loadNewSeason()">
+              <mat-option *ngFor="let season of selectableSeasons" [value]="season">{{season}}</mat-option>
+            </mat-select>
+        </mat-form-field>
       </span>
       <span class="container-spacer"></span>
       <span class="button-right" *ngIf="!configService.isMobile">

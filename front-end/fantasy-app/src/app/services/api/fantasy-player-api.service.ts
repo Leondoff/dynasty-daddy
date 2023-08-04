@@ -3,7 +3,7 @@ import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../../mode
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FantasyPlayerApiConfigService } from './fantasy-player-api-config.service';
 import { Observable, of } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, delay } from 'rxjs/operators';
 import { GridPlayer } from 'src/app/components/model/gridPlayer';
 import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
 
@@ -268,7 +268,7 @@ export class FantasyPlayerApiService {
    * get league format for league
    */
   fetchLeagueFormatForLeague(leagueId: string, season: number, format: any, settings: LeagueScoringDTO): Observable<any[]> {
-    return this.leagueFormatCache?.[leagueId]?.[season] ? of(this.leagueFormatCache[leagueId][season]) : this.getFetchLeagueFormatForLeague(leagueId, season, format, settings);
+    return this.leagueFormatCache?.[leagueId]?.[season] ? of(this.leagueFormatCache[leagueId][season]).pipe(delay(1000)) : this.getFetchLeagueFormatForLeague(leagueId, season, format, settings);
   }
 
   /**
