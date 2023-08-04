@@ -3,6 +3,8 @@ table {
 }
 
 .mat-column-worp,
+.mat-column-pos,
+.mat-column-team,
 .mat-column-worppg,
 .mat-column-winP,
 .mat-column-opp,
@@ -20,6 +22,23 @@ table {
     text-align: center;
 }
 
-.mat-column-actions {
-    max-width: 24px;
+.mat-column-owner {
+    max-width: 102px;
+}
+
+td.mat-cell {
+    &:last-of-type {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+}
+
+@media (min-width: 600px) {
+    .mat-column-actions {
+        max-width: 24px;
+    }
+}
+
+.portfolio-table-mobile {
+    margin-right: 90px;
 }

@@ -19,7 +19,27 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
     @Input()
     leagueFormat = [];
 
+    @Input()
+    metricName: string;
+
     datasets: FantasyPlayer[][] = [];
+
+    metricDisplay = {
+        'pts': 'Points',
+        'ppg': 'Points Per Game',
+        'worp': 'WoRP',
+        'worppg': 'WoRP Per Game',
+        'percent': 'Win %',
+        'ppo': 'Pts. Per Opp',
+        'opp': 'Fantasy Opp',
+        'oppg': 'Opp Per Game',
+        'spikeHigh': 'High Spike Weeks',
+        'spikeMid': 'Mid Spike Weeks',
+        'spikeLow': 'Low Spike Weeks',
+        'spikeHighP': 'High Spike %',
+        'spikeMidP': 'Mid Spike %',
+        'spikeLowP': 'Low Spike %',
+    }
 
     /** chart set up */
     @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
@@ -35,25 +55,29 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
             position: 'nearest',
             axis: 'xy',
             callbacks: {
-                title: function(context, data) {
+                title: function (context, data) {
                     let title = ''
                     context.forEach(con => {
                         if (title != '') {
                             title += '/'
                         }
-                        title += data.datasets[con.datasetIndex].data[con.index]?.['player']?.full_name || 'Player WoRP'
+                        title += data.datasets[con.datasetIndex].data[con.index]?.['player']?.full_name || 'Player'
                     })
                     return title;
                 },
-                afterLabel: function(context, data) {
-                    return  'Pos Rank: ' + context?.label + '\nRank: ' + data.datasets[context.datasetIndex].data[context.index]?.['ovRank'];
+                afterLabel: function (context, data) {
+                    return 'Pos Rank: ' + context?.label + '\nRank: ' + data.datasets[context.datasetIndex].data[context.index]?.['ovRank'];
                 },
-                label: function(tooltipItem) {
-                    var label = 'WoRP: ';                    
-                    label += Math.round(tooltipItem.yLabel as number * 100) / 100;
+                label: (tooltipItem) => {
+                    var label = `${this.metricDisplay[this.metricName]}: `;
+                    if (['percent', 'spikeMidP', 'spikeLowP', 'spikeHighP'].includes(this.metricName)) {
+                        label += Math.round(tooltipItem.yLabel as number * 1000) / 10 + '%';
+                    } else {
+                        label += Math.round(tooltipItem.yLabel as number * 100) / 100;
+                    }
                     return label;
                 }
-          }
+            }
         },
         scales: {
             xAxes: [{
@@ -74,7 +98,7 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString: 'WoRP',
+                    labelString: 'Metric',
                     fontColor: '#d3d3d3'
                 }
             }]
@@ -114,6 +138,7 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
+        this.lineChartOptions.scales.yAxes[0].scaleLabel.labelString = this.metricDisplay[this.metricName];
         this.updateChart();
     }
 
@@ -121,20 +146,49 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
 
     }
 
+    private getMetric(nameId: string): number {
+        switch (this.metricName) {
+            case 'worppg':
+                return Math.round(this.playerFormatDict[nameId]?.w?.worp / this.playerFormatDict[nameId]?.c?.week * 100) / 100;
+            case 'spikeHighP':
+                return this.playerFormatDict[nameId]?.c?.spikeHigh / this.playerFormatDict[nameId]?.c?.week;
+            case 'spikeMidP':
+                return this.playerFormatDict[nameId]?.c?.spikeMid / this.playerFormatDict[nameId]?.c?.week;
+            case 'spikeLowP':
+                return this.playerFormatDict[nameId]?.c?.spikeLow / this.playerFormatDict[nameId]?.c?.week;
+            case 'ppo':
+                return this.playerFormatDict[nameId]?.c?.opp != 0 ?
+                    this.playerFormatDict[nameId]?.c?.pts / this.playerFormatDict[nameId]?.c?.opp : 0;
+            case 'oppg':
+                return this.playerFormatDict[nameId]?.c?.week != 0 ?
+                    this.playerFormatDict[nameId]?.c?.opp / this.playerFormatDict[nameId]?.c?.week : 0;
+            case 'pgg':
+                return this.playerFormatDict[nameId]?.c?.week != 0 ?
+                    this.playerFormatDict[nameId]?.c?.pts / this.playerFormatDict[nameId]?.c?.week : 0;
+            case 'worp':
+            case 'percent':
+                return this.playerFormatDict[nameId]?.w?.[this.metricName] || 0;
+            default:
+                return this.playerFormatDict[nameId]?.c?.[this.metricName] || 0;
+        }
+    }
+
     private updateChart(): void {
         this.datasets = [];
         const worpPlayers = this.playerService.playerValues.filter(p => p.position != 'PI'
             && !this.playerFormatDict[this.leagueFormatService.selectedSeason]?.[p.name_id].c)
-            .sort((a, b) => this.playerFormatDict[b.name_id]?.w?.worp - this.playerFormatDict[a.name_id]?.w?.worp)
+            .sort((a, b) => (this.getMetric(b.name_id) || 0) - (this.getMetric(a.name_id) || 0))
         this.lineChartData = [];
         this.leagueFormat.forEach(pos => {
             const data = [];
             const posPlayers = worpPlayers.filter(p => p.position === pos)
             this.datasets.push(posPlayers);
             for (let i = 0; i < 50; i++) {
-                data.push({y: this.playerFormatDict[posPlayers[i]?.name_id]?.w?.worp || 0,
+                data.push({
+                    y: this.getMetric(posPlayers[i]?.name_id) || 0,
                     player: posPlayers[i],
-                    ovRank: worpPlayers.findIndex(p => p?.name_id === posPlayers[i]?.name_id) + 1})
+                    ovRank: worpPlayers.findIndex(p => p?.name_id === posPlayers[i]?.name_id) + 1
+                })
             }
             this.lineChartData.push({ data, label: pos, fill: false });
         });
