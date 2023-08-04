@@ -99,8 +99,8 @@
           
             <ng-container *ngIf="leagueService.isLeagueLoaded()" matColumnDef="owner">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Manager</th>
-              <td mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">
-                <div>{{element.owner?.ownerName || '-'}}</div>
+              <td mat-cell *matCellDef="let element">
+                <div>{{(element.owner?.ownerName || '-' )| truncate:10}}</div>
               </td>
             </ng-container>
 

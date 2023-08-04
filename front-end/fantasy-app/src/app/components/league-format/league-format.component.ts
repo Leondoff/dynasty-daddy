@@ -108,14 +108,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         this.selectedMetrics.setValue(this.leagueFormatService.columnsToDisplay);
         this.selectedVisualizations.setValue(this.leagueFormatService.selectedVisualizations);
         if (this.leagueService.selectedLeague) {
-            this.addSubscriptions(this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
-                this.leaguePositions = Array.from(new Set(this.leagueService.selectedLeague.rosterPositions
-                    .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p))));
-                this.selectedPositions.setValue(this.leaguePositions);
-                this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
-                this.reloadFormatTool();
-            })
-            );
+            this.loadNewSeason();
         }
         this.addSubscriptions(
             this.route.queryParams.subscribe(params => {
@@ -131,6 +124,21 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                 });
             })
         );
+    }
+
+    /**
+     * load new season for format
+     */
+    loadNewSeason(): void {
+        this.leagueFormatStatus = Status.LOADING;
+        this.leagueFormatService.filteredPlayers = [];
+        this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
+            this.leaguePositions = Array.from(new Set(this.leagueService.selectedLeague.rosterPositions
+                .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p))));
+            this.selectedPositions.setValue(this.leaguePositions);
+            this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
+            this.reloadFormatTool();
+        });
     }
 
     /**
@@ -155,14 +163,14 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
      * handles changing of fantasy market
      * @param $event 
      */
-    onMarketChange($event): void {
+    onMarketChange($event: any): void {
         this.playerService.selectedMarket = $event;
         this.reloadFormatTool();
     }
 
-    getSelectableSeasons(number) {
+    getSelectableSeasons(number: string) {
         const result = [];
-        for (let i = number; i >= this.earliestSeason; i--) {
+        for (let i = Number(number); i >= this.earliestSeason; i--) {
             result.push(i);
         }
         return result;

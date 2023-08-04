@@ -162,7 +162,7 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
             case 'oppg':
                 return this.playerFormatDict[nameId]?.c?.week != 0 ?
                     this.playerFormatDict[nameId]?.c?.opp / this.playerFormatDict[nameId]?.c?.week : 0;
-            case 'pgg':
+            case 'ppg':
                 return this.playerFormatDict[nameId]?.c?.week != 0 ?
                     this.playerFormatDict[nameId]?.c?.pts / this.playerFormatDict[nameId]?.c?.week : 0;
             case 'worp':
@@ -175,19 +175,22 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
 
     private updateChart(): void {
         this.datasets = [];
-        const worpPlayers = this.playerService.playerValues.filter(p => p.position != 'PI'
+        const playerList = this.playerService.playerValues.filter(p => p.position != 'PI'
             && !this.playerFormatDict[this.leagueFormatService.selectedSeason]?.[p.name_id].c)
-            .sort((a, b) => (this.getMetric(b.name_id) || 0) - (this.getMetric(a.name_id) || 0))
+            .sort((a, b) => (this.getMetric(b.name_id) || 0) - (this.getMetric(a.name_id) || 0));
+        // if (this.metricName === 'ppo') {
+        //     playerList = playerList.filter(p => (this.playerFormatDict[p.name_id]?.c?.opp || 0) >= 25);
+        // }
         this.lineChartData = [];
         this.leagueFormat.forEach(pos => {
             const data = [];
-            const posPlayers = worpPlayers.filter(p => p.position === pos)
+            const posPlayers = playerList.filter(p => p.position === pos)
             this.datasets.push(posPlayers);
             for (let i = 0; i < 50; i++) {
                 data.push({
                     y: this.getMetric(posPlayers[i]?.name_id) || 0,
                     player: posPlayers[i],
-                    ovRank: worpPlayers.findIndex(p => p?.name_id === posPlayers[i]?.name_id) + 1
+                    ovRank: playerList.findIndex(p => p?.name_id === posPlayers[i]?.name_id) + 1
                 })
             }
             this.lineChartData.push({ data, label: pos, fill: false });
