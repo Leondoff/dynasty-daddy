@@ -6,6 +6,8 @@ import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueService } from 'src/app/services/league.service';
 import { ColorService } from 'src/app/services/utilities/color.service';
+import { LeagueSwitchService } from '../../services/league-switch.service';
+import { LeagueFormatService } from '../../services/league-format.service';
 
 @Component({
     selector: 'app-league-format-table',
@@ -20,9 +22,6 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
     @Input()
     players: FantasyPlayer[];
 
-    /** table cache */
-    tableCache = {};
-
     // datasource for mat table
     dataSource: MatTableDataSource<FantasyPlayer> = new MatTableDataSource<FantasyPlayer>();
 
@@ -34,6 +33,8 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
 
     /** columns to display in table */
     @Input()
+    selectedCols: string[];
+
     columnsToDisplay: string[];
 
     /** color gradient */
@@ -42,6 +43,8 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
     worpGradient: string[] = [];
 
     constructor(public configService: ConfigService,
+        public leagueSwitchService: LeagueSwitchService,
+        public leagueFormatService: LeagueFormatService,
         private colorService: ColorService,
         public leagueService: LeagueService) {
 
@@ -58,10 +61,18 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
     }
 
     private refreshTable(): void {
+        this.columnsToDisplay = [...this.selectedCols, 'actions'];
         this.dataSource = new MatTableDataSource(this.players);
         this.setSortForTable();
         this.players.forEach(p => {
-            this.tableCache[p.name_id] = {
+            this.leagueFormatService.tableCache[p.name_id] = {
+                player: p.full_name,
+                pos: p.position,
+                team: p.team,
+                owner: p?.owner?.ownerName || '-',
+                tradeValue: this.leagueService.selectedLeague.isSuperflex ? p.sf_trade_value : p.trade_value,
+                pts: this.playerFormatDict[p.name_id]?.c?.pts,
+                ppg: Math.round(this.playerFormatDict[p.name_id]?.c?.pts / this.playerFormatDict[p?.name_id]?.c?.week * 100) / 100,
                 worp: this.playerFormatDict[p.name_id]?.w?.worp,
                 worppg: Math.round(this.playerFormatDict[p.name_id]?.w?.worp / this.playerFormatDict[p?.name_id]?.c?.week * 100) / 100,
                 winP: this.playerFormatDict[p.name_id]?.w?.percent,
@@ -88,7 +99,7 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
                 case 'tradeValue': {
                     return this.leagueService.selectedLeague.isSuperflex ? item.sf_trade_value : item.trade_value;
                 }
-                default: return this.tableCache[item.name_id]?.[property] || 0;
+                default: return this.leagueFormatService.tableCache[item.name_id]?.[property] || 0;
             }
         };
         this.dataSource.sort = this.sort;

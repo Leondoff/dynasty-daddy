@@ -816,6 +816,16 @@ hr.dark {
   margin: 0px auto;
 }
 
+.format-container {
+  display: flex;
+  flex-direction: column;
+  padding: 3px 8px 8px;
+  min-width: 300px;
+  max-width: 1400px;
+  justify-content: center;
+  margin: 0px auto;
+}
+
 .playoff-calc-table-container {
   display: flex;
   flex-direction: column;

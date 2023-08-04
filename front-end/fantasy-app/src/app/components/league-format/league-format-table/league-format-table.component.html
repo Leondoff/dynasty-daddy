@@ -1,11 +1,10 @@
-<div class="portfolio-container">
-    <div style="overflow-x: auto;" [ngClass]="{'portfolio-table-mobile': configService.isMobile}">
+<div style="overflow-x: auto;" [ngClass]="{'format-container-mobile': configService.isMobile}">
         <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort
             matSortActive="worp" matSortDirection="desc">
 
             <ng-container matColumnDef="player">
                 <th mat-header-cell *matHeaderCellDef>Player</th>
-                <td mat-cell *matCellDef="let element">{{element.full_name}} <span *ngIf="element.full_name.includes(':')"><mat-icon class="warning_icon" matTooltip="Unable to find name for player. May be a devy player or custom player not return from the platform APIs." matTooltipPosition="above">help</mat-icon></span></td>
+                <td mat-cell *matCellDef="let element">{{element.full_name}}</td>
             </ng-container>
 
             <ng-container matColumnDef="pos">
@@ -20,78 +19,115 @@
 
             <ng-container matColumnDef="winP">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Win %</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.winP | percent:'1.1' || '-'}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.winP | percent:'1.1' || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="ppo">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Pts Per Opp</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.ppo | number:'1.1-2' || '-'}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.ppo | number:'1.1-2' || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="oppg">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Opp Per Game</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.oppg | number:'1.1-2' || '-'}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.oppg | number:'1.1-2' || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="opp">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Opp</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.opp || '-'}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.opp || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="worp">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>WoRP</th>
-                <td mat-cell *matCellDef="let element"><mat-chip-list><mat-chip  style="background: {{getWoRPColor(tableCache[element?.name_id]?.worp)}}">{{tableCache[element?.name_id]?.worp}}</mat-chip></mat-chip-list></td>
+                <td mat-cell *matCellDef="let element"><mat-chip-list><mat-chip  style="background: {{getWoRPColor(leagueFormatService.tableCache[element?.name_id]?.worp)}}">{{leagueFormatService.tableCache[element?.name_id]?.worp}}</mat-chip></mat-chip-list></td>
             </ng-container>
 
             <ng-container matColumnDef="worppg">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>WoRP/G</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.worppg || '-'}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.worppg || '-'}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="pts">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Points</th>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.pts | number:'1.1-2' || 0}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="ppg">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>PPG</th>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.ppg || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="tradeValue">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Trade Value</th>
-                <td mat-cell *matCellDef="let element">{{leagueService.selectedLeague.isSuperflex ? element.sf_trade_value : element.rade_value}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.tradeValue || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="week">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Games</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.week || '-'}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.week || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="spikeHigh">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>High Spike Weeks</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.spikeHigh == null ? '-' : tableCache[element?.name_id]?.spikeHigh}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.spikeHigh == null ? '-' : leagueFormatService.tableCache[element?.name_id]?.spikeHigh}}</td>
             </ng-container>
 
             <ng-container matColumnDef="spikeMid">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Mid Spike Weeks</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.spikeMid == null ? '-' : tableCache[element?.name_id]?.spikeMid}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.spikeMid == null ? '-' : leagueFormatService.tableCache[element?.name_id]?.spikeMid}}</td>
             </ng-container>
 
             <ng-container matColumnDef="spikeLow">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Low Spike Weeks</th>
-                <td mat-cell *matCellDef="let element">{{tableCache[element?.name_id]?.spikeLow == null ? '-' : tableCache[element?.name_id]?.spikeLow}}</td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.spikeLow == null ? '-' : leagueFormatService.tableCache[element?.name_id]?.spikeLow}}</td>
             </ng-container>
 
             <ng-container matColumnDef="spikeHighP">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>High Spike %</th>
-                <td mat-cell *matCellDef="let element" style="background: {{getProbColor(tableCache[element?.name_id]?.spikeHighP)}}">{{tableCache[element?.name_id]?.spikeHighP | percent:'1.1' || '-'}}</td>
+                <td mat-cell *matCellDef="let element" style="background: {{getProbColor(leagueFormatService.tableCache[element?.name_id]?.spikeHighP)}}">{{leagueFormatService.tableCache[element?.name_id]?.spikeHighP | percent:'1.1' || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="spikeMidP">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Mid Spike %</th>
-                <td mat-cell *matCellDef="let element" style="background: {{getProbColor(tableCache[element?.name_id]?.spikeMidP)}}">{{tableCache[element?.name_id]?.spikeMidP | percent:'1.1' || '-'}}</td>
+                <td mat-cell *matCellDef="let element" style="background: {{getProbColor(leagueFormatService.tableCache[element?.name_id]?.spikeMidP)}}">{{leagueFormatService.tableCache[element?.name_id]?.spikeMidP | percent:'1.1' || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="spikeLowP">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header style="padding-right: unset !important;">Low Spike %</th>
-                <td mat-cell *matCellDef="let element" style="background: {{getProbColor(tableCache[element?.name_id]?.spikeLowP)}}; padding-right: unset !important;">{{tableCache[element?.name_id]?.spikeLowP | percent:'1.1' || '-'}}</td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Low Spike %</th>
+                <td mat-cell *matCellDef="let element" style="background: {{getProbColor(leagueFormatService.tableCache[element?.name_id]?.spikeLowP)}}; padding-right: unset !important;">{{leagueFormatService.tableCache[element?.name_id]?.spikeLowP | percent:'1.1' || '-'}}</td>
+            </ng-container>
+          
+            <ng-container *ngIf="leagueService.isLeagueLoaded()" matColumnDef="owner">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Manager</th>
+              <td mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">
+                <div>{{element.owner?.ownerName || '-'}}</div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef style="padding-right: unset !important;"></th>
+                <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation();">
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button *ngIf="element.position !== 'PI'" mat-menu-item [routerLink]="['../../players/details', element.name_id]"
+                      [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+                      <span>View Player Page</span>
+                    </button>
+                    <button mat-menu-item *ngIf="element.position !== 'PI' && element.owner"
+                      [routerLink]="['../team', element.owner?.ownerName]"
+                      [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
+                      <span>View Team Page</span>
+                    </button>
+                  </mat-menu>
+                </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
             <tr mat-row *matRowDef="let element; columns: columnsToDisplay;">
             </tr>
         </table>
-        <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
-    </div>
 </div>
+<mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
+
