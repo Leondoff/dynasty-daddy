@@ -41,7 +41,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         "If a cell is for a team and a season stat, the player you select must have recorded that stat after 1999 but didn't have to be on the team when recording that stat.",
         "If you select a player for a cell with a stat, that player must've accumulated that stat in a completed season/game from 1999 or later.",
         "If you select a player for a cell with a college, that player must have been drafted from that college. If a player transfers colleges, the college they transfer to is the college.",
-        "If a cell is for a college and a season stat, the player you select must have graduated from that college and accumulated that stat in the NFL (not in college).",
+        "If a cell is for a college and a season stat, the player you select must have been drafted from that college and accumulated that stat in the NFL (not in college).",
         "A player cannot be used twice.",
         "You have 9 guesses to fill out the grid.",
         "Each guess, whether correct or incorrect, counts as a guess.",
@@ -203,6 +203,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             return '50+/200+';
         } else if (stat == '50Rush200PassG') {
             return '50+/200+';
+        } else if (stat.includes('300')) {
+            return '300+';
         } else if (stat.includes('200')) {
             return '200+';
         } else if (stat.includes('100')) {
