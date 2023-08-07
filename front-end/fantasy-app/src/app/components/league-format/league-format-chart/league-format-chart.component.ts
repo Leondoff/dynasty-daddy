@@ -3,7 +3,6 @@ import { ChartOptions, ChartDataSets } from 'chart.js';
 import { BaseChartDirective, Label } from 'ng2-charts';
 import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { ComparisonColorPalette } from 'src/app/services/utilities/color.service';
-import { LeagueFormatService } from '../../services/league-format.service';
 import { PlayerService } from 'src/app/services/player.service';
 
 @Component({
@@ -132,8 +131,7 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
     worpPlayers: FantasyPlayer[] = [];
 
 
-    constructor(private leagueFormatService: LeagueFormatService,
-        private playerService: PlayerService) {
+    constructor(private playerService: PlayerService) {
 
     }
 
@@ -176,17 +174,14 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
     private updateChart(): void {
         this.datasets = [];
         const playerList = this.playerService.playerValues.filter(p => p.position != 'PI'
-            && !this.playerFormatDict[this.leagueFormatService.selectedSeason]?.[p.name_id].c)
+        && this.playerFormatDict[p.name_id]?.c)
             .sort((a, b) => (this.getMetric(b.name_id) || 0) - (this.getMetric(a.name_id) || 0));
-        // if (this.metricName === 'ppo') {
-        //     playerList = playerList.filter(p => (this.playerFormatDict[p.name_id]?.c?.opp || 0) >= 25);
-        // }
         this.lineChartData = [];
         this.leagueFormat.forEach(pos => {
             const data = [];
             const posPlayers = playerList.filter(p => p.position === pos)
             this.datasets.push(posPlayers);
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < (posPlayers.length > 50 ? 50: posPlayers.length); i++) {
                 data.push({
                     y: this.getMetric(posPlayers[i]?.name_id) || 0,
                     player: posPlayers[i],

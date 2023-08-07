@@ -292,23 +292,24 @@ export class FantasyPlayerApiService {
    * get non offense players
    * @param type players to fetch
    */
-  fetchNonOffensePlayers(type: number): Observable<{}> {
-    return this.nonOffensePlayers?.[type] ? of(this.nonOffensePlayers[type]) : this.getNonOffensePlayers(type);
+  fetchNonOffensePlayers(positions: string[]): Observable<any[]> {
+    return this.nonOffensePlayers?.[positions.join('|')] ? of(this.nonOffensePlayers[positions.join('|')]) : this.getNonOffensePlayers(positions);
   }
 
   /**
    * return non offense players
    */
-  private getNonOffensePlayers(type: number): Observable<{}> {
-    return this.http.get<any[]>(this.fantasyPlayerApiConfigService.getNonOffensePlayersEndpoint + `?type=${type}`)
+  private getNonOffensePlayers(positions: string[]): Observable<{}> {
+    return this.http.get<any[]>(this.fantasyPlayerApiConfigService.getNonOffensePlayersEndpoint + `?positions=${positions}`)
       .pipe(map(res => {
         if (!this.nonOffensePlayers) {
           this.nonOffensePlayers = {};
         }
-        if (!this.nonOffensePlayers[type]) {
-          this.nonOffensePlayers[type] = {};
+        const key = positions.join('|');
+        if (!this.nonOffensePlayers[key]) {
+          this.nonOffensePlayers[key] = {};
         }
-        this.nonOffensePlayers[type] = res;
+        this.nonOffensePlayers[key] = res;
         return res;
       }));
   }

@@ -120,10 +120,10 @@ export const GetPlayerPortfolioEndpoint = async (req, res) => {
  */
 export const GetNonOffensePlayersEndpoint = async (req, res) => {
   try {
-    const { type } = req.query;
-    const whereClause = type === '1'
-      ? 'mp.position IN (\'LB\', \'DL\', \'DB\')'
-      : 'mp.position IN (\'K\', \'DF\')';
+    const { positions } = req.query;
+    const positionList = positions.split(',');
+    const whereClause = `mp.position IN (${positionList.map(p =>
+      `'${p}'`).join(',')})`;
     const data = await GetSpecialPlayers(whereClause);
     res.status(200).json(data.rows);
   } catch (err) {

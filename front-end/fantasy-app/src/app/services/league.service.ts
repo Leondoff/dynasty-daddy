@@ -428,7 +428,7 @@ export class LeagueService {
         'FLEX': this.selectedLeague.rosterPositions.filter(p => p == 'FLEX').length,
         'SUPER_FLEX': this.selectedLeague.rosterPositions.filter(p => p == 'SUPER_FLEX').length,
         'K': this.selectedLeague.rosterPositions.filter(p => p == 'K').length,
-        'DF': this.selectedLeague.rosterPositions.filter(p => p == 'DEF').length,
+        'DF': this.selectedLeague.rosterPositions.filter(p => p == 'DF').length,
         'LB': this.selectedLeague.rosterPositions.filter(p => p == 'LB').length,
         'DB': this.selectedLeague.rosterPositions.filter(p => p == 'DB').length,
         'DL': this.selectedLeague.rosterPositions.filter(p => p == 'DL').length,

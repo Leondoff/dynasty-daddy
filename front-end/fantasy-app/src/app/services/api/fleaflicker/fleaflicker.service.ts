@@ -10,7 +10,7 @@ import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO
 import { TeamMetrics } from '../../../model/league/TeamMetrics';
 import { LeagueTeamTransactionDTO, TransactionStatus } from '../../../model/league/LeagueTeamTransactionDTO';
 import { LeagueRawTradePicksDTO } from '../../../model/league/LeagueRawTradePicksDTO';
-import { LeagueDTO, LeagueType } from '../../../model/league/LeagueDTO';
+import { LeagueDTO, LeagueScoringFormat, LeagueType } from '../../../model/league/LeagueDTO';
 import { FantasyPlatformDTO, LeaguePlatform } from '../../../model/league/FantasyPlatformDTO';
 import { DraftCapital } from '../../../model/assets/DraftCapital';
 import { LeagueUserDTO } from 'src/app/model/league/LeagueUserDTO';
@@ -19,6 +19,7 @@ import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrder
 import { CompletedDraft } from 'src/app/model/league/CompletedDraft';
 import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
 import { PlatformLogos } from '../../utilities/display.service';
+import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -80,6 +81,7 @@ export class FleaflickerService {
     const observableList = [];
     let fleaflickerRosters = [];
     let leagueTransactions = {};
+    let scoringFormatDTO;
     const teamDraftCapitalMap = {};
     const leagueSchedule = {};
     const isPlayoffs = [];
@@ -109,6 +111,10 @@ export class FleaflickerService {
         return of(leagueTransactions[4 + i]);
       })));
     }
+    observableList.push(this.fleaflickerApiService.getFFLeague(leagueId).pipe(map(leagueRules => {
+      scoringFormatDTO = new LeagueScoringDTO().fromFF(leagueRules?.groups);
+      return of(scoringFormatDTO);
+    })));
     // get future draft picks
     leagueWrapper.selectedLeague.metadata.rosters.forEach(division => {
       division.teams.forEach(team => {
@@ -132,6 +138,7 @@ export class FleaflickerService {
       leagueWrapper.selectedLeague.leagueTransactions = leagueTransactions;
       leagueWrapper.selectedLeague.playoffRoundType = 1;
       leagueWrapper.selectedLeague.playoffStartWeek = isPlayoffs.findIndex(it => it === true) > -1 ? isPlayoffs.findIndex(it => it === true) : 17;
+      leagueWrapper.selectedLeague.scoringSettings = scoringFormatDTO;
       leagueWrapper.completedDrafts = draftResults;
       const teams = [];
       leagueWrapper.selectedLeague.metadata.rosters?.forEach((division, ind) => {
@@ -222,7 +229,7 @@ export class FleaflickerService {
   fromFleaflickerLeague(leagueInfo: any): LeagueDTO {
     const divisions: string[] = [...new Set<string>(leagueInfo?.divisions?.map(division => division?.name))] || [];
     const rosterSize = Number(leagueInfo.league?.rosterRequirements?.rosterSize) + (Number(leagueInfo.league?.rosterRequirements?.reserveCount) || 0);
-    const roster = this.generateRosterPositions(leagueInfo.league.rosterRequirements)
+    const roster = this.generateRosterPositions(leagueInfo.league.rosterRequirements);
     const ffLeague = new LeagueDTO().fromFF(
       roster.includes('SUPER_FLEX'),
       leagueInfo.league.name,
@@ -245,12 +252,16 @@ export class FleaflickerService {
    */
   private generateRosterPositions(roster: any): string[] {
     const positionMap = [];
-    const validStartersList = ['QB', 'RB', 'WR', 'TE', 'RB/WR/TE', 'QB/RB/WR/TE'];
+    const validStartersList = ['QB', 'RB', 'WR', 'TE', 'RB/WR/TE', 'QB/RB/WR/TE', 'EDR/IL', 'LB', 'DB', 'DB/EDR/IL/LB', 'K', 'D/ST'];
     (roster?.positions as any[]).filter(pos => pos?.group === 'START' && validStartersList.includes(pos?.label)).forEach(pos => {
       for (let i = 0; i < pos?.start; i++) {
         let posLabel = pos?.label;
+        if (posLabel === 'S') posLabel = 'DB';
+        if (posLabel === 'EDR/IL' || posLabel === 'IL' || posLabel === 'EDR') posLabel = 'DL';
+        if (posLabel === 'D/ST') posLabel = 'DF';
         if (posLabel === 'RB/WR/TE') posLabel = 'FLEX';
         if (posLabel === 'QB/RB/WR/TE') posLabel = 'SUPER_FLEX';
+        if (posLabel === 'DB/EDR/IL/LB') posLabel = 'IDP_FLEX';
         positionMap.push(posLabel)
       }
     });

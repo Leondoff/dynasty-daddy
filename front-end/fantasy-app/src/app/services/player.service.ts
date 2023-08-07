@@ -5,7 +5,7 @@ import { FantasyPlayerApiService } from './api/fantasy-player-api.service';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { LeagueTeam } from '../model/league/LeagueTeam';
 import { SleeperApiService } from './api/sleeper/sleeper-api.service';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { NflService } from './utilities/nfl.service';
 import { mean, standardDeviation, variance } from 'simple-statistics';
 import { PlayerInsights } from '../components/model/playerInsights';
@@ -589,23 +589,24 @@ export class PlayerService {
    * Fetch all non offense players based on league format.
    * TODO what about idp and K leagues
    */
-  fetchAllNonOffensePlayers(rosterPositions: string[]): Observable<{}> {
-    if (
-      rosterPositions.includes('LB') || rosterPositions.includes('DB') ||
-      rosterPositions.includes('DL') || rosterPositions.includes('IDP_FLEX')
-    ) {
-      this.fantasyPlayerApiService.fetchNonOffensePlayers(1).subscribe(players => {
-        this.addNonOffensePlayersToValues(players);
-        return of(players);
-      });
+  fetchAllNonOffensePlayers(rosterPositions: string[]): Observable<any[]> {
+    const nonOffensePos = rosterPositions.filter(p => ['K', 'DF', 'DL', 'LB', 'DB'].includes(p));
+    if (rosterPositions.includes('FLEX'))
+      nonOffensePos.push(...['RB', 'WR', 'TE'])
+    if (rosterPositions.includes('SUPER_FLEX'))
+      nonOffensePos.push(...['QB', 'RB', 'WR', 'TE'])
+    if (rosterPositions.includes('IDP_FLEX'))
+      nonOffensePos.push(...['DL', 'LB', 'DB'])
+    if (nonOffensePos.length == 0) {
+      return of([]);
     }
-    if (rosterPositions.includes('DF') || rosterPositions.includes('K')) {
-      this.fantasyPlayerApiService.fetchNonOffensePlayers(0).subscribe(players => {
-        this.addNonOffensePlayersToValues(players);
-        return of(players);
-      });
-    }
-    return of({});
+    return this.fantasyPlayerApiService.fetchNonOffensePlayers(Array.from(new Set(nonOffensePos)))
+      .pipe(
+        mergeMap(players => {
+          this.addNonOffensePlayersToValues(players);
+          return of(players);
+        })
+      );
   }
 
   /**

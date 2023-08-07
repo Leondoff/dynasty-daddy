@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import { SUPPORTED_POS } from './worpService';
 
 export const CalculateOpportunityPerWeek = async (pos, stats) => {
@@ -10,7 +11,7 @@ export const CalculateOpportunityPerWeek = async (pos, stats) => {
     case 'DL':
       return stats.def_snp || 0;
     case 'K':
-      return stats.xpa || 0;
+      return (stats.xpa || 0) + (stats.fga || 0);
     case 'DF':
       return 0;
     default:
@@ -22,11 +23,16 @@ export const CalculateConsistency = async (pointsDict, playersInSystem, format) 
   const consistencyDict = {};
   const { teamCount } = format;
   Object.entries(pointsDict).map(async ([ _, weeklyPointsDict ]) => {
-    const sortedPlayers = playersInSystem.filter(p =>
-      weeklyPointsDict[Number(p.sleeper_id)])
-      .sort((a, b) =>
-        weeklyPointsDict[Number(b.sleeper_id)].pts - weeklyPointsDict[Number(a.sleeper_id)].pts);
-
+    const sortedPlayers = playersInSystem.filter(p => {
+      const sleeperId = isNaN(Number(p.sleeper_id)) ? p.sleeper_id : Number(p.sleeper_id);
+      return weeklyPointsDict[sleeperId] !== undefined;
+    }).sort((a, b) => {
+      const sleeperIdA = isNaN(Number(a.sleeper_id)) ? a.sleeper_id : Number(a.sleeper_id);
+      const sleeperIdB = isNaN(Number(b.sleeper_id)) ? b.sleeper_id : Number(b.sleeper_id);
+      const pointsA = weeklyPointsDict[sleeperIdA].pts || 0;
+      const pointsB = weeklyPointsDict[sleeperIdB].pts || 0;
+      return pointsB - pointsA;
+    });
     SUPPORTED_POS.forEach(pos => {
       const highThreshold = (teamCount * format[pos]) / 2;
       const midThreshold = teamCount * format[pos] || 0;
@@ -36,9 +42,9 @@ export const CalculateConsistency = async (pointsDict, playersInSystem, format) 
         p.position === pos);
 
       posPlayers.forEach(async (p, ind) => {
-        const playerInfo = weeklyPointsDict[Number(p.sleeper_id)];
-        const opp = await CalculateOpportunityPerWeek(
-          pos, playerInfo.gamelog);
+        const sleeperId = isNaN(Number(p.sleeper_id)) ? p.sleeper_id : Number(p.sleeper_id);
+        const playerInfo = weeklyPointsDict[sleeperId];
+        const opp = await CalculateOpportunityPerWeek(pos, playerInfo.gamelog);
         if (p.name_id in consistencyDict) {
           consistencyDict[p.name_id].week += 1;
           consistencyDict[p.name_id].spikeHigh += ind < highThreshold ? 1 : 0;
