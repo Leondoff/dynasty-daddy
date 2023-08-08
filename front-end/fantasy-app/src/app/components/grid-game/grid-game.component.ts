@@ -244,7 +244,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case 'recTds10':
             case 'maxTdRec3':
                 return this.configService.isMobile ? 'Rec Tds' : 'Receiving Tds';
-            case 'passTds30':
+            case 'passingTds30':
             case 'maxTdPass5':
                 return this.configService.isMobile ? 'Pass Tds' : 'Passing Tds';
             case 'rushYd1000':
