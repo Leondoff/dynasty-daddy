@@ -209,7 +209,7 @@ export class LeagueScoringDTO {
                 }
               }
             } else if (met === 'fgLength') {
-              if (rule?.['range']?.['$t'].substr(0,2) == '0-') {
+              if (rule?.['range']?.['$t'].substr(0, 2) == '0-') {
                 this.fgMade = metNum || 3;
               }
               this.fgMadeMod = 0.1;
@@ -225,9 +225,20 @@ export class LeagueScoringDTO {
     if (mflCache['TE'] && mflCache['TE']['rec'] > this.rec)
       this.bonusRecTE = mflCache['TE']['rec'] - this.rec;
     if (mflCache['RB'] && mflCache['RB']['rec'] > this.rec)
-    this.bonusRecRB = mflCache['RB']['rec'] - this.rec;
+      this.bonusRecRB = mflCache['RB']['rec'] - this.rec;
     if (mflCache['WR'] && mflCache['WR']['rec'] > this.rec)
       this.bonusRecWR = mflCache['WR']['rec'] - this.rec;
+    return this;
+  }
+
+  fromESPN(scoringSettings: any[]): LeagueScoringDTO {
+    for (let rule of scoringSettings['scoringItems']) {
+      if (ESPNRulesMap[rule.statId]) {
+        for (let met of ESPNRulesMap[rule.statId]) {
+          this[met] = rule['points'] || rule['pointsOverrides']['16'] || 0;
+        }
+      }
+    }
     return this;
   }
 
@@ -291,3 +302,55 @@ export const MFLRulesMap = {
   'FU': ['fum'],
   'TPA': ['pts_allowed']
 };
+
+// https://github.com/cwendt94/espn-api/blob/master/espn_api/football/constant.py
+export const ESPNRulesMap = {
+  0: ['passAtt'],
+  1: ['passCmp'],
+  2: ['passInc'],
+  3: ['passYd'],
+  4: ['passTd'],
+  15: ['pass40YdPTd'],
+  17: ['bonusPassYd300'],
+  18: ['bonusPassYd400'],
+  19: ['pass2pt'],
+  20: ['passInt'],
+  22: ['passYd'],
+  23: ['rushAtt'],
+  24: ['rushYd'],
+  25: ['rushTd'],
+  26: ['rush2pt'],
+  35: ['rush40YdPTd'],
+  37: ['bonusRushYd100'],
+  38: ['bonusRushYd200'],
+  40: ['rushAtt'],
+  41: ['rec'],
+  42: ['recYd'],
+  43: ['recTd'],
+  44: ['rec2pt'],
+  45: ['rec40YdPTd'],
+  53: ['rec'],
+  56: ['bonusRecYd100'],
+  57: ['bonusRecYd200'],
+  62: ['pass2pt'],
+  64: ['passSack'],
+  68: ['fum'],
+  72: ['fumLost'],
+  83: ['fgMade'],
+  85: ['fgMiss'],
+  86: ['xpMade'],
+  88: ['xpMiss'],
+  89: ['defPtsStart'],
+  94: ['defTd', 'idpDefTd'],
+  95: ['int', 'idpInt'],
+  96: ['defStFumRec', 'idpFumRec'],
+  97: ['blkKick', 'idpBlkKick'],
+  98: ['safety', 'idpSafety'],
+  99: ['sack', 'idpSack'],
+  105: ['defStTd'],
+  106: ['defStFF', 'idpFF'],
+  107: ['idpTklAst'],
+  108: ['idpTklSolo'],
+  109: ['idpTkl'],
+  113: ['idpPassDef']
+}
