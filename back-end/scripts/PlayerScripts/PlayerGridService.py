@@ -5,9 +5,10 @@ import json
 import os
 import psycopg2
 
-SupportedYTypes = ['college', 'team', 'team', 'team', 'team', 'team', 'stat', 'stat', 'stat']
+SupportedYTypes = ['college', 'team', 'team', 'team',
+                   'team', 'team', 'stat', 'stat', 'stat']
 
-SupportedXTypes = ['award', 'stat', 'stat']
+SupportedXTypes = ['award', 'award', 'stat', 'stat', 'stat']
 
 SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET',
                   'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']
@@ -41,7 +42,8 @@ SupportedStats = ['rushYd1000',
                   'maxYdRush200',
                   'maxYdPass300',
                   'rec100',
-                  'specialTds2']
+                  'specialTds2',
+                  'only1Team']
 
 AnswerGrid = []
 
@@ -135,6 +137,7 @@ def SetNewPlayerGrid():
                     VALUES (%s, %s)'''
     cursor.execute(archiveGridironStatement, (str(jsonGrid), str(AnswerGrid)))
 
+
 def ValidateActualSolutionExists(rows, xAxis, yAxis):
     global AnswerGrid
     playerIds = []
@@ -152,6 +155,7 @@ def ValidateActualSolutionExists(rows, xAxis, yAxis):
         return False
     AnswerGrid = playerNames
     return True
+
 
 def getValueToValidate(row, type):
     if type is 'jersey_number':
@@ -171,9 +175,12 @@ def getValueToValidate(row, type):
         for key, value in stats_json.items():
             if value:
                 stats.append(key)
+        if len(set(row[3])):
+            stats.append('only1Team')
         return stats
     else:
         return row[3]
+
 
 def filterOutTeams(json_data):
     yesterdayTeams = [item['value'] for item in json_data['xAxis'] +

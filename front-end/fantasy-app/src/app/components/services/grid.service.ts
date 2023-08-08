@@ -120,7 +120,10 @@ export class GridGameService {
           break;
         }
         case 'stat': {
-          isValid = player?.stats_json?.[category.value] && isValid;
+          if (category.value === 'only1Team')
+            isValid = new Set(player?.teams).size === 1 && isValid;
+          else
+            isValid = player?.stats_json?.[category.value] && isValid;
           break;
         }
         default: {

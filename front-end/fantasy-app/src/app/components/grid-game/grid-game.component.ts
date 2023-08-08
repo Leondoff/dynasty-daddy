@@ -185,6 +185,9 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         if (this.seasonStats.includes(stat)) {
             return !this.configService.isMobile ? 'in a season' : 'Season'
         }
+        if (stat === 'only1Team') {
+            return 'in career';
+        }
         return !this.configService.isMobile ? 'in one game' : 'in 1 game'
     }
 
@@ -199,6 +202,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             return '4000+';
         } else if (stat == '3Pass1RushG') {
             return '3+/1+';
+        } else if (stat == 'only1Team') {
+            return '1';
         } else if (stat == '80Rush200PassG') {
             return '50+/200+';
         } else if (stat == '50Rush200PassG') {
@@ -274,6 +279,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case '80Rush200PassG':
             case '50Rush200PassG':
                 return 'Rush & Pass Yds'
+            case 'only1Team':
+                return 'Team Only';
             default:
                 return this.configService.isMobile ? 'Int Thrown' : 'Ints Thrown';
         }
