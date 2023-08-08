@@ -196,7 +196,33 @@ export class LeagueScoringDTO {
     const mflCache = {};
     for (let posRules of scoringSettings) {
       mflCache[posRules.positions] = {}
-      for (let rule of posRules?.['rule']) {
+      if (Array.isArray(posRules?.['rule'])) {
+        for (let rule of posRules?.['rule']) {
+          if (MFLRulesMap[rule?.['event']?.['$t']]) {
+            for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
+              const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
+              if (met === 'pts_allowed') {
+                if (rule?.['range']?.['$t'] === '0-999') {
+                  if (rule?.['points']?.['$t'].includes('*')) {
+                    this.defPtsAllowedMod = metNum || 10;
+                  } else {
+                    this.defPtsStart = metNum || 10;
+                  }
+                }
+              } else if (met === 'fgLength') {
+                if (rule?.['range']?.['$t'].substr(0, 2) == '0-') {
+                  this.fgMade = metNum || 3;
+                }
+                this.fgMadeMod = 0.1;
+              } else {
+                mflCache[posRules.positions][met] = metNum
+                this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum
+              }
+            }
+          }
+        }
+      } else {
+        const rule = posRules?.['rule'];
         if (MFLRulesMap[rule?.['event']?.['$t']]) {
           for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
             const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));

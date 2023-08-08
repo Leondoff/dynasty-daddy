@@ -591,10 +591,6 @@ export class PlayerService {
    */
   fetchAllNonOffensePlayers(rosterPositions: string[]): Observable<any[]> {
     const nonOffensePos = rosterPositions.filter(p => ['K', 'DF', 'DL', 'LB', 'DB'].includes(p));
-    if (rosterPositions.includes('FLEX'))
-      nonOffensePos.push(...['RB', 'WR', 'TE'])
-    if (rosterPositions.includes('SUPER_FLEX'))
-      nonOffensePos.push(...['QB', 'RB', 'WR', 'TE'])
     if (rosterPositions.includes('IDP_FLEX'))
       nonOffensePos.push(...['DL', 'LB', 'DB'])
     if (nonOffensePos.length == 0) {
