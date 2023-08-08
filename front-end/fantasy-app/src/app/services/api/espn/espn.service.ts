@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LeagueDTO, LeagueType } from '../../../model/league/LeagueDTO';
+import { LeagueDTO } from '../../../model/league/LeagueDTO';
 import { ESPNApiService } from './espn-api.service';
-import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
 import { LeagueWrapper } from 'src/app/model/league/LeagueWrapper';
 import { LeagueTeam } from 'src/app/model/league/LeagueTeam';
 import { LeagueOwnerDTO } from 'src/app/model/league/LeagueOwnerDTO';
@@ -14,6 +13,7 @@ import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPick
 import { CompletedDraft } from 'src/app/model/league/CompletedDraft';
 import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 import { PlatformLogos } from '../../utilities/display.service';
+import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -87,6 +87,7 @@ export class ESPNService {
       roster.length + (leagueInfo?.settings?.rosterSettings?.lineupSlotCounts["23"] || 2 * roster.length),
       leagueInfo);
     ffLeague.setDivisions(divisions);
+    ffLeague.scoringSettings = new LeagueScoringDTO().fromESPN(leagueInfo?.settings?.scoringSettings)
     return ffLeague;
   }
 
@@ -104,8 +105,43 @@ export class ESPNService {
     rosterList = rosterList.concat(...new Array(rosterSettings["4"]).fill('WR'))
     rosterList = rosterList.concat(...new Array(rosterSettings["6"]).fill('TE'))
     rosterList = rosterList.concat(...new Array(rosterSettings["23"]).fill('FLEX'))
+    rosterList = rosterList.concat(...new Array((rosterSettings["3"] || 0) + (rosterSettings["5"] || 0) + (rosterSettings["13"] || 0)).fill('FLEX'))
+    rosterList = rosterList.concat(...new Array(rosterSettings["17"]).fill('K'))
+    rosterList = rosterList.concat(...new Array(rosterSettings["16"]).fill('DF'))
+    rosterList = rosterList.concat(...new Array((rosterSettings["8"] || 0) + (rosterSettings["9"] || 0) + (rosterSettings["11"] || 0)).fill('DL'))
+    rosterList = rosterList.concat(...new Array((rosterSettings["13"] || 0) + (rosterSettings["14"] || 0) + (rosterSettings["12"] || 0)).fill('DB'))
+    rosterList = rosterList.concat(...new Array(rosterSettings["10"]).fill('LB'))
+    rosterList = rosterList.concat(...new Array(rosterSettings["7"]).fill('SUPER_FLEX'))
+    rosterList = rosterList.concat(...new Array(rosterSettings["15"]).fill('IDP_FLEX'))
     return rosterList;
   }
+
+  // 0:  "QB",
+  // 1:  "TQB",
+  // 2:  "RB",
+  // 3:  "RB/WR",
+  // 4:  "WR",
+  // 5:  "WR/TE",
+  // 6:  "TE",
+  // 7:  "OP",
+  // 8:  "DT",
+  // 9:  "DE",
+  // 10: "LB",
+  // 11: "DL",
+  // 12: "CB",
+  // 13: "S",
+  // 14: "DB",
+  // 15: "DP",
+  // 16: "D/ST",
+  // 17: "K",
+  // 18: "P",
+  // 19: "HC",
+  // 20: "BE",
+  // 21: "IR",
+  // 22: "",
+  // 23: "RB/WR/TE",
+  // 24: "ER",
+  // 25: "Rookie",
 
   /**
    * Maps response schedule into dynasty daddy formatted schedule

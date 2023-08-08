@@ -20,6 +20,7 @@ import { NflService } from '../../utilities/nfl.service';
 import { LeagueUserDTO } from 'src/app/model/league/LeagueUserDTO';
 import { Status } from 'src/app/components/model/status';
 import { PlatformLogos } from '../../utilities/display.service';
+import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -95,15 +96,14 @@ export class MflService {
         })
       )
     );
-    // observableList.push(
-    //   this.mflApiService.getMFLLeagueRules(year, leagueId, this.mflUserId, baseURL).pipe(
-    //     map(response => {
-    //       scoringSettings = response;
-    //       console.log(response)
-    //       return of(scoringSettings);
-    //     })
-    //   )
-    // );
+    observableList.push(
+      this.mflApiService.getMFLLeagueRules(year, leagueId, this.mflUserId, baseURL).pipe(
+        map(response => {
+          scoringSettings = new LeagueScoringDTO().fromMFL(response?.rules?.positionRules);
+          return of(scoringSettings);
+        })
+      )
+    );
     // only load draft if it existed on platform
     if (
       leagueWrapper.selectedLeague.metadata.loadRosters.includes('live_draft') ||
@@ -132,6 +132,7 @@ export class MflService {
         leagueWrapper.selectedLeague.leagueMatchUps = leagueMatchUps;
         leagueWrapper.selectedLeague.leagueTransactions = leagueTransactions;
         leagueWrapper.playoffMatchUps = playoffMatchUps;
+        leagueWrapper.selectedLeague.scoringSettings = scoringSettings;
         leagueWrapper.leaguePlatform = LeaguePlatform.MFL;
         leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
         // get future pick year since it will filter out current year picks
@@ -347,25 +348,34 @@ export class MflService {
    */
   private generateRosterPositions(starters: any, rosterSize: any): string[] {
     const rawStarterNumber = starters.count.includes('-') ? starters.count?.split('-').slice(-1)[0] : Number(starters.count);
-    let count = rawStarterNumber - (Number(starters.idp_starters) || 0) - (Number(starters.kdst_starters) || 0);
+    let offensiveStarters = rawStarterNumber - (Number(starters.idp_starters) || 0) - (Number(starters.kdst_starters) || 0);
+    let idpStarters = (Number(starters.idp_starters) || 0);
     const positionMap = [];
-    const validStartersList = ['QB', 'RB', 'WR', 'TE', 'PK', 'Def'];
     // generate min count
     starters.position.forEach(group => {
-      if (validStartersList.includes(group.name)) {
-        const minAmount = Number(group.limit.substring(0, 1));
-        for (let i = 0; i < minAmount; i++) {
-          positionMap.push(group.name);
-          count--;
-        }
-        if (group.name === 'QB' && group.limit.length > 1) {
+      let posLabel = group.name;
+      const minAmount = Number(group.limit.substring(0, 1));
+      for (let i = 0; i < minAmount; i++) {
+        if (posLabel === 'Def') posLabel = 'DF';
+        if (posLabel === 'PK') posLabel = 'K';
+        if (posLabel === 'DT+DE' || posLabel === 'DE' || posLabel === 'DT') posLabel = 'DL';
+        if (posLabel === 'CB+S' || posLabel === 'CB' || posLabel === 'S') posLabel = 'DB';
+        positionMap.push(posLabel);
+        if (['DB', 'LB', 'DL'].includes(posLabel))
+          idpStarters--;
+        else
+          offensiveStarters--;
+        if (posLabel === 'QB' && group.limit.length > 1) {
           positionMap.push('SUPER_FLEX');
-          count--;
+          offensiveStarters--;
         }
       }
     });
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < offensiveStarters; i++) {
       positionMap.push('FLEX');
+    }
+    for (let i = 0; i < idpStarters; i++) {
+      positionMap.push('IDP_FLEX');
     }
     for (let i = positionMap.length; i < rosterSize; i++) {
       positionMap.push('BN');

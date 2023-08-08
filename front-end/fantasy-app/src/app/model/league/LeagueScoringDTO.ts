@@ -63,7 +63,7 @@ export class LeagueScoringDTO {
 
   // IDP Scoring
   idpBlkKick: number;
-  idpDefTD: number;
+  idpDefTd: number;
   idpFF: number;
   idpFumRec: number;
   idpFumRetYd: number;
@@ -87,13 +87,8 @@ export class LeagueScoringDTO {
   safety: number;
   blkKick: number;
   int: number;
-  ptsAllowed_0: number;
-  ptsAllowed_1_6: number;
-  ptsAllowed_7_13: number;
-  ptsAllowed_14_20: number;
-  ptsAllowed_21_27: number;
-  ptsAllowed_28_34: number;
-  ptsAllowed_35p: number;
+  defPtsStart: number = 10;
+  defPtsAllowedMod: number = -0.3;
 
   // Special teams scoring
   stFF: number;
@@ -103,14 +98,11 @@ export class LeagueScoringDTO {
   krTd: number;
 
   // Kicker scoring
-  fgm_0_19: number;
-  fgm_20_29: number;
-  fgm_30_39: number;
-  fgm_40_49: number;
-  fgm_50p: number;
-  fgmiss: number;
-  xpMake: number;
-  xpMiss: number;
+  fgMade: number = 3;
+  fgMiss: number = -1;
+  xpMake: number = 1;
+  xpMiss: number = -1;
+  fgMadeMod: number = 0.1;
 
   fromSleeper(sleeperData: any): LeagueScoringDTO {
     this.fum = sleeperData?.fum || 0;
@@ -160,7 +152,7 @@ export class LeagueScoringDTO {
     this.bonusRushYd100 = sleeperData?.bonus_rush_yd_100 || 0;
     this.bonusRushYd200 = sleeperData?.bonus_rush_yd_200 || 0;
     this.idpBlkKick = sleeperData?.idp_blk_kick || 0;
-    this.idpDefTD = sleeperData?.idp_def_td || 0;
+    this.idpDefTd = sleeperData?.idp_def_td || 0;
     this.idpFF = sleeperData?.idp_ff || 0;
     this.idpFumRec = sleeperData?.idp_fum_rec || 0;
     this.idpFumRetYd = this.roundYD(sleeperData?.idp_fum_ret_yd);
@@ -182,43 +174,226 @@ export class LeagueScoringDTO {
     this.safety = sleeperData?.safe || 0;
     this.blkKick = sleeperData?.blk_ick || 0;
     this.int = sleeperData?.int || 0;
-    this.ptsAllowed_0 = sleeperData?.pts_allowed_0 || 0;
-    this.ptsAllowed_1_6 = sleeperData?.pts_allowed_1_6 || 0;
-    this.ptsAllowed_7_13 = sleeperData?.pts_allowed_7_13 || 0;
-    this.ptsAllowed_14_20 = sleeperData?.pts_allowed_14_20 || 0;
-    this.ptsAllowed_21_27 = sleeperData?.pts_allowed_21_27 || 0;
-    this.ptsAllowed_28_34 = sleeperData?.pts_allowed_28_34 || 0;
-    this.ptsAllowed_35p = sleeperData?.pts_allowed_35p || 0;
+    this.defPtsStart = sleeperData?.pts_allow_0 || 10;
+    this.defPtsAllowedMod = sleeperData?.pts_allow || -0.3;
     this.stFF = sleeperData?.st_ff || 0;
     this.stTd = sleeperData?.st_td || 0;
     this.stFumRec = sleeperData?.st_fum_rec || 0;
     this.prTd = sleeperData?.pr_td || 0;
     this.krTd = sleeperData?.kr_td || 0;
-    this.fgm_0_19 = sleeperData?.fgm_0_19 || 0;
-    this.fgm_20_29 = sleeperData?.fgm_20_29 || 0;
-    this.fgm_30_39 = sleeperData?.fgm_30_39 || 0;
-    this.fgm_40_49 = sleeperData?.fgm_40_49 || 0;
-    this.fgm_50p = sleeperData?.fgm_50p || 0;
-    this.fgmiss = sleeperData?.fgm || 0
+    this.fgMade = sleeperData?.fgm || 3;
+    this.fgMadeMod = 0.1;
+    this.fgMiss = sleeperData?.fgmiss || 0;
     return this;
   }
 
-  parseJSON(jsonBlob) {
-    const data = JSON.parse(jsonBlob);
-    const result = {};
+  fromFF(scoringGroups: any): LeagueScoringDTO {
+    console.log(scoringGroups);
+    return this;
+  }
 
-    for (const item of data) {
-      const abbreviation = item.abbreviation?.$t || '';
-      const shortDescription = item.shortDescription?.$t || '';
-
-      result[abbreviation] = shortDescription;
+  fromMFL(scoringSettings: any[]): LeagueScoringDTO {
+    const mflCache = {};
+    for (let posRules of scoringSettings) {
+      mflCache[posRules.positions] = {}
+      for (let rule of posRules?.['rule']) {
+        if (MFLRulesMap[rule?.['event']?.['$t']]) {
+          for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
+            const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
+            if (met === 'pts_allowed') {
+              if (rule?.['range']?.['$t'] === '0-999') {
+                if (rule?.['points']?.['$t'].includes('*')) {
+                  this.defPtsAllowedMod = metNum || 10;
+                } else {
+                  this.defPtsStart = metNum || 10;
+                }
+              }
+            } else if (met === 'fgLength') {
+              if (rule?.['range']?.['$t'].substr(0, 2) == '0-') {
+                this.fgMade = metNum || 3;
+              }
+              this.fgMadeMod = 0.1;
+            } else {
+              mflCache[posRules.positions][met] = metNum
+              this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum
+            }
+          }
+        }
+      }
     }
+    // evaluate rec premiums
+    if (mflCache['TE'] && mflCache['TE']['rec'] > this.rec)
+      this.bonusRecTE = mflCache['TE']['rec'] - this.rec;
+    if (mflCache['RB'] && mflCache['RB']['rec'] > this.rec)
+      this.bonusRecRB = mflCache['RB']['rec'] - this.rec;
+    if (mflCache['WR'] && mflCache['WR']['rec'] > this.rec)
+      this.bonusRecWR = mflCache['WR']['rec'] - this.rec;
+    return this;
+  }
 
-    return result;
+  fromESPN(scoringSettings: any[]): LeagueScoringDTO {
+    for (let rule of scoringSettings['scoringItems']) {
+      if (ESPNRulesMap[rule.statId]) {
+        for (let met of ESPNRulesMap[rule.statId]) {
+          this[met] = rule['points'] || rule['pointsOverrides']['16'] || 0;
+        }
+      }
+    }
+    return this;
   }
 
   private roundYD(number?: number): number {
     if (!number) return 0;
     return Math.round(100 * number) / 100
   }
+}
+
+export const MFLRulesMap = {
+  '#P': ['passTd'],
+  'PY': ['passYd'],
+  'PA': ['passAtt'],
+  'PC': ['passCmp'],
+  'INC': ['passInc'],
+  'IN': ['passInt'],
+  '#IT': ['passIntTd'],
+  'TSK': ['passSack'],
+  'P40': ['passCmp40YdP'],
+  'P2': ['pass2pt'],
+  '#R': ['rushTd'],
+  'RY': ['rushYd'],
+  'RA': ['rushAtt'],
+  'R40': ['rush40YdP'],
+  'R2': ['rush2pt'],
+  '#C': ['recTd'],
+  'CY': ['recYd'],
+  'CC': ['rec'],
+  'C20': ['rec_20_29'],
+  'C40': ['rec40YdP'],
+  'C2': ['rec2pt'],
+  '#F': ['fgMake'],
+  'FG': ['fgLength'],
+  '#M': ['fgmiss'],
+  'EP': ['xpMake'],
+  'EM': ['xpMiss'],
+  '#UT': ['prTd'],
+  '#KT': ['krTd'],
+  'FCS': ['stFumRec'],
+  '#T': ['defStTd'],
+  '1P': ['passFD'],
+  '1R': ['rushFD'],
+  '1C': ['recFD'],
+  'FC': ['defStFumRec', 'idpFumRec'],
+  'FF': ['defStFF', 'idpFF'],
+  '#D': ['defTd', 'idpDefTd'],
+  'SK': ['sack', 'idpSack'],
+  'SF': ['safety', 'idpSafety'],
+  'IC': ['int', 'idpInt'],
+  'BLF': ['blkKick', 'idpBlkKick'],
+  'ICY': ['idpIntRetYd'],
+  'PD': ['idpPassDef'],
+  'TKD': ['idpTkl', 'idpTklSolo'],
+  'TK': ['idpTkl', 'idpTklSolo'],
+  'ASD': ['idpTklAst'],
+  'AS': ['idpTklAst'],
+  'QH': ['idpQBHit'],
+  'TKL': ['idpTklLoss'],
+  'FCY': ['idpFumRetYd'],
+  'FCD': ['idpFumRec'],
+  'FU': ['fum'],
+  'TPA': ['pts_allowed']
+};
+
+// https://github.com/cwendt94/espn-api/blob/master/espn_api/football/constant.py
+export const ESPNRulesMap = {
+  0: ['passAtt'],
+  1: ['passCmp'],
+  2: ['passInc'],
+  3: ['passYd'],
+  4: ['passTd'],
+  15: ['pass40YdPTd'],
+  17: ['bonusPassYd300'],
+  18: ['bonusPassYd400'],
+  19: ['pass2pt'],
+  20: ['passInt'],
+  22: ['passYd'],
+  23: ['rushAtt'],
+  24: ['rushYd'],
+  25: ['rushTd'],
+  26: ['rush2pt'],
+  35: ['rush40YdPTd'],
+  37: ['bonusRushYd100'],
+  38: ['bonusRushYd200'],
+  40: ['rushAtt'],
+  41: ['rec'],
+  42: ['recYd'],
+  43: ['recTd'],
+  44: ['rec2pt'],
+  45: ['rec40YdPTd'],
+  53: ['rec'],
+  56: ['bonusRecYd100'],
+  57: ['bonusRecYd200'],
+  62: ['pass2pt'],
+  64: ['passSack'],
+  68: ['fum'],
+  72: ['fumLost'],
+  83: ['fgMade'],
+  85: ['fgMiss'],
+  86: ['xpMade'],
+  88: ['xpMiss'],
+  89: ['defPtsStart'],
+  94: ['defTd', 'idpDefTd'],
+  95: ['int', 'idpInt'],
+  96: ['defStFumRec', 'idpFumRec'],
+  97: ['blkKick', 'idpBlkKick'],
+  98: ['safety', 'idpSafety'],
+  99: ['sack', 'idpSack'],
+  105: ['defStTd'],
+  106: ['defStFF', 'idpFF'],
+  107: ['idpTklAst'],
+  108: ['idpTklSolo'],
+  109: ['idpTkl'],
+  113: ['idpPassDef']
+}
+
+export const FFRulesMap = {
+  1: ['passAtt'],
+  2: ['passCmp'],
+  3: ['passYd'],
+  4: ['pass2pt'],
+  5: ['passTd'],
+  7: ['passInt'],
+  9: ['passSack'],
+  10: ['passInc'],
+  133: ['passFD'],
+  21: ['rushAtt'],
+  22: ['rushYd'],
+  23: ['rush2pt'],
+  24: ['rushTd'],
+  132: ['rushFD'],
+  41: ['rec'],
+  42: ['recYd'],
+  43: ['rec2pt'],
+  44: ['recTd'],
+  131: ['recFD'],
+  26: ['fum'],
+  27: ['fumLost'],
+  29: ['defStTd'],
+  101: ['fgMade'],
+  103: ['fgMiss'],
+  104: ['xpMade'],
+  105: ['xpMiss'],
+  81: ['idpTkl'],
+  82: ['idpTklAst'],
+  83: ['idpTklSolo'],
+  124: ['idlTklLoss'],
+  84: ['int', 'idpInt'],
+  85: ['sack', 'idpSack'],
+  86: ['defStFF', 'idpFF'],
+  87: ['defStFumRec', 'idpFumRec'],
+  88: ['safety', 'idpSafety'],
+  117: ['blkKick', 'idpBlkKick'],
+  96: ['idpPassDef'],
+  136: ['idpQBHit'],
+  128: ['idpIntRetYd'],
+  89: ['idpDefTd', 'defTd']
 }

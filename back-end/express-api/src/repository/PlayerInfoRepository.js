@@ -230,7 +230,7 @@ export const GetFantasyPortfolioForInterval = async (intervalDays, playerList) =
   return data;
 };
 
-export const GetPlayersInfoWithIds = async () => {
+export const GetPlayersInfoWithIds = async (whereClause) => {
   const data = await playersModel.selectQuery(`
   SELECT
       mp.name_id,
@@ -244,7 +244,8 @@ export const GetPlayersInfoWithIds = async () => {
       player_ids mp
   INNER JOIN
       player_info pi ON pi.name_id = mp.name_id
-  WHERE pi.position != 'PI';
+  WHERE pi.position != 'PI'
+  ${whereClause || ''};
     `);
   return data;
 };

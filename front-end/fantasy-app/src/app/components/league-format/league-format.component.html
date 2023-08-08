@@ -15,7 +15,7 @@
             <span>{{menu.display}}</span>
           </button>
         </mat-menu>
-        <mat-form-field appearance="standard" color="accent">
+        <mat-form-field appearance="standard" color="accent" [ngClass]="{'small-select': configService.isMobile}">
             <mat-label>Selected Season</mat-label>
             <mat-select [(ngModel)]="leagueFormatService.selectedSeason" (selectionChange)="loadNewSeason()">
               <mat-option *ngFor="let season of selectableSeasons" [value]="season">{{season}}</mat-option>
@@ -125,6 +125,9 @@
 
     <div class="center-text margin-top-50" *ngIf="leagueFormatStatus == 1 && leagueFormatService.filteredPlayers?.length > 0">
       <button mat-stroked-button (click)="exportTableData()"><mat-icon>download</mat-icon> Download Table Data</button>
+      <div class="center-text small-text__light margin-top-25">
+        *Some stats may differ from your platform's scoring due to yard thresholds being different or other limitations. Feel free to reach out with your league id if you have questions.
+      </div>
     </div>
   </div>
   

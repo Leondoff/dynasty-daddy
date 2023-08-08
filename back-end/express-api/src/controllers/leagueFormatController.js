@@ -6,7 +6,8 @@ import {
 export const GetLeagueFormatForLeague = async (req, res) => {
   try {
     const { season, settings, format } = req.body;
-    const playersInSystem = (await GetPlayersInfoWithIds()).rows;
+    const experienceOffset = (new Date()).getFullYear() - season;
+    const playersInSystem = (await GetPlayersInfoWithIds(`AND (pi.experience >= ${experienceOffset} OR pi.position = 'DF')`)).rows;
     const pointsDict = await FetchPointsPerWeekInSeason(season, settings);
     const worp = await CalculateWORPForSeason(pointsDict, playersInSystem, format);
     const consistency = await CalculatePlayerConsistencyForSeason(

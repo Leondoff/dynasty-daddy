@@ -58,7 +58,7 @@ export const CalculatePointsFromGamelog = (gamelog, settings) => {
   weeklyScore += gamelog.bonus_rush_yd_100 * settings.bonusRushYd100 || 0;
   weeklyScore += gamelog.bonus_rush_yd_200 * settings.bonusRushYd200 || 0;
   weeklyScore += gamelog.idp_blk_kick * settings.idpBlkKick || 0;
-  weeklyScore += gamelog.idp_def_td * settings.idpDefTD || 0;
+  weeklyScore += gamelog.idp_def_td * settings.idpDefTd || 0;
   weeklyScore += gamelog.idp_ff * settings.idpFF || 0;
   weeklyScore += gamelog.idp_fum_rec * settings.idpFumRec || 0;
   weeklyScore += gamelog.idp_fum_ret_yd * settings.idpFumRetYd || 0;
@@ -68,10 +68,9 @@ export const CalculatePointsFromGamelog = (gamelog, settings) => {
   weeklyScore += gamelog.idp_qb_hit * settings.idpQBHit || 0;
   weeklyScore += gamelog.idp_sack * settings.idpSack || 0;
   weeklyScore += gamelog.idp_safe * settings.idpSafety || 0;
-  weeklyScore += gamelog.idp_tkl * settings.idpTkl || 0;
-  weeklyScore += gamelog.idp_tkl_ast * settings.idpTklAst || 0;
+  weeklyScore += gamelog.idp_tkl_ast * (settings.idpTklAst || settings.idpTkl) || 0;
   weeklyScore += gamelog.idp_tkl_loss * settings.idpTklLoss || 0;
-  weeklyScore += gamelog.idp_tkl_solo * settings.idpTklSolo || 0;
+  weeklyScore += gamelog.idp_tkl_solo * (settings.idpTklSolo || settings.idpTkl) || 0;
   weeklyScore += gamelog.def_st_ff * settings.defStFF || 0;
   weeklyScore += gamelog.def_st_fum_rec * settings.defStFumRec || 0;
   weeklyScore += gamelog.def_st_td * settings.defStTd || 0;
@@ -80,24 +79,18 @@ export const CalculatePointsFromGamelog = (gamelog, settings) => {
   weeklyScore += gamelog.safe * settings.safety || 0;
   weeklyScore += gamelog.blk_ick * settings.blkKick || 0;
   weeklyScore += gamelog.int * settings.int || 0;
-  weeklyScore += gamelog.pts_allowed_0 * settings.ptsAllowed_0 || 0;
-  weeklyScore += gamelog.pts_allowed_1_6 * settings.ptsAllowed_1_6 || 0;
-  weeklyScore += gamelog.pts_allowed_7_13 * settings.ptsAllowed_7_13 || 0;
-  weeklyScore += gamelog.pts_allowed_14_20 * settings.ptsAllowed_14_20 || 0;
-  weeklyScore += gamelog.pts_allowed_21_27 * settings.ptsAllowed_21_27 || 0;
-  weeklyScore += gamelog.pts_allowed_28_34 * settings.ptsAllowed_28_34 || 0;
-  weeklyScore += gamelog.pts_allowed_35p * settings.ptsAllowed_35p || 0;
+  weeklyScore += gamelog.pts_allow ? (settings.defPtsStart || 10)
+    + gamelog.pts_allow * (settings.defPtsAllowedMod || -0.3) : 0;
   weeklyScore += gamelog.st_ff * settings.stFF || 0;
   weeklyScore += gamelog.st_td * settings.stTd || 0;
   weeklyScore += gamelog.st_fum_rec * settings.stFumRec || 0;
   weeklyScore += gamelog.pr_td * settings.prTd || 0;
   weeklyScore += gamelog.kr_td * settings.krTd || 0;
-  weeklyScore += gamelog.fgm_0_19 * settings.fgm_0_19 || 0;
-  weeklyScore += gamelog.fgm_20_29 * settings.fgm_20_29 || 0;
-  weeklyScore += gamelog.fgm_30_39 * settings.fgm_30_39 || 0;
-  weeklyScore += gamelog.fgm_40_49 * settings.fgm_40_49 || 0;
-  weeklyScore += gamelog.fgm_50p * settings.fgm_50p || 0;
-  weeklyScore += gamelog.fgm * settings.fgmiss || 0;
+  weeklyScore += gamelog.fgm * settings.fgMade || 0;
+  weeklyScore += gamelog.fgm_yds_over_30 * settings.fgMadeMod || 0;
+  weeklyScore += gamelog.fgmiss * settings.fgMiss || 0;
+  weeklyScore += gamelog.xpm * settings.xpMade || 0;
+  weeklyScore += gamelog.xpmiss * settings.xpMiss || 0;
   return weeklyScore;
 };
 
@@ -109,7 +102,7 @@ export const FetchPointsPerWeekInSeason = async (season, settings) => {
   const fantasySeasonWeeks = gamelogData.rows.slice(0, gamelogData.rows.length - 1);
   const pointsDict = {};
   fantasySeasonWeeks.forEach(gamelogs => {
-    Object.entries(gamelogs.gamelog_json).forEach(async ([ key, value ]) => {
+    Object.entries(gamelogs.gamelog_json).forEach(async ([key, value]) => {
       const pointsForWeek = await CalculatePointsFromGamelog(value, settings);
       if (!pointsDict[gamelogs.week]) {
         pointsDict[gamelogs.week] = {};

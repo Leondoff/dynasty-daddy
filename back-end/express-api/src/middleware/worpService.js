@@ -186,7 +186,7 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
       replacementLevelWinPer[week][pos] = cumulativeStdNormalProbability(repPlayerZ);
     });
   });
-  console.log(replacementLevelWinPer)
+  // console.log(replacementLevelWinPer)
   // calculate percent and WoRP for each player
   const playerWorpAndPercents = {};
   players.forEach(p => {

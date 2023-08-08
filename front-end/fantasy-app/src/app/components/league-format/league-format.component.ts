@@ -116,8 +116,15 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
             }),
             this.leagueSwitchService.leagueChanged$.subscribe(_ => {
                 this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
-                    this.leaguePositions = Array.from(new Set(this.leagueService.selectedLeague.rosterPositions
-                        .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p))));
+                    const positionFilterList = this.leagueService.selectedLeague.rosterPositions
+                        .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p));
+                    if (this.leagueService.selectedLeague.rosterPositions.includes('FLEX'))
+                        positionFilterList.push(...['RB', 'WR', 'TE'])
+                    if (this.leagueService.selectedLeague.rosterPositions.includes('SUPER_FLEX'))
+                        positionFilterList.push(...['QB', 'RB', 'WR', 'TE'])
+                    if (this.leagueService.selectedLeague.rosterPositions.includes('IDP_FLEX'))
+                        positionFilterList.push(...['DL', 'LB', 'DB'])
+                    this.leaguePositions = Array.from(new Set(positionFilterList));
                     this.selectedPositions.setValue(this.leaguePositions);
                     this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
                     this.reloadFormatTool();
@@ -146,7 +153,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
      */
     reloadFormatTool(): void {
         this.leagueFormatService.filteredPlayers = this.playerService.playerValues.filter(p => p.position != 'PI'
-            && this.leagueService.leagueFormatMetrics[this.leagueFormatService.selectedSeason]?.[p.name_id].c)
+            && this.leagueService.leagueFormatMetrics[this.leagueFormatService.selectedSeason]?.[p.name_id]?.c)
             .filter(p => p.full_name.toLowerCase().includes(this.searchVal.toLowerCase()) && this.selectedPositions.value.includes(p.position));
         this.leagueFormatService.columnsToDisplay = this.selectedMetrics.value;
         this.leagueFormatService.selectedVisualizations = this.selectedVisualizations.value;

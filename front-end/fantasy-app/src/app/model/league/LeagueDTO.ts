@@ -54,6 +54,9 @@ export class LeagueDTO {
       if (p === 'WRRB_FLEX') {
         return 'FLEX';
       }
+      if (p === 'DEF') {
+        return 'DF';
+      }
       return p
     });
     this.rosterSize = (roster_positions?.length || 0) + (settings?.reserve_slots || 0) + (settings?.taxi_slots || 0);
