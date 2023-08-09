@@ -177,7 +177,6 @@ create index player_grid_uindex on player_grid (name);
 create table historical_gridirons (
 	id Serial primary key, 
 	daily_grid text not null,
-	daily_grid_answer text not null,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

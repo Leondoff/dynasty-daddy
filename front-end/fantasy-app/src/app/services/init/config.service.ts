@@ -23,7 +23,6 @@ export const ConfigKeyDictionary = {
   HEADER_INFO_URL: 'header_info_url',
   GRIDIRON_GRID: 'daily_grid',
   GRIDIRON_GRID_COMPLETED: 'daily_grid_completed',
-  GRIDIRON_GRID_ANSWER: 'daily_grid_answer',
   GRIDIRON_WRITE_BACK: 'daily_grid_write_back',
 } as const;
 

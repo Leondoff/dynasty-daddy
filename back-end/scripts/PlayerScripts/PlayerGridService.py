@@ -45,8 +45,6 @@ SupportedStats = ['rushYd1000',
                   'specialTds2',
                   'only1Team']
 
-AnswerGrid = []
-
 
 def SetNewPlayerGrid():
 
@@ -68,58 +66,67 @@ def SetNewPlayerGrid():
     cursor.execute('TRUNCATE TABLE grid_results;')
     cursor.execute('SELECT * FROM player_grid;')
     rows = cursor.fetchall()
-
-    # filter out yesterdays teams from teams
+    
+    # Check if there is a custom grid defined
     cursor.execute(
-        'SELECT config_value FROM config WHERE config_key = \'daily_grid\';')
-    yesterdaysGridStr = cursor.fetchall()
-    yesterdaysGrid = json.loads(yesterdaysGridStr[0][0])
-    todaysSupportedTeams = filterOutTeams(yesterdaysGrid)
-    iter = 0
-    while True and iter < 100:
-        selectedTeams = random.sample(todaysSupportedTeams, 6)
-        formattedGrid = [{"type": "team", "value": value}
-                         for value in selectedTeams]
-        # Y axis wild card
-        if (random.choice([True])):
-            selectedWildcard = random.choice(SupportedYTypes)
-            if selectedWildcard is 'college':
-                selectedCollege = random.choice(SupportedColleges)
-                formattedGrid[5] = {
-                    "type": "college", "value": selectedCollege}
-            if selectedWildcard is 'jersey_number':
-                selectedNumber = random.choice(SupportedJerseyNumbers)
-                formattedGrid[5] = {
-                    "type": "jersey_number", "value": selectedNumber}
-            if selectedWildcard is 'stat':
-                selectedStat = random.choice(SupportedStats)
-                formattedGrid[5] = {"type": "stat", "value": selectedStat}
-        if (random.choice([True])):
-            selectedWildcard = random.choice(SupportedXTypes)
-            if selectedWildcard is 'stat':
-                selectedStat = random.choice(SupportedStats)
-                while selectedStat == formattedGrid[5]['value']:
+        'SELECT config_value FROM config WHERE config_key = \'daily_grid_custom_grid\';')
+    customGridString = cursor.fetchall()
+    
+    if customGridString[0][0] != '{}':
+        customGrid = json.loads(customGridString[0][0])
+        output_dict = customGrid
+    else:
+        # filter out yesterdays teams from teams
+        cursor.execute(
+            'SELECT config_value FROM config WHERE config_key = \'daily_grid\';')
+        yesterdaysGridStr = cursor.fetchall()
+        yesterdaysGrid = json.loads(yesterdaysGridStr[0][0])
+        todaysSupportedTeams = filterOutTeams(yesterdaysGrid)
+        iter = 0
+        while True and iter < 100:
+            selectedTeams = random.sample(todaysSupportedTeams, 6)
+            formattedGrid = [{"type": "team", "value": value}
+                            for value in selectedTeams]
+            # Y axis wild card
+            if (random.choice([True])):
+                selectedWildcard = random.choice(SupportedYTypes)
+                if selectedWildcard is 'college':
+                    selectedCollege = random.choice(SupportedColleges)
+                    formattedGrid[5] = {
+                        "type": "college", "value": selectedCollege}
+                if selectedWildcard is 'jersey_number':
+                    selectedNumber = random.choice(SupportedJerseyNumbers)
+                    formattedGrid[5] = {
+                        "type": "jersey_number", "value": selectedNumber}
+                if selectedWildcard is 'stat':
                     selectedStat = random.choice(SupportedStats)
-                formattedGrid[2] = {"type": "stat", "value": selectedStat}
-            if selectedWildcard is 'award':
-                selectedAward = random.choice(SupportedAwards)
-                formattedGrid[2] = {"type": "award", "value": selectedAward}
-        xAxis = formattedGrid[0:3]
-        yAxis = formattedGrid[3:6]
-        iter = iter + 1
-        if ValidateActualSolutionExists(rows, xAxis, yAxis):
-            break
+                    formattedGrid[5] = {"type": "stat", "value": selectedStat}
+            if (random.choice([True])):
+                selectedWildcard = random.choice(SupportedXTypes)
+                if selectedWildcard is 'stat':
+                    selectedStat = random.choice(SupportedStats)
+                    while selectedStat == formattedGrid[5]['value']:
+                        selectedStat = random.choice(SupportedStats)
+                    formattedGrid[2] = {"type": "stat", "value": selectedStat}
+                if selectedWildcard is 'award':
+                    selectedAward = random.choice(SupportedAwards)
+                    formattedGrid[2] = {"type": "award", "value": selectedAward}
+            xAxis = formattedGrid[0:3]
+            yAxis = formattedGrid[3:6]
+            iter = iter + 1
+            if ValidateActualSolutionExists(rows, xAxis, yAxis):
+                break
 
-    current_date = date.today()
-    target_date = date(2023, 7, 1)
+        current_date = date.today()
+        target_date = date(2023, 7, 1)
 
-    gridNumber = (current_date - target_date).days + 1
+        gridNumber = (current_date - target_date).days + 1
 
-    output_dict = {
-        'xAxis': xAxis,
-        'yAxis': yAxis,
-        'id': gridNumber
-    }
+        output_dict = {
+            'xAxis': xAxis,
+            'yAxis': yAxis,
+            'id': gridNumber
+        }
 
     jsonGrid = json.dumps(output_dict)
 
@@ -133,13 +140,12 @@ def SetNewPlayerGrid():
         config_value = 1 WHERE config_key = \'daily_grid_completed\';'''
     cursor.execute(resetGridsPlayedCount)
 
-    archiveGridironStatement = '''INSERT INTO historical_gridirons (daily_grid, daily_grid_answer)
-                    VALUES (%s, %s)'''
-    cursor.execute(archiveGridironStatement, (str(jsonGrid), str(AnswerGrid)))
+    archiveGridironStatement = '''INSERT INTO historical_gridirons (daily_grid)
+                    VALUES (%s)'''
+    cursor.execute(archiveGridironStatement, (str(jsonGrid),))
 
 
 def ValidateActualSolutionExists(rows, xAxis, yAxis):
-    global AnswerGrid
     playerIds = []
     playerNames = []
     for x in xAxis:
@@ -153,7 +159,6 @@ def ValidateActualSolutionExists(rows, xAxis, yAxis):
                     break
     if len(playerIds) < 9:
         return False
-    AnswerGrid = playerNames
     return True
 
 
