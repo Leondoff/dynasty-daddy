@@ -187,11 +187,6 @@ export class LeagueScoringDTO {
     return this;
   }
 
-  fromFF(scoringGroups: any): LeagueScoringDTO {
-    console.log(scoringGroups);
-    return this;
-  }
-
   fromMFL(scoringSettings: any[]): LeagueScoringDTO {
     const mflCache = {};
     for (let posRules of scoringSettings) {
@@ -265,6 +260,30 @@ export class LeagueScoringDTO {
         }
       }
     }
+    return this;
+  }
+
+  fromFF(scoringSettings: any[]): LeagueScoringDTO {
+    for (let ruleGroup of scoringSettings) {
+      for (let rule of ruleGroup?.scoringRules || []) {
+        if (FFRulesMap[rule.category.id]) {
+          if (!rule.isBonus) {
+            for (let met of FFRulesMap[rule.category.id]) {
+              this[met] = rule?.pointsPer?.value || rule?.points?.value || 0;
+            }
+          } else {
+            if (FFRulesMap[rule.category.id]) {
+
+            }
+          }
+        }
+      }
+    }
+    return this;
+  }
+
+  fromFFPC(scoringSettings: any): LeagueScoringDTO {
+    console.log(scoringSettings);
     return this;
   }
 

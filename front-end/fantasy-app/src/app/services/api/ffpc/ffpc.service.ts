@@ -18,6 +18,7 @@ import { LeagueUserDTO } from 'src/app/model/league/LeagueUserDTO';
 import { Status } from 'src/app/components/model/status';
 import { FFPCApiService } from './ffpc-api.service';
 import { PlatformLogos } from '../../utilities/display.service';
+import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -57,7 +58,7 @@ export class FFPCService {
     let leagueRosters: any = null;
     let teamMetrics = {};
     let completedDraft = null;
-    let scoringSettings: any = null;
+    leagueWrapper.selectedLeague.scoringSettings = new LeagueScoringDTO().fromFFPC(leagueWrapper.selectedLeague.metadata['scoringRules']);
     observableList.push(
       this.ffpcApiService.getFFPCSchedules(year, leagueId).pipe(
         map((leagueSchedule) => {
@@ -146,6 +147,7 @@ export class FFPCService {
       rosPosition.includes('SUPER_FLEX'),
       year
     );
+    ffpcLeagueId.metadata['scoringRules'] = leagueInfo?.scoringRules.scoringRule;
     return ffpcLeagueId;
   }
 

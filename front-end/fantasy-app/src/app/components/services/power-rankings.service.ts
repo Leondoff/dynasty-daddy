@@ -143,8 +143,8 @@ export class PowerRankingsService {
           for (const player of players) {
             if (playerPlatformId === this.playerService.getPlayerPlatformId(player, leaguePlatform)) {
               roster.push(player);
-              sfTradeValueTotal += player.sf_trade_value;
-              tradeValueTotal += player.trade_value;
+              sfTradeValueTotal += player.sf_trade_value || 0;
+              tradeValueTotal += player.trade_value || 0;
               break;
             }
           }
@@ -156,8 +156,8 @@ export class PowerRankingsService {
           let groupList: FantasyPlayer[] = [];
           groupList = roster.filter(player => {
             if (player.position === group) {
-              sfTradeValue += player.sf_trade_value;
-              tradeValue += player.trade_value;
+              sfTradeValue += player.sf_trade_value || 0;
+              tradeValue += player.trade_value || 0;
               return player;
             }
           });
@@ -177,10 +177,10 @@ export class PowerRankingsService {
                 && (pick.pick <= earlyPickThreshold && pickValue.last_name.includes(pickRanges.EARLY) ||
                   pick.pick >= latePickThreshold && pickValue.last_name.includes(pickRanges.LATE) ||
                   pick.pick > earlyPickThreshold && pick.pick < latePickThreshold && pickValue.last_name.includes(pickRanges.MID))) {
-                sfPickTradeValue += pickValue.sf_trade_value;
-                pickTradeValue += pickValue.trade_value;
-                sfTradeValueTotal += pickValue.sf_trade_value;
-                tradeValueTotal += pickValue.trade_value;
+                sfPickTradeValue += pickValue.sf_trade_value || 0;
+                pickTradeValue += pickValue.trade_value || 0;
+                sfTradeValueTotal += pickValue.sf_trade_value || 0;
+                tradeValueTotal += pickValue.trade_value || 0;
                 picks.push(pickValue);
                 break;
               }
