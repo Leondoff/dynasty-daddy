@@ -11,10 +11,10 @@
 
 <div mat-dialog-content style="max-height: 76vh !important;">
     <div *ngIf="selectedCellStat == -1">
-        <div class="center-text light_bg_color margin-top-10">
+        <div class="center-text light_bg_color margin-top-10" *ngIf="!gridGameService.isHistoricalGrid">
             Games Completed
         </div>
-        <div class="center-text large-bold-header-text">
+        <div class="center-text large-bold-header-text" *ngIf="!gridGameService.isHistoricalGrid">
             {{gridGameService.gamesPlayed + 1}}
         </div>
         
@@ -54,14 +54,14 @@
             Percent of players that got each cell right
         </div>
 
-        <div class="center-text light_bg_color margin-top-10">
+        <div class="center-text light_bg_color margin-top-10" *ngIf="!gridGameService.isHistoricalGrid">
             Rarity Rating
         </div>
-        <div class="center-text large-bold-header-text">
+        <div class="center-text large-bold-header-text" *ngIf="!gridGameService.isHistoricalGrid">
             {{uniScore}}
         </div>
         
-        <div class="margin-top-10 center-text">
+        <div class="margin-top-10 center-text" *ngIf="!gridGameService.isHistoricalGrid">
             <button mat-stroked-button (click)="toggleAnswers = !toggleAnswers">{{toggleAnswers ? 'Close' : 'Open'}} Stats</button>
         </div>
     </div>

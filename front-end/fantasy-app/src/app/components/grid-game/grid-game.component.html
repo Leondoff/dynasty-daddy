@@ -1,7 +1,11 @@
 <h1 class="margin-top-10 large-bold-header-text center-text">NFL Immaculate Gridiron {{gridGameService.gridDict['id']}}</h1>
 <div class="center-text margin-top-10">
     {{pageDescription}}
-  </div>
+</div>
+<div *ngIf="gridGameService.gridDict['creator']" class="center-text margin-top-10">
+    <span class="small-text__light">Custom Grid by: </span>
+    <a href="{{gridGameService.gridDict['creatorLink']}}" target="_blank" style="padding-right: 10px; text-decoration: unset;"><span class="link--text__dot__underline small-text__light"> {{gridGameService.gridDict?.['creator']}}</span></a>        
+</div>
 
 <div *ngIf="gridGameService.status === 1"class="margin-top-25">
     <div style="overflow-x: auto;">
