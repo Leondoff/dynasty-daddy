@@ -190,7 +190,7 @@ export class LeagueScoringDTO {
   fromMFL(scoringSettings: any[]): LeagueScoringDTO {
     const mflCache = {};
     // MFL object vs array iterable fix
-    for (let posRules of Array.isArray(scoringSettings) ? scoringSettings  : [scoringSettings]) {
+    for (let posRules of Array.isArray(scoringSettings) ? scoringSettings : [scoringSettings]) {
       mflCache[posRules.positions] = {}
       if (Array.isArray(posRules?.['rule'])) {
         for (let rule of posRules?.['rule']) {
@@ -274,7 +274,7 @@ export class LeagueScoringDTO {
             }
           } else {
             if (FFRulesMap[rule.category.id]) {
-
+              //TODO bonuses for fleaflicker leagues
             }
           }
         }
@@ -284,7 +284,41 @@ export class LeagueScoringDTO {
   }
 
   fromFFPC(scoringSettings: any): LeagueScoringDTO {
-    console.log(scoringSettings);
+    const ffpcCache = {}
+    for (let rawRule of scoringSettings) {
+      const rule = rawRule.scoringCategory.trim();
+      const pos = rawRule.positionCode.trim();
+      if (!ffpcCache[pos]) {
+        ffpcCache[pos] = {}
+      };
+      if (FFPCRulesMap[rule]) {
+        for (let met of FFPCRulesMap[rule]) {
+          if (Array.isArray(rawRule?.scoringValues?.scoringValue)) {
+            if (met === 'defPtsStart') {
+              this.defPtsStart = rawRule?.scoringValues?.scoringValue[0]?.fantasyPoints || 10;
+            } else if (met === 'fgMade') {
+              this.fgMade = rawRule?.scoringValues?.scoringValue?.[0]?.fantasyPoints || 3;
+              this.fgMadeMod = (rawRule?.scoringValues?.scoringValue?.[1]?.fantasyPoints || 3.1) - this.fgMade;
+            } else {
+              const baseMetric = rawRule?.scoringValues?.scoringValue.find(p => p.startRange === 0);
+              const metNum = baseMetric?.fantasyPoints || 0;
+              ffpcCache[pos][met] = metNum;
+              this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum;
+            }
+          } else {
+            const metNum = rawRule?.scoringValues?.scoringValue?.fantasyPoints || 0;
+            ffpcCache[pos][met] = metNum
+            this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum
+          }
+        }
+      }
+    }
+    if (ffpcCache['TE'] && ffpcCache['TE']['rec'] > this.rec)
+      this.bonusRecTE = ffpcCache['TE']['rec'] - this.rec;
+    if (ffpcCache['RB'] && ffpcCache['RB']['rec'] > this.rec)
+      this.bonusRecRB = ffpcCache['RB']['rec'] - this.rec;
+    if (ffpcCache['WR'] && ffpcCache['WR']['rec'] > this.rec)
+      this.bonusRecWR = ffpcCache['WR']['rec'] - this.rec;
     return this;
   }
 
@@ -469,40 +503,3 @@ export const FFPCRulesMap = {
   'KORTN': ['krTd'],
   'PTNRTN': ['prTd']
 }
-
-// stFF: number;
-// stTd: number;
-// stFumRec: number;
-
-// // Kicker scoring
-// fgMiss: number = -1;
-// xpMiss: number = -1;
-
-// defStFF: number;
-
-// recFD: number;
-// rec40YdP: number;
-// rec40YdPTd: number;
-// rec_0_4: number;
-// rec_5_9: number;
-// rec_10_19: number;
-// rec_20_29: number;
-// rec_30_39: number;
-
-//   rushAtt: number;
-//   rushFD: number;
-//   rush40YdP: number;
-//   rush40YdPTd: number;
-
-
-// fum: number;
-
-// // Off: Passing
-// pass40YdPTd: number;
-// passIntTd: number;
-// passAtt: number;
-// passCmp: number;
-// passCmp40YdP: number;
-// passFD: number;
-// passInc: number;
-// passSack: number;
