@@ -189,7 +189,8 @@ export class LeagueScoringDTO {
 
   fromMFL(scoringSettings: any[]): LeagueScoringDTO {
     const mflCache = {};
-    for (let posRules of scoringSettings) {
+    // MFL object vs array iterable fix
+    for (let posRules of Array.isArray(scoringSettings) ? scoringSettings  : [scoringSettings]) {
       mflCache[posRules.positions] = {}
       if (Array.isArray(posRules?.['rule'])) {
         for (let rule of posRules?.['rule']) {
@@ -442,3 +443,66 @@ export const FFRulesMap = {
   128: ['idpIntRetYd'],
   89: ['idpDefTd', 'defTd']
 }
+
+export const FFPCRulesMap = {
+  'FUMLOST': ['fumLost'],
+  'PASSYD': ['passYd'],
+  'PASSTD': ['passTd'],
+  'PASSINT': ['passInt'],
+  'PASSCNV': ['pass2pt'],
+  'RUSHCNV': ['rush2pt'],
+  'RUSHYD': ['rushYd'],
+  'RUSHTD': ['rushTd'],
+  'RECP': ['rec'],
+  'RECPCNV': ['rec2pt'],
+  'RECPTD': ['recTd'],
+  'RECPYD': ['recYd'],
+  'SACKS': ['sack'],
+  'SAFETY': ['safety'],
+  'BLKFG': ['blkKick'],
+  'DFFMBL': ['defStFumRec'],
+  'DFINTCP': ['int'],
+  'INTCTD': ['defTd', 'defStTd', 'stTd'],
+  'APTALLW': ['defPtsStart'], // custom handler
+  'FGS': ['fgMade'], // custom handler
+  'PATS': ['xpMake'],
+  'KORTN': ['krTd'],
+  'PTNRTN': ['prTd']
+}
+
+// stFF: number;
+// stTd: number;
+// stFumRec: number;
+
+// // Kicker scoring
+// fgMiss: number = -1;
+// xpMiss: number = -1;
+
+// defStFF: number;
+
+// recFD: number;
+// rec40YdP: number;
+// rec40YdPTd: number;
+// rec_0_4: number;
+// rec_5_9: number;
+// rec_10_19: number;
+// rec_20_29: number;
+// rec_30_39: number;
+
+//   rushAtt: number;
+//   rushFD: number;
+//   rush40YdP: number;
+//   rush40YdPTd: number;
+
+
+// fum: number;
+
+// // Off: Passing
+// pass40YdPTd: number;
+// passIntTd: number;
+// passAtt: number;
+// passCmp: number;
+// passCmp40YdP: number;
+// passFD: number;
+// passInc: number;
+// passSack: number;

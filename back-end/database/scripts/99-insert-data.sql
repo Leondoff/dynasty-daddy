@@ -21,3 +21,4 @@ INSERT INTO config (config_key, config_value, description, created_at, updated_a
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('header_info_text', '', 'String - header text for the info bar', DEFAULT, DEFAULT)
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('header_info_url', '', 'String - URL for content', DEFAULT, DEFAULT)
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('allow_espn_login', 'false', 'Boolean - Enable FleaFlicker league login on homepage', DEFAULT, DEFAULT)
+INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('daily_grid_custom_grid', '{}', 'NFL Gridiron grid custom puzzle override', DEFAULT, DEFAULT)
