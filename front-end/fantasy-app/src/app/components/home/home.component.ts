@@ -309,8 +309,9 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   /**
    * handles logging in with mfl league id
    */
-  loginWithMFLLeagueId(year?: string, leagueId?: string): void {
-    this.mflService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.mflLeagueIdInput).subscribe(leagueData => {
+  loginWithMFLLeagueId(year: string = this.selectedYear, leagueId: string = this.mflLeagueIdInput): void {
+    const formattedLeagueId = leagueId?.split('#')[0] || leagueId;
+    this.mflService.loadLeagueFromId$(year, formattedLeagueId).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(leagueData);
     });
   }
