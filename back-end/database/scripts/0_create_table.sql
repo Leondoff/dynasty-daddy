@@ -181,3 +181,18 @@ create table historical_gridirons (
 );
 
 create index historical_gridirons_uindex on historical_gridirons (id);
+
+create table grid_results (
+    player_id Serial primary KEY
+    cellnum INTEGER,
+    name text,
+    guesses INTEGER,
+    img text,
+    grid_id INTEGER,
+)
+
+create index grid_results_uindex on grid_results (grid_id);
+
+ALTER TABLE grid_results
+ADD CONSTRAINT unique_player_cell_grid
+UNIQUE (player_id, cellNum, grid_id);
