@@ -39,9 +39,7 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.getHistoricalPlayerValuesEndpoint = this.baseUrl + '/v1/player/';
     this.fantasyPlayerApiConfigService.getPlayerDetailsEndpoint = this.baseUrl + '/v1/player/details/';
     this.fantasyPlayerApiConfigService.getFantasyPortfolioEndpoint = this.baseUrl + '/v1/portfolio';
-    this.fantasyPlayerApiConfigService.validateSelectedPlayerEndpoint = this.baseUrl + '/v1/grid/validate';
     this.fantasyPlayerApiConfigService.searchGridPlayersEndpoint = this.baseUrl + '/v1/grid/players';
-    this.fantasyPlayerApiConfigService.getAllGridPlayersEndpoint = this.baseUrl + '/v1/grid/players/all';
     this.fantasyPlayerApiConfigService.getHistoricalGridironsEndpoint = this.baseUrl + '/v1/grid/archive';
     this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint = this.baseUrl + '/v1/grid/results/add';
     this.fantasyPlayerApiConfigService.getAllGridResultsEndpoint = this.baseUrl + '/v1/grid/results';

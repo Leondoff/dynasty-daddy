@@ -63,7 +63,6 @@ def SetNewPlayerGrid():
 
     # Creating a cursor object using the cursor() method
     cursor = conn.cursor()
-    cursor.execute('TRUNCATE TABLE grid_results;')
     cursor.execute('SELECT * FROM player_grid;')
     rows = cursor.fetchall()
     

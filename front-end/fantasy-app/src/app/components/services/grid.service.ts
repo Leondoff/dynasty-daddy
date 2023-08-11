@@ -89,7 +89,7 @@ export class GridGameService {
         const x = coords[0] + 1;
         const y = coords[1] + 1;
         const cellNum = (coords[1] * 3) + coords[0];
-        const percent = this.isHistoricalGrid ? null : this.getPercentForPlayerSelected(player.id, cellNum, true);
+        const percent = this.getPercentForPlayerSelected(player.id, cellNum, true);
         this.gridResults[x][y] = { name: player.name, img: player.headshot_url, id: player.id, percent: percent };
         this.alreadyUsedPlayers.push(player.id);
       }
@@ -139,7 +139,7 @@ export class GridGameService {
    * calculate total selections for all grids
    */
   calculateTotalSelections(): void {
-    this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
+    this.fantasyPlayersAPIService.fetchAllGridironResults(this.gridDict['id']).subscribe(res => {
       res.forEach(obj => {
         const { cellnum } = obj;
         if (this.globalSelectionMapping[cellnum]) {
@@ -172,7 +172,7 @@ export class GridGameService {
     if (!this.globalSelectionMapping[cellNum]) {
       return 1;
     }
-    this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
+    this.fantasyPlayersAPIService.fetchAllGridironResults(this.gridDict['id']).subscribe(res => {
       res.forEach(p => {
         if (p.player_id === playerId && p.cellnum === cellNum) {
           percent = (p.guesses + playerInc) / (this.globalSelectionMapping[cellNum] + playerInc);
@@ -199,7 +199,7 @@ export class GridGameService {
         }
       }
     }
-    if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true' && !this.isHistoricalGrid) {
+    if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true') {
       this.fantasyPlayersAPIService.postCorrectGridironAnswer(playerList, this.gridDict['id']).subscribe(_ => {
         // do nothing
       })
@@ -225,19 +225,17 @@ export class GridGameService {
    * @param percent percent to get cell color for
    */
   getCellColor(percent: number = 100): string {
-    if (!this.isHistoricalGrid) {
-      if (percent < 0.01) {
-        return 'linear-gradient(to bottom right, #ADD8E6, #CC7DFF, #ADD8E6);'
-      }
-      if (percent < 0.05) {
-        return 'linear-gradient(to bottom right, #FFD700, white, #FFD700);'
-      }
-      if (percent < 0.10) {
-        return 'linear-gradient(to bottom right, silver, white, silver);'
-      }
-      if (percent < 0.15) {
-        return 'linear-gradient(to bottom right, #cd7f32, white, #cd7f32);'
-      }
+    if (percent < 0.01) {
+      return 'linear-gradient(to bottom right, #ADD8E6, #CC7DFF, #ADD8E6);'
+    }
+    if (percent < 0.05) {
+      return 'linear-gradient(to bottom right, #FFD700, white, #FFD700);'
+    }
+    if (percent < 0.10) {
+      return 'linear-gradient(to bottom right, silver, white, silver);'
+    }
+    if (percent < 0.15) {
+      return 'linear-gradient(to bottom right, #cd7f32, white, #cd7f32);'
     }
     return '#008f51';
   }

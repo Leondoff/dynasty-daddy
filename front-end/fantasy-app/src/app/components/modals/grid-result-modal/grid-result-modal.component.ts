@@ -133,7 +133,7 @@ export class GridResultModalComponent implements OnInit {
         this.cellStatSelectedPlayerId = this.resultGrid[j]?.[i]?.id
         const cellNum = (i * 3) + j;
         this.cellStatList = [];
-        this.fantasyPlayersAPIService.fetchAllGridironResults().subscribe(res => {
+        this.fantasyPlayersAPIService.fetchAllGridironResults(this.gridGameService.gridDict['id']).subscribe(res => {
             res.forEach(obj => {
                 if (obj['cellnum'] == cellNum) {
                     obj.percent = this.gridGameService.getPercentForPlayerSelected(obj.player_id, obj['cellnum'])

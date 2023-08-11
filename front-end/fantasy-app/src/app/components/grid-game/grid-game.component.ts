@@ -107,18 +107,18 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     private initGridGame(isHistorical: boolean = false): void {
         this.gridGameService.isHistoricalGrid = isHistorical;
         if (!isHistorical) {
-            this.gridGameService.calculateTotalSelections();
             this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue);
             this.gridGameService.gamesPlayed = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID_COMPLETED)?.configValue || 1);
+            const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}');
+            if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
+                this.gridGameService.guessesLeft = gridCache.guesses;
+                this.gridGameService.gridResults = gridCache.results;
+                this.gridGameService.alreadyUsedPlayers = gridCache.alreadyUsedPlayers || [];
+            } else {
+                localStorage.removeItem(LocalStorageDictionary.GRIDIRON_ITEM)
+            }
         }
-        const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}');
-        if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
-            this.gridGameService.guessesLeft = gridCache.guesses;
-            this.gridGameService.gridResults = gridCache.results;
-            this.gridGameService.alreadyUsedPlayers = gridCache.alreadyUsedPlayers || [];
-        } else {
-            localStorage.removeItem(LocalStorageDictionary.GRIDIRON_ITEM)
-        }
+        this.gridGameService.calculateTotalSelections();
         this.gridGameService.status = Status.DONE;
         if (this.gridGameService.guessesLeft === 9) {
             this.openHowToPlay()
@@ -321,6 +321,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             [null, null, null, null]
         ];
         this.gridGameService.alreadyUsedPlayers = [];
+        this.gridGameService.globalCommonAnsMapping = [];
+        this.gridGameService.globalSelectionMapping = {}
         this.initGridGame(isHistorical);
     }
 

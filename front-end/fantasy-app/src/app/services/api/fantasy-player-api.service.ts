@@ -39,10 +39,7 @@ export class FantasyPlayerApiService {
   private historicalGridirons;
 
   /** gridiron results cache */
-  private gridironResults;
-
-  /** gridiron players*/
-  private gridironPlayers;
+  private gridironResults = {};
 
   /** league format cache */
   private leagueFormatCache;
@@ -173,20 +170,7 @@ export class FantasyPlayerApiService {
         return this.fantasyPortfolioCache;
       }));
   }
-
-  /**
-  * validate grid player is correct
-  * @param playerId player id for the grid game
-  * @param categories grid categories to evaluate on
-  */
-  validateGridGameSelectedPlayer(playerId: number, categories: any[]): Observable<{ isValid: boolean, img: string }> {
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this.http.post<{ isValid: boolean, img: string }>(this.fantasyPlayerApiConfigService.validateSelectedPlayerEndpoint, { playerId, categories }, { headers: headers })
-      .pipe(map(res => {
-        return res;
-      }));
-  }
-
+  
   /**
   * return all players in grid game based on search
   * @param search string to search on
@@ -197,26 +181,6 @@ export class FantasyPlayerApiService {
         return res;
       }));
   }
-
-  /**
- * get historical gridirons
- */
-  fetchGridironPlayers(): Observable<any[]> {
-    return this.gridironPlayers ? of(this.gridironPlayers) : this.getAllGridGamePlayers();
-  }
-
-
-  /**
-  * return all players in grid game
-  */
-  private getAllGridGamePlayers(): Observable<GridPlayer[]> {
-    return this.http.get<GridPlayer[]>(this.fantasyPlayerApiConfigService.getAllGridPlayersEndpoint)
-      .pipe(map(res => {
-        this.gridironPlayers = res;
-        return res;
-      }));
-  }
-
 
   /**
    * get historical gridirons
@@ -239,17 +203,17 @@ export class FantasyPlayerApiService {
   /**
    * get gridiron results
    */
-  fetchAllGridironResults(): Observable<any[]> {
-    return this.gridironResults ? of(this.gridironResults) : this.getGridironResults();
+  fetchAllGridironResults(id: number): Observable<any[]> {
+    return this.gridironResults[id] ? of(this.gridironResults[id]) : this.getGridironResults(id);
   }
 
   /**
    * return all players in grid game
    */
-  private getGridironResults(): Observable<any[]> {
-    return this.http.get<any[]>(this.fantasyPlayerApiConfigService.getAllGridResultsEndpoint)
+  private getGridironResults(id: number): Observable<any[]> {
+    return this.http.get<any[]>(this.fantasyPlayerApiConfigService.getAllGridResultsEndpoint + `?gridId=${id}`)
       .pipe(map(res => {
-        this.gridironResults = res;
+        this.gridironResults[id] = res;
         return res;
       }));
   }

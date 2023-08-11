@@ -36,7 +36,8 @@ export const FetchAllHistoricalGridsEndpoint = async (req, res) => {
 
 export const FetchAllGridResultsEndpoint = async (req, res) => {
   try {
-    const allPlayers = await FetchAllGridResults();
+    const { gridId } = req.query;
+    const allPlayers = await FetchAllGridResults(gridId);
     res.status(200).json(allPlayers);
   } catch (err) {
     res.status(500).json(err.stack);

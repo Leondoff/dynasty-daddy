@@ -37,7 +37,7 @@
         <div class="center-text light_bg_color small-text__light"  *ngIf="toggleAnswers">
             Click cell to see rarity of each player
         </div>
-        <div *ngIf="selectedCellStat == -1 && toggleAnswers" class="margin-top-15">
+        <div *ngIf="selectedCellStat == -1 && toggleAnswers && !gridGameService.isHistoricalGrid" class="margin-top-15"> 
             <table class="result-table">
                 <tbody>
                     <ng-container *ngFor="let row of resultGrid; let i = index">
@@ -54,14 +54,14 @@
             Percent of players that got each cell right
         </div>
 
-        <div class="center-text light_bg_color margin-top-10" *ngIf="!gridGameService.isHistoricalGrid">
+        <div class="center-text light_bg_color margin-top-10">
             Rarity Rating
         </div>
-        <div class="center-text large-bold-header-text" *ngIf="!gridGameService.isHistoricalGrid">
+        <div class="center-text large-bold-header-text">
             {{uniScore}}
         </div>
         
-        <div class="margin-top-10 center-text" *ngIf="!gridGameService.isHistoricalGrid">
+        <div class="margin-top-10 center-text">
             <button mat-stroked-button (click)="toggleAnswers = !toggleAnswers">{{toggleAnswers ? 'Close' : 'Open'}} Stats</button>
         </div>
     </div>
