@@ -211,7 +211,10 @@ export class FFPCService {
         } else if (group.positionCategoryCode === 'RBWRTE') {
           positionMap.push('FLEX');
         } else {
-          positionMap.push(group.positionCategoryCode);
+          let pos = group.positionCategoryCode;
+          if (pos == 'PK')
+            pos = 'K';
+          positionMap.push(pos);
         }
       }
     });

@@ -4,7 +4,6 @@ import {
   GetAllHistoricalGridirons,
   GetCurrentResults,
   PersistGridResult,
-  IncrementGridGamesPlayed
 } from '../repository';
 
 export const SearchGridPlayers = async (search) =>
@@ -22,6 +21,5 @@ export const UpdateGridResultsWithAnswer = async (playerList, id) => {
   if (validPlayerList.length < 1) return id;
 
   await PersistGridResult(validPlayerList, id);
-  await IncrementGridGamesPlayed();
   return id;
 };

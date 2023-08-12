@@ -138,6 +138,7 @@ export class SidebarComponent extends BaseComponent implements OnInit {
    */
   private filterSidebarResults(): void {
     this.filteredPlayers = this.playerService.playerValues
+      .filter(p => ['QB', 'RB', 'WR', 'TE'].includes(p.position))
       .filter(p => this.isInSearch(p.full_name) ||
         this.isInSearch(p.position) ||
         this.isInSearch(p.owner?.ownerName) ||
