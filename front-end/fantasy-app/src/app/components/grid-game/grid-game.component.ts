@@ -108,7 +108,6 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         this.gridGameService.isHistoricalGrid = isHistorical;
         if (!isHistorical) {
             this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue);
-            this.gridGameService.gamesPlayed = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID_COMPLETED)?.configValue || 1);
             const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}');
             if (JSON.stringify(this.gridGameService.gridDict) === JSON.stringify(gridCache.grid)) {
                 this.gridGameService.guessesLeft = gridCache.guesses;

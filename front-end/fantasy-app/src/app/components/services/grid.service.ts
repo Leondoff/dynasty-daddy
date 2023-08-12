@@ -139,17 +139,22 @@ export class GridGameService {
    * calculate total selections for all grids
    */
   calculateTotalSelections(): void {
+    this.gamesPlayed = 1;
     this.fantasyPlayersAPIService.fetchAllGridironResults(this.gridDict['id']).subscribe(res => {
       res.forEach(obj => {
         const { cellnum } = obj;
-        if (this.globalSelectionMapping[cellnum]) {
-          this.globalSelectionMapping[cellnum] += obj.guesses;
-          if (this.globalCommonAnsMapping[cellnum].guesses < obj.guesses) {
+        if (cellnum == -1) {
+          this.gamesPlayed = obj.guesses || 1;
+        } else {
+          if (this.globalSelectionMapping[cellnum]) {
+            this.globalSelectionMapping[cellnum] += obj.guesses;
+            if (this.globalCommonAnsMapping[cellnum].guesses < obj.guesses) {
+              this.globalCommonAnsMapping[cellnum] = obj;
+            }
+          } else {
+            this.globalSelectionMapping[cellnum] = obj.guesses;
             this.globalCommonAnsMapping[cellnum] = obj;
           }
-        } else {
-          this.globalSelectionMapping[cellnum] = obj.guesses;
-          this.globalCommonAnsMapping[cellnum] = obj;
         }
       });
       this.refreshPercents();

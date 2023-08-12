@@ -125,6 +125,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                     if (this.leagueService.selectedLeague.rosterPositions.includes('IDP_FLEX'))
                         positionFilterList.push(...['DL', 'LB', 'DB'])
                     this.leaguePositions = Array.from(new Set(positionFilterList));
+                    console.log(positionFilterList, this.leaguePositions);
                     this.selectedPositions.setValue(this.leaguePositions);
                     this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
                     this.reloadFormatTool();

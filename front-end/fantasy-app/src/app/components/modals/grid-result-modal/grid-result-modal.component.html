@@ -11,10 +11,10 @@
 
 <div mat-dialog-content style="max-height: 76vh !important;">
     <div *ngIf="selectedCellStat == -1">
-        <div class="center-text light_bg_color margin-top-10" *ngIf="!gridGameService.isHistoricalGrid">
+        <div class="center-text light_bg_color margin-top-10">
             Games Completed
         </div>
-        <div class="center-text large-bold-header-text" *ngIf="!gridGameService.isHistoricalGrid">
+        <div class="center-text large-bold-header-text">
             {{gridGameService.gamesPlayed + 1}}
         </div>
         
@@ -37,7 +37,7 @@
         <div class="center-text light_bg_color small-text__light"  *ngIf="toggleAnswers">
             Click cell to see rarity of each player
         </div>
-        <div *ngIf="selectedCellStat == -1 && toggleAnswers && !gridGameService.isHistoricalGrid" class="margin-top-15"> 
+        <div *ngIf="selectedCellStat == -1 && toggleAnswers" class="margin-top-15"> 
             <table class="result-table">
                 <tbody>
                     <ng-container *ngFor="let row of resultGrid; let i = index">
