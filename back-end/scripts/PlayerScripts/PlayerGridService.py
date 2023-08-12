@@ -134,11 +134,6 @@ def SetNewPlayerGrid():
         config_value = %s WHERE config_key = \'daily_grid\';'''
     cursor.execute(setTodaysGridStatement, (str(jsonGrid),))
 
-    resetGridsPlayedCount = '''UPDATE config
-        SET
-        config_value = 1 WHERE config_key = \'daily_grid_completed\';'''
-    cursor.execute(resetGridsPlayedCount)
-
     archiveGridironStatement = '''INSERT INTO historical_gridirons (daily_grid)
                     VALUES (%s)'''
     cursor.execute(archiveGridironStatement, (str(jsonGrid),))
