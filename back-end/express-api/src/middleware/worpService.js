@@ -1,11 +1,10 @@
 /* eslint-disable max-len */
-/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-async-promise-executor */
 import {
   standardDeviation, sum, mean, zScore, cumulativeStdNormalProbability
 } from 'simple-statistics';
 
-const SUPPORTED_STARTERS = [ 'QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX', 'K', 'DF', 'LB', 'DB', 'DL', 'IDP_FLEX'];
+const SUPPORTED_STARTERS = [ 'QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX', 'K', 'DF', 'LB', 'DB', 'DL', 'IDP_FLEX' ];
 
 const FLEX_POS = [ 'RB', 'WR', 'TE' ];
 
@@ -13,7 +12,38 @@ const IDP_FLEX_POS = [ 'LB', 'DB', 'DL' ];
 
 const SUPER_FLEX_POS = [ 'QB', 'RB', 'WR', 'TE' ];
 
-export const SUPPORTED_POS = ['QB', 'RB', 'WR', 'TE', 'LB', 'DB', 'DL', 'K', 'DF' ];
+export const SUPPORTED_POS = [ 'QB', 'RB', 'WR', 'TE', 'LB', 'DB', 'DL', 'K', 'DF' ];
+
+/**
+ * Return positions strings that are to be processed
+ * @param {*} format dict of positions
+ */
+export const getPositionsToProcess = async (format) => {
+  const posList = [];
+  Object.keys(format).forEach(pos => {
+    if (format[pos] !== 0) {
+      switch (pos) {
+        case 'teamCount':
+          break;
+        case 'IDP_FLEX':
+          posList.push(...IDP_FLEX_POS);
+          posList.push('IDP_FLEX');
+          break;
+        case 'FLEX':
+          posList.push(...FLEX_POS);
+          posList.push('FLEX');
+          break;
+        case 'SUPER_FLEX':
+          posList.push(...SUPER_FLEX_POS);
+          posList.push('SUPER_FLEX');
+          break;
+        default:
+          posList.push(pos);
+      }
+    }
+  });
+  return Array.from(new Set(posList));
+};
 
 /**
  * Get standard deviation for an entire team from the std dev of the players
@@ -32,15 +62,18 @@ export const CalculateTeamStdDev = async (posGroupStdDev) =>
 export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
   const weeklyAVGDict = {};
   const { teamCount } = format;
+  const starterPosList = await getPositionsToProcess(format);
+  const posList = (await starterPosList).filter(p =>
+    ![ 'IDP_FLEX', 'FLEX', 'SUPER_FLEX' ].includes(p));
   const promises = Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
     const pointsPerPostionArray = [];
     const processedNameIds = [];
     const sortedPlayers = players.filter(p =>
-      weeklyPointsDict[Number(p.sleeper_id)])
+      weeklyPointsDict[p.sleeper_id])
       .sort((a, b) =>
-        weeklyPointsDict[Number(b.sleeper_id)].pts - weeklyPointsDict[Number(a.sleeper_id)].pts);
+        weeklyPointsDict[b.sleeper_id].pts - weeklyPointsDict[a.sleeper_id].pts);
 
-    SUPPORTED_STARTERS.forEach(pos => {
+    starterPosList.forEach(pos => {
       const avgDepth = format[pos] * teamCount;
       let posPlayerList = [];
       switch (pos) {
@@ -73,7 +106,7 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
       posPlayerList.forEach(player => {
         processedNameIds.push(player.name_id);
         // console.log(pos, player.name_id, weeklyPointsDict[Number(player.sleeper_id)]);
-        pointsForStartersList.push(weeklyPointsDict[Number(player.sleeper_id)].pts);
+        pointsForStartersList.push(weeklyPointsDict[player.sleeper_id].pts);
       });
       pointsPerPostionArray[pos] = {
         avg: pointsForStartersList.length > 0
@@ -85,14 +118,15 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
 
     // Replacement level for each position
     const replacementLevelDict = {};
-    SUPPORTED_POS.forEach(pos => {
-      const avgDepth = format[pos] * teamCount;
+    posList.forEach(pos => {
+      // const avgDepth = format[pos] * teamCount;
+      const avgDepth = 1;
       const replacementPlayers = sortedPlayers.filter(p =>
         p.position === pos && !processedNameIds.includes(p.name_id))
         .slice(0, avgDepth);
       replacementLevelDict[pos] = replacementPlayers.length > 0
         ? mean(replacementPlayers.map(p =>
-          weeklyPointsDict[Number(p.sleeper_id)].pts || 0)) : 0;
+          weeklyPointsDict[p.sleeper_id].pts || 0)) : 0;
       // console.log(pos, avgDepth, replacementLevelDict[pos]);
     });
 
@@ -100,7 +134,7 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
     const posScores = Object.values(pointsPerPostionArray).map(t =>
       t.avg);
     const startingLineUpStdDev = [];
-    SUPPORTED_STARTERS.forEach(pos => {
+    starterPosList.forEach(pos => {
       let count = 0;
       while (count < format[pos]) {
         startingLineUpStdDev.push(pointsPerPostionArray[pos].std);
@@ -140,44 +174,28 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
  * @param {*} players array of players in system
  * @param {*} pointsDict weekly points for players
  * @param {*} teamPointDict weekly team points
+ * @param {*} format league starter dict
  */
-export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, teamPointDict) => {
-  // replacement level wins? Do i need this? full season
-  const rlPoints = {};
-  SUPER_FLEX_POS.forEach(pos => {
-    const weeklyRepPoints = [];
-    Object.entries(teamPointDict).map(async ([_, weeklyTeamPointDict]) => {
-      weeklyRepPoints.push(weeklyTeamPointDict.repLevel[pos]);
-    });
-    rlPoints[pos] = mean(weeklyRepPoints);
-  });
-  // console.log(rlPoints)
-  const replacementLevelWins = {};
-  SUPPORTED_POS.forEach(pos => {
-    const repLevelPositionPoints = [];
-    Object.entries(teamPointDict).map(async ([_, weeklyTeamPointDict]) => {
-      const posPointsPerWeek = weeklyTeamPointDict.posGroups[pos];
-      const valueAddedTotal = weeklyTeamPointDict.total
-        - posPointsPerWeek.avg + rlPoints[pos];
-      const playerZ = zScore(
-        valueAddedTotal,
-        weeklyTeamPointDict.total,
-        weeklyTeamPointDict.stdDev
-      );
-      repLevelPositionPoints.push(cumulativeStdNormalProbability(playerZ));
-    });
-    replacementLevelWins[pos] = repLevelPositionPoints.length > 0
-      ? mean(repLevelPositionPoints) : 0;
-    // console.log(pos, replacementLevelWins[pos]);
-  });
-  // WEEKLY WORP TEST
+export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, teamPointDict, format) => {
+  // // replacement level wins? Do i need this? full season
+  // const rlPoints = {};
+  // SUPER_FLEX_POS.forEach(pos => {
+  //   const weeklyRepPoints = [];
+  //   Object.entries(teamPointDict).map(async ([_, weeklyTeamPointDict]) => {
+  //     weeklyRepPoints.push(weeklyTeamPointDict.repLevel[pos]);
+  //   });
+  //   rlPoints[pos] = mean(weeklyRepPoints);
+  // });
+  const posList = (await getPositionsToProcess(format)).filter(p =>
+    ![ 'IDP_FLEX', 'FLEX', 'SUPER_FLEX' ].includes(p));
+  // weekly WoRP calculation
   const replacementLevelWinPer = {};
   Object.entries(teamPointDict).map(async ([ week, weeklyTeamPointDict ]) => {
     replacementLevelWinPer[week] = {};
-    SUPPORTED_POS.forEach(pos => {
+    posList.forEach(pos => {
       const posPointsPerWeek = weeklyTeamPointDict.posGroups[pos];
       const valueAddedTotal = weeklyTeamPointDict.total
-          - posPointsPerWeek.avg + weeklyTeamPointDict.repLevel[pos];
+        - posPointsPerWeek.avg + weeklyTeamPointDict.repLevel[pos];
       const repPlayerZ = zScore(
         valueAddedTotal,
         weeklyTeamPointDict.total,
@@ -189,7 +207,8 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
   // console.log(replacementLevelWinPer)
   // calculate percent and WoRP for each player
   const playerWorpAndPercents = {};
-  players.forEach(p => {
+  players.filter(p =>
+    posList.includes(p.position)).forEach(p => {
     let weeklyWorp = 0;
     const winsPercentPerWeek = [];
     Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
@@ -197,7 +216,7 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
       const playerPointsPerWeek = weeklyPointsDict[p.sleeper_id]
         ? weeklyPointsDict[p.sleeper_id].pts : teamPointDict[week].repLevel[p.position];
       const valueAddedTotal = teamPointDict[week].total
-        - posPointsPerWeek.avg + playerPointsPerWeek;
+          - posPointsPerWeek.avg + playerPointsPerWeek;
       const playerZ = zScore(
         valueAddedTotal,
         teamPointDict[week].total,
@@ -205,15 +224,14 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
       );
       winsPercentPerWeek.push(cumulativeStdNormalProbability(playerZ));
       weeklyWorp += cumulativeStdNormalProbability(playerZ)
-        - replacementLevelWinPer[week][p.position];
+          - replacementLevelWinPer[week][p.position];
       // console.log(week, ` Team {${teamPointDict[week].total}, ${teamPointDict[week].stdDev}}`, p.position, teamPointDict[week].posGroups[p.position], `Points: {${weeklyPointsDict[p.sleeper_id]}, ${valueAddedTotal}, ${cumulativeStdNormalProbability(playerZ)}}`, `Rep: {pts: ${teamPointDict[week].repLevel[p.position]}, win% ${replacementLevelWinPer[week][p.position]}}, WORP: {Weekly: ${cumulativeStdNormalProbability(playerZ) - replacementLevelWinPer[week][p.position]}, Total: ${weeklyWorp}}`);
     });
     const playerPercent = winsPercentPerWeek.length > 0
       ? mean(winsPercentPerWeek) : 0;
-    // console.log(playerPercent);
+      // console.log(playerPercent);
     const weeks = Object.keys(pointsDict).length;
     playerWorpAndPercents[p.name_id] = {
-      yearWorp: playerPercent * weeks - replacementLevelWins[p.position] * weeks,
       svw: playerPercent * weeks,
       worp: Math.round(weeklyWorp * 100) / 100,
       percent: playerPercent
@@ -224,7 +242,7 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
 
 export const CalculateWORPForSeason = async (pointsDict, playersInSystem, format) => {
   const avgPointsPerPos = await CalculateAvgTeamScore(playersInSystem, pointsDict, format);
-  const playerWoRPAndPercent = await CalculatePercentAndWoRPForPlayers(playersInSystem, pointsDict, avgPointsPerPos);
+  const playerWoRPAndPercent = await CalculatePercentAndWoRPForPlayers(playersInSystem, pointsDict, avgPointsPerPos, format);
   return playerWoRPAndPercent;
   // return playersInSystem.sort((a, b) =>
   //   playerWoRPAndPercent[b.name_id].worp - playerWoRPAndPercent[a.name_id].worp)
