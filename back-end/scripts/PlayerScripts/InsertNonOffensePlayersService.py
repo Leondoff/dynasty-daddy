@@ -1,7 +1,8 @@
 import psycopg2
 from sleeper_wrapper import Players
 from PlayerService import cleanPlayerIdString
-from MFLPlayerService import fetchMFLPlayerDictNonOffense, DDPlayerMap
+from MFLPlayerService import fetchMFLPlayerDictNonOffense
+from Constants import DDPlayerPosMap
 
 
 def getSleeperData():
@@ -14,8 +15,8 @@ def getSleeperData():
     for playerId, value in sleeperData.items():
         if value['position'] not in ['QB', 'RB', 'WR', 'TE', 'FB', 'OT', 'RG', 'G', 'OL', 'T', 'LS', 'OT', 'C', 'OG', 'P'] and value['fantasy_positions'] is not None:
             pos = 'DL' if 'DL' in value['fantasy_positions'] else value['position']
-            if pos in DDPlayerMap:
-                pos = DDPlayerMap[pos]
+            if pos in DDPlayerPosMap:
+                pos = DDPlayerPosMap[pos]
                 value['position'] = pos
             playerNameId = cleanPlayerIdString(str(
                 value['first_name'] + value['last_name'] + pos))

@@ -1,6 +1,7 @@
 import requests
 import csv
 import PlayerService
+from Constants import DYNASTY_PROCESS_URL
 
 # format pick to be a string
 # this is needed to align with name id format
@@ -62,7 +63,6 @@ def formatDynastyProcessDict(response):
 
 # fetch std players from dynasty process
 def fetchDynastyProcessPlayerValues():
-    response = requests.get(
-            "https://raw.githubusercontent.com/dynastyprocess/data/master/files/values.csv")
+    response = requests.get(DYNASTY_PROCESS_URL)
     content = response.content.decode("utf-8")
     return formatDynastyProcessDict(content)
