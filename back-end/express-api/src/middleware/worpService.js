@@ -3,16 +3,12 @@
 import {
   standardDeviation, sum, mean, zScore, cumulativeStdNormalProbability
 } from 'simple-statistics';
-
-const SUPPORTED_STARTERS = [ 'QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX', 'K', 'DF', 'LB', 'DB', 'DL', 'IDP_FLEX' ];
-
-const FLEX_POS = [ 'RB', 'WR', 'TE' ];
-
-const IDP_FLEX_POS = [ 'LB', 'DB', 'DL' ];
-
-const SUPER_FLEX_POS = [ 'QB', 'RB', 'WR', 'TE' ];
-
-export const SUPPORTED_POS = [ 'QB', 'RB', 'WR', 'TE', 'LB', 'DB', 'DL', 'K', 'DF' ];
+import {
+  IDP_FLEX_POS,
+  FLEX_POS,
+  SUPER_FLEX_POS,
+  FLEX_TYPES
+} from './constants';
 
 /**
  * Return positions strings that are to be processed
@@ -64,7 +60,7 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
   const { teamCount } = format;
   const starterPosList = await getPositionsToProcess(format);
   const posList = (await starterPosList).filter(p =>
-    ![ 'IDP_FLEX', 'FLEX', 'SUPER_FLEX' ].includes(p));
+    !FLEX_TYPES.includes(p));
   const promises = Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
     const pointsPerPostionArray = [];
     const processedNameIds = [];
@@ -187,7 +183,7 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
   //   rlPoints[pos] = mean(weeklyRepPoints);
   // });
   const posList = (await getPositionsToProcess(format)).filter(p =>
-    ![ 'IDP_FLEX', 'FLEX', 'SUPER_FLEX' ].includes(p));
+    !FLEX_TYPES.includes(p));
   // weekly WoRP calculation
   const replacementLevelWinPer = {};
   Object.entries(teamPointDict).map(async ([ week, weeklyTeamPointDict ]) => {
