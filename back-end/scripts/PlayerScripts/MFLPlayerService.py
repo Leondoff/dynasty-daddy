@@ -1,28 +1,6 @@
 import requests
 import PlayerService
-
-MFL_URL = "https://api.myfantasyleague.com/2023/export?TYPE=players&L=&APIKEY=&DETAILS=&SINCE=&PLAYERS=&JSON=1"
-
-DDPlayerMap = {
-    'S': 'DB',
-    'CB': 'DB',
-    'NT': 'DL',
-    'DT': 'DL',
-    'DE': 'DL',
-    'PK': 'K',
-    'K': 'K',
-    'DL': 'DL',
-    'DB': 'DB',
-    'LB': 'LB',
-    'ILB': 'LB',
-    'OLB': 'LB',
-    'Def': 'DF',
-    'DEF': 'DF',
-    'SS': 'DB',
-    'FS': 'DB',
-    'DL/LB': 'DL'
-}
-
+from Constants import DDPlayerPosMap, MFL_URL
 
 # fetch players and ids from mfl
 def fetchMFLPlayerDict():
@@ -43,8 +21,8 @@ def fetchMFLPlayerDictNonOffense():
     mflPlayerDict = {}
     if response.json() is not None:
         for player in response.json()['players']['player']:
-            if player['position'] in DDPlayerMap:
+            if player['position'] in DDPlayerPosMap:
                 playerNames = player['name'].split(',')
-                playerNameId = PlayerService.cleanPlayerIdString(playerNames[1] + playerNames[0] + DDPlayerMap[player['position']])
+                playerNameId = PlayerService.cleanPlayerIdString(playerNames[1] + playerNames[0] + DDPlayerPosMap[player['position']])
                 mflPlayerDict[playerNameId] = player['id']
     return mflPlayerDict

@@ -1,7 +1,7 @@
 import csv
 import PlayerService
 import psycopg2
-from Constants import playerExceptionsMap
+from Constants import DDPlayerPosMap
 
 def fetchFromFleaFlickerCsv():
     with open('C:\\Users\\Jeremy\\Desktop\\People.csv', 'r') as file:
@@ -19,14 +19,18 @@ def fetchFromFleaFlickerCsv():
         cursor = conn.cursor()
         iter = 0
         for row in csvreader:
-            playerId = PlayerService.cleanPlayerIdString(row[3] + row[4])
+            pos = row[4]
+            if pos in DDPlayerPosMap:
+                pos = DDPlayerPosMap[pos]
+            playerId = PlayerService.cleanPlayerIdString(row[3] + pos)
             fleaflicker_id = row[2]
             playerIdsStatement = ''' UPDATE player_ids
                         SET
                         ff_id = %s,
                         updated_at = now() where name_id = %s'''
             cursor.execute(playerIdsStatement, (fleaflicker_id, playerId))
-            print('(' + str(iter) + '/' + str(len(csvreader)) + ') ' + playerId + ' processed ')
+            print('(' + str(iter) + ') ' + playerId + ' processed ')
+            iter = iter + 1
         
         # update the materialized view for the player ids   
         cursor.execute('''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_players;''')

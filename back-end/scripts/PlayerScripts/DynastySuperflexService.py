@@ -1,5 +1,6 @@
 import requests
 import PlayerService
+from Constants import DYNASTY_SUPERFLEX_URL
 
 # format api response to dict
 # Dict format will be {value: number, rank: number}
@@ -12,6 +13,5 @@ def formatDynastySuperflexDict(response):
 
 # fetch std players from dynasty superflex
 def fetchDynastySuperflexPlayerValues():
-    dynastySuperflexResponse = requests.get(
-            "https://www.dynastysuperflex.com/superflex/rankings/")
+    dynastySuperflexResponse = requests.get(DYNASTY_SUPERFLEX_URL)
     return formatDynastySuperflexDict(dynastySuperflexResponse)

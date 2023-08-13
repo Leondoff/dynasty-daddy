@@ -1,5 +1,6 @@
 import requests
 import PlayerService
+from Constants import FANTASY_CALC_SF_URL, FANTASY_CALC_STD_URL
 
 # format pick to be a string
 # this is needed to align with name id format
@@ -42,12 +43,10 @@ def formatFantasyCalcDict(response):
 
 # fetch std players from fantast calc
 def fetchStandardPlayerDict():
-    stdResponse = requests.get(
-            "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=1")
+    stdResponse = requests.get(FANTASY_CALC_STD_URL)
     return formatFantasyCalcDict(stdResponse)
 
 # fetch sf players from fantast calc
 def fetchSuperFlexPlayerDict():
-    sfResponse = requests.get(
-            "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2")
+    sfResponse = requests.get(FANTASY_CALC_SF_URL)
     return formatFantasyCalcDict(sfResponse)

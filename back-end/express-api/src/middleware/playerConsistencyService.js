@@ -21,7 +21,7 @@ export const CalculateOpportunityPerWeek = async (pos, stats) => {
 export const CalculateConsistency = async (pointsDict, playersInSystem, format, posList) => {
   const consistencyDict = {};
   const { teamCount } = format;
-  Object.entries(pointsDict).map(async ([ _, weeklyPointsDict ]) => {
+  Object.entries(pointsDict).map(async ([_, weeklyPointsDict]) => {
     const sortedPlayers = playersInSystem.filter(p => {
       const sleeperId = isNaN(Number(p.sleeper_id)) ? p.sleeper_id : Number(p.sleeper_id);
       return weeklyPointsDict[sleeperId] !== undefined;
@@ -68,7 +68,8 @@ export const CalculateConsistency = async (pointsDict, playersInSystem, format, 
   return consistencyDict;
 };
 
-export const CalculatePlayerConsistencyForSeason = async (pointsDict, playersInSystem, format, posList) => {
+export const CalculatePlayerConsistencyForSeason = async (
+  pointsDict, playersInSystem, format, posList) => {
   const updatedPlayerDict = await CalculateConsistency(
     pointsDict, playersInSystem, format, posList);
   return updatedPlayerDict;

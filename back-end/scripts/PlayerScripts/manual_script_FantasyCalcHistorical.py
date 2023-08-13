@@ -3,11 +3,11 @@ import psycopg2
 import datetime
 import time
 from FantasyCalcService import formatFantasyCalcDict
+from Constants import FANTASY_CALC_SF_URL
 
 # Create a map of nameIds to fantasy calc ids
 def createNameIdFCMap():
-    currentRes = requests.get(
-        "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2")
+    currentRes = requests.get(FANTASY_CALC_SF_URL)
     return formatFantasyCalcDict(currentRes)
 
 # fetch historical std and sf values for fantasy calc id and merge maps
