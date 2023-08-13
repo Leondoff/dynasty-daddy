@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-globals */
-import { SUPPORTED_POS } from './worpService';
 
 export const CalculateOpportunityPerWeek = async (pos, stats) => {
   if (!stats) return 0;
@@ -19,7 +18,7 @@ export const CalculateOpportunityPerWeek = async (pos, stats) => {
   }
 };
 
-export const CalculateConsistency = async (pointsDict, playersInSystem, format) => {
+export const CalculateConsistency = async (pointsDict, playersInSystem, format, posList) => {
   const consistencyDict = {};
   const { teamCount } = format;
   Object.entries(pointsDict).map(async ([ _, weeklyPointsDict ]) => {
@@ -33,7 +32,7 @@ export const CalculateConsistency = async (pointsDict, playersInSystem, format) 
       const pointsB = weeklyPointsDict[sleeperIdB].pts || 0;
       return pointsB - pointsA;
     });
-    SUPPORTED_POS.forEach(pos => {
+    posList.forEach(pos => {
       const highThreshold = (teamCount * format[pos]) / 2;
       const midThreshold = teamCount * format[pos] || 0;
       const lowThreshold = teamCount * (format[pos] || 0) + teamCount;
@@ -69,7 +68,8 @@ export const CalculateConsistency = async (pointsDict, playersInSystem, format) 
   return consistencyDict;
 };
 
-export const CalculatePlayerConsistencyForSeason = async (pointsDict, playersInSystem, format) => {
-  const updatedPlayerDict = await CalculateConsistency(pointsDict, playersInSystem, format);
+export const CalculatePlayerConsistencyForSeason = async (pointsDict, playersInSystem, format, posList) => {
+  const updatedPlayerDict = await CalculateConsistency(
+    pointsDict, playersInSystem, format, posList);
   return updatedPlayerDict;
 };
