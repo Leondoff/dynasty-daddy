@@ -76,7 +76,6 @@ export class LeagueSwitchService extends BaseComponent {
     this.tradeService.reset();
     console.time('Fetch League Data');
     this.addSubscriptions(this.leagueService.loadNewLeague$(this.selectedLeague).subscribe(res => {
-      console.log(this.leagueService.selectedLeague.scoringSettings)
       this.leagueService.leagueTeamDetails.map((team) => {
         this.playersService.generateRoster(team, this.selectedLeague.leaguePlatform);
       });

@@ -73,3 +73,12 @@ export const BarChartColorPalette = [
   '#9DC700',
   '#00C72B',
 ]
+
+export const TierColorPalette = [
+  '#9DC700',
+  '#c59700',
+  '#FF5733',
+  '#C70039',
+  '#900C3F',
+  '#581845'
+]

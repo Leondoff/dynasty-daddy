@@ -6,14 +6,14 @@ import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 })
 export class LeagueFormatService {
 
-    selectedSeason: number = 2022;
+    selectedSeason: number = null;
 
     filteredPlayers: FantasyPlayer[] = [];
 
     filterPosGroup: any[] = [];
 
-    columnsToDisplay = ['player', 'pos', 'team', 'worp',
-        'worppg', 'ppo', 'week', 'spikeHigh', 'spikeMid',
+    columnsToDisplay = ['player', 'pos', 'team', 'worpTier', 'worp',
+        'week', 'spikeHigh', 'spikeMid',
         'spikeLow', 'spikeHighP', 'spikeMidP', 'spikeLowP'];
 
     selectedVisualizations: string[] = ['worp', 'spikeMidP']
@@ -22,4 +22,13 @@ export class LeagueFormatService {
 
     constructor() { }
 
+}
+
+export enum WoRPTiers {
+    LeagueWinner,
+    Elite,
+    Starter,
+    Clogger,
+    Replaceable,
+    Droppable
 }

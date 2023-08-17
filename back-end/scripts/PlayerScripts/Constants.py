@@ -48,6 +48,6 @@ DYNASTY_PROCESS_URL = "https://raw.githubusercontent.com/dynastyprocess/data/mas
 DYNASTY_SUPERFLEX_URL = "https://www.dynastysuperflex.com/superflex/rankings/"
 
 # fantasy calc apis
-FANTASY_CALC_SF_URL = "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=1"
+FANTASY_CALC_SF_URL = "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2"
 
-FANTASY_CALC_STD_URL = "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2"
+FANTASY_CALC_STD_URL = "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=1"

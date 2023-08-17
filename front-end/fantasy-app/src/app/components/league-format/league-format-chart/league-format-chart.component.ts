@@ -32,6 +32,9 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
         'ppo': 'Pts. Per Opp',
         'opp': 'Fantasy Opp',
         'oppg': 'Opp Per Game',
+        'snpP': 'Snap %',
+        'pps': 'Points Per Snap',
+        'snppg': 'Snaps Per Game',
         'spikeHigh': 'High Spike Weeks',
         'spikeMid': 'Mid Spike Weeks',
         'spikeLow': 'Low Spike Weeks',
@@ -39,6 +42,8 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
         'spikeMidP': 'Mid Spike %',
         'spikeLowP': 'Low Spike %',
     }
+
+    percentMetrics = ['percent', 'spikeMidP', 'spikeLowP', 'spikeHighP', 'snpP'];
 
     /** chart set up */
     @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
@@ -69,7 +74,7 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
                 },
                 label: (tooltipItem) => {
                     var label = `${this.metricDisplay[this.metricName]}: `;
-                    if (['percent', 'spikeMidP', 'spikeLowP', 'spikeHighP'].includes(this.metricName)) {
+                    if (this.percentMetrics.includes(this.metricName)) {
                         label += Math.round(tooltipItem.yLabel as number * 1000) / 10 + '%';
                     } else {
                         label += Math.round(tooltipItem.yLabel as number * 100) / 100;
@@ -163,6 +168,15 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
             case 'ppg':
                 return this.playerFormatDict[nameId]?.c?.week != 0 ?
                     this.playerFormatDict[nameId]?.c?.pts / this.playerFormatDict[nameId]?.c?.week : 0;
+            case 'snpP':
+                return this.playerFormatDict[nameId]?.c?.snp /
+                    this.playerFormatDict[nameId]?.c?.tmSnp;
+            case 'pps':
+                return this.playerFormatDict[nameId]?.c?.snp != 0 ? this.playerFormatDict[nameId]?.c?.pts /
+                    this.playerFormatDict[nameId]?.c?.snp : 0;
+            case 'snppg':
+                return this.playerFormatDict[nameId]?.c?.week != 0 ?
+                    this.playerFormatDict[nameId]?.c?.snp / this.playerFormatDict[nameId]?.c?.week : 0;
             case 'worp':
             case 'percent':
                 return this.playerFormatDict[nameId]?.w?.[this.metricName] || 0;
@@ -174,14 +188,14 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
     private updateChart(): void {
         this.datasets = [];
         const playerList = this.playerService.playerValues.filter(p => p.position != 'PI'
-        && this.playerFormatDict[p.name_id]?.c)
+            && this.playerFormatDict[p.name_id]?.c)
             .sort((a, b) => (this.getMetric(b.name_id) || 0) - (this.getMetric(a.name_id) || 0));
         this.lineChartData = [];
         this.leagueFormat.forEach(pos => {
             const data = [];
             const posPlayers = playerList.filter(p => p.position === pos)
             this.datasets.push(posPlayers);
-            for (let i = 0; i < (posPlayers.length > 50 ? 50: posPlayers.length); i++) {
+            for (let i = 0; i < (posPlayers.length > 50 ? 50 : posPlayers.length); i++) {
                 data.push({
                     y: this.getMetric(posPlayers[i]?.name_id) || 0,
                     player: posPlayers[i],

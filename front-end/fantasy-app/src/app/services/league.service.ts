@@ -22,6 +22,7 @@ import { NflService } from './utilities/nfl.service';
 import { ESPNService } from './api/espn/espn.service';
 import { FFPCService } from './api/ffpc/ffpc.service';
 import { FantasyPlayerApiService } from './api/fantasy-player-api.service';
+import { StatService } from './utilities/stat.service';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +67,7 @@ export class LeagueService {
     private ffpcService: FFPCService,
     private fleaflickerService: FleaflickerService,
     private fantasyPlayerApiService: FantasyPlayerApiService,
+    private statService: StatService,
     private mflService: MflService) {
   }
 
@@ -435,6 +437,17 @@ export class LeagueService {
         'IDP_FLEX': this.selectedLeague.rosterPositions.filter(p => p == 'IDP_FLEX').length,
       }
       return this.fantasyPlayerApiService.fetchLeagueFormatForLeague(this.selectedLeague.leagueId, season, format, this.selectedLeague.scoringSettings).pipe(map(res => {
+        const arr = [];
+        Object.entries(res).forEach(p => {
+          p[1].id = p[0];
+          arr.push(p[1])
+        })
+        const tieriedWorp = this.statService.bucketSort(arr, 'w.worp', 6);
+        tieriedWorp.forEach((tierList, ind) => {
+          tierList.forEach(p => {
+            res[p['id']].w.worpTier = ind;
+          });
+        });
         this.leagueFormatMetrics[season] = res;
         return of(res);
       }));

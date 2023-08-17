@@ -6,7 +6,7 @@ import { LeagueSwitchService } from "../services/league-switch.service";
 import { ActivatedRoute } from "@angular/router";
 import { LeagueService } from "src/app/services/league.service";
 import { LeagueFormatService } from "../services/league-format.service";
-import { ConfigService } from "src/app/services/init/config.service";
+import { ConfigKeyDictionary, ConfigService } from "src/app/services/init/config.service";
 import { Status } from "../model/status";
 import { UntypedFormControl } from "@angular/forms";
 import { NflService } from "src/app/services/utilities/nfl.service";
@@ -53,11 +53,15 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         { key: 'pos', display: 'Position' },
         { key: 'owner', display: 'Fantasy Manager' },
         { key: 'team', display: 'NFL Team' },
+        { key: 'worpTier', display: 'WoRP Tier (Beta)' },
         { key: 'worp', display: 'Wins Over Replacement (WoRP)' },
         { key: 'worppg', display: 'WoRP Per Game' },
         { key: 'winP', display: 'Player Win Percent' },
         { key: 'pts', display: 'Fantasy Points' },
         { key: 'ppg', display: 'Points Per Game' },
+        { key: 'snpP', display: 'Snap Percent' },
+        { key: 'snppg', display: 'Snaps Per Game' },
+        { key: 'pps', display: 'Points Per Snap' },
         { key: 'tradeValue', display: 'Fantasy Market Trade Value' },
         { key: 'opp', display: 'Fantasy Opportunity' },
         { key: 'oppg', display: 'Opportunities Per Game' },
@@ -80,6 +84,9 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         { key: 'opp', display: 'Fantasy Opportunities', type: 'line' },
         { key: 'oppg', display: 'Fantasy Opportunities Per Game', type: 'line' },
         { key: 'ppo', display: 'Points Per Opportunity', type: 'line' },
+        { key: 'snpP', display: 'Snap Percent', type: 'line' },
+        { key: 'snppg', display: 'Snaps Per Week', type: 'line' },
+        { key: 'pps', display: 'Points Per Snap', type: 'line' },
         { key: 'spikeHigh', display: 'High Spike Week Count', type: 'line' },
         { key: 'spikeMid', display: 'Mid Spike Week Count', type: 'line' },
         { key: 'spikeLow', display: 'Low Spike Week Count', type: 'line' },
@@ -115,6 +122,8 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                 this.leagueSwitchService.loadFromQueryParams(params);
             }),
             this.leagueSwitchService.leagueChanged$.subscribe(_ => {
+                this.leagueFormatService.selectedSeason =
+                    Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
                 this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
                     const positionFilterList = this.leagueService.selectedLeague.rosterPositions
                         .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p));
@@ -175,6 +184,10 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         this.reloadFormatTool();
     }
 
+    /**
+     * Generate selectable seasons in league format tool
+     * @param number start year string
+     */
     getSelectableSeasons(number: string) {
         const result = [];
         for (let i = Number(number); i >= this.earliestSeason; i--) {
@@ -199,7 +212,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         switch (type) {
             case 2:
                 this.selectedVisualizations.setValue(['oppg', 'ppo']);
-                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'opp', 'oppg', 'ppo']);
+                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'opp', 'oppg', 'ppo', 'snpP']);
                 break;
             case 1:
                 this.selectedVisualizations.setValue(['spikeMidP', 'spikeHighP']);
@@ -207,7 +220,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                 break;
             default:
                 this.selectedVisualizations.setValue(['worp']);
-                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'worp', 'worppg', 'winP']);
+                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'worpTier', 'worp', 'worppg', 'winP']);
         }
         this.reloadFormatTool();
     }
