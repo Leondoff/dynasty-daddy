@@ -9,7 +9,7 @@ import { max, min } from 'simple-statistics';
 import { takeUntil } from 'rxjs/operators';
 import { MatchupService } from './matchup.service';
 import { NflService } from '../../services/utilities/nfl.service';
-import { EloService } from '../../services/utilities/elo.service';
+import { StatService } from '../../services/utilities/stat.service';
 import { LeagueType } from '../../model/league/LeagueDTO';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
 import { PowerRankingOrder } from '../power-rankings/power-rankings-chart/power-rankings-chart.component';
@@ -22,7 +22,7 @@ export class PowerRankingsService {
   constructor(private leagueService: LeagueService,
     public playerService: PlayerService,
     private matchupService: MatchupService,
-    private eloService: EloService,
+    private eloService: StatService,
     private nflService: NflService
   ) {
 
@@ -441,39 +441,14 @@ export class PowerRankingsService {
    * @private
    */
   private setTeamTiers(teams: TeamPowerRanking[], isSuperflex: boolean): void {
-    const groups = [];
     // create a map of all starter rankings for teams
-    const ratings = teams.map(team => {
-      return team.adpValueStarter;
+    const ratingsDict = {};
+    teams.forEach(item => {
+      ratingsDict[item.team.roster.rosterId] = item.adpValueStarter;
     });
-    // get min rating
-    const minRating = min(ratings);
-    // get max rating
-    const maxRating = max(ratings);
-    // determine number of bins
-    // const binCount = Math.ceil(Math.sqrt(ratings.length));
-    const binCount = 4;
-    // calculate the bin width
-    const binWidth = (maxRating - minRating) / binCount;
-    // set up loop with floor & ceiling
-    let binFloor = minRating;
-    let binCeiling = minRating + binWidth;
-    // loop through teams and determine each group
-    for (let groupInd = 0; groupInd < binCount; groupInd++) {
-      const newGroup = [];
-      teams.forEach((team) => {
-        if (team?.adpValueStarter >= binFloor && team?.adpValueStarter < binCeiling) {
-          newGroup?.push(team);
-        }
-      });
-      // after checking each team push group and set up next group
-      groups.push(newGroup);
-      binFloor = binCeiling;
-      binCeiling += binWidth + 1;
-    }
-
+    const groups = this.eloService.bucketSort(teams, 'adpValueStarter', 4);
     // assign tier based on grouping
-    groups.reverse().map((group, ind) => {
+    groups.map((group, ind) => {
       // set super team if criteria is met
       if (group.length === 1 && ind === 0) {
         group[0].tier = ind;

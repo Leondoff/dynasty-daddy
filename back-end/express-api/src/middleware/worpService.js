@@ -63,7 +63,7 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
   const starterPosList = await getPositionsToProcess(format);
   const posList = (await starterPosList).filter(p =>
     !FLEX_TYPES.includes(p));
-  const promises = Object.entries(pointsDict).map(async ([week, weeklyPointsDict]) => {
+  const promises = Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
     const pointsPerPostionArray = [];
     const processedNameIds = [];
     const sortedPlayers = players.filter(p =>
@@ -188,7 +188,7 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
     !FLEX_TYPES.includes(p));
   // weekly WoRP calculation
   const replacementLevelWinPer = {};
-  Object.entries(teamPointDict).map(async ([week, weeklyTeamPointDict]) => {
+  Object.entries(teamPointDict).map(async ([ week, weeklyTeamPointDict ]) => {
     replacementLevelWinPer[week] = {};
     posList.forEach(pos => {
       const posPointsPerWeek = weeklyTeamPointDict.posGroups[pos];
@@ -207,34 +207,34 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
   const playerWorpAndPercents = {};
   players.filter(p =>
     posList.includes(p.position)).forEach(p => {
-      let weeklyWorp = 0;
-      const winsPercentPerWeek = [];
-      Object.entries(pointsDict).map(async ([week, weeklyPointsDict]) => {
-        const posPointsPerWeek = teamPointDict[week].posGroups[p.position];
-        const playerPointsPerWeek = weeklyPointsDict[p.sleeper_id]
-          ? weeklyPointsDict[p.sleeper_id].pts : teamPointDict[week].repLevel[p.position];
-        const valueAddedTotal = teamPointDict[week].total
+    let weeklyWorp = 0;
+    const winsPercentPerWeek = [];
+    Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
+      const posPointsPerWeek = teamPointDict[week].posGroups[p.position];
+      const playerPointsPerWeek = weeklyPointsDict[p.sleeper_id]
+        ? weeklyPointsDict[p.sleeper_id].pts : teamPointDict[week].repLevel[p.position];
+      const valueAddedTotal = teamPointDict[week].total
           - posPointsPerWeek.avg + playerPointsPerWeek;
-        const playerZ = zScore(
-          valueAddedTotal,
-          teamPointDict[week].total,
-          teamPointDict[week].stdDev
-        );
-        winsPercentPerWeek.push(cumulativeStdNormalProbability(playerZ));
-        weeklyWorp += cumulativeStdNormalProbability(playerZ)
+      const playerZ = zScore(
+        valueAddedTotal,
+        teamPointDict[week].total,
+        teamPointDict[week].stdDev
+      );
+      winsPercentPerWeek.push(cumulativeStdNormalProbability(playerZ));
+      weeklyWorp += cumulativeStdNormalProbability(playerZ)
           - replacementLevelWinPer[week][p.position];
-        // console.log(week, ` Team {${teamPointDict[week].total}, ${teamPointDict[week].stdDev}}`, p.position, teamPointDict[week].posGroups[p.position], `Points: {${weeklyPointsDict[p.sleeper_id]}, ${valueAddedTotal}, ${cumulativeStdNormalProbability(playerZ)}}`, `Rep: {pts: ${teamPointDict[week].repLevel[p.position]}, win% ${replacementLevelWinPer[week][p.position]}}, WORP: {Weekly: ${cumulativeStdNormalProbability(playerZ) - replacementLevelWinPer[week][p.position]}, Total: ${weeklyWorp}}`);
-      });
-      const playerPercent = winsPercentPerWeek.length > 0
-        ? mean(winsPercentPerWeek) : 0;
-      // console.log(playerPercent);
-      const weeks = Object.keys(pointsDict).length;
-      playerWorpAndPercents[p.name_id] = {
-        svw: playerPercent * weeks,
-        worp: Math.round(weeklyWorp * 100) / 100,
-        percent: playerPercent
-      };
+      // console.log(week, ` Team {${teamPointDict[week].total}, ${teamPointDict[week].stdDev}}`, p.position, teamPointDict[week].posGroups[p.position], `Points: {${weeklyPointsDict[p.sleeper_id]}, ${valueAddedTotal}, ${cumulativeStdNormalProbability(playerZ)}}`, `Rep: {pts: ${teamPointDict[week].repLevel[p.position]}, win% ${replacementLevelWinPer[week][p.position]}}, WORP: {Weekly: ${cumulativeStdNormalProbability(playerZ) - replacementLevelWinPer[week][p.position]}, Total: ${weeklyWorp}}`);
     });
+    const playerPercent = winsPercentPerWeek.length > 0
+      ? mean(winsPercentPerWeek) : 0;
+      // console.log(playerPercent);
+    const weeks = Object.keys(pointsDict).length;
+    playerWorpAndPercents[p.name_id] = {
+      svw: playerPercent * weeks,
+      worp: Math.round(weeklyWorp * 100) / 100,
+      percent: playerPercent
+    };
+  });
   return playerWorpAndPercents;
 };
 

@@ -5,9 +5,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueService } from 'src/app/services/league.service';
-import { ColorService } from 'src/app/services/utilities/color.service';
+import { ColorService, TierColorPalette } from 'src/app/services/utilities/color.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
-import { LeagueFormatService } from '../../services/league-format.service';
+import { LeagueFormatService, WoRPTiers } from '../../services/league-format.service';
 
 @Component({
     selector: 'app-league-format-table',
@@ -40,8 +40,6 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
     /** color gradient */
     perGradient: string[] = [];
 
-    worpGradient: string[] = [];
-
     constructor(public configService: ConfigService,
         public leagueSwitchService: LeagueSwitchService,
         public leagueFormatService: LeagueFormatService,
@@ -52,7 +50,6 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.perGradient = this.colorService.getProbGradient();
-        this.worpGradient = this.colorService.getColorGradientArray(60, '#581845', '#c59700');
         this.refreshTable();
     }
 
@@ -88,6 +85,15 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
                     this.playerFormatDict[p?.name_id]?.c?.opp / this.playerFormatDict[p?.name_id]?.c?.week : 0,
                 ppo: this.playerFormatDict[p?.name_id]?.c?.opp != 0 ?
                     this.playerFormatDict[p?.name_id]?.c?.pts / this.playerFormatDict[p?.name_id]?.c?.opp : 0,
+                pps: this.playerFormatDict[p?.name_id]?.c?.snp != 0 ? this.playerFormatDict[p?.name_id]?.c?.pts /
+                    this.playerFormatDict[p?.name_id]?.c?.snp : 0,
+                snpP: this.playerFormatDict[p?.name_id]?.c?.snp /
+                    this.playerFormatDict[p?.name_id]?.c?.tmSnp,
+                snppg:
+                    this.playerFormatDict[p?.name_id]?.c?.week != 0 ?
+                        this.playerFormatDict[p?.name_id]?.c?.snp / this.playerFormatDict[p?.name_id]?.c?.week : 0,
+                worpTier: this.playerFormatDict[p?.name_id]?.w?.worpTier,
+                worpTierDisplay: this.getWoRPTierName(this.playerFormatDict[p?.name_id]?.w?.worpTier),
             }
         });
         this.dataSource.paginator = this.paginator;
@@ -112,6 +118,23 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
     getProbColor = (percent: number) =>
         this.perGradient[Math.round(percent * 100)];
 
-    getWoRPColor = (worp: number) =>
-        this.worpGradient[Math.round(worp * 10) + 10];
+    getWoRPTierName(tier: WoRPTiers): string {
+        switch (tier) {
+            case WoRPTiers.LeagueWinner:
+                return this.configService.isMobile ? 'Breaker' : 'League Breaker';
+            case WoRPTiers.Elite:
+                return 'Elite';
+            case WoRPTiers.Starter:
+                return 'Starter';
+            case WoRPTiers.Replaceable:
+                return 'Waiver';
+            case WoRPTiers.Clogger:
+                return this.configService.isMobile ? 'Clogger' : 'Roster Clogger';
+            default:
+                return 'Dropable';
+        }
+    }
+
+    getWoRPColor = (tier: WoRPTiers) =>
+        TierColorPalette[tier]
 }

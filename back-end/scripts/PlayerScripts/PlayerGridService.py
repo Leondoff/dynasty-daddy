@@ -5,8 +5,8 @@ import json
 import os
 import psycopg2
 
-SupportedYTypes = ['college', 'team', 'team', 'team',
-                   'team', 'team', 'stat', 'stat', 'stat']
+SupportedYTypes = ['team', 'team', 'team',
+                   'team', 'stat', 'stat', 'stat']
 
 SupportedXTypes = ['award', 'award', 'stat', 'stat', 'stat']
 

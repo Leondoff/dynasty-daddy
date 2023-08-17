@@ -39,7 +39,12 @@
 
             <ng-container matColumnDef="worp">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>WoRP</th>
-                <td mat-cell *matCellDef="let element"><mat-chip-list><mat-chip  style="background: {{getWoRPColor(leagueFormatService.tableCache[element?.name_id]?.worp)}}">{{leagueFormatService.tableCache[element?.name_id]?.worp}}</mat-chip></mat-chip-list></td>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.worp}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="worpTier">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>WoRP Tier</th>
+                <td mat-cell *matCellDef="let element"><mat-chip-list><mat-chip style="background: {{getWoRPColor(leagueFormatService.tableCache[element?.name_id]?.worpTier)}}">{{leagueFormatService.tableCache[element?.name_id]?.worpTierDisplay}}</mat-chip></mat-chip-list></td>
             </ng-container>
 
             <ng-container matColumnDef="worppg">
@@ -55,6 +60,21 @@
             <ng-container matColumnDef="ppg">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>PPG</th>
                 <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.ppg || '-'}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="pps">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Pts/Snp</th>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.pps | number:'1.1-2' || 0}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="snppg">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Snp PG</th>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.snppg | number:'1.1-2' || 0}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="snpP">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>SNP %</th>
+                <td mat-cell *matCellDef="let element">{{leagueFormatService.tableCache[element?.name_id]?.snpP | percent:'1.1' || '-'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="tradeValue">
