@@ -69,7 +69,7 @@ export class StatService {
     // determine number of bins
     const binCount = hardcodedWidth || Math.ceil(Math.sqrt(valueList.length));
     // calculate the bin width
-    const binWidth = (maxRating - minRating) / binCount;
+    const binWidth = Math.round((maxRating - minRating) / binCount * 100) / 100;
     // set up loop with floor & ceiling
     let binFloor = minRating;
     let binCeiling = minRating + binWidth;

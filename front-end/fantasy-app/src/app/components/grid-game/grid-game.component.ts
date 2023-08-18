@@ -34,7 +34,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     menuItems: Observable<any[]>;
 
     /** help menu bullet points */
-    helpBullets = [
+    helpBullets = [{list: [
         "Select a player for each cell that matches the criteria for that cell's row and column.",
         "For a player to be considered valid for a team, he must've suited up for one NFL regular season game for that team.",
         "If a cell is for a team and an award, the award must have been won after 1999 but didn't have to be on the team when winning the award.",
@@ -46,8 +46,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         "You have 9 guesses to fill out the grid.",
         "Each guess, whether correct or incorrect, counts as a guess.",
         "You can guess active or inactive NFL players.",
-        "There is a new grid every day at 5 AM EST."
-    ];
+        "There is a new grid every day at 5 AM EST."]
+    }];
 
     seasonStats = ['rushYd1000',
         'recYd1000',
@@ -295,7 +295,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 minWidth: this.configService.isMobile ? '200px' : '500px',
                 data: {
                     headerText: 'How to play',
-                    listText: this.helpBullets
+                    categoryList: this.helpBullets
                 }
             }
         );

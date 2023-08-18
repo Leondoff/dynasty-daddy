@@ -1,0 +1,9 @@
+@use '@angular/material' as mat;
+
+@import "../../../../styles.scss";
+
+.tool-help {
+    color: mat.get-color-from-palette($mat-accent, main);
+    font-weight: bold;
+    cursor: pointer;
+}

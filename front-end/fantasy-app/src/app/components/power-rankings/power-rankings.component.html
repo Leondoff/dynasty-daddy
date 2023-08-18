@@ -3,6 +3,8 @@
   {{pageDescription}}
 </div>
 
+<tool-help [toolName]="'Power Rankings'"></tool-help>
+
 <div *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0" class="power-ranking-container">
   <div>
     <app-power-rankings-chart [powerRankings]="powerRankingService.powerRankings" [selectedOrder]="powerRankingService.powerRankingChartOption" [selectedMarket]="playersService.selectedMarket"></app-power-rankings-chart>

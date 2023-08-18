@@ -6,7 +6,10 @@
   </div>
 
 <mat-dialog-content>
+  <div *ngFor="let category of categoryList">
+    <div *ngIf="category.title" class="mid-bold-text">{{category.title}}</div>
     <ul>
-      <li class="bullet-point" *ngFor="let bulletPoint of listText">{{ bulletPoint }}</li>
+      <li class="bullet-point" *ngFor="let bulletPoint of category.list">{{ bulletPoint }}</li>
     </ul>
+  </div>
 </mat-dialog-content>
