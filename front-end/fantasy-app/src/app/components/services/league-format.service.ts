@@ -28,7 +28,7 @@ export enum WoRPTiers {
     LeagueWinner,
     Elite,
     Starter,
+    Bench,
     Clogger,
-    Replaceable,
     Droppable
 }

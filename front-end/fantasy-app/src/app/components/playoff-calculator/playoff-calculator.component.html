@@ -2,6 +2,9 @@
 <div class="center-text margin-top-10">
   {{pageDescription}}
 </div>
+
+<tool-help [toolName]="'Playoff Calculator'"></tool-help>
+
 <div *ngIf="leagueService.isLeagueLoaded() && playoffCalculatorService.matchUpsWithProb.length != 0 && playoffCalculatorService.divisions.length > 0 && (leagueService.selectedLeague?.status !== 'pre_draft' && leagueService.selectedLeague?.status !== 'drafting')" class="margin-top-10 table-container">
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
     <mat-tab label="Season" style="overflow: hidden">

@@ -126,12 +126,12 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
                 return 'Elite';
             case WoRPTiers.Starter:
                 return 'Starter';
-            case WoRPTiers.Replaceable:
-                return 'Waiver';
             case WoRPTiers.Clogger:
                 return this.configService.isMobile ? 'Clogger' : 'Roster Clogger';
+            case WoRPTiers.Bench:
+                return this.configService.isMobile ? 'Bench' : 'Bench Piece';
             default:
-                return 'Dropable';
+                return 'Waiver';
         }
     }
 

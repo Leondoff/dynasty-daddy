@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MAT_DIALOG_DATA } from "@angular/material/dialog";
-
+import { SimpleTextCategory } from "src/app/model/toolHelpModel";
 
 @Component({
     selector: 'simple-text-modal',
@@ -11,16 +11,16 @@ export class SimpleTextModal implements OnInit {
 
     headerText: string = '';
 
-    listText: string[] = [];
+    categoryList: SimpleTextCategory[] = [];
 
     constructor(
         private dialog: MatDialog,
-        @Inject(MAT_DIALOG_DATA) public data: { headerText: string, listText: string[] }
+        @Inject(MAT_DIALOG_DATA) public data: { headerText: string, categoryList: SimpleTextCategory[] }
     ) {}
 
     ngOnInit(): void {
         this.headerText = this.data.headerText;
-        this.listText = this.data.listText;
+        this.categoryList = this.data.categoryList;
     }
 
     close(): void {
