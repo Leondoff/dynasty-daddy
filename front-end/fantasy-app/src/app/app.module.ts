@@ -122,6 +122,7 @@ import { SimpleTextModal } from './components/sub-components/simple-text-modal/s
 import { LeagueFormatChartComponent } from './components/league-format/league-format-chart/league-format-chart.component';
 import { LeagueFormatTableComponent } from './components/league-format/league-format-table/league-format-table.component';
 import { ToolHelpComponent } from './components/sub-components/tool-help/tool-help.component';
+import { FilterLeagueFormatModalComponent } from './components/modals/filter-league-format-modal/filter-league-format-modal.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -211,6 +212,7 @@ let UniversalDeviceDetectorService;
     TruncatePipe,
     LeagueFormatChartComponent,
     LeagueFormatTableComponent,
+    FilterLeagueFormatModalComponent,
     ToolHelpComponent
   ],
   imports: [

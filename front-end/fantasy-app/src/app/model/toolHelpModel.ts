@@ -113,7 +113,7 @@ export const LeagueFormatTutorial: SimpleTextCategory[] = [
         title: 'Data Table Options',
         list: [
             'The data table enables searching player names via the search bar and sorting by column values by selecting the field in the the table headers.',
-            'Using the \"Filter Position\" dropdown, you can configure what player positions to filter out from the data table. This can be useful for diving into a specific position group(s).'
+            'Using the \"Filter Position\" dropdown, you can configure what player positions to filter out from the data table. This can be useful for diving into a specific position group(s).',
         ]
     },
     {
@@ -129,7 +129,7 @@ export const LeagueFormatTutorial: SimpleTextCategory[] = [
         list: [
             'WoRP - WoRP stands for Wins Over Replacement Player and is a useful cross-positional metric to derive what position groups make the biggest impact for your league format. In simple terms, WoRP quantifies the value a specific player has vs a replacement level player on a week-to-week basis. A Replacement level player would be a player outside the ideal starter range for your league so in a 12 team 1 QB league that would be QB 13 and beyond.',
             'WoRP Per Game - Using WoRP calculations, this is Worp divided by games played. It can be useful to catch players that have high WoRP but missed more games than others.',
-            'Spike Weeks - Spike weeks are calculated based on if a player rankings among a top amount of players based on your format. For high spike weeks, the player must rank in the top half of the starting roster spots for that postion ({pos starts} * {team count} / 2). For mid spike weeks, players must be an optimal or quality starter for that week ({pos starts} * {team count}). For low spike weeks, a player must finish as a top starter or flex option for a position that week ({pos starts + (flex/super_flex/idp_flex)} * {team count}. Based on some league formats results may vary.',
+            'Spike Weeks - Spike weeks are calculated based on if a player ranks among a top threshold amount of players based on your format. For high spike weeks, the player must rank in the top half of the starting roster spots for that postion ({pos starts} * {team count} / 2). For mid spike weeks, players must be an optimal or quality starter for that week ({pos starts} * {team count}). For low spike weeks, a player must finish as a top starter or flex option for a position that week ({pos starts + (flex/super_flex/idp_flex)} * {team count}. Based on some league formats results may vary.',
             'Fantasy Opportunties - Fantasy Opportunities count how many times a specific player was in the position to score points. For QB, this counts pass & rush attempts. For WR, RB, and TE, this counts pass, rush, & rec attempts. For K, this counts all extra point & field goal attempts. For Team Defense or IDP, this counts all snaps the defense or defensive player played.',
         ]
     },
@@ -143,6 +143,14 @@ export const LeagueFormatTutorial: SimpleTextCategory[] = [
             'Bench Piece - A weak starter and solid depth piece that has enough value to be rostered but not enough production to be a reliable starter. (Mobile: Tier is just Bench)',
             'Roster Clogger - A player that has some value but lacks any relevant production. Most likely this player is on waivers or burning a hole on some teams bench somewhere. (Mobile: Tier is just Clogger)',
             'Waiver - A droppable player that will probably available in most leagues with this format. The definition of a waste of a roster space.'
+        ]
+    },
+    {
+        title: 'Advanced Filtering (Desktop Only)',
+        list: [
+            'By clicking on the filter icon, the advanced filtering modal will pop up to let you create complex queries on the data table.',
+            'You can select what fields you want to filter on, the operator, and the value threshold to filter on. You can create and/or and nested sets of rules to create more complex queries for your data.',
+            'After applying an advanced filter, another icon with the filter and a slash will be present. By clicking that icon, the advanced filter will be removed from the data table.'
         ]
     },
 ];

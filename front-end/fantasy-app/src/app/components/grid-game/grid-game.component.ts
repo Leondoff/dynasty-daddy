@@ -57,6 +57,12 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         'passingTds30',
         'ints10',
         'rec100',
+        'defTkl100',
+        'defFF4',
+        'defSacks12',
+        'defInts6',
+        'defTds2',
+        'defSafe1',
         'specialTds2']
 
     constructor(public configService: ConfigService,
@@ -66,8 +72,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         private fantasyPlayerApiService: FantasyPlayerApiService,
         public gridGameService: GridGameService) {
         super();
-        this.pageService.setUpPageSEO('NFL Immaculate Gridiron',
-            ['nfl', 'immaculate', 'grid', 'trivia'],
+        this.pageService.setUpPageSEO('Immaculate Gridiron',
+            ['nfl', 'immaculate', 'grid', 'trivia', 'football', 'game', 'crossover'],
             this.pageDescription)
     }
 
@@ -223,6 +229,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             return '80+';
         } else if (stat.includes('12')) {
             return '12+';
+        } else if (stat.includes('6')) {
+            return '6+';
         } else if (stat.includes('5')) {
             return '5+';
         } else if (stat.includes('4')) {
@@ -277,7 +285,26 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 return 'Pass Tds';
             case '80Rush200PassG':
             case '50Rush200PassG':
-                return 'Rush & Pass Yds'
+                return 'Rush & Pass Yds';
+            case 'defTkl100':
+            case 'max10TklG':
+                return 'Tackles';
+            case 'defFF4':
+            case 'max2FFG':
+                return 'Forced Fumbles';
+            case 'defSacks12':
+            case 'max2SacksG':
+                return 'Sacks (Def)';
+            case 'defInts6':
+            case 'max2IntsG':
+                return 'Int Caught';
+            case 'defTds2':
+            case 'max2defTd':
+                return 'Def Tds';
+            case 'defSafe1':
+                return 'Safeties (Def)';
+            case '1Sack1IntG':
+                return 'Sacks & Ints';
             case 'only1Team':
                 return 'Team Only';
             default:
