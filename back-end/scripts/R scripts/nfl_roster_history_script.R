@@ -1,25 +1,18 @@
-install.packages("nflreadr")
+install.packages("tidyverse", type = "binary")
+install.packages("ggrepel", type = "binary")
+install.packages("nflreadr", type = "binary")
+install.packages("nflplotR", type = "binary")
+install.packages("nflfastR", type = "binary")
+install.packages("gsisdecoder", type = "binary")
 
 library(nflreadr)
-options(nflreadr.verbose = FALSE)
-library(dplyr)
+# options(nflreadr.verbose = FALSE)
+library(nflfastR)
+# library(ggrepel)
+# library(nflplotR)
+# library(dplyr)
 
 # file_name <- "roster_all_years.csv"
-
-# # Loop from 1999 to 2022
-# for (year in 2001:1999) {
-#   # Call the function and get the roster data
-#   roster_data <- load_rosters(2002:2022)
-
-#   # Select the desired columns (name and team)
-#   selected_columns <- roster_data[, c("season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college")]
-  
-#   # Write the selected columns to the file in append mode without headers
-#   write.table(selected_columns, file = file_name, append = TRUE, sep = ",")
-  
-#   # Print a message for each iteration
-#   message(paste("Data for year", year, "has been written to", file_name))
-# }
 
 # load weekly roster stats for players
 # aaa <- load_rosters_weekly(season = 2002:2022)
@@ -30,7 +23,29 @@ library(dplyr)
 # # write rostered players to csv
 # write.csv(selected_columns, "C:\\Users\\Jeremy\\Desktop\\test.csv", row.names=FALSE)
 
-#manually add in 1999-2001 from the commented out section above
+try({# to avoid CRAN test problems
+  pbp <- load_pbp(season = 1999:2022)
+  weekly <- calculate_player_stats_def(pbp, weekly = TRUE)
+
+  grouped_data_def <- weekly %>% group_by(player_id, season)
+  summed_data_def <- grouped_data_def %>% 
+  summarise(
+    sum_def_tackles = sum(def_tackles + def_tackle_assists, na.rm = TRUE),
+    sum_forced_fum = sum(def_fumbles_forced, na.rm = TRUE),
+    sum_def_sacks = sum(def_sacks, na.rm = TRUE),
+    sum_def_interceptions = sum(def_interceptions, na.rm = TRUE),
+    sum_def_tds = sum(def_tds, na.rm = TRUE),
+    sum_def_safety = sum(def_safety, na.rm = TRUE),
+    max_def_tackles = max(def_tackles + def_tackle_assists, na.rm = TRUE),
+    max_forced_fum = max(def_fumbles_forced, na.rm = TRUE),
+    max_def_sacks = max(def_sacks, na.rm = TRUE),
+    max_def_interceptions = max(def_interceptions, na.rm = TRUE),
+    max_def_tds = max(def_tds, na.rm = TRUE),
+    has_1_sack_int = any(def_sacks >= 1 & def_interceptions >= 1),
+  )
+  # write.csv(weekly, "C:\\Users\\Jeremy\\Desktop\\def_stats.csv", row.names=FALSE)
+  write.csv(summed_data_def, "C:\\Users\\Jeremy\\Desktop\\def_cat_stats.csv", row.names=FALSE)
+})
 
 # NFL Stats spreadsheet for thresholds
 player_data <- load_player_stats(season = 1999:2022)
@@ -62,7 +77,6 @@ summed_data <- grouped_data %>%
     has_1_passing_receiving_td = any(receiving_tds >= 1 & passing_tds >= 1),
     has_3_passing_1_rushing_td = any(rushing_tds >= 1 & passing_tds >= 3),
   )
-
 
 write.csv(summed_data, "C:\\Users\\Jeremy\\Desktop\\stats.csv", row.names=FALSE)
 

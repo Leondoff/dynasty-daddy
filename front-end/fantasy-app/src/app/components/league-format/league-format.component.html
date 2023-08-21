@@ -70,8 +70,8 @@
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile}" color="accent"
           style="border-top: unset !important;">
           <mat-label>Search Player</mat-label>
-          <input matInput type="text" (keyup)="reloadFormatTool()" [(ngModel)]="searchVal">
-          <button mat-button *ngIf="searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearchVal()">
+          <input matInput type="text" (keyup)="reloadFormatTool()" [(ngModel)]="leagueFormatService.searchVal">
+          <button mat-button *ngIf="leagueFormatService.searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearchVal()">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
@@ -79,13 +79,15 @@
       <span class="container-spacer" *ngIf="!configService.isMobile"></span>
       <span [ngClass]="{'button-right': !configService.isMobile, 'button-left': configService.isMobile}"
         class="margin-top-10">
+        <button mat-icon-button matTooltip="Clear Advanced Filter" matTooltipPosition="above" *ngIf="leagueFormatService.isAdvancedFiltered === true" (click)="disableAdvancedFilter()"><mat-icon>filter_alt_off</mat-icon></button>
+        <button mat-icon-button matTooltip="Advanced Filtering" matTooltipPosition="above" *ngIf="!configService.isMobile" (click)="openPlayerQuery()"><mat-icon>filter_alt</mat-icon></button>
         <mat-form-field appearance="standard" color="accent">
             <mat-label>Filter Positions</mat-label>
-            <mat-select [formControl]="selectedPositions" multiple (selectionChange)="reloadFormatTool()">
+            <mat-select [formControl]="leagueFormatService.selectedPositions" multiple (selectionChange)="reloadFormatTool()">
               <mat-select-trigger>
-                {{selectedPositions.value ? selectedPositions.value[0] : ''}}
-                <span *ngIf="selectedPositions.value?.length > 1">
-                  (+{{selectedPositions.value.length - 1}} {{selectedPositions.value?.length === 2 ? 'other' : 'others'}})
+                {{leagueFormatService.selectedPositions.value ? leagueFormatService.selectedPositions.value[0] : ''}}
+                <span *ngIf="leagueFormatService.selectedPositions.value?.length > 1">
+                  (+{{leagueFormatService.selectedPositions.value.length - 1}} {{leagueFormatService.selectedPositions.value?.length === 2 ? 'other' : 'others'}})
                 </span>
               </mat-select-trigger>
               <mat-option *ngFor="let pos of leaguePositions" [value]="pos">{{pos}}</mat-option>

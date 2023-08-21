@@ -11,6 +11,9 @@ import { Status } from "../model/status";
 import { UntypedFormControl } from "@angular/forms";
 import { NflService } from "src/app/services/utilities/nfl.service";
 import { DownloadService } from "src/app/services/utilities/download.service";
+import { MatDialog } from "@angular/material/dialog";
+import { FilterLeagueFormatModalComponent } from "../modals/filter-league-format-modal/filter-league-format-modal.component";
+import { QueryService } from "src/app/services/utilities/query.service";
 
 @Component({
     selector: 'league-format-tool',
@@ -23,20 +26,15 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
 
     leagueFormatStatus: Status = Status.LOADING;
 
-    searchVal: string = '';
-
-    leaguePositions: string[] = [];
-
     showAdvancedSettings: boolean = false;
-
-    /** form control for postion filter dropdown */
-    selectedPositions = new UntypedFormControl();
 
     /** form control for metrics dropdown */
     selectedMetrics = new UntypedFormControl();
 
     /** form control for data visualizations dropdown */
     selectedVisualizations = new UntypedFormControl();
+
+    leaguePositions: string[] = [];
 
     formatPresetOptions = [
         { type: 0, display: 'WoRP View' },
@@ -101,7 +99,9 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         public configService: ConfigService,
         public leagueFormatService: LeagueFormatService,
         private route: ActivatedRoute,
+        private queryService: QueryService,
         private nflService: NflService,
+        private dialog: MatDialog,
         private downloadService: DownloadService,
         private playerService: PlayerService) {
         super();
@@ -121,6 +121,9 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
             this.route.queryParams.subscribe(params => {
                 this.leagueSwitchService.loadFromQueryParams(params);
             }),
+            this.leagueFormatService.leagueFormatPlayerUpdated$.subscribe(() => {
+                this.reloadFormatTool();
+            }),
             this.leagueSwitchService.leagueChanged$.subscribe(_ => {
                 this.leagueFormatService.selectedSeason =
                     Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
@@ -134,9 +137,9 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                     if (this.leagueService.selectedLeague.rosterPositions.includes('IDP_FLEX'))
                         positionFilterList.push(...['DL', 'LB', 'DB'])
                     this.leaguePositions = Array.from(new Set(positionFilterList));
-                    this.selectedPositions.setValue(this.leaguePositions);
+                    this.leagueFormatService.selectedPositions.setValue(this.leaguePositions);
                     this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
-                    this.reloadFormatTool();
+                    this.leagueFormatService.leagueFormatPlayerUpdated$.next();
                 });
             })
         );
@@ -151,9 +154,9 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
             this.leaguePositions = Array.from(new Set(this.leagueService.selectedLeague.rosterPositions
                 .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p))));
-            this.selectedPositions.setValue(this.leaguePositions);
+            this.leagueFormatService.selectedPositions.setValue(this.leaguePositions);
             this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
-            this.reloadFormatTool();
+            this.leagueFormatService.leagueFormatPlayerUpdated$.next();
         });
     }
 
@@ -161,9 +164,10 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
      * reload format tool data
      */
     reloadFormatTool(): void {
-        this.leagueFormatService.filteredPlayers = this.playerService.playerValues.filter(p => p.position != 'PI'
-            && this.leagueService.leagueFormatMetrics[this.leagueFormatService.selectedSeason]?.[p.name_id]?.c)
-            .filter(p => p.full_name.toLowerCase().includes(this.searchVal.toLowerCase()) && this.selectedPositions.value.includes(p.position));
+        this.leagueFormatService.applyFilters();
+        if (this.leagueFormatService.isAdvancedFiltered) {
+            this.leagueFormatService.filteredPlayers = this.queryService.processRulesetForPlayer(this.leagueFormatService.filteredPlayers, this.leagueFormatService.query) || [];
+        }
         this.leagueFormatService.columnsToDisplay = this.selectedMetrics.value;
         this.leagueFormatService.selectedVisualizations = this.selectedVisualizations.value;
         this.leagueFormatStatus = Status.DONE;
@@ -171,8 +175,8 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
 
     /** wrapper around reseting search functionality */
     clearSearchVal(): void {
-        this.searchVal = '';
-        this.reloadFormatTool();
+        this.leagueFormatService.searchVal = '';
+        this.leagueFormatService.leagueFormatPlayerUpdated$.next();
     }
 
     /**
@@ -181,7 +185,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
      */
     onMarketChange($event: any): void {
         this.playerService.selectedMarket = $event;
-        this.reloadFormatTool();
+        this.leagueFormatService.leagueFormatPlayerUpdated$.next();
     }
 
     /**
@@ -222,7 +226,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                 this.selectedVisualizations.setValue(['worp']);
                 this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'worpTier', 'worp', 'worppg', 'winP']);
         }
-        this.reloadFormatTool();
+        this.leagueFormatService.leagueFormatPlayerUpdated$.next();
     }
 
     /**
@@ -243,5 +247,25 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         const filename = `Dynasty_Daddy_League_Format_${new Date().toISOString().slice(0, 10)}.csv`;
 
         this.downloadService.downloadCSVFile(formattedDraftData, filename);
+    }
+
+    /**
+     * open advanced filtering modal
+     */
+    openPlayerQuery(): void {
+        this.dialog.open(FilterLeagueFormatModalComponent
+            , {
+                minHeight: '350px',
+                minWidth: this.configService.isMobile ? '300px' : '500px',
+            }
+        );
+    }
+
+    /**
+     * handles disabling advanced filtering when active
+     */
+    disableAdvancedFilter(): void {
+        this.leagueFormatService.isAdvancedFiltered = false;
+        this.leagueFormatService.leagueFormatPlayerUpdated$.next();
     }
 }

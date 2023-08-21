@@ -43,6 +43,18 @@ SupportedStats = ['rushYd1000',
                   'maxYdPass300',
                   'rec100',
                   'specialTds2',
+                  'defTkl100',
+                  'defFF4',
+                  'defSacks12',
+                  'defInts6',
+                  'defTds2',
+                  'defSafe1',
+                  'max10TklG',
+                  'max2IntsG',
+                  'max2FFG',
+                  'max2SacksG',
+                  'max2defTd',
+                  '1Sack1IntG',
                   'only1Team']
 
 
@@ -174,7 +186,7 @@ def getValueToValidate(row, type):
         for key, value in stats_json.items():
             if value:
                 stats.append(key)
-        if len(set(row[3])):
+        if len(set(row[3])) == 1:
             stats.append('only1Team')
         return stats
     else:
@@ -187,3 +199,5 @@ def filterOutTeams(json_data):
     todaysTeams = [
         team for team in SupportedTeams if team not in yesterdayTeams]
     return todaysTeams
+
+# SetNewPlayerGrid()

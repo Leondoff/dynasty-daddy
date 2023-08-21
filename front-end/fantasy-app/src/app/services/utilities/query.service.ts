@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { PlayerService } from '../player.service';
 import { PortfolioService } from 'src/app/components/services/portfolio.service';
+import { LeagueFormatService } from 'src/app/components/services/league-format.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +15,12 @@ export class QueryService {
   /** portfolio league prefix value */
   PORTFOLIO_LEAGUE_PREFIX = 'fl_'
 
+  /** portfolio league prefix value */
+  LEAGUE_FORMAT_PREFIX = 'lf_'
+
   constructor(
     private playerService: PlayerService,
+    private leagueFormatService: LeagueFormatService,
     private portfolioService: PortfolioService) {
   }
 
@@ -92,25 +97,47 @@ export class QueryService {
               case this.PORTFOLIO_LEAGUE_PREFIX:
                 const portfolioLeagueValues = this.getPortfolioPlayerLeagueValues(player.name_id, rule.field.slice(3));
                 return !portfolioLeagueValues.includes(rule.value);
+              case this.LEAGUE_FORMAT_PREFIX:
+                return (this.leagueFormatService.tableCache[player.name_id]?.[rule.field.slice(3)] || 0) != Number(rule.value);
               default:
                 return player[rule.field] !== rule.value;
             }
           }
           case '<=': {
-            return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) <= rule.value
-              : player[rule.field] <= rule.value;
+            switch (rule.field.slice(0, 3)) {
+              case this.LEAGUE_FORMAT_PREFIX:
+                return (this.leagueFormatService.tableCache[player.name_id]?.[rule.field.slice(3)] || 0) <= Number(rule.value);
+              default:
+                return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) <= rule.value
+                  : player[rule.field] <= rule.value;
+            }
           }
           case '>=': {
-            return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) >= rule.value
-              : player[rule.field] >= rule.value;
+            switch (rule.field.slice(0, 3)) {
+              case this.LEAGUE_FORMAT_PREFIX:
+                return (this.leagueFormatService.tableCache[player.name_id]?.[rule.field.slice(3)] || 0) >= Number(rule.value);
+              default:
+                return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) >= rule.value
+                  : player[rule.field] >= rule.value;
+            }
           }
           case '<': {
-            return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) < rule.value
-              : player[rule.field] < rule.value;
+            switch (rule.field.slice(0, 3)) {
+              case this.LEAGUE_FORMAT_PREFIX:
+                return (this.leagueFormatService.tableCache[player.name_id]?.[rule.field.slice(3)] || 0) < Number(rule.value);
+              default:
+                return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) < rule.value
+                  : player[rule.field] < rule.value;
+            }
           }
           case '>': {
-            return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) > rule.value
-              : player[rule.field] > rule.value;
+            switch (rule.field.slice(0, 3)) {
+              case this.LEAGUE_FORMAT_PREFIX:
+                return (this.leagueFormatService.tableCache[player.name_id]?.[rule.field.slice(3)] || 0) > Number(rule.value);
+              default:
+                return rule.field.slice(0, 3) === this.FOOTBALL_STAT_PREFIX ? (this.playerService.playerStats[player.sleeper_id]?.[rule.field.slice(3)] || 0) > rule.value
+                  : player[rule.field] > rule.value;
+            }
           }
           default: {
             switch (rule.field.slice(0, 3)) {
@@ -119,6 +146,8 @@ export class QueryService {
               case this.PORTFOLIO_LEAGUE_PREFIX:
                 const portfolioLeagueValues = this.getPortfolioPlayerLeagueValues(player.name_id, rule.field.slice(3));
                 return portfolioLeagueValues.includes(rule.value);
+              case this.LEAGUE_FORMAT_PREFIX:
+                return (this.leagueFormatService.tableCache[player.name_id]?.[rule.field.slice(3)] || 0) === Number(rule.value);
               default:
                 return player[rule.field] === rule.value;
             }
