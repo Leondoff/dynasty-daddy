@@ -94,12 +94,12 @@ export const CalculatePointsFromGamelog = (gamelog, settings) => {
   return weeklyScore;
 };
 
-export const FetchGamelogsForSeason = async (season) =>
-  GetGamelogsForSeason(season);
+export const FetchGamelogsForSeason = async (season, startWeek, endWeek) =>
+  GetGamelogsForSeason(season, startWeek, endWeek);
 
-export const FetchPointsPerWeekInSeason = async (season, settings) => {
-  const gamelogData = await FetchGamelogsForSeason(season);
-  const fantasySeasonWeeks = gamelogData.rows.slice(0, gamelogData.rows.length - 1);
+export const FetchPointsPerWeekInSeason = async (season, settings, startWeek, endWeek) => {
+  const gamelogData = await FetchGamelogsForSeason(season, startWeek, endWeek);
+  const fantasySeasonWeeks = gamelogData.rows;
   const pointsDict = {};
   fantasySeasonWeeks.forEach(gamelogs => {
     Object.entries(gamelogs.gamelog_json).forEach(async ([key, value]) => {

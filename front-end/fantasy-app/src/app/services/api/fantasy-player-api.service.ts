@@ -239,7 +239,9 @@ export class FantasyPlayerApiService {
    * return all players advance format metrics for league
    */
   private getFetchLeagueFormatForLeague(leagueId: string, season: number, format: any, settings: LeagueScoringDTO): Observable<any[]> {
-    return this.http.post<any[]>(this.fantasyPlayerApiConfigService.getLeagueFormatEndpoint, { season, format, settings })
+    const startWeek = 1;
+    const endWeek = 17;
+    return this.http.post<any[]>(this.fantasyPlayerApiConfigService.getLeagueFormatEndpoint, { season, startWeek, endWeek, format, settings })
       .pipe(map(res => {
         if (!this.leagueFormatCache) {
           this.leagueFormatCache = {};
