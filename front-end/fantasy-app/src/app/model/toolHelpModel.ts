@@ -154,3 +154,27 @@ export const LeagueFormatTutorial: SimpleTextCategory[] = [
         ]
     },
 ];
+
+export const TradeCalculatorTutorial: SimpleTextCategory[] = [
+    {
+        title: 'Overview',
+        list: [
+            'The Trade Calculator is a cutting edge fantasy football trade analyzer that let\'s you log into your league and generate power rankings on the trade.',
+            'Add players on both sides of the trade and see which side win the trade. Toggle between fantasy markets to determine what market to calculate the trade for.',
+        ]
+    },
+    {
+        title: 'Trade Calulator',
+        list: [
+            'Add a player to the left or right side to make the trade you want to calculate.',
+            'When players are added on both sides, you can click the \"Even out trade\" button to automatically build a fair trade.',
+        ]
+    },
+    {
+        title: 'Power Rankings Card',
+        list: [
+            'When logged in, our calculator will generate a mock power rankings as if the created trade went through.',
+            'The arrows will denote if a category has risen or fallen from the proposed trade.'
+        ]
+    }
+];

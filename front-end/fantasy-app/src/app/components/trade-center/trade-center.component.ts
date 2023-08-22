@@ -27,7 +27,7 @@ import { PageService } from 'src/app/services/utilities/page.service';
 })
 export class TradeCenterComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  pageDescription = 'Build trades with our trade calculator. The fantasy trade analyzer will update based on your league\'s rosters.'
+  pageDescription = 'Build fantasy trades with our trade calculator using KeepTradeCut, FantasyCalc, DynastyProcess, and more. Log into your league and the fantasy trade analyzer will update based on your league\'s rosters.'
 
   /** list of players */
   protected players: FantasyPlayer[] = [];
@@ -122,7 +122,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     private route: ActivatedRoute
   ) {
     super();
-    this.pageService.setUpPageSEO('Trade Calculator', ['fantasy trade analyzer', 'trade calculator', 'fantasy football'], this.pageDescription);
+    this.pageService.setUpPageSEO('Fantasy Football Trade Calculator', ['fantasy trade analyzer', 'trade calculator', 'fantasy football'], this.pageDescription);
   }
 
   ngOnInit(): void {

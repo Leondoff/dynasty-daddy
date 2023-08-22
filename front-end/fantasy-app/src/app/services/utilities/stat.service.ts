@@ -76,8 +76,11 @@ export class StatService {
     // loop through teams and determine each group
     for (let groupInd = 0; groupInd < binCount; groupInd++) {
       const newGroup = [];
+      // handle edge cases for rounding issues
+      const binFloorAdj = groupInd == 0 ? binFloor - binWidth : binFloor;
+      const binCeilingAdj = groupInd + 1 == binCount ? binCeiling + binWidth : binCeiling;
       for (const item of arr) {
-        if (getField(item) as number >= binFloor && getField(item) as number <= binCeiling) {
+        if (getField(item) as number >= binFloorAdj && getField(item) as number <= binCeilingAdj) {
           newGroup.push(item);
         }
       };

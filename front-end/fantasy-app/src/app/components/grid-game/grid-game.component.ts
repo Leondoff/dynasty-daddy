@@ -34,19 +34,20 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     menuItems: Observable<any[]>;
 
     /** help menu bullet points */
-    helpBullets = [{list: [
-        "Select a player for each cell that matches the criteria for that cell's row and column.",
-        "For a player to be considered valid for a team, he must've suited up for one NFL regular season game for that team.",
-        "If a cell is for a team and an award, the award must have been won after 1999 but didn't have to be on the team when winning the award.",
-        "If a cell is for a team and a season stat, the player you select must have recorded that stat after 1999 but didn't have to be on the team when recording that stat.",
-        "If you select a player for a cell with a stat, that player must've accumulated that stat in a completed season/game from 1999 or later.",
-        "If you select a player for a cell with a college, that player must have been drafted from that college. If a player transfers colleges, the college they transfer to is the college.",
-        "If a cell is for a college and a season stat, the player you select must have been drafted from that college and accumulated that stat in the NFL (not in college).",
-        "A player cannot be used twice.",
-        "You have 9 guesses to fill out the grid.",
-        "Each guess, whether correct or incorrect, counts as a guess.",
-        "You can guess active or inactive NFL players.",
-        "There is a new grid every day at 5 AM EST."]
+    helpBullets = [{
+        list: [
+            "Select a player for each cell that matches the criteria for that cell's row and column.",
+            "For a player to be considered valid for a team, he must've suited up for one NFL regular season game for that team.",
+            "If a cell is for a team and an award, the award must have been won after 1999 but didn't have to be on the team when winning the award.",
+            "If a cell is for a team and a season stat, the player you select must have recorded that stat after 1999 but didn't have to be on the team when recording that stat.",
+            "If you select a player for a cell with a stat, that player must've accumulated that stat in a completed season/game from 1999 or later.",
+            "If you select a player for a cell with a college, that player must have been drafted from that college. If a player transfers colleges, the college they transfer to is the college.",
+            "If a cell is for a college and a season stat, the player you select must have been drafted from that college and accumulated that stat in the NFL (not in college).",
+            "A player cannot be used twice.",
+            "You have 9 guesses to fill out the grid.",
+            "Each guess, whether correct or incorrect, counts as a guess.",
+            "You can guess active or inactive NFL players.",
+            "There is a new grid every day at 5 AM EST."]
     }];
 
     seasonStats = ['rushYd1000',
@@ -72,8 +73,9 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         private fantasyPlayerApiService: FantasyPlayerApiService,
         public gridGameService: GridGameService) {
         super();
-        this.pageService.setUpPageSEO('Immaculate Gridiron',
-            ['nfl', 'immaculate', 'grid', 'trivia', 'football', 'game', 'crossover'],
+        this.pageService.setUpPageSEO('NFL Immaculate Gridiron',
+            ['nfl', 'immaculate', 'grid', 'trivia', 'football', 'game',
+                'crossover', 'pro football reference', 'daily grid', 'weddle'],
             this.pageDescription)
     }
 
@@ -251,7 +253,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     getStatCategory(stat: string): string {
         switch (stat) {
             case 'rushTds10':
-            case'maxTdRush3':
+            case 'maxTdRush3':
                 return this.configService.isMobile ? 'Rush Tds' : 'Rushing Tds';
             case 'recTds10':
             case 'maxTdRec3':
@@ -265,7 +267,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case 'recYd1000':
             case 'maxYdRec200':
                 return this.configService.isMobile ? 'Rec Yds' : 'Receiving Yards';
-            case 'passYd4000': 
+            case 'passYd4000':
             case 'maxYdPass300':
                 return this.configService.isMobile ? 'Pass Yds' : 'Passing Yards';
             case 'rec100':
