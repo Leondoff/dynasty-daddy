@@ -17,6 +17,7 @@ COPY back-end/scripts/PlayerScripts/DynastySuperflexService.py /app/DynastySuper
 COPY back-end/scripts/PlayerScripts/Constants.py /app/Constants.py
 COPY back-end/scripts/PlayerScripts/PlayerGridService.py /app/PlayerGridService.py
 COPY back-end/scripts/PlayerScripts/InsertNonOffensePlayersService.py /app/InsertNonOffensePlayersService.py
+COPY back-end/scripts/PlayerScripts/KeepTradeCutService.py /app/KeepTradeCutService.py
 
 # execution rights to cron
 RUN chmod 0644 /etc/cron.d/ktc-crontab

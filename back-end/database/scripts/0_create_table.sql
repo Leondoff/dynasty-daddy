@@ -24,6 +24,14 @@ create table player_values (
     ds_trade_value int,
     ds_sf_position_rank int,
     ds_position_rank int,
+    ktc_rd_sf_trade_value int,
+    ktc_rd_trade_value int,
+    ktc_rd_sf_position_rank int,
+    ktc_rd_position_rank int,
+    fc_rd_sf_trade_value int,
+    fc_rd_trade_value int,
+    fc_rd_sf_position_rank int,
+    fc_rd_position_rank int,
     created_at timestamp not null default CURRENT_TIMESTAMP
 );
 

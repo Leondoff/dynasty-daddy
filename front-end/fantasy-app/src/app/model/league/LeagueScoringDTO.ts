@@ -196,6 +196,7 @@ export class LeagueScoringDTO {
         for (let rule of posRules?.['rule']) {
           if (MFLRulesMap[rule?.['event']?.['$t']]) {
             for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
+              if (rule?.['points']?.['$t'].includes('/')) continue;
               const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
               if (met === 'pts_allowed') {
                 if (rule?.['range']?.['$t'] === '0-999') {
@@ -221,6 +222,7 @@ export class LeagueScoringDTO {
         const rule = posRules?.['rule'];
         if (MFLRulesMap[rule?.['event']?.['$t']]) {
           for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
+            if (rule?.['points']?.['$t'].includes('/')) continue;
             const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
             if (met === 'pts_allowed') {
               if (rule?.['range']?.['$t'] === '0-999') {
