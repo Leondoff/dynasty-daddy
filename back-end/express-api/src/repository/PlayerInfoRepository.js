@@ -76,19 +76,23 @@ export const GetHistoricalPlayerValuesDatapoint = async (id, isAllTime) => {
   const data = await playersModel.selectQuery(
     `
   SELECT
-      player_info.name_id    as name_id,
-      player_info.full_name  as full_name,
-      pv.trade_value         as trade_value,
-      pv.sf_trade_value      as sf_trade_value,
-      pv.fc_sf_trade_value   as fc_sf_trade_value,
-      pv.fc_trade_value      as fc_trade_value,
-      pv.dp_sf_trade_value   as dp_sf_trade_value,
-      pv.dp_trade_value      as dp_trade_value,
-      pv.ds_sf_trade_value   as ds_sf_trade_value,
-      pv.ds_trade_value      as ds_trade_value,
-      pv.sf_position_rank    as sf_position_rank,
-      pv.position_rank       as position_rank,
-      pv.created_at          as date
+      player_info.name_id        as name_id,
+      player_info.full_name      as full_name,
+      pv.trade_value             as trade_value,
+      pv.sf_trade_value          as sf_trade_value,
+      pv.fc_sf_trade_value       as fc_sf_trade_value,
+      pv.fc_trade_value          as fc_trade_value,
+      pv.dp_sf_trade_value       as dp_sf_trade_value,
+      pv.dp_trade_value          as dp_trade_value,
+      pv.ds_sf_trade_value       as ds_sf_trade_value,
+      pv.ds_trade_value          as ds_trade_value,
+      pv.ktc_rd_sf_trade_value   as ktc_rd_sf_trade_value,
+      pv.ktc_rd_trade_value      as ktc_rd_trade_value,
+      pv.fc_rd_sf_trade_value    as fc_rd_sf_trade_value,
+      pv.fc_rd_trade_value       as fc_rd_trade_value,
+      pv.sf_position_rank        as sf_position_rank,
+      pv.position_rank           as position_rank,
+      pv.created_at              as date
   FROM 
       player_info
   LEFT JOIN
@@ -106,19 +110,23 @@ export const GetHistoricalPlayerValuesDatapointByDays = async (intervalDays) => 
   const data = await playersModel.selectQuery(
     `
   SELECT
-      player_info.name_id    as name_id,
-      player_info.full_name  as full_name,
-      pv.trade_value         as trade_value,
-      pv.sf_trade_value      as sf_trade_value,
-      pv.fc_sf_trade_value   as fc_sf_trade_value,
-      pv.fc_trade_value      as fc_trade_value,
-      pv.dp_sf_trade_value   as dp_sf_trade_value,
-      pv.dp_trade_value      as dp_trade_value,
-      pv.ds_sf_trade_value   as ds_sf_trade_value,
-      pv.ds_trade_value      as ds_trade_value,
-      pv.sf_position_rank    as sf_position_rank,
-      pv.position_rank       as position_rank,
-      pv.created_at          as date
+      player_info.name_id        as name_id,
+      player_info.full_name      as full_name,
+      pv.trade_value             as trade_value,
+      pv.sf_trade_value          as sf_trade_value,
+      pv.fc_sf_trade_value       as fc_sf_trade_value,
+      pv.fc_trade_value          as fc_trade_value,
+      pv.dp_sf_trade_value       as dp_sf_trade_value,
+      pv.dp_trade_value          as dp_trade_value,
+      pv.ds_sf_trade_value       as ds_sf_trade_value,
+      pv.ds_trade_value          as ds_trade_value,
+      pv.ktc_rd_sf_trade_value   as ktc_rd_sf_trade_value,
+      pv.ktc_rd_trade_value      as ktc_rd_trade_value,
+      pv.fc_rd_sf_trade_value    as fc_rd_sf_trade_value,
+      pv.fc_rd_trade_value       as fc_rd_trade_value,
+      pv.sf_position_rank        as sf_position_rank,
+      pv.position_rank           as position_rank,
+      pv.created_at              as date
   FROM
       player_info
   LEFT JOIN
@@ -158,6 +166,18 @@ export const GetPlayerValuesForMarket = async (market) => {
     case '3': {
       table = 'mat_vw_ds_player_values';
       marketPrefix = 'ds_';
+      break;
+    }
+    // DynastySuperflex
+    case '4': {
+      table = 'mat_vw_ktc_rd_player_values';
+      marketPrefix = 'ktc_rd_';
+      break;
+    }
+    // DynastySuperflex
+    case '5': {
+      table = 'mat_vw_fc_rd_player_values';
+      marketPrefix = 'fc_rd_';
       break;
     }
     // Invalid fantasy market
@@ -216,7 +236,11 @@ export const GetFantasyPortfolioForInterval = async (intervalDays, playerList) =
                 'dp_sf_trade_value', dp_sf_trade_value,
                 'dp_trade_value', dp_trade_value,
                 'ds_sf_trade_value', ds_sf_trade_value,
-                'ds_trade_value', ds_trade_value
+                'ds_trade_value', ds_trade_value,
+                'ktc_rd_sf_trade_value', ktc_rd_sf_trade_value,
+                'ktc_rd_trade_value', ktc_rd_trade_value,
+                'fc_rd_sf_trade_value', fc_rd_sf_trade_value,
+                'fc_rd_trade_value', fc_rd_trade_value,
             ) ORDER BY created_at::date
         ) AS player_data
     FROM

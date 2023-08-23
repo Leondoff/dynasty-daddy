@@ -23,7 +23,7 @@ import { PageService } from 'src/app/services/utilities/page.service';
 })
 export class PlayoffCalculatorComponent extends BaseComponent implements OnInit {
 
-  pageDescription = 'Calculate game probability and playoff odds based on current week. Updated every week to be more accurate.';
+  pageDescription = 'Simulate your fantasy football seasons to see what teams have the best odds to win it all! Calculate game probability and playoff odds based on current week. Updated every week to be more accurate.';
 
   /** upcoming match ups prob */
   upcomingMatchUps: MatchUpProbability[][] = [];
@@ -85,8 +85,9 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     private pageService: PageService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
-    this.pageService.setUpPageSEO('Playoff Simulator',
-      ['fantasy league simulator', 'playoff calculator', 'fantasy playoff calculator', 'league simulator'],
+    this.pageService.setUpPageSEO('Fantasy Football Playoff Calculator | Dynasty Daddy',
+      ['fantasy league simulator', 'playoff calculator', 'fantasy playoff calculator', 'league simulator', 'fantasy league simulator', 'fantasy football simulator',
+      'fantasy fooball playoff odds'],
       this.pageDescription)
   }
 
