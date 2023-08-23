@@ -105,7 +105,8 @@ export const LeagueFormatTutorial: SimpleTextCategory[] = [
         list: [
             'The League Format Tool enables you to create your own data visualizations and tables to dive deep into your league format to find positional advantages and sleepers. This tool supports K, Team Defense, & IDP as well.',
             'Using the \"Load Presets\" button, you can select from different views that emphasize a specific metric. These views will set up visualizations & configure the table to meet the selected preset.',
-            'By clicking the year dropdown, you can select what year to load stats from all the way back to 2019.'
+            'By clicking the year dropdown, you can select what year to load stats from all the way back to 2019.',
+            'NOTE: This tool is still in Beta. Some stats may differ from your platform\'s scoring due to yard thresholds being different or other limitations. Feel free to reach out with your league id if you are noticing any odd behavior.'
         ]
     },
     {

@@ -192,13 +192,15 @@ export class LeagueScoringDTO {
     // MFL object vs array iterable fix
     for (let posRules of Array.isArray(scoringSettings) ? scoringSettings : [scoringSettings]) {
       mflCache[posRules.positions] = {}
-      if (Array.isArray(posRules?.['rule'])) {
-        for (let rule of posRules?.['rule']) {
-          if (MFLRulesMap[rule?.['event']?.['$t']]) {
-            for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
-              if (rule?.['points']?.['$t'].includes('/')) continue;
-              const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
-              if (met === 'pts_allowed') {
+      const rules = Array.isArray(posRules?.['rule']) ? posRules?.['rule'] : [posRules?.['rule']];
+
+      for (let rule of rules) {
+        if (MFLRulesMap[rule?.['event']?.['$t']]) {
+          for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
+            if (rule?.['points']?.['$t'].includes('/')) continue;
+            const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
+            switch (met) {
+              case 'pts_allowed': {
                 if (rule?.['range']?.['$t'] === '0-999') {
                   if (rule?.['points']?.['$t'].includes('*')) {
                     this.defPtsAllowedMod = metNum || 10;
@@ -206,40 +208,28 @@ export class LeagueScoringDTO {
                     this.defPtsStart = metNum || 10;
                   }
                 }
-              } else if (met === 'fgLength') {
+                break;
+              }
+              case 'fgLength': {
                 if (rule?.['range']?.['$t'].substr(0, 2) == '0-') {
                   this.fgMade = metNum || 3;
                 }
                 this.fgMadeMod = 0.1;
-              } else {
+                break;
+              }
+              case 'passCmp':
+              case 'rushAtt': {
+                let metNumPerAtt = 0;
+                if (rule?.['range']?.['$t'].includes('-')) {
+                  const rangeList = rule?.['range']?.['$t'].split('-')
+                  metNumPerAtt = metNum / Number(rangeList[0]) || 0.1;
+                }
+                this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNumPerAtt;
+                break;
+              }
+              default:
                 mflCache[posRules.positions][met] = metNum
                 this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum
-              }
-            }
-          }
-        }
-      } else {
-        const rule = posRules?.['rule'];
-        if (MFLRulesMap[rule?.['event']?.['$t']]) {
-          for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
-            if (rule?.['points']?.['$t'].includes('/')) continue;
-            const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
-            if (met === 'pts_allowed') {
-              if (rule?.['range']?.['$t'] === '0-999') {
-                if (rule?.['points']?.['$t'].includes('*')) {
-                  this.defPtsAllowedMod = metNum || 10;
-                } else {
-                  this.defPtsStart = metNum || 10;
-                }
-              }
-            } else if (met === 'fgLength') {
-              if (rule?.['range']?.['$t'].substr(0, 2) == '0-') {
-                this.fgMade = metNum || 3;
-              }
-              this.fgMadeMod = 0.1;
-            } else {
-              mflCache[posRules.positions][met] = metNum
-              this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum
             }
           }
         }
