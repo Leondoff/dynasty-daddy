@@ -240,7 +240,7 @@ export const GetFantasyPortfolioForInterval = async (intervalDays, playerList) =
                 'ktc_rd_sf_trade_value', ktc_rd_sf_trade_value,
                 'ktc_rd_trade_value', ktc_rd_trade_value,
                 'fc_rd_sf_trade_value', fc_rd_sf_trade_value,
-                'fc_rd_trade_value', fc_rd_trade_value,
+                'fc_rd_trade_value', fc_rd_trade_value
             ) ORDER BY created_at::date
         ) AS player_data
     FROM

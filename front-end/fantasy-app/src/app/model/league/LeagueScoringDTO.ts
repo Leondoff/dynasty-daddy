@@ -193,7 +193,6 @@ export class LeagueScoringDTO {
     for (let posRules of Array.isArray(scoringSettings) ? scoringSettings : [scoringSettings]) {
       mflCache[posRules.positions] = {}
       const rules = Array.isArray(posRules?.['rule']) ? posRules?.['rule'] : [posRules?.['rule']];
-
       for (let rule of rules) {
         if (MFLRulesMap[rule?.['event']?.['$t']]) {
           for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
