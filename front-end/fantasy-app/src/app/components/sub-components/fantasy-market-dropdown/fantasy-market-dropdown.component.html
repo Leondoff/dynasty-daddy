@@ -1,7 +1,13 @@
 <mat-form-field appearance="standard" color="accent">
     <mat-label>Fantasy Market</mat-label>
     <mat-select [value]="selectedMarket" (selectionChange)="changeMarket($event)">
-      <mat-option *ngFor="let market of fantasyMarkets"
+    <mat-optgroup label="Dynasty">
+      <mat-option *ngFor="let market of dynastyFantasyMarkets"
                   [value]="market.num">{{market.value}}</mat-option>
+    </mat-optgroup>
+    <mat-optgroup label="Redraft">
+      <mat-option *ngFor="let market of redraftFantasyMarkets"
+                  [value]="market.num">{{market.value}}</mat-option>
+    </mat-optgroup>
     </mat-select>
 </mat-form-field>

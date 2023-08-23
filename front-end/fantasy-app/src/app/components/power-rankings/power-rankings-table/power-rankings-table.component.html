@@ -16,8 +16,14 @@
         <mat-form-field appearance="standard" color="accent" class="mat-dropdown-wide-200">
           <mat-label>Fantasy Market</mat-label>
           <mat-select [value]="powerRankingsService.rankingMarket" (selectionChange)="updateFantasyMarket($event)">
-            <mat-option *ngFor="let market of powerRankingsService.rankingMetricsOptions"
-                        [value]="market.value">{{market.display}}</mat-option>
+            <mat-optgroup label="Dynasty">
+              <mat-option *ngFor="let market of powerRankingsService.dynastyRankingMetricOptions"
+                [value]="market.value">{{market.display}}</mat-option>
+            </mat-optgroup>
+            <mat-optgroup label="Redraft">
+              <mat-option *ngFor="let market of powerRankingsService.redraftRankingMetricOptions"
+                [value]="market.value">{{market.display}}</mat-option>
+            </mat-optgroup>
           </mat-select>
         </mat-form-field>
       </span>
@@ -31,13 +37,7 @@
   </div>
   <div *ngIf="showAdvancedSettings">
     <div class="button-left" style="padding-left: 12px;">
-      <mat-form-field appearance="standard" color="accent">
-        <mat-label>Table View</mat-label>
-        <mat-select [(ngModel)]="powerRankingsService.powerRankingsTableView" (selectionChange)="setUpTableView()">
-        <mat-option [value]="0">Trade Values</mat-option>
-        <mat-option [value]="1">Contender</mat-option>
-        </mat-select>
-      </mat-form-field>
+
     </div>
     <span class="container_spacer"></span>
     <div class="button-right">
@@ -60,8 +60,14 @@
         <mat-form-field appearance="standard" color="accent">
           <mat-label>Fantasy Market</mat-label>
           <mat-select [value]="powerRankingsService.rankingMarket" (selectionChange)="updateFantasyMarket($event)">
-            <mat-option *ngFor="let market of powerRankingsService.rankingMetricsOptions"
-                        [value]="market.value">{{market.display}}</mat-option>
+            <mat-optgroup label="Dynasty">
+              <mat-option *ngFor="let market of powerRankingsService.dynastyRankingMetricOptions"
+                [value]="market.value">{{market.display}}</mat-option>
+            </mat-optgroup>
+            <mat-optgroup label="Redraft">
+              <mat-option *ngFor="let market of powerRankingsService.redraftRankingMetricOptions"
+                [value]="market.value">{{market.display}}</mat-option>
+            </mat-optgroup>
           </mat-select>
         </mat-form-field>
       </span>
@@ -211,8 +217,8 @@
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isStarter(element, player)" matTooltip="Starter" matTooltipPosition="above">grade</mat-icon></span>
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isInjured(player)" matTooltip="{{player.injury_status}}" matTooltipPosition="above">healing</mat-icon></span>
                   <span innerHTML="{{ configService.isMobile ? player.last_name : player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}}</span>
-                  <span *ngIf="powerRankingsService.rankingMarket !== 4" [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
-                  <span *ngIf="powerRankingsService.rankingMarket === 4" [ngClass]="{'success__alert': player.avg_adp < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (leagueService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '-'}}</span>
+                  <span *ngIf="powerRankingsService.rankingMarket !== 100" [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
+                  <span *ngIf="powerRankingsService.rankingMarket === 100" [ngClass]="{'success__alert': player.avg_adp < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player.avg_adp > (leagueService.selectedLeague.totalRosters * 3) || player.avg_adp == 0) }"> {{player.avg_adp || '-'}}</span>
                 </div>
               </div>
               <div class="grid-20" *ngIf="leagueService.selectedLeague.type == 2 && this.powerRankingsService.powerRankingsTableView == 0">

@@ -113,10 +113,10 @@
   </mat-expansion-panel>
   <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="searchVal != '' ? true : false" *ngIf="filteredCreators.length > 0">
     <mat-expansion-panel-header>
-        Trade Value Partners
+        Integration Partners
     </mat-expansion-panel-header>
     <mat-nav-list>
-      <a mat-list-item (click)="openUrl('https://www.fantasycalc.com/dynasty-rankings')" *ngIf="searchVal == '' || isInSearch('FantasyCalc')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl('https://www.fantasycalc.com/dynasty-rankings')" *ngIf="searchVal == '' || isInSearch('Fantasy Calc')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>FantasyCalc</a>
     </mat-nav-list>
   </mat-expansion-panel>

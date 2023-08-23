@@ -85,6 +85,10 @@ export class FantasyPlayerDataPoint {
   dp_trade_value: number;
   ds_sf_trade_value: number;
   ds_trade_value: number;
+  ktc_rd_sf_trade_value: number;
+  ktc_rd_trade_value: number;
+  fc_rd_sf_trade_value: number;
+  fc_rd_trade_value: number;
   date: string;
 }
 
@@ -100,5 +104,7 @@ export enum FantasyMarket {
   KeepTradeCut,
   FantasyCalc,
   DynastyProcess,
-  DynastySuperflex
+  DynastySuperflex,
+  KeepTradeCutRedraft,
+  FantasyCalcRedraft
 }

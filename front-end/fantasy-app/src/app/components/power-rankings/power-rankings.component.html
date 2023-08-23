@@ -1,4 +1,4 @@
-<h1 class="margin-top-10 large-bold-header-text center-text">League Power Rankings</h1>
+<h1 class="margin-top-10 large-bold-header-text center-text">Fantasy League Power Rankings</h1>
 <div class="center-text margin-top-10">
   {{pageDescription}}
 </div>
@@ -7,50 +7,22 @@
 
 <div *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0" class="power-ranking-container">
   <div>
+    <span>
+      <button mat-raised-button [matMenuTriggerFor]="menu" style="margin-right: 10px;">
+        <mat-icon>insert_chart</mat-icon> Load Preset
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let menu of powerRankingsPresetOptions" (click)="loadPreset(menu.type)">
+          <span>{{menu.display}}</span>
+        </button>
+      </mat-menu>
+    </span>
+  </div>
+  <div>
     <app-power-rankings-chart [powerRankings]="powerRankingService.powerRankings" [selectedOrder]="powerRankingService.powerRankingChartOption" [selectedMarket]="playersService.selectedMarket"></app-power-rankings-chart>
   </div>
   <div>
-    <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="leagueService.selectedLeague.isSuperflex"></app-power-rankings-table>
-  </div>
-
-  <div class="margin-top-50 center-text">
-    <div class="large-bold-header-text center-text margin-bot-20">
-      Starter Value
-    </div>
-    <div class="center-text" style="max-width: 800px; margin: 0 auto">
-      Starter Value is calculated by selecting the best possible roster based on trade value. It does factor in significant status like IR, SUS, or COV. A starter is denoted by the star next to the players name in the roster table.
-    </div>
-  </div>
-
-  <div class="margin-top-50 center-text">
-    <div class="large-bold-header-text center-text margin-bot-20">
-      Team Tiers
-    </div>
-    <div class="center-text" style="max-width: 800px; margin: 0 auto">
-      <table class="margin-bot-10">
-        <tr>
-          <td class="tier-table-col">
-            Super Team<span><mat-icon class="info-icon" matTooltip="Conditional Tier that appears if there is only one team is classified as a contender" matTooltipPosition="above">info_outline</mat-icon></span>
-          </td>
-          <td class="tier-table-col">
-            Contender
-          </td>
-          <td class="tier-table-col">
-            Frisky
-          </td>
-          <td class="tier-table-col">
-            Fraud
-          </td>
-          <td class="tier-table-col">
-            Rebuilding
-          </td>
-          <td class="tier-table-col" style="width: 14%">
-            Trust the Process<span><mat-icon class="info-icon" matTooltip="Conditional Tier that appears if there is only one team is classified as a rebuilding team" matTooltipPosition="above">info_outline</mat-icon></span>
-          </td>
-        </tr>
-      </table>
-      The Tiers are determined by bucket sorting on starter value. The tier rankings go from worst to best.
-    </div>
+    <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="leagueService.selectedLeague.isSuperflex" [columnsToDisplay]="powerRankingService.powerRankingsTableCols"></app-power-rankings-table>
   </div>
 </div>
 

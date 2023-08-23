@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LeagueService } from '../../services/league.service';
-import { PowerRankingsService } from '../services/power-rankings.service';
+import { PowerRankingTableView, PowerRankingsService } from '../services/power-rankings.service';
 import { PlayerService } from '../../services/player.service';
 import { BaseComponent } from '../base-component.abstract';
 import { LeagueSwitchService } from '../services/league-switch.service';
@@ -9,6 +9,8 @@ import { ActivatedRoute } from '@angular/router';
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
 import { PageService } from 'src/app/services/utilities/page.service';
+import { UntypedFormControl } from '@angular/forms';
+import { LeagueType } from 'src/app/model/league/LeagueDTO';
 
 @Component({
   selector: 'app-power-rankings',
@@ -25,6 +27,18 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
   /** No league selected error message */
   noLeagueErrMsg = 'Unable to create rankings. Please select a league.'
 
+  /** Power Rankings Presets */
+  powerRankingsPresetOptions = [
+    { type: PowerRankingTableView.TradeValues, display: 'Trade Value View' },
+    { type: PowerRankingTableView.Starters, display: 'Contender View' }
+  ]
+
+  /** form control for metrics dropdown */
+  selectedMetrics = new UntypedFormControl();
+
+  /** form control for data visualizations dropdown */
+  selectedVisualizations = new UntypedFormControl();
+
   constructor(public leagueService: LeagueService,
     public powerRankingService: PowerRankingsService,
     private playersService: PlayerService,
@@ -34,9 +48,11 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     private pageService: PageService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
-    this.pageService.setUpPageSEO('League Power Rankings', 
-    ['fantasy league ranker', 'fantasy football rankings', 'league power ranker', 'fantasy power rankings'],
-    this.pageDescription)
+    this.pageService.setUpPageSEO('Fantasy League Power Rankings | Dynasty Daddy',
+      ['fantasy league ranker', 'fantasy football rankings', 'league power ranker',
+        'fantasy power rankings', 'fantasy league analyzer', 'fantasy footbal analyzer',
+        'fantasy league rankings', 'fantasy football power rankings'],
+      this.pageDescription)
   }
 
   ngOnInit(): void {
@@ -52,6 +68,27 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
       }));
   }
 
+  /**
+   * Load presets for power rankings
+   * @param type preset to load
+   */
+  loadPreset(type: number = 0): void {
+    switch (type) {
+      case 1:
+        this.selectedVisualizations.setValue(['overall']);
+        this.selectedMetrics.setValue(['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank']);
+        break;
+      default:
+        const cols = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+        if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+          cols.push('draftRank');
+        }
+        this.selectedVisualizations.setValue(['overall']);
+        this.selectedMetrics.setValue(cols);
+    }
+    this.refreshPowerRankingsView();
+  }
+
   mapPowerRankings(): void {
     // TODO ugly fix for race condition on adding upcoming draft picks to playoff calculator
     if (this.leagueService.upcomingDrafts.length !== 0) {
@@ -62,6 +99,14 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
         this.leagueService.selectedLeague.leaguePlatform
       );
     }
+  }
+
+  /**
+   * Refresh selected metrics and visualizations in service
+   */
+  refreshPowerRankingsView(): void {
+    this.powerRankingService.powerRankingsTableCols = this.selectedMetrics.value;
+    this.powerRankingService.powerRankingsVisualizations = this.selectedVisualizations.value;
   }
 
   /**

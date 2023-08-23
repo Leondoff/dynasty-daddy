@@ -39,6 +39,10 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   @Input()
   isSuperFlex: boolean;
 
+  // input columns to display
+  @Input()
+  columnsToDisplay: string[] = [];
+
   // toggles the advanced setting bar
   showAdvancedSettings: boolean = false;
 
@@ -46,7 +50,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   dataSource: MatTableDataSource<TeamPowerRanking> = new MatTableDataSource<TeamPowerRanking>();
 
   // columns to display in table
-  columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+  // columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
 
   // determines if team is top 3rd or bottom 3rd of league
   alertThreshold: number;
@@ -78,7 +82,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
 
   ngOnInit(): void {
     this.alertThreshold = this.powerRankings.length / 3;
-    this.setUpTableView();
     this.createNewTableDataSource(this.powerRankings);
     this.refreshPowerRankingCache();
   }
@@ -357,30 +360,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         this.playerService.selectedMarket = this.powerRankingsService.rankingMarket.valueOf();
       }));
     }
-    this.refreshPowerRankingCache();
-  }
-
-  /**
-   * gets columns for power rankings table based on league type & table view
-   */
-  public setUpTableView(): void {
-    let newColumns = [];
-    switch (this.powerRankingsService.powerRankingsTableView) {
-      case PowerRankingTableView.Starters: {
-        newColumns = ['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank'];
-        this.powerRankingsService.rankingMarket = PowerRankingMarket.ADP;
-        break;
-      }
-      default: {
-        newColumns = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
-        if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
-          this.powerRankingsService.rankingMarket = this.playerService.selectedMarket.valueOf();
-          newColumns.push('draftRank');
-        }
-      }
-    }
-
-    this.columnsToDisplay = newColumns;
     this.refreshPowerRankingCache();
   }
 }
