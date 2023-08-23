@@ -17,11 +17,19 @@ export const PowerRankingsTutorial: SimpleTextCategory[] = [
     {
         title: 'Overview',
         list: [
+            'The \"Load Preset\" button will let you select a specifc view for the power rankings tool. For more information on each preset, check the Power Ranking Presets section.',
             'The chart displays overall value with each color being a specific position room\'s overall value. You can right-click and save an image of this chart.',
             'The table displays all teams and their power rankings. Each row can be expanded to show each position room in depth.',
             'The table can be sorted by field by pressing a field in the header. You may also search for a specific player or team name via the search bar.',
             'The expand arrow (⤢) will expand or collapse all the expandable rows.',
             'At the bottom, you can download the power rankings table to a CSV to import into any other spreadsheet application.'
+        ]
+    },
+    {
+        title: 'Power Ranking Presets',
+        list: [
+            'Trade Value View - This view shows each position based on fantasy market trade value. While this view typically is used for dynasty leagues, you can select a redraft fantasy market to generate power rankings with those trade values. [Default for Dynasty/Keeper leagues]',
+            'Contender View - This view shows each position based on current season outlook using average ADP accross multiple platforms. All categories are ranked based on starter value. For more information on each individual metric check the Metric Legend. [Default for Redraft]',
         ]
     },
     {
@@ -52,9 +60,6 @@ export const PowerRankingsTutorial: SimpleTextCategory[] = [
     {
         title: '⚙ Advanced Options (Desktop only)',
         list: [
-            'Table View - This dropdown loads a specific table view from the following',
-            'Table View: Contender - This view shows each position based on current season outlook. All categories are ranked based on starter value.',
-            'Table View: Overall - This view shows each position based on fantasy market trade value. [Default]',
             'Order Chart - This dropdown controls what order the chart will be sorted from left-to-right based on the selected metric. The default is overall value.',
             'Fantasy Market - This dropdown controls what fantasy market\'s values are used to create the power rankings.'
         ]

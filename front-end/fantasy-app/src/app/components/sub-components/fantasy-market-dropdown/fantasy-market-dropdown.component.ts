@@ -15,11 +15,18 @@ export class FantasyMarketDropdown implements OnInit {
     @Output()
     selectedMarketChange: EventEmitter<FantasyMarket> = new EventEmitter<FantasyMarket>();
 
-    fantasyMarkets = [
+    // Dynasty Fantasy Markets
+    dynastyFantasyMarkets = [
         { 'num': FantasyMarket.KeepTradeCut, 'value': 'KeepTradeCut' },
         { 'num': FantasyMarket.FantasyCalc, 'value': 'FantasyCalc' },
         { 'num': FantasyMarket.DynastyProcess, 'value': 'DynastyProcess' },
         { 'num': FantasyMarket.DynastySuperflex, 'value': 'DynastySuperflex' }
+    ]
+
+    // Redraft Fantasy Markets
+    redraftFantasyMarkets = [
+        { 'num': FantasyMarket.KeepTradeCutRedraft, 'value': 'KeepTradeCut (Redraft)' },
+        { 'num': FantasyMarket.FantasyCalcRedraft, 'value': 'FantasyCalc (Redraft)' },
     ]
 
     constructor(private playerService: PlayerService) {

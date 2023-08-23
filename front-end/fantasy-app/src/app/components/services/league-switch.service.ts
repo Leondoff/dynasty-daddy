@@ -91,6 +91,7 @@ export class LeagueSwitchService extends BaseComponent {
           ),
           this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails),
           this.playersService.fetchAllNonOffensePlayers(this.selectedLeague.rosterPositions)]).subscribe(() => {
+            this.powerRankingService.loadDefaultPreset(this.selectedLeague.type)
             this.leagueService.selectedLeague = this.selectedLeague;
             this.playerValueService.isSuperFlex = this.selectedLeague.isSuperflex;
             this.leagueService.leagueStatus = 'DONE';

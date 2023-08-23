@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
-import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
 import { PositionGroup, PositionPowerRanking, TeamPowerRanking } from '../model/powerRankings';
 import { LeagueService } from '../../services/league.service';
 import { PlayerService } from '../../services/player.service';
 import { Observable, of, Subject } from 'rxjs';
-import { max, min } from 'simple-statistics';
 import { takeUntil } from 'rxjs/operators';
 import { MatchupService } from './matchup.service';
 import { NflService } from '../../services/utilities/nfl.service';
@@ -49,15 +48,30 @@ export class PowerRankingsService {
   /** supported position groups to power rank */
   positionGroups: string[] = ['QB', 'RB', 'WR', 'TE'];
 
-  /** rankings metric options */
-  rankingMetricsOptions: {}[] =
+  /** power ranking table cols to display */
+  powerRankingsTableCols: string[] = [
+    'team', 'owner', 'tier', 'overallRank',
+    'starterRank', 'qbRank', 'rbRank', 'wrRank',
+    'teRank', 'draftRank'];
+
+  /** TODO add custom visualizations to power rankings */
+  powerRankingsVisualizations: string[] = ['overall'];
+
+  /** dynasty rankings metric options */
+  dynastyRankingMetricOptions: {}[] =
     [
-      { 'value': 0, 'display': 'KeepTradeCut' },
-      { 'value': 1, 'display': 'FantasyCalc' },
-      { 'value': 2, 'display': 'DynastyProcess' },
-      { 'value': 3, 'display': 'DynastySuperflex' },
-      { 'value': 4, 'display': 'ADP' }
+      { 'value': PowerRankingMarket.KeepTradeCut, 'display': 'KeepTradeCut' },
+      { 'value': PowerRankingMarket.FantasyCalc, 'display': 'FantasyCalc' },
+      { 'value': PowerRankingMarket.DynastyProcess, 'display': 'DynastyProcess' },
+      { 'value': PowerRankingMarket.DynastySuperflex, 'display': 'DynastySuperflex' }
     ]
+  
+  /** rederaft ranking metric options */
+  redraftRankingMetricOptions: {}[] = [
+    { 'value': PowerRankingMarket.KeepTradeCutRedraft, 'display': 'KeepTradeCut Redraft' },
+    { 'value': PowerRankingMarket.FantasyCalcRedraft, 'display': 'FantasyCalc Redraft' },
+    { 'value': PowerRankingMarket.ADP, 'display': 'Average ADP' }
+  ]
 
   /** power rankings table filter options */
   powerRankingChartOption: PowerRankingOrder = PowerRankingOrder.OVERALL;
@@ -609,6 +623,29 @@ export class PowerRankingsService {
     return !this.leagueService.selectedLeague.isSuperflex ?
       team.tradeValueOverall : team.sfTradeValueOverall
   }
+
+  /**
+   * Load presets for format tool
+   * @param type preset to load
+   */
+  loadDefaultPreset(type: number = 2): void {
+    switch (type) {
+      case 0:
+        this.powerRankingsTableCols = ['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank'];
+        this.rankingMarket = PowerRankingMarket.ADP;
+        this.playerService.loadPlayerValuesForFantasyMarket$(FantasyMarket.FantasyCalcRedraft).subscribe(() => {
+          this.playerService.selectedMarket = FantasyMarket.FantasyCalcRedraft;
+        })
+        break;
+      default:
+        this.powerRankingsTableCols = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+        this.rankingMarket = Number(this.playerService.selectedMarket);
+        if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+          this.powerRankingsTableCols.push('draftRank');
+        }
+    }
+  }
+
 }
 
 export enum PowerRankingMarket {
@@ -616,7 +653,9 @@ export enum PowerRankingMarket {
   FantasyCalc,
   DynastyProcess,
   DynastySuperflex,
-  ADP
+  KeepTradeCutRedraft,
+  FantasyCalcRedraft,
+  ADP = 100
 }
 
 export enum PowerRankingTableView {

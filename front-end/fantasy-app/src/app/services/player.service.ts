@@ -568,6 +568,10 @@ export class PlayerService {
         return !isSuperflex ? player.dp_trade_value : player.dp_sf_trade_value;
       case FantasyMarket.DynastySuperflex:
         return !isSuperflex ? player.ds_trade_value : player.ds_sf_trade_value;
+      case FantasyMarket.KeepTradeCutRedraft:
+        return !isSuperflex ? player.ktc_rd_trade_value : player.ktc_rd_sf_trade_value;
+      case FantasyMarket.FantasyCalcRedraft:
+        return !isSuperflex ? player.fc_rd_trade_value : player.fc_rd_sf_trade_value;
       default:
         return !isSuperflex ? player.trade_value : player.sf_trade_value;
     }
