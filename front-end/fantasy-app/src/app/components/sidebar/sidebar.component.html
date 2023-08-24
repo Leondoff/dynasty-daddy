@@ -116,13 +116,13 @@
         Data Sources
     </mat-expansion-panel-header>
     <mat-nav-list>
-      <a mat-list-item (click)="openUrl(dataSources[0])" *ngIf="searchVal == '' || isInSearch('KeepTradeCut')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[0])" *ngIf="searchVal == '' || isInSearch('KeepTradeCut')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_keep_trade_cut" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>KeepTradeCut</a>
       <a mat-list-item (click)="openUrl(dataSources[1])" *ngIf="searchVal == '' || isInSearch('Fantasy Calc')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>FantasyCalc</a>
-      <a mat-list-item (click)="openUrl(dataSources[2])" *ngIf="searchVal == '' || isInSearch('DynastyProcess')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[2])" *ngIf="searchVal == '' || isInSearch('DynastyProcess')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_dynasty_process" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>DynastyProcess</a>
-      <a mat-list-item (click)="openUrl(dataSources[3])" *ngIf="searchVal == '' || isInSearch('DynastySuperflex')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[3])" *ngIf="searchVal == '' || isInSearch('DynastySuperflex')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_dynasty_superflex" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>DynastySuperflex</a>
     </mat-nav-list>
   </mat-expansion-panel>

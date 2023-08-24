@@ -116,12 +116,14 @@ export class FFPCService {
           const ddTeam = new LeagueTeam(ownerDTO, rosterDTO);
           ddTeam.roster.teamMetrics = teamMetrics[ddTeam.roster.ownerId] || new TeamMetrics();
           // only load future draft capital if dynasty league
-          const picks = Array.isArray(team?.draftPicks?.pick) ? team?.draftPicks?.pick : [team?.draftPicks?.pick];
-          ddTeam.futureDraftCapital = picks?.map(p => new DraftCapital(
-            p.draftRound,
-            p.roundPick !== 0 ? p.roundPick : 6,
-            p.draftSeason.toString(), team.teamID)
-          ) || []
+          if (team?.draftPicks?.pick) {
+            const picks = Array.isArray(team?.draftPicks?.pick) ? team?.draftPicks?.pick : [team?.draftPicks?.pick];
+            ddTeam.futureDraftCapital = picks?.map(p => new DraftCapital(
+              p.draftRound,
+              p.roundPick !== 0 ? p.roundPick : 6,
+              p.draftSeason.toString(), team.teamID)
+            ) || []
+          }
           teams.push(ddTeam);
         });
         leagueWrapper.leagueTeamDetails = teams;
