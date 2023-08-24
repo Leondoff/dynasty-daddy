@@ -22,6 +22,7 @@ export class ToolHelpComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.categoryList = [];
         switch (this.toolName) {
             case ToolsHelp.PlayoffCalculator:
                 this.categoryList = PlayoffCalculatorTutorial;

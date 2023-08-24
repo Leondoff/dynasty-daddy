@@ -27,7 +27,7 @@
           </mat-select>
         </mat-form-field>
       </span>
-      <mat-form-field appearance="standard" color="accent" *ngIf="!configService.isMobile">
+      <mat-form-field appearance="standard" color="accent" *ngIf="!configService.isMobile" class="fantasy-market-pr">
         <mat-label>Fantasy Market</mat-label>
         <mat-select [value]="powerRankingsService.rankingMarket" (selectionChange)="updateFantasyMarket($event)">
           <mat-optgroup label="Dynasty">
@@ -40,6 +40,7 @@
           </mat-optgroup>
         </mat-select>
       </mat-form-field>
+      <mat-icon (click)="openDataSourcesModal()" class="icon-source-link">info</mat-icon>
       <button mat-icon-button
               (click)="expandCollapseAll()"><mat-icon>{{isExpanded() ? 'close_fullscreen' : 'open_in_full'}}</mat-icon>
       </button>

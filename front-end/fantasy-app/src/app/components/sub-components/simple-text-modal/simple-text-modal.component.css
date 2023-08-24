@@ -7,3 +7,14 @@
 .bullet-point {
     padding: 8px 0;
 }
+
+.text-type {
+    padding: 20px 0;
+}
+
+.link_icon {
+    vertical-align: text-top;
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}

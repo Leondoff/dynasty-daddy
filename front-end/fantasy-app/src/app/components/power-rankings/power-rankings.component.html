@@ -5,7 +5,7 @@
 
 <tool-help [toolName]="'Power Rankings'"></tool-help>
 
-<div *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0" class="power-ranking-container">
+<div *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0" class="power-ranking-container margin-top-15">
   <div>
     <span>
       <button mat-raised-button [matMenuTriggerFor]="menu" style="margin-right: 10px;">

@@ -23,6 +23,13 @@ export class SimpleTextModal implements OnInit {
         this.categoryList = this.data.categoryList;
     }
 
+    /**
+     * Open url
+     */
+    openURL(url: string): void {
+        window.open(url, "_blank");
+    }
+
     close(): void {
         this.dialog.closeAll();
     }

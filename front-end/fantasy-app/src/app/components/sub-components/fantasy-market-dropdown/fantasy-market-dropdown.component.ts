@@ -1,6 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
+import { ConfigService } from 'src/app/services/init/config.service';
 import { PlayerService } from 'src/app/services/player.service';
+import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
+import { SimpleTextModal } from '../simple-text-modal/simple-text-modal.component';
 
 @Component({
     selector: 'fantasy-market-dropdown',
@@ -29,7 +33,9 @@ export class FantasyMarketDropdown implements OnInit {
         { 'num': FantasyMarket.FantasyCalcRedraft, 'value': 'FantasyCalc (Redraft)' },
     ]
 
-    constructor(private playerService: PlayerService) {
+    constructor(private playerService: PlayerService,
+        private configService: ConfigService,
+        private dialog: MatDialog) {
 
     }
 
@@ -43,10 +49,16 @@ export class FantasyMarketDropdown implements OnInit {
         });
     }
 
-    /**
-     * Open url
-     */
-    openUrl(url: string): void {
-        window.open(url, "_blank");
+    openDataSourcesModal(): void {
+        this.dialog.open(SimpleTextModal
+            , {
+                minHeight: '350px',
+                minWidth: this.configService.isMobile ? '200px' : '500px',
+                data: {
+                    headerText: 'About our Data Sources',
+                    categoryList: DataSourcesInfo
+                }
+            }
+        );
     }
 }
