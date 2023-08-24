@@ -16,6 +16,7 @@ import { BaseComponent } from '../../base-component.abstract';
 import { SimpleTextModal } from '../../sub-components/simple-text-modal/simple-text-modal.component';
 import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
 import { MatDialog } from '@angular/material/dialog';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -77,6 +78,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     public leagueSwitchService: LeagueSwitchService,
     public displayService: DisplayService,
     private dialog: MatDialog,
+    private gaService: GoogleAnalyticsService,
     private clipboard: Clipboard) {
     super();
   }
@@ -355,6 +357,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
    * @param $event 
    */
   updateFantasyMarket($event): void {
+    this.gaService.event('click', `click_${$event.value}`, 'fantasy_market')
     this.powerRankingsService.rankingMarket = $event.value;
     if (this.powerRankingsService.rankingMarket !== PowerRankingMarket.ADP) {
       this.addSubscriptions(this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
