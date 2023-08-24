@@ -7,13 +7,14 @@
 
 <div class="trade-table-container">
 
-  <div class="margin-top-15" style="padding-left: 10%; padding-right: 10%">
-    <span class="button-left">
+  <div class="margin-top-15" style="padding-left: 10%; padding-right: 10%" [ngClass]="{'center-text': configService.isMobile}">
+    <span [ngClass]="{'button-left margin-top-15': !configService.isMobile}">
+      <button mat-raised-button (click)="clearTradeTable()"><mat-icon>refresh</mat-icon> Clear</button>
       <mat-slide-toggle [(ngModel)]="isSuperFlex" (change)="processTrade()" color="accent">SuperFlex</mat-slide-toggle>
     </span>
     <span *ngIf="!configService.isMobile" class="container_spacer"></span>
     <span class="button-right">
-      <button mat-raised-button (click)="clearTradeTable()"><mat-icon>refresh</mat-icon> Clear</button>
+      <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
       <button mat-icon-button (click)="toggleAdvancedSettings = !toggleAdvancedSettings"><mat-icon>settings</mat-icon></button>
     </span>
   </div>
@@ -31,7 +32,6 @@
     </span>
     <span class="container_spacer"></span>
     <span class="button-right">
-      <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
     </span>
   </div>
 

@@ -44,6 +44,10 @@ export class SidebarComponent extends BaseComponent implements OnInit {
   /** is the trending tab by number */
   isTrendingByNumber: boolean = true;
 
+  /** data sources url */
+  dataSources: string[] = ['https://keeptradecut.com', 'https://fantasycalc.com',
+  'https://dynastyprocess.com', 'https://www.dynastysuperflex.com'];
+
   constructor(public leagueService: LeagueService,
     public playerService: PlayerService,
     public configService: ConfigService,
