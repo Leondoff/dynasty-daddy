@@ -1,6 +1,9 @@
 export class SimpleTextCategory {
-    title: string;
-    list: string[];
+    title?: string;
+    list?: string[];
+    text?: string;
+    link?: string;
+    type?: string;
 }
 
 export const FooterTutorial: SimpleTextCategory[] = [
@@ -183,4 +186,73 @@ export const TradeCalculatorTutorial: SimpleTextCategory[] = [
             'The arrows will denote if a category has risen or fallen from the proposed trade.'
         ]
     }
+];
+
+export const DataSourcesInfo: SimpleTextCategory[] = [
+    {
+        text: 'Dynasty Daddy is powered by the community for the community for free. In an effort to give exposure to the innovated creators in the fantasy space, I\'ve compiled a list of sites and links to support these sites that help make Dynasty Daddy a great fantasy football resource.',
+        type: 'text'
+    },
+    {
+        title: 'KeepTradeCut',
+        link: 'https://keeptradecut.com',
+        list: [
+            'KeepTradeCut is a free dynasty fantasy football resource that crowdsources up-to-date dynasty rankings and values.',
+            'By asking users to Keep, Trade, or Cut 3 players, KTC is able to generate player trade values and rankings from all these datapoints.',
+            'Dynasty Daddy uses the trade values and updated every day at 5:00 AM.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'FantasyCalc',
+        link: 'https://fantasycalc.com',
+        list: [
+            'FantasyCalc scrapes Sleeper & MFL league trades to create player trade values and rankings based on their algorithm.',
+            'Dynasty Daddy uses the trade values and updated every day at 5:00 AM.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'DynastyProcess',
+        link: 'https://dynastyprocess.com',
+        list: [
+            'DynastyProcess uses FantasyPros\'s Expert Consensus Rankings to create dynasty rankings and trade values',
+            'Dynasty Daddy uses the trade values and updated every day at 5:00 AM.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'DynastySuperflex',
+        link: 'https://www.dynastysuperflex.com/',
+        list: [
+            'DynastySuperflex combines all three trade values from KeepTradeCut, FantasyCalc, and DynastyProcess to create it\'s own fantasy rankings and trade values.',
+            'Dynasty Daddy uses the trade values and updated every day at 5:00 AM.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'FantasyPros',
+        link: 'https://fantasypros.com',
+        list: [
+            'FantasyPros is a fantasy football tool and stores many pages of data. For Dynasty Daddy, we reference their document of Best-Ball ADPs which has references to many ADPs across the fantasy space.',
+            'Dynasty Daddy uses the player ADP data and updated every day at 5:00 AM.'
+        ],
+        type: 'list'
+    },
+    // {
+    //     title: 'PlayerProfiler',
+    //     link: 'https://keeptradecut.com',
+    //     list: [
+    //         'KeepTradeCut is a free dynasty fantasy football resource that crowdsources up-to-date dynasty rankings and values.',
+    //     ],
+    //     type: 'list'
+    // },
+    // {
+    //     title: 'OverTheCap',
+    //     link: 'https://keeptradecut.com',
+    //     list: [
+    //         'KeepTradeCut is a free dynasty fantasy football resource that crowdsources up-to-date dynasty rankings and values.',
+    //     ],
+    //     type: 'list'
+    // }
 ];

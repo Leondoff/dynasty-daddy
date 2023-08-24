@@ -7,9 +7,10 @@
 
 <mat-dialog-content>
   <div *ngFor="let category of categoryList">
-    <div *ngIf="category.title" class="mid-bold-text">{{category.title}}</div>
-    <ul>
-      <li class="bullet-point" *ngFor="let bulletPoint of category.list">{{ bulletPoint }}</li>
+    <div *ngIf="category?.title" class="mid-bold-text">{{category.title}}<mat-icon *ngIf="category?.link" (click)="openURL(category?.link)" class="link_icon">open_in_new</mat-icon></div>
+    <ul *ngIf="!category?.type || category?.type == 'list'">
+      <li class="bullet-point" *ngFor="let bulletPoint of category?.list">{{ bulletPoint }}</li>
     </ul>
+    <div *ngIf="category?.type == 'text'" class="text-type">{{category?.text}}</div>
   </div>
 </mat-dialog-content>

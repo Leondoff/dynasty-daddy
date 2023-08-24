@@ -13,6 +13,9 @@ import { LeagueSwitchService } from '../../services/league-switch.service';
 import { LeagueType } from "../../../model/league/LeagueDTO";
 import { PowerRankingMarket, PowerRankingTableView, PowerRankingsService } from '../../services/power-rankings.service';
 import { BaseComponent } from '../../base-component.abstract';
+import { SimpleTextModal } from '../../sub-components/simple-text-modal/simple-text-modal.component';
+import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
+import { MatDialog } from '@angular/material/dialog';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -49,9 +52,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   // datasource for mat table
   dataSource: MatTableDataSource<TeamPowerRanking> = new MatTableDataSource<TeamPowerRanking>();
 
-  // columns to display in table
-  // columnsToDisplay = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
-
   // determines if team is top 3rd or bottom 3rd of league
   alertThreshold: number;
 
@@ -76,6 +76,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     public powerRankingsService: PowerRankingsService,
     public leagueSwitchService: LeagueSwitchService,
     public displayService: DisplayService,
+    private dialog: MatDialog,
     private clipboard: Clipboard) {
     super();
   }
@@ -361,5 +362,18 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
       }));
     }
     this.refreshPowerRankingCache();
+  }
+
+  openDataSourcesModal(): void {
+    this.dialog.open(SimpleTextModal
+      , {
+        minHeight: '350px',
+        minWidth: this.configService.isMobile ? '200px' : '500px',
+        data: {
+          headerText: 'About our Data Sources',
+          categoryList: DataSourcesInfo
+        }
+      }
+    );
   }
 }

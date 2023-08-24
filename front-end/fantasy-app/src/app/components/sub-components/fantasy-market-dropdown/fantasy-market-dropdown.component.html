@@ -1,4 +1,4 @@
-<mat-form-field appearance="standard" color="accent" class="my-form-field">
+<mat-form-field appearance="standard" color="accent" class="fantast-market-dropdown">
     <mat-label>Fantasy Market</mat-label>
     <mat-select [value]="selectedMarket" (selectionChange)="changeMarket($event)">
     <mat-optgroup label="Dynasty">
@@ -11,3 +11,4 @@
     </mat-optgroup>
     </mat-select>
 </mat-form-field>
+<mat-icon (click)="openDataSourcesModal()" class="icon-source-link">info</mat-icon>

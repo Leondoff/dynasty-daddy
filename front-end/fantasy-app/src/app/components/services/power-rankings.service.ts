@@ -68,9 +68,9 @@ export class PowerRankingsService {
   
   /** rederaft ranking metric options */
   redraftRankingMetricOptions: {}[] = [
-    { 'value': PowerRankingMarket.KeepTradeCutRedraft, 'display': 'KeepTradeCut Redraft' },
-    { 'value': PowerRankingMarket.FantasyCalcRedraft, 'display': 'FantasyCalc Redraft' },
-    { 'value': PowerRankingMarket.ADP, 'display': 'Average ADP' }
+    { 'value': PowerRankingMarket.ADP, 'display': 'Average ADP' },
+    { 'value': PowerRankingMarket.KeepTradeCutRedraft, 'display': 'KeepTradeCut (Redraft)' },
+    { 'value': PowerRankingMarket.FantasyCalcRedraft, 'display': 'FantasyCalc (Redraft)' },
   ]
 
   /** power rankings table filter options */
