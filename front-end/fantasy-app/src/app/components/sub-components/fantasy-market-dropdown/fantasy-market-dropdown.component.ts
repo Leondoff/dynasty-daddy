@@ -5,6 +5,7 @@ import { ConfigService } from 'src/app/services/init/config.service';
 import { PlayerService } from 'src/app/services/player.service';
 import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
 import { SimpleTextModal } from '../simple-text-modal/simple-text-modal.component';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
     selector: 'fantasy-market-dropdown',
@@ -35,6 +36,7 @@ export class FantasyMarketDropdown implements OnInit {
 
     constructor(private playerService: PlayerService,
         private configService: ConfigService,
+        private gaService: GoogleAnalyticsService,
         private dialog: MatDialog) {
 
     }
@@ -44,6 +46,7 @@ export class FantasyMarketDropdown implements OnInit {
     }
 
     changeMarket($event: any) {
+        this.gaService.event('click', `click_${$event.value}`, 'fantasy_market')
         this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
             this.selectedMarketChange.emit($event.value);
         });
