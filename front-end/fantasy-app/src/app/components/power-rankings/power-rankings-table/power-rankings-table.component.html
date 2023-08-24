@@ -27,6 +27,19 @@
           </mat-select>
         </mat-form-field>
       </span>
+      <mat-form-field appearance="standard" color="accent" *ngIf="!configService.isMobile">
+        <mat-label>Fantasy Market</mat-label>
+        <mat-select [value]="powerRankingsService.rankingMarket" (selectionChange)="updateFantasyMarket($event)">
+          <mat-optgroup label="Dynasty">
+            <mat-option *ngFor="let market of powerRankingsService.dynastyRankingMetricOptions"
+              [value]="market.value">{{market.display}}</mat-option>
+          </mat-optgroup>
+          <mat-optgroup label="Redraft">
+            <mat-option *ngFor="let market of powerRankingsService.redraftRankingMetricOptions"
+              [value]="market.value">{{market.display}}</mat-option>
+          </mat-optgroup>
+        </mat-select>
+      </mat-form-field>
       <button mat-icon-button
               (click)="expandCollapseAll()"><mat-icon>{{isExpanded() ? 'close_fullscreen' : 'open_in_full'}}</mat-icon>
       </button>
@@ -53,21 +66,6 @@
           <mat-option [value]="5">WR Rank</mat-option>
           <mat-option [value]="6">TE Rank</mat-option>
           <mat-option [value]="7">Draft Capital Rank</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </span>
-      <span>
-        <mat-form-field appearance="standard" color="accent">
-          <mat-label>Fantasy Market</mat-label>
-          <mat-select [value]="powerRankingsService.rankingMarket" (selectionChange)="updateFantasyMarket($event)">
-            <mat-optgroup label="Dynasty">
-              <mat-option *ngFor="let market of powerRankingsService.dynastyRankingMetricOptions"
-                [value]="market.value">{{market.display}}</mat-option>
-            </mat-optgroup>
-            <mat-optgroup label="Redraft">
-              <mat-option *ngFor="let market of powerRankingsService.redraftRankingMetricOptions"
-                [value]="market.value">{{market.display}}</mat-option>
-            </mat-optgroup>
           </mat-select>
         </mat-form-field>
       </span>

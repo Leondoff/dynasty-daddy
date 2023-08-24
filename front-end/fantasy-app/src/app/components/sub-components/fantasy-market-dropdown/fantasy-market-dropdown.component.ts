@@ -42,4 +42,11 @@ export class FantasyMarketDropdown implements OnInit {
             this.selectedMarketChange.emit($event.value);
         });
     }
+
+    /**
+     * Open url
+     */
+    openUrl(url: string): void {
+        window.open(url, "_blank");
+    }
 }
