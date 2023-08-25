@@ -85,7 +85,7 @@ export class TransactionsService {
     if (player) {
       return {
         playerName: player.full_name,
-        value: this.leagueService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value,
+        value: this.leagueService.selectedLeague.isSuperflex ? player.sf_trade_value || 0 : player.trade_value || 0,
         rosterId
       };
     } else {
