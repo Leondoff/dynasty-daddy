@@ -136,7 +136,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     const aggMap = {};
     for (const pos of positions) {
       const playerGroup = pos === 'OV' ? this.roster.slice() : this.roster.slice().filter(it => it.position === pos)
-      aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.leagueService?.selectedLeague?.isSuperflex ? player.sf_trade_value : player.trade_value), 0);
+      aggMap[pos + '_value'] = playerGroup.reduce((s, player) => s + (this.leagueService?.selectedLeague?.isSuperflex ? (player.sf_trade_value || 0) : (player.trade_value || 0)), 0);
       const lastMonth = playerGroup.reduce((s, player) => s + (this.leagueService.selectedLeague.isSuperflex ? player.last_month_value_sf : player.last_month_value), 0)
       aggMap[pos + '_change'] = lastMonth > 0 ? Math.round(((aggMap[pos + '_value'] / lastMonth) - 1) * 100) : '-';
       aggMap[pos + '_avg_age'] = Math.round(playerGroup.reduce((s, player) => s + player.age, 0) / playerGroup.length * 10) / 10;
@@ -169,8 +169,8 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
   updateActivityFilter(): void {
     if (this.activitySearchVal && this.activitySearchVal.length > 0) {
       const fullFilteredList = this.teamActivity.filter(activity => {
-        return (activity.adds.findIndex(add => add.playerName.toLowerCase().includes(this.activitySearchVal.toLowerCase())) >= 0
-          || activity.drops.findIndex(drop => drop.playerName.toLowerCase().includes(this.activitySearchVal.toLowerCase())) >= 0
+        return (activity.adds.findIndex(add => add.playerName?.toLowerCase().includes(this.activitySearchVal.toLowerCase())) >= 0
+          || activity.drops.findIndex(drop => drop.playerName?.toLowerCase().includes(this.activitySearchVal.toLowerCase())) >= 0
           || activity.type.toLowerCase().includes(this.activitySearchVal.toLowerCase())
           || activity.headerDisplay.toLowerCase().includes(this.activitySearchVal.toLowerCase()));
       });
