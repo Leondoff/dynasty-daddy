@@ -46,7 +46,8 @@ export class SidebarComponent extends BaseComponent implements OnInit {
 
   /** data sources url */
   dataSources: string[] = ['https://keeptradecut.com', 'https://fantasycalc.com',
-  'https://dynastyprocess.com', 'https://www.dynastysuperflex.com'];
+  'https://dynastyprocess.com', 'https://www.dynastysuperflex.com', 'https://www.playerprofiler.com/',
+  'https://overthecap.com/', 'https://ras.football/', 'https://nflverse.nflverse.com/'];
 
   constructor(public leagueService: LeagueService,
     public playerService: PlayerService,
@@ -152,6 +153,13 @@ export class SidebarComponent extends BaseComponent implements OnInit {
       this.leagueService.leagueTeamDetails.filter(t => this.isInSearch(t.owner?.ownerName) || this.isInSearch(t.owner?.teamName));
     this.filteredCreators = this.configService.preferredCreators.slice(0, this.configService.preferredCreators.length - 1).filter(c => this.isInSearch(c.alt))
   }
+
+  /**
+   * Returns true if the data source header should be present on search
+   */
+  isDataSourceInSearch(): boolean {
+    return this.dataSources.some(source => this.isInSearch(source));
+  }  
 
   /**
    * Open roster review form

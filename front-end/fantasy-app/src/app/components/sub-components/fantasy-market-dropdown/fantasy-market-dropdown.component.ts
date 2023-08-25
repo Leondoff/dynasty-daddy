@@ -51,17 +51,4 @@ export class FantasyMarketDropdown implements OnInit {
             this.selectedMarketChange.emit($event.value);
         });
     }
-
-    openDataSourcesModal(): void {
-        this.dialog.open(SimpleTextModal
-            , {
-                minHeight: '350px',
-                minWidth: this.configService.isMobile ? '200px' : '500px',
-                data: {
-                    headerText: 'About our Data Sources',
-                    categoryList: DataSourcesInfo
-                }
-            }
-        );
-    }
 }
