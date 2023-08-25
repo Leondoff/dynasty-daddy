@@ -111,19 +111,27 @@
           <mat-icon>{{creator.icon || 'podcasts'}}</mat-icon><span>{{creator.alt}}</span></a>
     </mat-nav-list>
   </mat-expansion-panel>
-  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="searchVal != '' ? true : false" *ngIf="filteredCreators.length > 0">
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="searchVal != '' ? true : false" *ngIf="searchVal == '' || isDataSourceInSearch()">
     <mat-expansion-panel-header>
         Data Sources
     </mat-expansion-panel-header>
     <mat-nav-list>
       <a mat-list-item (click)="openUrl(dataSources[0])" *ngIf="searchVal == '' || isInSearch('KeepTradeCut')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_keep_trade_cut" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>KeepTradeCut</a>
-      <a mat-list-item (click)="openUrl(dataSources[1])" *ngIf="searchVal == '' || isInSearch('Fantasy Calc')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[1])" *ngIf="searchVal == '' || isInSearch('FantasyCalc')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>FantasyCalc</a>
       <a mat-list-item (click)="openUrl(dataSources[2])" *ngIf="searchVal == '' || isInSearch('DynastyProcess')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_dynasty_process" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>DynastyProcess</a>
       <a mat-list-item (click)="openUrl(dataSources[3])" *ngIf="searchVal == '' || isInSearch('DynastySuperflex')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_dynasty_superflex" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>DynastySuperflex</a>
+      <a mat-list-item (click)="openUrl(dataSources[4])" *ngIf="searchVal == '' || isInSearch('PlayerProfiler')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_profiler" gaCategory="page_nav">
+        <mat-icon>open_in_new</mat-icon>PlayerProfiler</a>
+      <a mat-list-item (click)="openUrl(dataSources[5])" *ngIf="searchVal == '' || isInSearch('OverTheCap')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_over_the_cap" gaCategory="page_nav">
+        <mat-icon>open_in_new</mat-icon>OverTheCap</a>
+      <a mat-list-item (click)="openUrl(dataSources[6])" *ngIf="searchVal == '' || isInSearch('Ras.Football')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_ras_football" gaCategory="page_nav">
+        <mat-icon>open_in_new</mat-icon>Ras.Football</a>
+      <a mat-list-item (click)="openUrl(dataSources[7])" *ngIf="searchVal == '' || isInSearch('NFLVerse')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_verse" gaCategory="page_nav">
+        <mat-icon>open_in_new</mat-icon>NFLVerse</a>
     </mat-nav-list>
   </mat-expansion-panel>
 </mat-nav-list>

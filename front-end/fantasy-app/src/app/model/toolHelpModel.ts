@@ -239,20 +239,44 @@ export const DataSourcesInfo: SimpleTextCategory[] = [
         ],
         type: 'list'
     },
-    // {
-    //     title: 'PlayerProfiler',
-    //     link: 'https://keeptradecut.com',
-    //     list: [
-    //         'KeepTradeCut is a free dynasty fantasy football resource that crowdsources up-to-date dynasty rankings and values.',
-    //     ],
-    //     type: 'list'
-    // },
-    // {
-    //     title: 'OverTheCap',
-    //     link: 'https://keeptradecut.com',
-    //     list: [
-    //         'KeepTradeCut is a free dynasty fantasy football resource that crowdsources up-to-date dynasty rankings and values.',
-    //     ],
-    //     type: 'list'
-    // }
+    {
+        title: 'PlayerProfiler',
+        link: 'https://www.playerprofiler.com/',
+        list: [
+            'PlayerProfiler is home of the best NFL player profiles, advanced fantasy football statistics, and fresh fantasy football content on the interwebs.',
+            'Dynasty Daddy uses player combine results data.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'OverTheCap',
+        link: 'https://overthecap.com/',
+        list: [
+            'OverTheCap has NFL salary cap and contract information for every player including bonus money, dead money, and positional salary rankings.',
+            'Dynasty Daddy uses the current player contact information.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'Ras.football',
+        link: 'https://ras.football/',
+        list: [
+            'Ras.football is the site that hosts the ras score calculator and blog.',
+            'Dynasty Daddy uses player RAS scores from the site.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'NFLVerse',
+        link: 'https://nflverse.nflverse.com/',
+        list: [
+            'The nflverse is a set of packages dedicated to data of the National Football League. The nflverse package is designed to make it easy to install and load core packages from the nflverse in a single command.',
+            'Dynasty Daddy uses the the play-by-play data for creating stat thresholds for the immaculate gridiron.'
+        ],
+        type: 'list'
+    },
+    {
+        text: 'Dynasty Daddy does not take credit for any of these sites or their data.',
+        type: 'text'
+    },
 ];

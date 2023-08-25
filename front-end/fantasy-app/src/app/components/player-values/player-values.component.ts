@@ -36,8 +36,9 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
     super();
     this.pageService.setUpPageSEO('Player Rankings',
       ['fantasy football rankings', 'dynasty player rankings', 'player trade values', 'dynasty trade values', 'dynasty fantasy rankings',
-       'dynasty rankings', 'dynasty fantasy football rankings', 'dynasty football rankings', 'fantasypros', 'nfl fantasy', 'fantasy sports',
-       'fantasy dynasty rankings', 'fantasy football cheat sheet', 'fantasy football trade value table', 'keep trade cut', 'fantasycalc'],
+        'dynasty rankings', 'dynasty fantasy football rankings', 'dynasty football rankings', 'fantasypros', 'nfl fantasy', 'fantasy sports',
+        'fantasy dynasty rankings', 'fantasy football cheat sheet', 'fantasy football trade value table', 'keep trade cut', 'fantasycalc',
+        'keeptradecut', 'dynastyprocess', 'dynastysuperflex'],
       this.pageDescription);
   }
 
