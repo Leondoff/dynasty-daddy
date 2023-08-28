@@ -291,7 +291,6 @@ export class FantasyPlayerApiService {
     user.leagues.forEach(l => {
       leagues.push({leagueId: l.leagueId, season, platform: 'Sleeper'});
     });
-    console.log(leagues);
     if (leagues.length === 0) return of();
     return this.http.post<any>(this.fantasyPlayerApiConfigService.postLeaguesToDatabaseEndpoint, { leagues })
       .pipe(map(res => {

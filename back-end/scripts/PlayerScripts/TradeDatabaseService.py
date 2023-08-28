@@ -4,6 +4,7 @@ import os
 
 import requests
 from Constants import SLEEPER_BASE_URL
+from PlayerService import formatPickNumber
 import psycopg2
 
 def getDBConnection():
@@ -23,6 +24,10 @@ def getDBConnection():
     # Creating a cursor object using the cursor() method
     return conn.cursor()
 
+def FormatPickFromSleeper(pick):
+    rd = formatPickNumber(pick.get('round'))
+    # 2025late3rdpi
+    return pick.get('season') + 'mid' + rd + 'pi'
 
 def ScrapeTrades():
     cursor = getDBConnection()
@@ -69,6 +74,29 @@ def ScrapeTrades():
 
         # Execute bulk insert/update
         cursor.executemany(insert_query, bulk_data)
+        
+    for league in leagues:
+        transaction_data = requests.get(SLEEPER_BASE_URL + league[0] + '/transactions/1').json()
+        for transaction in transaction_data:
+            if transaction.get("type") == "trade" and transaction.get("status") == "complete":
+                sideA = []
+                sideB = []
+                
+                transactionDict = transaction.get("adds") if transaction.get("adds") is not None else {}
+                rosterIds = transaction.get("roster_ids") if transaction.get("roster_ids") is not None else []
+                for key, value in transactionDict.items():
+                    if value == rosterIds[0]:
+                        sideA.append(key)
+                    elif value == rosterIds[1]:
+                        sideB.append(key)
+                draft_picks = transaction.get("draft_picks") if transaction.get("draft_picks") is not None else []
+                for pick in draft_picks:
+                    if pick.get("owner_id") == rosterIds[0]:
+                        sideA.append(FormatPickFromSleeper(pick))
+                    elif pick.get("owner_id") == rosterIds[1]:
+                        sideB.append(FormatPickFromSleeper(pick))
+                print(sideA, sideB)
+
         
 ScrapeTrades()
     
