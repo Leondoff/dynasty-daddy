@@ -34,6 +34,8 @@ export class FantasyPlayerApiConfigService {
 
   private _getNonOffensePlayersEndpoint = '';
 
+  private _postLeaguesToDatabaseEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
@@ -144,5 +146,13 @@ export class FantasyPlayerApiConfigService {
 
   set getLeagueFormatEndpoint(value: string) {
     this._getLeagueFormatEndpoint= value;
+  }
+
+  get postLeaguesToDatabaseEndpoint(): string {
+    return this._postLeaguesToDatabaseEndpoint;
+  }
+
+  set postLeaguesToDatabaseEndpoint(value: string) {
+    this._postLeaguesToDatabaseEndpoint= value;
   }
 }

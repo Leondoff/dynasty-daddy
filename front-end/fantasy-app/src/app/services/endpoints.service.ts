@@ -44,6 +44,7 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint = this.baseUrl + '/v1/grid/results/add';
     this.fantasyPlayerApiConfigService.getAllGridResultsEndpoint = this.baseUrl + '/v1/grid/results';
     this.fantasyPlayerApiConfigService.getLeagueFormatEndpoint = this.baseUrl + '/v1/league/format';
+    this.fantasyPlayerApiConfigService.postLeaguesToDatabaseEndpoint = this.baseUrl + '/v1/league/add';
 
     // Sleeper Endpoints
     this.sleeperApiConfigService.getSleeperUsernameEndpoint = 'https://api.sleeper.app/v1/user/';

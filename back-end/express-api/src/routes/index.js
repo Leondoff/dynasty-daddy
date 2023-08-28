@@ -41,7 +41,8 @@ import {
   FetchAllHistoricalGridsEndpoint,
   FetchSearchedPlayersEndpoint,
   UpdateGridResultsEndpoint,
-  GetNonOffensePlayersEndpoint
+  GetNonOffensePlayersEndpoint,
+  AddLeaguesToDatabaseEndpoint
 } from '../controllers';
 
 const indexRouter = express.Router();
@@ -61,6 +62,7 @@ indexRouter.get('/grid/players', FetchSearchedPlayersEndpoint);
 indexRouter.get('/grid/archive', FetchAllHistoricalGridsEndpoint);
 indexRouter.post('/grid/results/add', UpdateGridResultsEndpoint);
 indexRouter.get('/grid/results', FetchAllGridResultsEndpoint);
+indexRouter.post('/league/add', AddLeaguesToDatabaseEndpoint);
 
 // MFL Wrapper Endpoints
 indexRouter.post('/mfl/league', GetMFLLeagueEndpoint);

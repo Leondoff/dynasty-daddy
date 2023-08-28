@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SleeperApiService } from './api/sleeper/sleeper-api.service';
 import { Observable, merge, of } from 'rxjs';
-import { map, delay } from 'rxjs/operators';
+import { map, delay, catchError, switchMap } from 'rxjs/operators';
 import { LeagueWrapper } from '../model/league/LeagueWrapper';
 import { SleeperService } from './api/sleeper/sleeper.service';
 import { MflService } from './api/mfl/mfl.service';
@@ -146,44 +146,49 @@ export class LeagueService {
    */
   loadNewUser$(username: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER, password: string = ''): Observable<any> {
     this.selectedYear = year;
-    try {
+  
+    const loadUserObservable = () => {
       switch (leaguePlatform) {
-        case LeaguePlatform.SLEEPER: {
-          this.sleeperService.loadSleeperUser$(username, year).subscribe(leagueUser => {
-            this.leagueUser = leagueUser;
-            return of(leagueUser);
-          });
-          break;
-        }
-        case LeaguePlatform.FLEAFLICKER: {
-          this.fleaflickerService.loadFleaflickerUser$(username, year).subscribe(leagueUser => {
-            this.leagueUser = leagueUser;
-            return of(leagueUser);
-          });
-          break
-        }
-        case LeaguePlatform.MFL: {
-          this.mflService.loadMFLUser$(username, password, year).subscribe(leagueUser => {
-            this.leagueUser = leagueUser;
-            return of(leagueUser);
-          });
-          break
-        }
-        case LeaguePlatform.FFPC: {
-          this.ffpcService.loadFFPCUser$(username, year).subscribe(leagueUser => {
-            this.leagueUser = leagueUser;
-            return of(leagueUser);
-          });
-          break
-        }
-        default: {
+        case LeaguePlatform.SLEEPER:
+          return this.sleeperService.loadSleeperUser$(username, year).pipe(
+            switchMap(leagueUser => {
+              this.leagueUser = leagueUser;
+              return this.fantasyPlayerApiService.postLeaguesToDatabase(leagueUser, year);
+            }),
+          );
+        case LeaguePlatform.FLEAFLICKER:
+          return this.fleaflickerService.loadFleaflickerUser$(username, year).pipe(
+            switchMap(leagueUser => {
+              this.leagueUser = leagueUser;
+              return of(leagueUser);
+            }),
+          );
+        case LeaguePlatform.MFL:
+          return this.mflService.loadMFLUser$(username, password, year).pipe(
+            switchMap(leagueUser => {
+              this.leagueUser = leagueUser;
+              return of(leagueUser);
+            }),
+          );
+        case LeaguePlatform.FFPC:
+          return this.ffpcService.loadFFPCUser$(username, year).pipe(
+            switchMap(leagueUser => {
+              this.leagueUser = leagueUser;
+              return of(leagueUser);
+            }),
+          );
+        default:
           console.warn(`Unsupported league platform type ${leaguePlatform}`);
           return of(null);
-        }
       }
-    } catch (e) {
-      return of();
-    }
+    };
+  
+    return loadUserObservable().pipe(
+      catchError(error => {
+        console.error('Error:', error);
+        return of(null);
+      })
+    );
   }
 
   /**

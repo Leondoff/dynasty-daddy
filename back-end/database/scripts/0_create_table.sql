@@ -204,3 +204,23 @@ create index grid_results_uindex on grid_results (grid_id);
 ALTER TABLE grid_results
 ADD CONSTRAINT unique_player_cell_grid
 UNIQUE (player_id, cellNum, grid_id);
+
+CREATE TYPE platform_enum AS ENUM ('Sleeper', 'MFL', 'Fleaflicker', 'FFPC', 'ESPN');
+
+CREATE TYPE league_type AS ENUM ('Dynasty', 'Redraft');
+
+CREATE TABLE league_info (
+    league_id VARCHAR(20) PRIMARY KEY,
+    season VARCHAR(5) NOT NULL,
+    platform platform_enum DEFAULT 'Sleeper' NOT NULL,
+    league_type league_type,
+    teams INTEGER,
+    starters INTEGER,
+    ppr DECIMAL(4, 2),
+    tep DECIMAL(4, 2),
+    is_superflex BOOLEAN,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE (league_id, season, platform)
+);
+
+CREATE INDEX idx_league_id ON league_info (league_id);
