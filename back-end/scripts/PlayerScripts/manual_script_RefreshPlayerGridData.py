@@ -41,14 +41,37 @@ posExpMap = {
     'DE': 'DT'
 }
 
+def getDBConnection():
+    # Connect to local test database
+    conn = psycopg2.connect(
+        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
+    )
 
-def refreshPlayerGridTable():
+    # conn = psycopg2.connect(
+    #     database=os.environ['DO_DATABASE'], user=os.environ['DO_DB_USER'], password=os.environ[
+    #         'DO_DB_PASSWORD'], host=os.environ['DO_DB_HOST'], port=os.environ['DO_DB_PORT']
+    # )
+    
+    # Setting auto commit false
+    conn.autocommit = True
+
+    # Creating a cursor object using the cursor() method
+    return conn.cursor()
+
+# first run the r scripts to generate the files
+def AddNewPlayersToGrid(cursor):
+    playerStatement = '''select gsis_id
+                        from player_grid where gsis_id is not null;'''
+    cursor.execute(playerStatement)
+    existingPlayers = cursor.fetchall()
+    
     playerMap = {}
-    with open('C:\\Users\\Jeremy\\Desktop\\test.csv', 'r') as file:
+    with open('C:\\Users\\Jeremy\\Desktop\\roster.csv', 'r') as file:
         csvreader = csv.reader(file)
+        existing_players_stripped = [existing[0].strip() for existing in existingPlayers]
 
         for row in csvreader:
-            if row[6] not in ['gsis_id']:
+            if row[6] not in ['gsis_id'] and row[6].strip() not in existing_players_stripped:
                 if row[6] not in playerMap:
                     playerMap[row[6]] = {}
                 playerMap[row[6]]['name'] = row[2]
@@ -111,18 +134,6 @@ def refreshPlayerGridTable():
                     'ints10': int(row[6]) > 9 or playerMap[row[0]]['stats']['ints10'] is True
                 }
 
-        # Connect to local test database
-        conn = psycopg2.connect(
-            database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
-        )
-
-        # Setting auto commit false
-        conn.autocommit = True
-
-        # Creating a cursor object using the cursor() method
-        cursor = conn.cursor()
-        cursor.execute('TRUNCATE TABLE player_grid;')
-
         iter = 1
         for key, value in playerMap.items():
             print('(' + str(iter) + '/' + str(len(playerMap)) + ') ' +
@@ -133,24 +144,12 @@ def refreshPlayerGridTable():
                                                  value['teams'], value['headshot_url'], value['pos'], value['sleeperId'], value['college'], json.dumps(value['awards'], indent=4), value['start_year'], value['end_year'], json.dumps(value['stats'], indent=4), key))
             iter = iter + 1
 
-    conn.commit()
 
-
-def UpdateStatsJson():
-
-    # Connect to local test database
-    conn = psycopg2.connect(
-        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
-    )
-
-    # Setting auto commit false
-    conn.autocommit = True
+def UpdateStatsJson(cursor):
 
     # Creating a cursor object using the cursor() method
-    cursor = conn.cursor()
     playerStatement = '''select gsis_id
                         from player_grid where gsis_id is not null;'''
-    cursor = conn.cursor()
     cursor.execute(playerStatement)
     result_set = cursor.fetchall()
 
@@ -158,7 +157,8 @@ def UpdateStatsJson():
     with open('C:\\Users\\Jeremy\\Desktop\\stats.csv', 'r') as statsFile:
         stats = csv.reader(statsFile)
         for p in result_set:
-            statsDict[p[0]] = {
+            pId = p[0].strip()
+            statsDict[pId] = {
                 'rushYd1000': False,
                 'recYd1000': False,
                 'passYd4000': False,
@@ -196,58 +196,59 @@ def UpdateStatsJson():
             }
         for row in stats:
             if row[0] in statsDict:
+                statsId = row[0].strip()
                 off_fields_to_update = {
-                    'rushYd1000': int(row[2]) > 999 or statsDict[row[0]]['rushYd1000'] is True,
-                    'recYd1000': int(row[4]) > 999 or statsDict[row[0]]['recYd1000'] is True,
-                    'passYd4000': int(row[7]) > 3999 or statsDict[row[0]]['passYd4000'] is True,
-                    'rushTds10': int(row[3]) > 9 or statsDict[row[0]]['rushTds10'] is True,
-                    'recTds10': int(row[5]) > 9 or statsDict[row[0]]['recTds10'] is True,
-                    'passingTds30': int(row[8]) > 29 or statsDict[row[0]]['passingTds30'] is True,
-                    'ints10': int(row[6]) > 9 or statsDict[row[0]]['ints10'] is True,
-                    'rec100': int(row[9]) > 100 or statsDict[row[0]]['rec100'] is True,
-                    'specialTds2': int(row[10]) >= 2 or statsDict[row[0]]['specialTds2'] is True,
-                    'maxTdPass5': int(row[11]) > 4 or statsDict[row[0]]['maxTdPass5'] is True,
-                    'maxTdRush3': int(row[12]) > 2 or statsDict[row[0]]['maxTdRush3'] is True,
-                    'maxTdRec3': int(row[13]) > 2 or statsDict[row[0]]['maxTdRec3'] is True,
-                    'maxInt4': int(row[14]) > 3 or statsDict[row[0]]['maxInt4'] is True,
-                    'maxYdPass300': int(row[15]) >= 300 or statsDict[row[0]]['maxYdPass300'] is True,
-                    'maxYdRush200': int(row[16]) >= 200 or statsDict[row[0]]['maxYdRush200'] is True,
-                    'maxYdRec200': int(row[17]) >= 200 or statsDict[row[0]]['maxYdRec200'] is True,
-                    'maxRec12': int(row[18]) >= 12 or statsDict[row[0]]['maxRec12'] is True,
-                    '70RushRecG': row[19] == 'TRUE' or statsDict[row[0]]['70RushRecG'] is True,
-                    '50Rush200PassG': row[20] == 'TRUE' or statsDict[row[0]]['50Rush200PassG'] is True,
-                    '1Rush1RecG': row[21] == 'TRUE' or statsDict[row[0]]['1Rush1RecG'] is True,
-                    '1Pass1RecG': row[22] == 'TRUE' or statsDict[row[0]]['1Pass1RecG'] is True,
-                    '3Pass1RushG': row[23] == 'TRUE' or statsDict[row[0]]['3Pass1RushG'] is True,
+                    'rushYd1000': int(row[2]) > 999 or statsDict[statsId]['rushYd1000'] is True,
+                    'recYd1000': int(row[4]) > 999 or statsDict[statsId]['recYd1000'] is True,
+                    'passYd4000': int(row[7]) > 3999 or statsDict[statsId]['passYd4000'] is True,
+                    'rushTds10': int(row[3]) > 9 or statsDict[statsId]['rushTds10'] is True,
+                    'recTds10': int(row[5]) > 9 or statsDict[statsId]['recTds10'] is True,
+                    'passingTds30': int(row[8]) > 29 or statsDict[statsId]['passingTds30'] is True,
+                    'ints10': int(row[6]) > 9 or statsDict[statsId]['ints10'] is True,
+                    'rec100': int(row[9]) > 100 or statsDict[statsId]['rec100'] is True,
+                    'specialTds2': int(row[10]) >= 2 or statsDict[statsId]['specialTds2'] is True,
+                    'maxTdPass5': int(row[11]) > 4 or statsDict[statsId]['maxTdPass5'] is True,
+                    'maxTdRush3': int(row[12]) > 2 or statsDict[statsId]['maxTdRush3'] is True,
+                    'maxTdRec3': int(row[13]) > 2 or statsDict[statsId]['maxTdRec3'] is True,
+                    'maxInt4': int(row[14]) > 3 or statsDict[statsId]['maxInt4'] is True,
+                    'maxYdPass300': int(row[15]) >= 300 or statsDict[statsId]['maxYdPass300'] is True,
+                    'maxYdRush200': int(row[16]) >= 200 or statsDict[statsId]['maxYdRush200'] is True,
+                    'maxYdRec200': int(row[17]) >= 200 or statsDict[statsId]['maxYdRec200'] is True,
+                    'maxRec12': int(row[18]) >= 12 or statsDict[statsId]['maxRec12'] is True,
+                    '70RushRecG': row[19] == 'TRUE' or statsDict[statsId]['70RushRecG'] is True,
+                    '50Rush200PassG': row[20] == 'TRUE' or statsDict[statsId]['50Rush200PassG'] is True,
+                    '1Rush1RecG': row[21] == 'TRUE' or statsDict[statsId]['1Rush1RecG'] is True,
+                    '1Pass1RecG': row[22] == 'TRUE' or statsDict[statsId]['1Pass1RecG'] is True,
+                    '3Pass1RushG': row[23] == 'TRUE' or statsDict[statsId]['3Pass1RushG'] is True,
                 }
             
                 for field, value in off_fields_to_update.items():
-                    statsDict[row[0]][field] = value
+                    statsDict[statsId][field] = value
         with open('C:\\Users\\Jeremy\\Desktop\\def_cat_stats.csv', 'r') as defStatsFile:
             defStats = csv.reader(defStatsFile)
             for row in defStats:
-                if row[0] in statsDict:
+                if statsId in statsDict:
                     def_fields_to_update = {
-                        'defTkl100': int(row[2]) > 99 or statsDict[row[0]]['defTkl100'] is True,
-                        'defFF4': int(row[3]) > 3 or statsDict[row[0]]['defFF4'] is True,
-                        'defSacks12': float(row[4]) > 11 or statsDict[row[0]]['defSacks12'] is True,
-                        'defInts6': int(row[5]) > 5 or statsDict[row[0]]['defInts6'] is True,
-                        'defTds2': int(row[6]) > 1 or statsDict[row[0]]['defTds2'] is True,
-                        'defSafe1': int(row[7]) > 0 or statsDict[row[0]]['defSafe1'] is True,
-                        'max10TklG': int(row[8]) > 11 or statsDict[row[0]]['max10TklG'] is True,
-                        'max2IntsG': int(row[11]) > 1 or statsDict[row[0]]['max2IntsG'] is True,
-                        'max2FFG': int(row[9]) > 1 or statsDict[row[0]]['max2FFG'] is True,
-                        'max2SacksG': float(row[10]) > 1 or statsDict[row[0]]['max2SacksG'] is True,
-                        'max2defTd': int(row[12]) > 1 or statsDict[row[0]]['max2defTd'] is True,
-                        '1Sack1IntG': row[13] == 'TRUE' or statsDict[row[0]]['1Sack1IntG'] is True,
+                        'defTkl100': int(row[2]) > 99 or statsDict[statsId]['defTkl100'] is True,
+                        'defFF4': int(row[3]) > 3 or statsDict[statsId]['defFF4'] is True,
+                        'defSacks12': float(row[4]) > 11 or statsDict[statsId]['defSacks12'] is True,
+                        'defInts6': int(row[5]) > 5 or statsDict[statsId]['defInts6'] is True,
+                        'defTds2': int(row[6]) > 1 or statsDict[statsId]['defTds2'] is True,
+                        'defSafe1': int(row[7]) > 0 or statsDict[statsId]['defSafe1'] is True,
+                        'max10TklG': int(row[8]) > 11 or statsDict[statsId]['max10TklG'] is True,
+                        'max2IntsG': int(row[11]) > 1 or statsDict[statsId]['max2IntsG'] is True,
+                        'max2FFG': int(row[9]) > 1 or statsDict[statsId]['max2FFG'] is True,
+                        'max2SacksG': float(row[10]) > 1 or statsDict[statsId]['max2SacksG'] is True,
+                        'max2defTd': int(row[12]) > 1 or statsDict[statsId]['max2defTd'] is True,
+                        '1Sack1IntG': row[13] == 'TRUE' or statsDict[statsId]['1Sack1IntG'] is True,
                     }
 
                     for field, value in def_fields_to_update.items():
-                        statsDict[row[0]][field] = value
+                        statsDict[statsId][field] = value
         iter = 1
         for key, value in statsDict.items():
             print('(' + str(iter) + '/' + str(len(statsDict)) + ') ' +
-                  key + ' processed ')
+                  key + ' stats updated ')
             playerGridStatement = '''UPDATE player_grid
                         SET
                         stats_json = %s
@@ -255,6 +256,47 @@ def UpdateStatsJson():
             cursor.execute(playerGridStatement,
                            (json.dumps(value, indent=4), key))
             iter = iter + 1
-    conn.commit()
 
-# UpdateStatsJson()
+def UpdateRosterTeamsAndYear(cursor):
+    # Creating a cursor object using the cursor() method
+    playerStatement = '''select teams, end_year, gsis_id, college
+                        from player_grid where gsis_id is not null;'''
+    cursor.execute(playerStatement)
+    result_set = cursor.fetchall()
+    
+    with open('C:\\Users\\Jeremy\\Desktop\\roster.csv', 'r') as file:
+        csvreader = csv.reader(file)
+        playerMap = {}
+        for player in result_set:
+            playerMap[player[2].strip()] = list(player)
+        for row in csvreader:
+            if row[6] in playerMap:
+                teamList = list(playerMap[row[6]][0])
+                teamList.append(
+                    row[3] if row[3] not in TeamACCException else TeamACCException[row[3]]
+                )
+                playerMap[row[6]][0] = list(
+                    set(teamList))
+                if playerMap[row[6]][1] < row[1]:
+                    playerMap[row[6]][1] = row[1]
+                if playerMap[row[6]][3] is None and row[11] != 'NA':
+                    playerMap[row[6]][3] = row[11]
+                iter = 1
+        for key, value in playerMap.items():
+            print('(' + str(iter) + '/' + str(len(playerMap)) + ') ' +
+                  key + ' roster updated ')
+            playerGridStatement = '''UPDATE player_grid
+                        SET
+                        teams = %s,
+                        end_year = %s,
+                        college = %s
+                        WHERE gsis_id = %s;'''
+            cursor.execute(playerGridStatement,
+                           (value[0], value[1], value[3], key))
+            iter = iter + 1
+                
+                
+cursor = getDBConnection()
+# AddNewPlayersToGrid(cursor)
+# UpdateStatsJson(cursor)
+# UpdateRosterTeamsAndYear(cursor)
