@@ -23,3 +23,15 @@ def formatPickNumber(round):
         return '3rd'
     else:
         return '4th'    
+
+def formatPickNumberTransaction(round):
+    if round == '1':
+        return '1st'
+    elif round == '2':
+        return '2nd'
+    elif round == '3':
+        return '3rd'
+    elif round == '4':
+        return '4th'
+    else:
+        return round

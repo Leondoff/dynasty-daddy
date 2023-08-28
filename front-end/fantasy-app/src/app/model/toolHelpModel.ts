@@ -57,7 +57,7 @@ export const PowerRankingsTutorial: SimpleTextCategory[] = [
             'Fraud - This tier is the middling tier and most likely won\'t make the playoffs. These teams could be exiting a rebuild or tailing off from a contender run.',
             'Rebuilding - This tier is the bottom tier and holds the teams that are in a deep rebuild. These teams usually end up with high picks and oftentimes skew young.',
             'Super Team - This tier is when the contender tier bucket only has one team. Meaning this team\'s starter value is so much higher than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is a clear favorite to win the championship heading into the season.',
-            'Trust the Process - This tier is when the rebuilding tier bucket only has one team. Meaning this team\'s starter value is so much higher than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is a clear favorite to win the championship heading into the season.'
+            'Trust the Process - This tier is when the rebuilding tier bucket only has one team. Meaning this team\'s starter value is so much lower than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is missing many pieces and most likely is aiming for the first pick next year.'
         ]
     },
     {

@@ -337,8 +337,8 @@ export class FleaflickerService {
       trans.status = TransactionStatus.COMPLETED;
       trans.createdAt = Number(trade?.approvedOn) || Number(trade?.proposedOn)
 
-      const team1Id = trade.teams[0].team.id;
-      const team2Id = trade.teams[1].team.id;
+      const team1Id = trade.teams[0].team?.id || 0;
+      const team2Id = trade.teams[1].team?.id || 0;
       trans.rosterIds = [team1Id, team2Id];
 
       trade.teams[0]?.playersObtained?.forEach(player => {
