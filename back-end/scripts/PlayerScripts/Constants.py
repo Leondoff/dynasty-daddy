@@ -60,3 +60,6 @@ FANTASY_CALC_STD_URL = "https://api.fantasycalc.com/values/current?isDynasty=tru
 FANTASY_CALC_SF_REDRAFT_URL = "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=12&ppr=1&includeAdp=false"
 
 FANTASY_CALC_STD_REDRAFT_URL = "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1&includeAdp=false"
+
+# Sleeper apis
+SLEEPER_BASE_URL = "https://api.sleeper.app/v1/league/"

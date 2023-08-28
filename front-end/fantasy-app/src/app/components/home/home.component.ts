@@ -174,32 +174,44 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * @param platform platform to load user for
    */
   fetchUserInfo(platform: LeaguePlatform): void {
+    let username: string;
+    let password: string;
+  
     switch (platform) {
       case LeaguePlatform.SLEEPER:
-        this.leagueService.loadNewUser$(this.usernameInput, this.selectedYear);
-        localStorage.setItem(LocalStorageDictionary.SLEEPER_USERNAME_ITEM, this.usernameInput);
+        username = this.usernameInput;
+        localStorage.setItem(LocalStorageDictionary.SLEEPER_USERNAME_ITEM, username);
         break;
       case LeaguePlatform.MFL:
-        this.mflLeagueIdInput = '';
-        this.leagueService.loadNewUser$(this.mflUsernameInput, this.selectedYear, LeaguePlatform.MFL, this.mflPasswordInput);
-        localStorage.setItem(LocalStorageDictionary.MFL_USERNAME_ITEM, this.mflLeagueIdInput);
+        username = this.mflUsernameInput;
+        password = this.mflPasswordInput;
+        localStorage.setItem(LocalStorageDictionary.MFL_USERNAME_ITEM, username);
         break;
       case LeaguePlatform.FLEAFLICKER:
-        this.fleaflickerLeagueIdInput = '';
-        this.leagueService.loadNewUser$(this.fleaflickerEmail, this.selectedYear, LeaguePlatform.FLEAFLICKER);
-        localStorage.setItem(LocalStorageDictionary.FF_USERNAME_ITEM, this.fleaflickerEmail)
+        username = this.fleaflickerEmail;
+        localStorage.setItem(LocalStorageDictionary.FF_USERNAME_ITEM, username);
         break;
       case LeaguePlatform.FFPC:
-        this.ffpcLeagueId = '';
-        this.leagueService.loadNewUser$(this.ffpcEmail, this.selectedYear, LeaguePlatform.FFPC);
-        localStorage.setItem(LocalStorageDictionary.FFPC_USERNAME_ITEM, this.ffpcEmail)
+        username = this.ffpcEmail;
+        localStorage.setItem(LocalStorageDictionary.FFPC_USERNAME_ITEM, username);
         break;
       default:
-        console.error(`${platform} is not a supported platform for user login.`)
+        console.error(`${platform} is not a supported platform for user login.`);
+        return;
     }
-    this.leagueService.selectedYear = this.selectedYear;
-    this.leagueService.resetLeague();
+  
+    this.leagueService.loadNewUser$(username, this.selectedYear, platform, password)
+      .subscribe(
+        _ => {
+          this.leagueService.selectedYear = this.selectedYear;
+          this.leagueService.resetLeague();
+        },
+        error => {
+          console.error('Error:', error);
+        }
+      );
   }
+  
 
 
   /**

@@ -6,3 +6,4 @@ export * from './fleaflickerWrapperController';
 export * from './leagueFormatController';
 export * from './ffpcWrapperController';
 export * from './gridController';
+export * from './tradeController';

@@ -6,6 +6,7 @@ import { Observable, of } from 'rxjs';
 import { tap, map, delay } from 'rxjs/operators';
 import { GridPlayer } from 'src/app/components/model/gridPlayer';
 import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
+import { FantasyPlatformDTO } from 'src/app/model/league/FantasyPlatformDTO';
 
 
 @Injectable({
@@ -170,7 +171,7 @@ export class FantasyPlayerApiService {
         return this.fantasyPortfolioCache;
       }));
   }
-  
+
   /**
   * return all players in grid game based on search
   * @param search string to search on
@@ -276,6 +277,24 @@ export class FantasyPlayerApiService {
           this.nonOffensePlayers[key] = {};
         }
         this.nonOffensePlayers[key] = res;
+        return res;
+      }));
+  }
+
+  /**
+  * Add user leagues to database
+  * @param user user platform with leagues
+  * @param season year in string
+  */
+  postLeaguesToDatabase(user: FantasyPlatformDTO, season: string): Observable<void> {
+    const leagues = [];
+    user.leagues.forEach(l => {
+      leagues.push({leagueId: l.leagueId, season, platform: 'Sleeper'});
+    });
+    console.log(leagues);
+    if (leagues.length === 0) return of();
+    return this.http.post<any>(this.fantasyPlayerApiConfigService.postLeaguesToDatabaseEndpoint, { leagues })
+      .pipe(map(res => {
         return res;
       }));
   }
