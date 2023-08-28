@@ -8,7 +8,7 @@ import psycopg2
 SupportedYTypes = ['team', 'team', 'team',
                    'team', 'stat', 'stat', 'stat']
 
-SupportedXTypes = ['award', 'award', 'stat', 'stat', 'stat']
+SupportedXTypes = ['award', 'stat', 'stat', 'stat']
 
 SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET',
                   'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']

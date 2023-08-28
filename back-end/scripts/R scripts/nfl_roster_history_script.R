@@ -15,13 +15,12 @@ library(nflfastR)
 # file_name <- "roster_all_years.csv"
 
 # load weekly roster stats for players
-# aaa <- load_rosters_weekly(season = 2002:2022)
+aaa <- load_rosters_weekly(season = 2002:2023)
 
-# selected_columns <- aaa[, c("season", "season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college")]
+selected_columns <- aaa[, c("season", "season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college")]
 
-
-# # write rostered players to csv
-# write.csv(selected_columns, "C:\\Users\\Jeremy\\Desktop\\test.csv", row.names=FALSE)
+# write rostered players to csv
+write.csv(selected_columns, "C:\\Users\\Jeremy\\Desktop\\roster.csv", row.names=FALSE)
 
 try({# to avoid CRAN test problems
   pbp <- load_pbp(season = 1999:2022)

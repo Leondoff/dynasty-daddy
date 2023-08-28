@@ -4,7 +4,7 @@ import requests
 
 espnPosMap = {1: 'QB', 2: 'RB', 3: 'WR', 4: 'TE'}
 
-def updatePlayerGamelogs(season):
+def updatePlayerGamelogs(season, week = None):
     
     baseUrl = 'https://api.sleeper.app/v1/stats/nfl/regular/' + str(season) + '/'
     
@@ -18,7 +18,14 @@ def updatePlayerGamelogs(season):
     # Creating a cursor object using the cursor() method
     cursor = conn.cursor()
     
-    for num in range(1, 19):
+    weeks = []
+    if week is None:
+        for num in range(1, 19):
+            weeks.append(num)
+    else:
+        weeks.append(week)
+    
+    for num in weeks:
         data = requests.get(baseUrl + str(num))
         gamelog = json.loads(data.content.decode('utf-8'))
         if gamelog != {}:
@@ -32,4 +39,3 @@ def updatePlayerGamelogs(season):
     conn.commit()
 
 updatePlayerGamelogs(2022)
-
