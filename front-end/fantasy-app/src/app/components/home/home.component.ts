@@ -15,6 +15,8 @@ import { ESPNService } from 'src/app/services/api/espn/espn.service';
 import { FFPCService } from 'src/app/services/api/ffpc/ffpc.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
 import { PageService } from 'src/app/services/utilities/page.service';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -81,6 +83,8 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
 
   /** FFPC email string */
   ffpcEmail: string = '';
+
+  errorMsg: string = '';
 
   constructor(private sleeperApiService: SleeperApiService,
     public leagueService: LeagueService,
@@ -218,10 +222,23 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * loads fleaflicker data for user
    */
   loginWithESPNLeagueId(year?: string, leagueId?: string): void {
-    this.espnService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.espnLeagueId).subscribe(leagueData => {
-      this.leagueSwitchService.loadLeague(leagueData);
-    });
+    this.errorMsg = '';
+    this.espnService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.espnLeagueId)
+      .subscribe(
+        leagueData => {
+          this.leagueSwitchService.loadLeague(leagueData);
+        },
+        catchError((error) => {
+          if (error.status === 403) {
+            this.errorMsg = 'ESPN League is private. Leagues must be public in order to use on ESPN.';
+            return throwError('ESPN League is private. Leagues must be public in order to use on ESPN.');
+          } else {
+            return throwError(error);
+          }
+        })
+      );
   }
+  
 
   /**
    * loads ffpc data for user

@@ -76,10 +76,12 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     switch (type) {
       case 1:
         this.selectedVisualizations.setValue(['overall']);
+        this.powerRankingService.powerRankingsTableView = PowerRankingTableView.Starters;
         this.selectedMetrics.setValue(['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank']);
         break;
       default:
         const cols = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+        this.powerRankingService.powerRankingsTableView = PowerRankingTableView.TradeValues;
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
           cols.push('draftRank');
         }

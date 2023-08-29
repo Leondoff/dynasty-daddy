@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { TeamPowerRanking, TeamRankingTier } from '../../model/powerRankings';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortable } from '@angular/material/sort';
 import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
 import { LeagueService } from '../../../services/league.service';
 import { ConfigService } from '../../../services/init/config.service';
@@ -10,7 +10,6 @@ import { PlayerService } from '../../../services/player.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { DisplayService } from '../../../services/utilities/display.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
-import { LeagueType } from "../../../model/league/LeagueDTO";
 import { PowerRankingMarket, PowerRankingTableView, PowerRankingsService } from '../../services/power-rankings.service';
 import { BaseComponent } from '../../base-component.abstract';
 import { SimpleTextModal } from '../../sub-components/simple-text-modal/simple-text-modal.component';
@@ -334,6 +333,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         return item[property];
       }
     };
+    this.sort.sort(({ id: (this.powerRankingsService.powerRankingsTableView === PowerRankingTableView.TradeValues ? 'overallRank' : 'starterRank'), start: 'asc' } as MatSortable));
     this.dataSource.sort = this.sort;
   }
 

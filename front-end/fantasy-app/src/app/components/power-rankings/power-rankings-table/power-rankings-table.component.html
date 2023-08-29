@@ -75,7 +75,7 @@
   <div [hidden]="this.displayedRankingsSize === 0" class="margin-top-10" [ngClass]="{'power-ranking-container': configService.isMobile}">
     <table mat-table
            [dataSource]="dataSource" multiTemplateDataRows
-           class="mat-elevation-z8" matSort matSortActive="overallRank" matSortDirection="asc">
+           class="mat-elevation-z8" matSort>
 
       <ng-container matColumnDef="team">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Team</th>

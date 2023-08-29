@@ -60,7 +60,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         'rec100',
         'defTkl100',
         'defFF4',
-        'defSacks12',
+        'defSacks10',
         'defInts6',
         'defTds2',
         'defSafe1',
@@ -294,7 +294,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case 'defFF4':
             case 'max2FFG':
                 return 'Forced Fumbles';
-            case 'defSacks12':
+            case 'defSacks10':
             case 'max2SacksG':
                 return 'Sacks (Def)';
             case 'defInts6':
