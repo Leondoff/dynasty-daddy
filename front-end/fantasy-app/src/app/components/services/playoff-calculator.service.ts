@@ -85,7 +85,7 @@ export class PlayoffCalculatorService {
    * @private
    */
   private generateMatchUpsWithProb(): void {
-    this.matchUpsWithProb = [];
+    const matchups = [];
     this.matchUpService.leagueMatchUpUI.map(weekMatchups => {
       const games: MatchUpProbability[] = [];
       weekMatchups.map(matchup => {
@@ -94,8 +94,9 @@ export class PlayoffCalculatorService {
         matchup.selectedTeam2MedianWin = 0;
         games.push(this.getProbabilityForGame(matchup));
       });
-      this.matchUpsWithProb.push(games);
+      matchups.push(games);
     });
+    this.matchUpsWithProb = matchups;
   }
 
   /**
@@ -765,7 +766,6 @@ export class PlayoffCalculatorService {
     let nonWildCardTeams: SimulatedTeamInfo[] = [];
 
     let simulatedPlayoffTeams: SimulatedTeamInfo[] = [];
-
     // if divisions calculate winner
     // determine division winner and bye
     if (this.divisions.length > 1) {

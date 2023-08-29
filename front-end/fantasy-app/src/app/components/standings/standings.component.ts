@@ -42,7 +42,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
               public leagueSwitchService: LeagueSwitchService,
               public transactionService: TransactionsService) {
     super();
-    this.pageService.setUpPageSEO('League Standings',
+    this.pageService.setUpPageSEO('Fantasy League Standings',
     ['League Standings', 'fantasy football stats', 'fantasy league stats'],
     this.pageDescription)
   }
