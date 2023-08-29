@@ -256,12 +256,24 @@ export class LeagueScoringDTO {
   }
 
   fromFF(scoringSettings: any[]): LeagueScoringDTO {
+    const ffCache = {};
     for (let ruleGroup of scoringSettings) {
       for (let rule of ruleGroup?.scoringRules || []) {
         if (FFRulesMap[rule.category.id]) {
           if (!rule.isBonus) {
             for (let met of FFRulesMap[rule.category.id]) {
-              this[met] = rule?.pointsPer?.value || rule?.points?.value || 0;
+              if (met === 'rec') {
+                const metNum = rule?.pointsPer?.value || rule?.points?.value || 0;
+                (rule?.applyTo || []).forEach(pos => {
+                  if (!ffCache[pos]) {
+                    ffCache[pos] = {}
+                  };
+                  ffCache[pos][met] = metNum;
+                });
+                this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum        
+              } else {
+                this[met] = rule?.pointsPer?.value || rule?.points?.value || 0;
+              }
             }
           } else {
             if (FFRulesMap[rule.category.id]) {
@@ -271,6 +283,12 @@ export class LeagueScoringDTO {
         }
       }
     }
+    if (ffCache['TE'] && ffCache['TE']['rec'] > this.rec)
+      this.bonusRecTE = ffCache['TE']['rec'] - this.rec;
+    if (ffCache['RB'] && ffCache['RB']['rec'] > this.rec)
+      this.bonusRecRB = ffCache['RB']['rec'] - this.rec;
+    if (ffCache['WR'] && ffCache['WR']['rec'] > this.rec)
+      this.bonusRecWR = ffCache['WR']['rec'] - this.rec;
     return this;
   }
 
