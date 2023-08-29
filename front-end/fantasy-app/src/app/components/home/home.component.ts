@@ -180,7 +180,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   fetchUserInfo(platform: LeaguePlatform): void {
     let username: string;
     let password: string;
-  
+
     switch (platform) {
       case LeaguePlatform.SLEEPER:
         username = this.usernameInput;
@@ -203,7 +203,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         console.error(`${platform} is not a supported platform for user login.`);
         return;
     }
-  
+
     this.leagueService.loadNewUser$(username, this.selectedYear, platform, password)
       .subscribe(
         _ => {
@@ -215,7 +215,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         }
       );
   }
-  
+
 
 
   /**
@@ -224,21 +224,21 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   loginWithESPNLeagueId(year?: string, leagueId?: string): void {
     this.errorMsg = '';
     this.espnService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.espnLeagueId)
+      .pipe(
+        catchError((error) => {
+          if (error.status === 401) {
+            this.errorMsg = 'ERROR: ESPN League is private. Update league settings in ESPN.';
+          }
+          return throwError(error);
+        })
+      )
       .subscribe(
         leagueData => {
           this.leagueSwitchService.loadLeague(leagueData);
-        },
-        catchError((error) => {
-          if (error.status === 403) {
-            this.errorMsg = 'ESPN League is private. Leagues must be public in order to use on ESPN.';
-            return throwError('ESPN League is private. Leagues must be public in order to use on ESPN.');
-          } else {
-            return throwError(error);
-          }
-        })
+        }
       );
   }
-  
+
 
   /**
    * loads ffpc data for user
