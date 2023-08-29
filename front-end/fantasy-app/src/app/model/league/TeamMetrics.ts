@@ -43,6 +43,7 @@ export class TeamMetrics {
     this.wins = Number(settings.record?.overall?.wins || 0);
     this.losses = Number(settings.record?.overall?.losses || 0);
     this.rank = Number(settings.playoffSeed || 0);
+    this.division = Number(settings?.divisionId + 1 || 0);
     return this;
   }
 
