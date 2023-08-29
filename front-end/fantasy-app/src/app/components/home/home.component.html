@@ -509,6 +509,9 @@
           </mat-select>
         </mat-form-field>
       </div>
+      <div *ngIf="errorMsg != ''" class="warning__alert">
+        {{errorMsg}}
+      </div>
       <div>
         <button mat-raised-button [disabled]="!espnLeagueId || usernameInput === leagueService.selectedLeague?.leagueId"
                 color="accent" (click)="loginWithESPNLeagueId()" gaEvent="login_espn_league_id" gaCategory="platform_login">Sign In

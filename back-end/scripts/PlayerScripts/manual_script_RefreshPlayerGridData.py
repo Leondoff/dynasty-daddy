@@ -183,7 +183,7 @@ def UpdateStatsJson(cursor):
                 '3Pass1RushG': False,
                 'defTkl100': False,
                 'defFF4': False,
-                'defSacks12': False,
+                'defSacks10': False,
                 'defInts6': False,
                 'defSafe1': False,
                 'defTds2': False,
@@ -231,7 +231,7 @@ def UpdateStatsJson(cursor):
                     def_fields_to_update = {
                         'defTkl100': int(row[2]) > 99 or statsDict[statsId]['defTkl100'] is True,
                         'defFF4': int(row[3]) > 3 or statsDict[statsId]['defFF4'] is True,
-                        'defSacks12': float(row[4]) > 11 or statsDict[statsId]['defSacks12'] is True,
+                        'defSacks10': float(row[4]) > 9 or statsDict[statsId]['defSacks10'] is True,
                         'defInts6': int(row[5]) > 5 or statsDict[statsId]['defInts6'] is True,
                         'defTds2': int(row[6]) > 1 or statsDict[statsId]['defTds2'] is True,
                         'defSafe1': int(row[7]) > 0 or statsDict[statsId]['defSafe1'] is True,
