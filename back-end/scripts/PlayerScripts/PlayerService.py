@@ -24,6 +24,7 @@ def formatPickNumber(round):
     else:
         return '4th'    
 
+# this is for trade db reasons
 def formatPickNumberTransaction(round):
     if round == '1':
         return '1st'
@@ -34,4 +35,4 @@ def formatPickNumberTransaction(round):
     elif round == '4':
         return '4th'
     else:
-        return round
+        return str(round)
