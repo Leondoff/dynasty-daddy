@@ -10,7 +10,8 @@ playerExceptionsMap = {
     'nathanieldellwr': 'tankdellwr',
     "kenwalkerrb": "kennethwalkerrb",
     "mitchtrubiskyqb": "mitchelltrubiskyqb",
-    "scottymillerwr": "scottmillerwr"
+    "scottymillerwr": "scottmillerwr",
+    "andreosivaswr": "andreiiosivaswr"
 }
 
 # hardcoded postion map exceptions

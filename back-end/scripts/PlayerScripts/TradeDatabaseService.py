@@ -4,7 +4,7 @@ import os
 
 import requests
 from Constants import SLEEPER_BASE_URL
-from PlayerService import formatPickNumber
+from PlayerService import formatPickNumberTransaction
 import psycopg2
 
 def getDBConnection():
@@ -25,7 +25,9 @@ def getDBConnection():
     return conn.cursor()
 
 def FormatPickFromSleeper(pick):
-    rd = formatPickNumber(pick.get('round'))
+    if (pick.get('round') > 10):
+        print(pick)
+    rd = formatPickNumberTransaction(pick.get('round'))
     # 2025late3rdpi
     return pick.get('season') + 'mid' + rd + 'pi'
 
@@ -91,6 +93,8 @@ def ScrapeTrades():
                         sideB.append(key)
                 draft_picks = transaction.get("draft_picks") if transaction.get("draft_picks") is not None else []
                 for pick in draft_picks:
+                    if pick.get("season") == league[1]:
+                        continue
                     if pick.get("owner_id") == rosterIds[0]:
                         sideA.append(FormatPickFromSleeper(pick))
                     elif pick.get("owner_id") == rosterIds[1]:
