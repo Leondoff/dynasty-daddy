@@ -24,9 +24,9 @@ def formatDynastyProcessFutureYearPick(pick):
     if 'Mid' in pick or 'Early' in pick or 'Late' in pick:
         return [pick.lower().replace(" ", "") + 'pi']
     else:
-        return [pick[0:4] + 'early' + pick[-3] + 'pi',
-                pick[0:4] + 'mid' + pick[-3] + 'pi',
-                pick[0:4] + 'late' + pick[-3] + 'pi']
+        return [pick[0:4] + 'early' + PlayerService.formatPickNumber(pick[-3]) + 'pi',
+                pick[0:4] + 'mid' + PlayerService.formatPickNumber(pick[-3]) + 'pi',
+                pick[0:4] + 'late' + PlayerService.formatPickNumber(pick[-3]) + 'pi']
 
 # format api response to dict
 # Dict format will be {value: number, rank: number}
