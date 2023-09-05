@@ -5,8 +5,6 @@ WORKDIR /app
 COPY back-end/scripts/PlayerScripts/requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
-RUN echo "00 8 * * * /usr/local/bin/python /app/DailyCronJob.py >> /var/log/cron.log 2>&1" >> /etc/cron.d/ktc-crontab
-RUN echo "00 4 * * * /usr/local/bin/python /app/TradeDatabaseService.py >> /var/log/cron.log 2>&1" >> /etc/cron.d/trade-crontab
 COPY back-end/scripts/PlayerScripts/DailyCronJob.py /app/DailyCronJob.py
 COPY back-end/scripts/PlayerScripts/FantasyProsADPScraper.py /app/FantasyProsADPScraper.py
 COPY back-end/scripts/PlayerScripts/PlayerService.py /app/PlayerService.py
@@ -21,13 +19,20 @@ COPY back-end/scripts/PlayerScripts/InsertNonOffensePlayersService.py /app/Inser
 COPY back-end/scripts/PlayerScripts/KeepTradeCutService.py /app/KeepTradeCutService.py
 COPY back-end/scripts/PlayerScripts/TradeDatabaseService.py /app/TradeDatabaseService.py
 
+# schedule cron jobs
+RUN echo "00 4 * * * /usr/local/bin/python /app/TradeDatabaseService.py >> /var/log/trade_cron.log 2>&1" >> /etc/cron.d/trade-crontab
+RUN echo "00 8 * * * /usr/local/bin/python /app/DailyCronJob.py >> /var/log/cron.log 2>&1" >> /etc/cron.d/ktc-crontab
+
 # execution rights to cron
 RUN chmod 0644 /etc/cron.d/ktc-crontab
 RUN chmod 0644 /etc/cron.d/trade-crontab
-# Apply cron job
+
+# create log files
 RUN touch /var/log/cron.log
-RUN crontab /etc/cron.d/ktc-crontab
 RUN touch /var/log/trade_cron.log
+
+# apply cron jobs
 RUN crontab /etc/cron.d/trade-crontab
+RUN crontab /etc/cron.d/ktc-crontab
 
 CMD printenv > /etc/environment && cron -f && tail -f /var/log/cron.log
