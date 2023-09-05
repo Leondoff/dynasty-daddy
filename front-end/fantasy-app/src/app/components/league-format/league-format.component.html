@@ -135,6 +135,8 @@
     </div>
   </div>
   
-  <div class="center-spinner margin-top-120" *ngIf="leagueFormatStatus == 0">
+  <div class="center-spinner margin-top-120" *ngIf="leagueFormatStatus == 0 && leagueService.isLeagueLoaded()">
     <mat-spinner></mat-spinner>
   </div>
+
+  <app-login-error [errorHeader]="loginError" *ngIf="!leagueService.isLeagueLoaded()"></app-login-error>

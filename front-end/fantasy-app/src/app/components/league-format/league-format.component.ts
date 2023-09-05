@@ -22,10 +22,16 @@ import { QueryService } from "src/app/services/utilities/query.service";
 })
 export class LeagueFormatComponent extends BaseComponent implements OnInit {
 
+    /** page description and SEO */
     pageDescription = 'Identify positional advantages for your league by looking at historical quality starts and WoRP for your league\'s settings.';
 
+    /** league format loading status */
     leagueFormatStatus: Status = Status.LOADING;
 
+    /** login error when no league selected */
+    loginError: String = 'Unable to pull league format. Please select a league.';
+
+    /** toggle advanced settings */
     showAdvancedSettings: boolean = false;
 
     /** form control for metrics dropdown */
