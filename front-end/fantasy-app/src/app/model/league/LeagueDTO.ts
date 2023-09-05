@@ -34,6 +34,13 @@ export class LeagueDTO {
 
   }
 
+  /**
+   * Set offensive starter count for league based on roster position
+   */
+  private setOffensiveStarters(): void {
+    this.starters = this.rosterPositions.filter(position => ['QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX'].includes(position)).length;
+  }
+
   fromSleeper(isSuperflex: boolean,
     name: string,
     league_id: string,
@@ -59,6 +66,7 @@ export class LeagueDTO {
       }
       return p
     });
+    this.setOffensiveStarters();
     this.rosterSize = (roster_positions?.length || 0) + (settings?.reserve_slots || 0) + (settings?.taxi_slots || 0);
     this.prevLeagueId = previous_league_id;
     this.status = status;
@@ -106,6 +114,7 @@ export class LeagueDTO {
     this.leagueId = league_id;
     this.totalRosters = total_rosters;
     this.rosterPositions = roster_positions;
+    this.setOffensiveStarters();
     this.rosterSize = (Number(leagueInfo?.rosterSize) || 30) + (Number(leagueInfo?.injuredReserve) || 0) + (Number(leagueInfo?.taxiSquad) || 0);
     this.prevLeagueId = previous_league_id;
     this.status = status;
@@ -142,6 +151,7 @@ export class LeagueDTO {
     this.leagueId = league_id;
     this.totalRosters = total_rosters;
     this.rosterPositions = roster_positions;
+    this.setOffensiveStarters();
     this.rosterSize = (Number(leagueInfo?.rosterSize) || 30) + (Number(leagueInfo?.injuredReserve) || 0) + (Number(leagueInfo?.taxiSquad) || 0);
     this.prevLeagueId = previous_league_id;
     this.status = status;
@@ -173,6 +183,7 @@ export class LeagueDTO {
     this.leagueId = league_id;
     this.totalRosters = total_rosters;
     this.rosterPositions = roster_positions;
+    this.setOffensiveStarters();
     this.prevLeagueId = previous_league_id;
     this.status = status;
     this.season = season;

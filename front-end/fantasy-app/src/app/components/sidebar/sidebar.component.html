@@ -30,7 +30,7 @@
         <a mat-list-item [routerLink]="['./league/portfolio']" *ngIf="searchVal == '' || isInSearch('Fantasy Portfolio')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_portfolio" gaCategory="page_nav">
           <mat-icon>account_balance</mat-icon>Fantasy Portfolio</a>
         <a mat-list-item [routerLink]="['./league/format']" *ngIf="(searchVal == '' || isInSearch('League Format Tool')) && configService.getConfigOptionByKey('show_league_format_page')?.configValue === 'true'" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_league_format" gaCategory="page_nav">
-          <mat-icon>line_axis</mat-icon>League Format</a>
+          <mat-icon>line_axis</mat-icon>League Format <mat-chip-list><mat-chip class="sidebar-new-alert">New</mat-chip></mat-chip-list></a>
       </mat-nav-list>
   </mat-expansion-panel>
   <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="searchVal == '' || (isInSearch('Value Comparisons') || isInSearch('Positional Statistics') || isInSearch('Trade Calculator') || isInSearch('Player Rankings'))">
