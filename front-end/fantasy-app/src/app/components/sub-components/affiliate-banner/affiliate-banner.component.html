@@ -1,0 +1,5 @@
+
+<div class="margin-top-15 center-text" style="text-align: -webkit-center;" *ngIf="displayImg">
+  <img [src]="displayImg" alt="Dynasty Daddy Affiliate Offer" class="affiliate-style"
+  [ngClass]="{'small-size': size === 'small' || configService.isMobile, 'normal-size': size !== 'small' && !configService.isMobile}" (click)="openAffiliate()">
+</div>

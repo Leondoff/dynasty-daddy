@@ -1,0 +1,13 @@
+.normal-size {
+    width: 80%;
+    max-width: 720px;
+}
+
+.small-size {
+    width: 100%;
+    max-width: 300px;
+}
+
+.affiliate-style {
+    cursor: pointer;
+}
