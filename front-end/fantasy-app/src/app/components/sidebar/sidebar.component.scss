@@ -32,3 +32,9 @@
   color: mat.get-color-from-palette($mat-dark-theme-foreground, disabled-text) !important;
   background-color: mat.get-color-from-palette($mat-dark-theme-background, disabled-button-toggle) !important;
 }
+
+.sidebar-new-alert {
+  background-color: mat.get-color-from-palette($mat-accent, main) !important;
+  margin-left: 10px !important;
+  min-height: 2em !important;
+}

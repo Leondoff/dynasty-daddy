@@ -24,6 +24,7 @@
   <div>
     <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="leagueService.selectedLeague.isSuperflex" [columnsToDisplay]="powerRankingService.powerRankingsTableCols"></app-power-rankings-table>
   </div>
+  <div class="small-text__light center-text margin-top-15">{{leagueService.selectedLeague.name}} • {{leagueService.selectedLeague.totalRosters}} Teams • Start {{leagueService.selectedLeague.starters}}</div>
 </div>
 
 <div class="center-text margin-top-50"*ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0">

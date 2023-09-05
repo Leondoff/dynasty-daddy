@@ -224,3 +224,19 @@ CREATE TABLE league_info (
 );
 
 CREATE INDEX idx_league_id ON league_info (league_id);
+
+CREATE TABLE trades (
+    transaction_id  VARCHAR(20) PRIMARY KEY,
+    sideA TEXT[],
+    sideB TEXT[],
+    transaction_date TIMESTAMP,
+    platform platform_enum DEFAULT 'Sleeper' NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    league_id VARCHAR(20) REFERENCES league_info (league_id),
+    UNIQUE (transaction_id, platform)
+);
+
+CREATE INDEX idx_sideA ON trades USING GIN (sideA);
+CREATE INDEX idx_sideB ON trades USING GIN (sideB);
+CREATE INDEX idx_trade_league_id ON trades (league_id);
+create index inx_trade_transaction_date on trades (transaction_date);
