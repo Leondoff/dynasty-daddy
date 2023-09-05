@@ -7,6 +7,8 @@
     <a href="{{gridGameService.gridDict['creatorLink']}}" target="_blank" style="padding-right: 10px; text-decoration: unset;"><span class="link--text__dot__underline small-text__light"> {{gridGameService.gridDict?.['creator']}}</span></a>        
 </div>
 
+<affiliate-banner></affiliate-banner>
+
 <div *ngIf="gridGameService.status === 1"class="margin-top-25">
     <div style="overflow-x: auto;">
         <table class="grid-table">
@@ -94,6 +96,8 @@
             <button mat-stroked-button (click)="openPuckdoku()"><mat-icon>sports_hockey</mat-icon>Puckdoku</button>
         </div>
     </div>
+
+    <div class="center-text small-text__light margin-top-50">Dynasty Daddy is not affiliated or associated in any way with the National Football League. Use of any logos on this website does not constitute a sponsorship or endorsement by the teams, league, or trademark holders.</div>
 
 </div>
 

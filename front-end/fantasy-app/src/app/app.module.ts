@@ -124,6 +124,7 @@ import { LeagueFormatTableComponent } from './components/league-format/league-fo
 import { ToolHelpComponent } from './components/sub-components/tool-help/tool-help.component';
 import { FilterLeagueFormatModalComponent } from './components/modals/filter-league-format-modal/filter-league-format-modal.component';
 import { DataSourcesButtonComponent } from './components/sub-components/data-sources-button/data-sources-button.component';
+import { AffiliateBannerComponent } from './components/sub-components/affiliate-banner/affiliate-banner.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -214,6 +215,7 @@ let UniversalDeviceDetectorService;
     LeagueFormatChartComponent,
     LeagueFormatTableComponent,
     FilterLeagueFormatModalComponent,
+    AffiliateBannerComponent,
     ToolHelpComponent,
     DataSourcesButtonComponent
   ],
