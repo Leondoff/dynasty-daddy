@@ -23,16 +23,17 @@ COPY back-end/scripts/PlayerScripts/TradeDatabaseService.py /app/TradeDatabaseSe
 RUN echo "00 4 * * * /usr/local/bin/python /app/TradeDatabaseService.py >> /var/log/trade_cron.log 2>&1" >> /etc/cron.d/trade-crontab
 RUN echo "00 8 * * * /usr/local/bin/python /app/DailyCronJob.py >> /var/log/cron.log 2>&1" >> /etc/cron.d/ktc-crontab
 
-# execution rights to cron
-RUN chmod 0644 /etc/cron.d/ktc-crontab
-RUN chmod 0644 /etc/cron.d/trade-crontab
+# Combine the contents of both crontabs into a single file
+RUN cat /etc/cron.d/ktc-crontab /etc/cron.d/trade-crontab > /etc/cron.d/combined-crontab
+
+# Apply the combined crontab
+RUN crontab /etc/cron.d/combined-crontab
+
+# Execution rights to cron
+RUN chmod 0644 /etc/cron.d/combined-crontab
 
 # create log files
 RUN touch /var/log/cron.log
 RUN touch /var/log/trade_cron.log
-
-# apply cron jobs
-RUN crontab /etc/cron.d/trade-crontab
-RUN crontab /etc/cron.d/ktc-crontab
 
 CMD printenv > /etc/environment && cron -f && tail -f /var/log/cron.log
