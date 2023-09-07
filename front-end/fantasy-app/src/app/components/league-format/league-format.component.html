@@ -69,7 +69,7 @@
         <mat-form-field class="mat-dropdown-wide-300"
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile}" color="accent"
           style="border-top: unset !important;">
-          <mat-label>Search Player</mat-label>
+          <mat-label>Search Player or Manager</mat-label>
           <input matInput type="text" (keyup)="reloadFormatTool()" [(ngModel)]="leagueFormatService.searchVal">
           <button mat-button *ngIf="leagueFormatService.searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearchVal()">
             <mat-icon>close</mat-icon>
