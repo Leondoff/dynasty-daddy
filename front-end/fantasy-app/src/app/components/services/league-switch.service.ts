@@ -20,6 +20,7 @@ import { PlayerValueService } from './player-value.service';
 import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
 import { ESPNService } from 'src/app/services/api/espn/espn.service';
 import { FFPCService } from 'src/app/services/api/ffpc/ffpc.service';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -75,36 +76,42 @@ export class LeagueSwitchService extends BaseComponent {
     this.transactionService.reset();
     this.tradeService.reset();
     console.time('Fetch League Data');
-    this.addSubscriptions(this.leagueService.loadNewLeague$(this.selectedLeague).subscribe(res => {
-      this.leagueService.leagueTeamDetails.map((team) => {
-        this.playersService.generateRoster(team, this.selectedLeague.leaguePlatform);
-      });
-      this.matchupService.initMatchUpCharts(
-        this.selectedLeague,
-        this.nflService.getCompletedWeekForSeason(this.selectedLeague.season)
-      ).subscribe(() => {
-        forkJoin([
-          this.powerRankingService.mapPowerRankings(
-            this.leagueService.leagueTeamDetails,
-            this.playersService.playerValues,
-            this.leagueService.selectedLeague.leaguePlatform
-          ),
-          this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails),
-          this.playersService.fetchAllNonOffensePlayers(this.selectedLeague.rosterPositions)]).subscribe(() => {
-            this.powerRankingService.loadDefaultPreset(this.selectedLeague.type)
-            this.leagueService.selectedLeague = this.selectedLeague;
-            this.playerValueService.isSuperFlex = this.selectedLeague.isSuperflex;
-            this.leagueService.leagueStatus = 'DONE';
-            this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id
-              || this.leagueService.leagueTeamDetails[0]?.owner?.userId;
-            console.timeEnd('Fetch League Data');
-            this.leagueChanged$.next(this.selectedLeague);
-            this.lastTimeRefreshed = new Date();
-            this.updateQueryParams();
-          });
-      });
-    }
-    ));
+    this.addSubscriptions(this.leagueService.loadNewLeague$(this.selectedLeague)
+      .pipe(
+        switchMap((res) => {
+          // First, fetch all non-offense players
+          return this.playersService.fetchAllNonOffensePlayers(this.selectedLeague.rosterPositions);
+        })
+      )
+      .subscribe(res => {
+        this.leagueService.leagueTeamDetails.map((team) => {
+          this.playersService.generateRoster(team, this.selectedLeague.leaguePlatform);
+        });
+        this.matchupService.initMatchUpCharts(
+          this.selectedLeague,
+          this.nflService.getCompletedWeekForSeason(this.selectedLeague.season)
+        ).subscribe(() => {
+          forkJoin([
+            this.powerRankingService.mapPowerRankings(
+              this.leagueService.leagueTeamDetails,
+              this.playersService.playerValues,
+              this.leagueService.selectedLeague.leaguePlatform
+            ),
+            this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
+              this.powerRankingService.loadDefaultPreset(this.selectedLeague.type)
+              this.leagueService.selectedLeague = this.selectedLeague;
+              this.playerValueService.isSuperFlex = this.selectedLeague.isSuperflex;
+              this.leagueService.leagueStatus = 'DONE';
+              this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id
+                || this.leagueService.leagueTeamDetails[0]?.owner?.userId;
+              console.timeEnd('Fetch League Data');
+              this.leagueChanged$.next(this.selectedLeague);
+              this.lastTimeRefreshed = new Date();
+              this.updateQueryParams();
+            });
+        });
+      }
+      ));
   }
 
   /**

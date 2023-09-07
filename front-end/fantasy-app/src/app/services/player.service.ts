@@ -606,7 +606,9 @@ export class PlayerService {
     return this.fantasyPlayerApiService.fetchNonOffensePlayers(Array.from(new Set(nonOffensePos)))
       .pipe(
         mergeMap(players => {
-          const nonOffensePlayers = this.addNonOffensePlayersToValues(players);
+          const nonOffensePlayers = this.formatNonOffensePlayersToFantasyPlayers(players);
+          this.unfilteredPlayerValues = this.unfilteredPlayerValues.filter(p => ['QB', 'RB', 'WR', 'TE', 'PI'].includes(p.position))
+          this.playerValues = this.playerValues.filter(p => ['QB', 'RB', 'WR', 'TE', 'PI'].includes(p.position))
           this.unfilteredPlayerValues.push(...nonOffensePlayers);
           this.playerValues.push(...nonOffensePlayers);
           return of(players);
@@ -615,10 +617,10 @@ export class PlayerService {
   }
 
   /**
-   * Helper function that adds new players to player values
+   * Helper function that formats players to list of FantasyPlayer
    * @param players dict of new players to add
    */
-  private addNonOffensePlayersToValues(players: {}): FantasyPlayer[] {
+  private formatNonOffensePlayersToFantasyPlayers(players: {}): FantasyPlayer[] {
     const playerList = []
     for (const key of Object.keys(players)) {
       playerList.push(players[key] as FantasyPlayer);
