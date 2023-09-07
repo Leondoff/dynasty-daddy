@@ -58,7 +58,7 @@ export class LeagueDTO {
     this.leagueId = league_id;
     this.totalRosters = total_rosters;
     this.rosterPositions = roster_positions.map(p => {
-      if (p === 'WRRB_FLEX') {
+      if (p === 'WRRB_FLEX' || p === 'REC_FLEX') {
         return 'FLEX';
       }
       if (p === 'DEF') {
