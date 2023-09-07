@@ -120,6 +120,10 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         this.playerService.loadPlayerValuesForToday();
         this.selectedMetrics.setValue(this.leagueFormatService.columnsToDisplay);
         this.selectedVisualizations.setValue(this.leagueFormatService.selectedVisualizations);
+        if (!this.leagueFormatService.selectedSeason) {
+            this.leagueFormatService.selectedSeason =
+            Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
+        }
         if (this.leagueService.selectedLeague) {
             this.loadNewSeason();
         }
@@ -131,8 +135,6 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                 this.reloadFormatTool();
             }),
             this.leagueSwitchService.leagueChanged$.subscribe(_ => {
-                this.leagueFormatService.selectedSeason =
-                    Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
                 this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
                     const positionFilterList = this.leagueService.selectedLeague.rosterPositions
                         .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p));
@@ -144,7 +146,8 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                         positionFilterList.push(...['DL', 'LB', 'DB'])
                     this.leaguePositions = Array.from(new Set(positionFilterList));
                     this.leagueFormatService.selectedPositions.setValue(this.leaguePositions);
-                    this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
+                    const currentStatYear = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022).toString()
+                    this.selectableSeasons = this.getSelectableSeasons(currentStatYear);
                     this.leagueFormatService.leagueFormatPlayerUpdated$.next();
                 });
             })
