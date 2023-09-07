@@ -3,6 +3,7 @@ from datetime import date
 import datetime
 import json
 import os
+import time
 
 import requests
 from Constants import SLEEPER_BASE_URL
@@ -175,6 +176,7 @@ def ScrapeTrades(leagueType, isAllTime = False):
                         ]
                         tradesToProcess.append(trade)
             iter += 1
+            time.sleep(0.001)
             if interval != 0 and iter % interval == 0:
                 print(f"{round((iter/len(leagues))*100)}% Processed")
         except Exception as e:

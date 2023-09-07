@@ -170,9 +170,12 @@ export class PlayerService {
         return of(this.playerStats);
       })));
       let currentWeekInd = this.nflService.stateOfNFL.seasonType !== 'post' ? this.nflService.stateOfNFL.completedWeek : 18;
-      const currentYearInd = this.nflService.getYearForStats();
+      let currentYearInd = this.nflService.getYearForStats();
       for (let weekNum = 1; weekNum < 19; weekNum++) {
-        if (currentWeekInd === 0) currentWeekInd = currentWeekInd < 2021 ? 17 : 18;
+        if (currentWeekInd === 0) {
+          currentWeekInd = 18;
+          currentYearInd = (Number(currentYearInd) - 1).toString()
+        }
         observe.push(this.sleeperApiService.getSleeperStatsForWeek(
           currentYearInd,
           currentWeekInd).pipe(map((weeklyStats) => {

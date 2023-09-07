@@ -117,10 +117,10 @@ export class PlayerValuesComponent extends BaseComponent implements OnInit {
       playerData.push(filterRow);
       playerData.push([]);
       playerData.push([
-        ['Name', 'Position', 'Age', 'Owner', 'Avg Pos ADP', 'KeepTradeCut', 'KeepTradeCut % Change', 'FantasyCalc', 'FantasyCalc % Change', 'DynastyProcess', 'DynastyProcess % Change', 'DynastySuperflex', 'DynastySuperflex % Change'],
+        ['Name', 'Position', 'Team', 'Age', 'Owner', 'Avg Pos ADP', 'KeepTradeCut', 'KeepTradeCut % Change', 'FantasyCalc', 'FantasyCalc % Change', 'DynastyProcess', 'DynastyProcess % Change', 'DynastySuperflex', 'DynastySuperflex % Change'],
       ]);
       this.playerValueService.filteredPlayers.forEach((player, ind) => {
-        const playerRow = [player?.full_name, player?.position, player?.age, player?.owner?.ownerName,
+        const playerRow = [player?.full_name, player?.position, player?.team, player?.age, player?.owner?.ownerName,
         player?.avg_adp > 0 ? player?.avg_adp : '',
         this.playerValueService?.isSuperFlex ?
           playerValues[0][player?.name_id]?.sf_trade_value || 0 :
