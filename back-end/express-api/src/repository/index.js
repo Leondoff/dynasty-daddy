@@ -7,3 +7,4 @@ export * from './PlayerIdRepository';
 export * from './PlayerMetadataRepository';
 export * from './PlayerGridRepository';
 export * from './leagueInfoRepository';
+export * from './TradesRepository';

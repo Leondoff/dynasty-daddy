@@ -211,6 +211,10 @@ def ScrapeTrades(leagueType, isAllTime = False):
                     print(f"Error on row {idx + 1}: {data} \n Error: {inner_e}")
         iter += 1
         print(f"{batch_size * iter}/{len(tradesToProcess)} Trades Persisted")
+        
+    # update mat view for fantasy calc values
+    cursor.execute(
+    '''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_trade_agg;''')
 
 ScrapeTrades('Dynasty', False)
     

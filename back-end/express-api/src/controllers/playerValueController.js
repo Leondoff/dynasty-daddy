@@ -5,7 +5,8 @@ import {
   GetFantasyPortfolioForInterval,
   GetPlayerValuesForMarket,
   GetSpecialPlayers,
-  GetPlayerMetadataByNameId
+  GetPlayerMetadataByNameId,
+  GetTradeDetailsForPlayer
 } from '../repository';
 
 /**
@@ -86,9 +87,11 @@ export const GetPlayerDetailsEndpoint = async (req, res) => {
     const { id } = req.params;
     const valueData = await GetHistoricalPlayerValuesDatapoint(id, 'false');
     const metadata = await GetPlayerMetadataByNameId(id);
+    const tradeData = await GetTradeDetailsForPlayer(id);
     res.status(200).json({
       historicalData: valueData.rows,
-      profile: metadata.rows
+      profile: metadata.rows,
+      tradeData
     });
   } catch (err) {
     res.status(500).json(err.stack);
