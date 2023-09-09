@@ -137,7 +137,7 @@ def AddNewPlayersToGrid(cursor):
         iter = 1
         for key, value in playerMap.items():
             print('(' + str(iter) + '/' + str(len(playerMap)) + ') ' +
-                  value['name'] + ' processed ')
+                  value['name'] + ' player added')
             playerGridStatement = '''INSERT INTO player_grid (name, jersey_numbers, teams, headshot_url, pos, sleeper_id, college, awards_json, start_year, end_year, stats_json, gsis_id)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
             cursor.execute(playerGridStatement, (value['name'], value['jerseyNumbers'],
@@ -297,5 +297,5 @@ def UpdateRosterTeamsAndYear(cursor):
                 
 cursor = getDBConnection()
 # AddNewPlayersToGrid(cursor)
-# UpdateStatsJson(cursor)
+UpdateStatsJson(cursor)
 # UpdateRosterTeamsAndYear(cursor)

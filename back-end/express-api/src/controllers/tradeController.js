@@ -1,4 +1,4 @@
-import { AddLeaguesToDatabase } from '../middleware/tradeService';
+import { AddLeaguesToDatabase, FetchTradesFromDatabase, GetPlayerTradeDetails } from '../middleware';
 
 export const AddLeaguesToDatabaseEndpoint = async (req, res) => {
   try {
@@ -7,6 +7,15 @@ export const AddLeaguesToDatabaseEndpoint = async (req, res) => {
     } = req.body;
     await AddLeaguesToDatabase(leagues);
     res.status(200).json('success');
+  } catch (err) {
+    res.status(500).json(err.stack);
+  }
+};
+
+export const GetTradesFromSearchEndpoint = async (req, res) => {
+  try {
+    const trades = await FetchTradesFromDatabase(req.body);
+    res.status(200).json(trades);
   } catch (err) {
     res.status(500).json(err.stack);
   }
