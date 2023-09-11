@@ -39,7 +39,6 @@ SupportedStats = ['rushYd1000',
                   'maxTdRec3',
                   'maxTdRush3',
                   'maxYdRec200',
-                  'maxYdRush200',
                   'maxYdPass300',
                   'rec100',
                   'specialTds2',
@@ -57,6 +56,7 @@ SupportedStats = ['rushYd1000',
                   '1Sack1IntG',
                   'only1Team']
 
+#   'maxYdRush200',
 
 def SetNewPlayerGrid():
 

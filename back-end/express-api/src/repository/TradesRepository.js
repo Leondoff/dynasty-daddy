@@ -30,12 +30,12 @@ export const FetchTrades = async (tradeInfo) => {
         (ARRAY[$1] <@ ARRAY[t.sideA] AND ARRAY[$2] <@ ARRAY[t.sideB]) OR
         (ARRAY[$1] <@ ARRAY[t.sideB] AND ARRAY[$2] <@ ARRAY[t.sideA])
       )
-      AND (($3::boolean IS NULL) OR l.is_superflex = $3::boolean)
-      AND (($4::integer IS NULL) OR l.starters = $4::integer)
-      AND (($5::integer IS NULL) OR l.teams = $5::integer)
+      AND (COALESCE($3::boolean[], ARRAY[]::boolean[]) = ARRAY[]::boolean[] OR l.is_superflex = ANY($3::boolean[]))
+      AND (COALESCE($4::integer[], ARRAY[]::integer[]) = ARRAY[]::integer[] OR l.starters = ANY($4::integer[]))
+      AND (COALESCE($5::integer[], ARRAY[]::integer[]) = ARRAY[]::integer[] OR l.teams = ANY($5::integer[]))
       AND (($6::text IS NULL) OR l.league_type::text = $6::league_type_v2::text)
-      AND (($7::decimal IS NULL) OR l.ppr = $7::decimal)
-      AND (($8::decimal IS NULL) OR l.tep = $8::decimal)
+      AND (COALESCE($7::decimal[], ARRAY[]::decimal[]) = ARRAY[]::decimal[] OR l.ppr = ANY($7::decimal[]))
+      AND (COALESCE($8::decimal[], ARRAY[]::decimal[]) = ARRAY[]::decimal[] OR l.tep = ANY($8::decimal[]))
     ORDER BY transaction_date DESC
     LIMIT $9
     OFFSET $10
