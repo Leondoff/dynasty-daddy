@@ -9,7 +9,7 @@
 <div mat-dialog-content>
   <div *ngIf="searchPlayers.length == 0" class="light_bg_color">
     Players must have played one regular season game in order to count for the team.
-    <div>The only exception is for players changing teams in the 2023 offseason. Those players are updated till August 1st.</div>
+    <div>Player stats will update weekly on Wednesday afternoon (after stat corrects are complete).</div>
   </div>
   <div *ngFor="let player of searchPlayers" class="select-player" (click)="selectPlayer(player)">
     {{player.name}} <span class="light_bg_color" style="padding-left: 5px;">{{player.pos}}</span>
