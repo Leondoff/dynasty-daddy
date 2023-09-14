@@ -13,6 +13,7 @@ import { LeagueService } from "src/app/services/league.service";
 import { LeagueType } from "src/app/model/league/LeagueDTO";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { BarChartColorPalette, ComparisonColorPalette, TierColorPalette } from "src/app/services/utilities/color.service";
+import { ConfigService } from "src/app/services/init/config.service";
 
 @Component({
     selector: 'app-trade-database',
@@ -78,6 +79,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
     constructor(private playerService: PlayerService,
         public tradeDatabaseService: TradeDatabaseService,
         private route: ActivatedRoute,
+        public configService: ConfigService,
         public leagueService: LeagueService,
         private fantasyPlayerApiService: FantasyPlayerApiService,
         private leagueSwitchService: LeagueSwitchService) {
@@ -124,7 +126,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         this.tradeVolumeStatus = Status.LOADING;
         this.addSubscriptions(this.fantasyPlayerApiService.loadRecentTradeVolume().subscribe(res => {
             this.volumeData = [];
-            res.sort((a, b) => Number(b.count) - Number(a.count)).slice(0, 50).forEach(p => {
+            res.sort((a, b) => Number(b.count) - Number(a.count)).slice(0, this.configService.isMobile ? 30 : 50).forEach(p => {
                 const player = this.playerService.getPlayerByPlayerPlatformId(p.id)
                 const name = player ? `${player.first_name[0]}. ${player.last_name}` : ''
                 const tooltipStr = '<span style="font-weight: bold;">' + name + '</span>'
@@ -244,6 +246,13 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
     }
 
     /**
+     * reset filters
+     */
+    resetFilters(): void {
+        this.tradeDatabaseService.resetFilters();
+    }
+
+    /**
      * Change page by a certain amount
      * @param change number to change by
      */
@@ -279,7 +288,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         this.tradeDatabaseService.sideBPlayers = [];
         this.tradeDatabaseService.sideAPlayers = [];
         this.addPlayerToSideA(this.playerService.getPlayerByPlayerPlatformId(id));
-        this.searchTradeDatabase();
+        this.changeFilters();
     }
 
     ngOnDestroy(): void {

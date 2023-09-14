@@ -122,7 +122,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         this.selectedVisualizations.setValue(this.leagueFormatService.selectedVisualizations);
         if (!this.leagueFormatService.selectedSeason) {
             this.leagueFormatService.selectedSeason =
-            Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
+                Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
         }
         if (this.leagueService.selectedLeague) {
             this.loadNewSeason();
@@ -135,21 +135,8 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                 this.reloadFormatTool();
             }),
             this.leagueSwitchService.leagueChanged$.subscribe(_ => {
-                this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
-                    const positionFilterList = this.leagueService.selectedLeague.rosterPositions
-                        .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p));
-                    if (this.leagueService.selectedLeague.rosterPositions.includes('FLEX'))
-                        positionFilterList.push(...['RB', 'WR', 'TE'])
-                    if (this.leagueService.selectedLeague.rosterPositions.includes('SUPER_FLEX'))
-                        positionFilterList.push(...['QB', 'RB', 'WR', 'TE'])
-                    if (this.leagueService.selectedLeague.rosterPositions.includes('IDP_FLEX'))
-                        positionFilterList.push(...['DL', 'LB', 'DB'])
-                    this.leaguePositions = Array.from(new Set(positionFilterList));
-                    this.leagueFormatService.selectedPositions.setValue(this.leaguePositions);
-                    const currentStatYear = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022).toString()
-                    this.selectableSeasons = this.getSelectableSeasons(currentStatYear);
-                    this.leagueFormatService.leagueFormatPlayerUpdated$.next();
-                });
+                this.leagueFormatService.selectedSeason = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022);
+                this.loadNewSeason();
             })
         );
     }
@@ -161,8 +148,15 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         this.leagueFormatStatus = Status.LOADING;
         this.leagueFormatService.filteredPlayers = [];
         this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
-            this.leaguePositions = Array.from(new Set(this.leagueService.selectedLeague.rosterPositions
-                .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p))));
+            const positionFilterList = this.leagueService.selectedLeague.rosterPositions
+                .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p));
+            if (this.leagueService.selectedLeague.rosterPositions.includes('FLEX'))
+                positionFilterList.push(...['RB', 'WR', 'TE'])
+            if (this.leagueService.selectedLeague.rosterPositions.includes('SUPER_FLEX'))
+                positionFilterList.push(...['QB', 'RB', 'WR', 'TE'])
+            if (this.leagueService.selectedLeague.rosterPositions.includes('IDP_FLEX'))
+                positionFilterList.push(...['DL', 'LB', 'DB']);
+            this.leaguePositions = Array.from(new Set(positionFilterList));
             this.leagueFormatService.selectedPositions.setValue(this.leaguePositions);
             this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
             this.leagueFormatService.leagueFormatPlayerUpdated$.next();

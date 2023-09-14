@@ -47,9 +47,9 @@ export const CalculateConsistency = async (pointsDict, playersInSystem, format, 
       return pointsB - pointsA;
     });
     posList.forEach(pos => {
-      const highThreshold = (teamCount * format[pos]) / 2;
-      const midThreshold = teamCount * format[pos] || 0;
-      const lowThreshold = teamCount * (format[pos] || 0) + teamCount;
+      const highThreshold = (teamCount * (format[pos] || 1)) / 2;
+      const midThreshold = teamCount * (format[pos] || 1);
+      const lowThreshold = teamCount * (format[pos] || 1) + teamCount;
 
       const posPlayers = sortedPlayers.filter(p =>
         p.position === pos);
