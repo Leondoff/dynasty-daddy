@@ -1,16 +1,18 @@
 {
   "name": "dynasty-daddy-front-end",
-  "version": "1.10.0",
+  "version": "2.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host=0.0.0.0 --configuration development",
     "start-deploy": "node server.js",
     "build": "ng build",
+    "build:stats": "ng build --stats-json",
     "build-prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src/",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "analyze": "webpack-bundle-analyzer dist/dynasty/stats.json"
   },
   "private": true,
   "dependencies": {
@@ -28,10 +30,11 @@
     "@angular/platform-browser-dynamic": "^14.2.12",
     "@angular/router": "^14.2.12",
     "@thouet/material-carousel": "^14.2.2",
+    "@types/d3": "^7.4.0",
     "angular2-query-builder": "^0.6.2",
     "chart.js": "^2.9.3",
-    "chartjs-plugin-colorschemes": "^0.4.0",
     "chartjs-plugin-datalabels": "^1.0.0",
+    "d3": "^7.8.5",
     "express": "^4.17.1",
     "grosso-modo": "^4.3.0",
     "javascript-color-gradient": "^2.4.4",
@@ -70,7 +73,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.0.0",
     "protractor": "~7.0.0",
-    "ts-node": "~10.9.1"
+    "ts-node": "~10.9.1",
+    "webpack-bundle-analyzer": "^4.9.1"
   },
   "engines": {
     "node": "v18.13.0",

@@ -91,3 +91,13 @@ export const GetTradeDetailsForPlayer = async (playerId) => {
   const data = await playersModel.pool.query(query);
   return data.rows;
 };
+
+export const FetchRecentTradeVolume = async () => {
+  const query = `
+    SELECT * from mat_vw_trade_agg
+      WHERE week_interval = 1;
+  `;
+
+  const data = await playersModel.pool.query(query);
+  return data.rows;
+};

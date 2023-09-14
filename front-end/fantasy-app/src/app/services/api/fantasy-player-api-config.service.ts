@@ -36,6 +36,10 @@ export class FantasyPlayerApiConfigService {
 
   private _postLeaguesToDatabaseEndpoint = '';
 
+  private _searchTradeDatabaseEndpoint = '';
+
+  private _getRecentTradeVolumeEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
@@ -154,5 +158,21 @@ export class FantasyPlayerApiConfigService {
 
   set postLeaguesToDatabaseEndpoint(value: string) {
     this._postLeaguesToDatabaseEndpoint= value;
+  }
+
+  get searchTradeDatabaseEndpoint(): string {
+    return this._searchTradeDatabaseEndpoint;
+  }
+
+  set searchTradeDatabaseEndpoint(value: string) {
+    this._searchTradeDatabaseEndpoint= value;
+  }
+
+  get getRecentTradeVolumeEndpoint(): string {
+    return this._getRecentTradeVolumeEndpoint;
+  }
+
+  set getRecentTradeVolumeEndpoint(value: string) {
+    this._getRecentTradeVolumeEndpoint = value;
   }
 }

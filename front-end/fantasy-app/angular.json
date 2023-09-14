@@ -15,7 +15,6 @@
           "options": {
             "allowedCommonJsDependencies": [
               "chart.js",
-              "chartjs-plugin-colorschemes",
               "javascript-color-gradient"
             ],
             "outputPath": "dist/dynasty",

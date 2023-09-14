@@ -42,7 +42,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { AddPlayerComparisonModalComponent } from './components/modals/add-player-comparison-modal/add-player-comparison-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TradeValueLineChartComponent } from './components/player-comparisons/trade-value-line-chart/trade-value-line-chart.component';
-import 'chartjs-plugin-colorschemes';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -125,6 +124,9 @@ import { ToolHelpComponent } from './components/sub-components/tool-help/tool-he
 import { FilterLeagueFormatModalComponent } from './components/modals/filter-league-format-modal/filter-league-format-modal.component';
 import { DataSourcesButtonComponent } from './components/sub-components/data-sources-button/data-sources-button.component';
 import { AffiliateBannerComponent } from './components/sub-components/affiliate-banner/affiliate-banner.component';
+import { TradeDatabaseComponent } from './components/trade-database/trade-database.component';
+import { TradeDatabaseCardComponent } from './components/trade-database/trade-database-card/trade-database-card.component';
+import { BubblePackingChartComponent } from './components/sub-components/bubble-packing-chart/bubble-packing-chart.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -177,7 +179,6 @@ let UniversalDeviceDetectorService;
     TeamTransactionsChartComponent,
     GridGameComponent,
     HighLightSearchPipe,
-    HighLightSearchPipe,
     TradeCenterComponent,
     TradeFinderComponent,
     TradeFinderTableComponent,
@@ -189,6 +190,7 @@ let UniversalDeviceDetectorService;
     EditLeagueSettingsModalComponent,
     FilterPlayerValuesModalComponent,
     FantasyMarketDropdown,
+    BubblePackingChartComponent,
     WrappedComponent,
     WrappedWelcomeComponent,
     WrappedTransactionsComponent,
@@ -216,6 +218,8 @@ let UniversalDeviceDetectorService;
     LeagueFormatTableComponent,
     FilterLeagueFormatModalComponent,
     AffiliateBannerComponent,
+    TradeDatabaseComponent,
+    TradeDatabaseCardComponent,
     ToolHelpComponent,
     DataSourcesButtonComponent
   ],

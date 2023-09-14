@@ -9,7 +9,9 @@ updates:
     directory: "/front-end/fantasy-app"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 10
   - package-ecosystem: "npm"
     directory: "/back-end/express-api/"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 10
