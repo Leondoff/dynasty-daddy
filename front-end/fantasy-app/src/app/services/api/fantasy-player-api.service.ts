@@ -48,6 +48,9 @@ export class FantasyPlayerApiService {
   /** non offense players loaded */
   private nonOffensePlayers;
 
+  /** trade database volume cache */
+  private tradeDatabaseVolume;
+
   constructor(private http: HttpClient, private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService) {
   }
 
@@ -290,7 +293,7 @@ export class FantasyPlayerApiService {
   postLeaguesToDatabase(user: FantasyPlatformDTO, season: string): Observable<void> {
     const leagues = [];
     user.leagues.forEach(l => {
-      leagues.push({leagueId: l.leagueId, season, platform: 'Sleeper'});
+      leagues.push({ leagueId: l.leagueId, season, platform: 'Sleeper' });
     });
     if (leagues.length === 0) return of();
     return this.http.post<any>(this.fantasyPlayerApiConfigService.postLeaguesToDatabaseEndpoint, { leagues })
@@ -298,4 +301,44 @@ export class FantasyPlayerApiService {
         return res;
       }));
   }
+
+  /**
+   * Search trade database for trades
+   * @param sideA list of sleeper ids
+   * @param sideB list of sleeper ids
+   * @param isSuperFlex list of boolean
+   * @param starters starter count list
+   * @param teams team count list
+   * @param leagueType string type
+   * @param ppr ppr list
+   * @param tep tep list
+   * @param page number page
+   * @param pageLength page length
+   */
+  searchTradeDatabase(sideA: string[], sideB: string[], isSuperFlex: boolean[], starters: number[], teams: number[], leagueType: string, ppr: number[], tep: number[], page: number, pageLength: number): Observable<any[]> {
+    return this.http.post<any>(this.fantasyPlayerApiConfigService.searchTradeDatabaseEndpoint, { sideA, sideB, isSuperFlex, starters, teams, leagueType, ppr, tep, page, pageLength })
+      .pipe(map(res => {
+        return res;
+      }));
+  }
+
+  /**
+   * Loades recent trade volumn from cache or api
+   * @returns Observable of players trade volume
+   */
+  loadRecentTradeVolume(): Observable<any[]> {
+    return this.tradeDatabaseVolume ? of(this.tradeDatabaseVolume) : this.refreshRecentTradeVolume();
+  }
+
+  /**
+    * return recent trade volume from the trade database
+    */
+  private refreshRecentTradeVolume(): Observable<any[]> {
+    return this.http.get<any[]>(this.fantasyPlayerApiConfigService.getRecentTradeVolumeEndpoint)
+      .pipe(map(res => {
+        this.tradeDatabaseVolume = res;
+        return res;
+      }));
+  }
+
 }

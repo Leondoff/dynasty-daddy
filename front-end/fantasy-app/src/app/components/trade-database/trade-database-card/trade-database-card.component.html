@@ -1,0 +1,31 @@
+<mat-card>
+    <div class="mid-bold-text">{{dateString}}</div>
+    <div>
+        <table class="trade-results-table">
+            <tr>
+              <td class="trade-results-column">
+                <div *ngFor="let player of trade?.sidea || []" style="margin-top: 2px">
+                    {{ getAssetName(player) }}
+                </div>
+              </td>
+              <td class="trade-results-icon">
+                <mat-icon>autorenew</mat-icon>
+              </td>
+              <td class="trade-results-column">
+                <div *ngFor="let player of trade?.sideb || []" style="margin-top: 2px">
+                  {{ getAssetName(player) }}
+                </div>
+              </td>
+            </tr>
+        </table>       
+    </div>
+    <div style="margin-top: 5px">
+        <mat-chip-list>
+            <mat-chip class="superflex-color result-chip">{{ trade.is_superflex ? '2 QB' : '1 QB'}}</mat-chip>
+            <mat-chip class="teams-color result-chip">{{ trade.teams }} Teams</mat-chip>
+            <mat-chip class="starters-color result-chip">Start {{ trade.starters }}</mat-chip>
+            <mat-chip class="ppr-color result-chip">{{ pprStr }} PPR</mat-chip>
+            <mat-chip class="tep-color result-chip" *ngIf="tepStr != 'No'">{{ tepStr }} TEP</mat-chip>
+        </mat-chip-list>
+    </div>
+</mat-card>

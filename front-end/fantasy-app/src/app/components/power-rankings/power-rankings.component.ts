@@ -50,7 +50,7 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     super();
     this.pageService.setUpPageSEO('Fantasy League Power Rankings | Dynasty Daddy',
       ['fantasy league ranker', 'fantasy football rankings', 'league power ranker',
-        'fantasy power rankings', 'fantasy league analyzer', 'fantasy footbal analyzer',
+        'fantasy power rankings', 'fantasy league analyzer', 'fantasy football league analyzer free',
         'fantasy league rankings', 'fantasy football power rankings'],
       this.pageDescription)
   }

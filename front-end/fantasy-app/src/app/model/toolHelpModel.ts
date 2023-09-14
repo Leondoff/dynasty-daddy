@@ -280,3 +280,43 @@ export const DataSourcesInfo: SimpleTextCategory[] = [
         type: 'text'
     },
 ];
+
+
+export const TradeDatabaseTutorial: SimpleTextCategory[] = [
+    {
+        title: 'Overview',
+        list: [
+            'The Trade Database is a powerful tool giving you access to a treasure trove of completed trades and statistics at your fingertips, helping you make strategic trade decisions and dominate your fantasy league.',
+            'We pull over 300,000 trades across 50,000+ league daily to give you up to date trades from across the fantasy space.',
+            'Trades are pulled every evening at 12 AM.'
+        ]
+    },
+    {
+        title: 'Trade Volume Chart',
+        list: [
+            'The Trade Volume Chart is a circle pack chart showing the top 50 (30 for mobile) most traded players in the past week and updated daily.',
+            'You can hover over a circle to pull up information in a tooltip or drag around the circles (that\'s mainly just for fun 😆).',
+            'By clicking the circle, a trade database search for that player will be triggered returning results for that player.'
+        ]
+    },
+    {
+        title: 'Trade Database Search',
+        list: [
+            'Add players to either side of a trade and see what trades have been made with specific players.',
+            'Using the league setting dropdowns, filter trades based on specific league format. More information below on each dropdown.',
+            'Click the \'🔎 Search\' button to load new trades based on the filters set.',
+            'If you are logged in, you can click the \'Use My League Settings\' button to filter to only leagues matching your format.'
+        ]
+    },
+    {
+        title: 'League Setting Filter Details',
+        list: [
+            'League Type - Select between Dynasty or Redraft leagues to pull trades for.',
+            'Quarterbacks - Include trades with 1 starting QB or 2 starting QBs in their league.',
+            'Scoring Format - Include trades with 0, 0.5, or 1.0 PPR formats.',
+            'Tight End Premium - Include trades with specific Tight End Premium formats.',
+            'Team Count - Filter trades based on how many teams are in the league.',
+            'Starter Count - Include trades based on how many offensive starters are in the league.'
+        ]
+    }
+];

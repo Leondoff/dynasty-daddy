@@ -125,7 +125,7 @@ def ScrapeTrades(leagueType, isAllTime = False):
         SELECT *
         FROM league_info
         WHERE EXTRACT(YEAR FROM created_at) = %s
-            AND league_type = %s;
+            AND league_type = ANY(%s::league_type_v2[]);
     """
     cursor.execute(leagueQuery, (season, leagueType))
     leagues = cursor.fetchall()
@@ -165,7 +165,7 @@ def ScrapeTrades(leagueType, isAllTime = False):
                             sideA.append(FormatPickFromSleeper(pick))
                         elif pick.get("owner_id") == rosterIds[1]:
                             sideB.append(FormatPickFromSleeper(pick))
-                    if len(sideA) > 0 and len(sideB) > 0:
+                    if len(sideA) > 0 and len(sideB) > 0 and (league[3] == 'Dynasty' or (league[3] == 'Redraft' and len(draft_picks) == 0)):
                         trade = [
                             transaction.get("transaction_id"),
                             sideA,
@@ -216,5 +216,5 @@ def ScrapeTrades(leagueType, isAllTime = False):
     cursor.execute(
     '''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_trade_agg;''')
 
-ScrapeTrades('Dynasty', False)
+ScrapeTrades(['Dynasty', 'Redraft'], False)
     

@@ -1,0 +1,43 @@
+.superflex-color {
+    background: #9DC700;
+}
+
+.teams-color {
+    background: #c59700;
+}
+
+.starters-color {
+    background: #FF5733;
+}
+
+.ppr-color {
+    background: #C70039;
+}
+
+.tep-color {
+    background: #900C3F;
+}
+
+.result-chip {
+    border-radius: 8px !important;
+    min-height: 24px !important;
+    height: 1px !important;
+}
+
+.trade-results-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.trade-results-column {
+    width: 40%;
+    padding: 5px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.trade-results-icon {
+    width: 40%;
+    padding: 5px;
+    text-align: center;
+}
