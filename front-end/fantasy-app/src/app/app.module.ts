@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
+import 'chartjs-plugin-colorschemes';
 import { EndpointsService } from './services/endpoints.service';
 import { ConfigService } from './services/init/config.service';
 import { StartupService } from './services/init/startup.service';

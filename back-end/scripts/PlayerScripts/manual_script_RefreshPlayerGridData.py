@@ -296,6 +296,6 @@ def UpdateRosterTeamsAndYear(cursor):
                 
                 
 cursor = getDBConnection()
-# AddNewPlayersToGrid(cursor)
+AddNewPlayersToGrid(cursor)
 UpdateStatsJson(cursor)
-# UpdateRosterTeamsAndYear(cursor)
+UpdateRosterTeamsAndYear(cursor)

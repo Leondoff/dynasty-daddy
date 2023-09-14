@@ -1,3 +1,5 @@
+# remove.packages("gsisdecoder")
+# install.packages("rlang")
 install.packages("tidyverse", type = "binary")
 install.packages("ggrepel", type = "binary")
 install.packages("nflreadr", type = "binary")
@@ -6,13 +8,16 @@ install.packages("nflfastR", type = "binary")
 install.packages("gsisdecoder", type = "binary")
 
 library(nflreadr)
-# options(nflreadr.verbose = FALSE)
+options(nflreadr.verbose = FALSE)
 library(nflfastR)
-# library(ggrepel)
+library(ggrepel)
+library(ggplot2)
 # library(nflplotR)
-# library(dplyr)
+library(dplyr)
 
 # file_name <- "roster_all_years.csv"
+
+nflreadr::.clear_cache()
 
 # load weekly roster stats for players
 aaa <- load_rosters_weekly(season = 2002:2023)
@@ -23,7 +28,7 @@ selected_columns <- aaa[, c("season", "season", "full_name", "team", "position",
 write.csv(selected_columns, "C:\\Users\\Jeremy\\Desktop\\roster.csv", row.names=FALSE)
 
 try({# to avoid CRAN test problems
-  pbp <- load_pbp(season = 1999:2022)
+  pbp <- load_pbp(season = 1999:2023)
   weekly <- calculate_player_stats_def(pbp, weekly = TRUE)
 
   grouped_data_def <- weekly %>% group_by(player_id, season)
@@ -47,7 +52,7 @@ try({# to avoid CRAN test problems
 })
 
 # NFL Stats spreadsheet for thresholds
-player_data <- load_player_stats(season = 1999:2022)
+player_data <- load_player_stats(season = 1999:2023)
 
 # Group the filtered data by season and calculate the sum of passing yards and passing TDs
 grouped_data <- player_data %>% group_by(player_id, season)
