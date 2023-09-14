@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, Renderer2 } from "@angular/core";
 import * as d3 from 'd3';
+import { ConfigService } from "src/app/services/init/config.service";
 
 @Component({
     selector: 'bubble-packing-chart',
@@ -15,6 +16,7 @@ export class BubblePackingChartComponent implements AfterViewInit {
     circleClicked = new EventEmitter<string>();
 
     constructor(private elementRef: ElementRef,
+        private configService: ConfigService,
         private renderer: Renderer2
     ) { }
 
@@ -42,30 +44,36 @@ export class BubblePackingChartComponent implements AfterViewInit {
         // Size scale for countries
         const size = d3.scaleLinear()
             .domain([minMaxValues.min, minMaxValues.max])
-            .range([16, 57])
+            .range([16, 62])
 
         // Functions to handle tooltip interactions
         const showBubbleTooltip = (event: any, d: any) => {
-            bubbleTooltip.style('opacity', '1')
-                .html(d.tooltip);
+            if (!this.configService.isMobile) {
+                bubbleTooltip.style('opacity', '1')
+                    .html(d.tooltip);
+            }
         };
 
         const updateBubbleTooltipContent = (event: any, d: any) => {
-            const tooltip = bubbleTooltip.node();
-            const target = event.target as SVGCircleElement;
+            if (!this.configService.isMobile) {
+                const tooltip = bubbleTooltip.node();
+                const target = event.target as SVGCircleElement;
 
-            const left = target?.cx?.baseVal?.value + 50;
-            const top = target?.cy?.baseVal?.value + 20;
+                const left = target?.cx?.baseVal?.value + size(d.value) + 40;
+                const top = target?.cy?.baseVal?.value + 20;
 
-            bubbleTooltip.style("opacity", "1")
-                .html(d.tooltip)
-                .style("left", left + "px")
-                .style("top", top + "px");
+                bubbleTooltip.style("opacity", "1")
+                    .html(d.tooltip)
+                    .style("left", left + "px")
+                    .style("top", top + "px");
+            }
         };
 
         const hideBubbleTooltip = (event: any, d: any) => {
-            bubbleTooltip.html('')
-                .style('opacity', '0')
+            if (!this.configService.isMobile) {
+                bubbleTooltip.html('')
+                    .style('opacity', '0')
+            }
         };
 
         // simulation code and dragging logic

@@ -25,13 +25,15 @@ export class TradeDatabaseCardComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const date = new Date(this.trade.transaction_date);
-        const month = date.getMonth() + 1; // Months are zero-indexed, so add 1
-        const day = date.getDate();
+        const transactionDate = new Date(this.trade.transaction_date);
+        const currentDate = new Date();
+        const timeDifference = currentDate.getTime() - transactionDate.getTime();
 
-        this.dateString = `${month}/${day}`;
+        const daysAgo = Math.floor(timeDifference / (1000 * 3600 * 24));
 
-        switch(Number(this.trade.ppr)) {
+        this.dateString = daysAgo === 0 ? 'Today' : `${daysAgo} days ago`;
+
+        switch (Number(this.trade.ppr)) {
             case 1:
                 this.pprStr = 'Full';
                 break;
@@ -49,7 +51,7 @@ export class TradeDatabaseCardComponent implements OnInit {
 
     getAssetName(id: string): string {
         const player = this.playerService.unfilteredPlayerValues.find(p => p.position == 'PI' ? p.name_id == id : p.sleeper_id == id);
-        return player?.full_name.length > 20 ? player?.first_name.substring(0,1) + '. ' + player?.last_name : player?.full_name;
+        return player?.full_name.length > 20 ? player?.first_name.substring(0, 1) + '. ' + player?.last_name : player?.full_name;
     }
 
 }

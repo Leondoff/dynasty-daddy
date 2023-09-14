@@ -103,6 +103,7 @@
     </div>
     <div class="margin-top-25 center-text">
         <button mat-raised-button (click)="changeFilters()"><mat-icon>search</mat-icon> Search</button>
+        <button mat-icon-button (click)="resetFilters()"><mat-icon>restart_alt</mat-icon></button>
     </div>
     <div class="margin-top-15 center-text" *ngIf="leagueService.selectedLeague">
         <button mat-button (click)="useMyLeague()"><mat-icon>tune</mat-icon> Use My League Settings</button>

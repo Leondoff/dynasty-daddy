@@ -21,7 +21,7 @@ export class TradeDatabaseService {
   selectedQbFormat = new UntypedFormControl([1, 2]);
 
   /** form control for scoring filter dropdown */
-  selectedStartersFormat = new UntypedFormControl( [6, 7, 8, 9, 10, 11, 12, 13, 14]);
+  selectedStartersFormat = new UntypedFormControl([6, 7, 8, 9, 10, 11, 12, 13, 14]);
 
   /** form control for scoring filter dropdown */
   selectedLeagueTypeFormat = new UntypedFormControl('Dynasty');
@@ -44,12 +44,20 @@ export class TradeDatabaseService {
   constructor(private fantasyPlayerApiService: FantasyPlayerApiService) {
   }
 
+  resetFilters(): void {
+    this.selectedQbFormat.setValue([1, 2]);
+    this.selectedStartersFormat.setValue([6, 7, 8, 9, 10, 11, 12, 13, 14]);
+    this.selectedTeamFormat.setValue([4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]);
+    this.selectedScoringFormat.setValue([0, 0.5, 1.0]);
+    this.selectedTepFormat.setValue([0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5]);
+  }
+
   /**
    * Search observable with formatted message from service
    * @param page page number
    * @param pageLength length of a page
    */
-  searchTradeDatabase(page: number, pageLength: number): Observable<TradeDatabaseItem[]>  {
+  searchTradeDatabase(page: number, pageLength: number): Observable<TradeDatabaseItem[]> {
     return this.fantasyPlayerApiService.searchTradeDatabase(
       this.sideAPlayers.map(p => p.position == 'PI' ? p.name_id : p.sleeper_id),
       this.sideBPlayers.map(p => p.position == 'PI' ? p.name_id : p.sleeper_id),
@@ -61,12 +69,12 @@ export class TradeDatabaseService {
       this.selectedTepFormat.value,
       page,
       pageLength
-      ).pipe(
-        catchError((error) => {
-          console.error('An error occurred:', error);
-          throw error; // Rethrow the error to propagate it to the component
-        })
-      );
-    }
+    ).pipe(
+      catchError((error) => {
+        console.error('An error occurred:', error);
+        throw error; // Rethrow the error to propagate it to the component
+      })
+    );
+  }
 
 }
