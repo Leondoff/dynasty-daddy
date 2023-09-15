@@ -59,7 +59,7 @@
     </mat-expansion-panel-header>
     <mat-nav-list>
         <a mat-list-item *ngFor="let team of filteredTeams" [routerLink]="['./league/team', team.owner.ownerName]" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
-          <img #image [src]="team?.owner?.avatar"
+          <img #image [src]="team?.owner?.avatar" alt="Fantasy Team Avatar"
           (error)="image.hidden = true" [hidden]="image.hidden" style="width: 20px;">{{team.owner.teamName | truncate: 20}}</a>
     </mat-nav-list>
 </mat-expansion-panel>

@@ -25,31 +25,31 @@
         <mat-tab-group mat-align-tabs="center" class="margin-top-25" selectedIndex="{{selectedTab}}">
           <mat-tab>
             <ng-template mat-tab-label>
-              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(0)'>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(0)' alt="Sleeper">
             </ng-template>
             <div *ngIf="false else sleeperTemplate"></div>
           </mat-tab>
           <mat-tab *ngIf="configService.getConfigOptionByKey('allow_mfl_login')?.configValue === 'true'">
             <ng-template mat-tab-label>
-              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(1)'>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(1)' alt="MyFantasyLeague">
             </ng-template>
             <div *ngIf="false else mflTemplate"></div>
           </mat-tab>
           <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ff_login')?.configValue === 'true'">
             <ng-template mat-tab-label>
-              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(2)'>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(2)' alt="Fleaflicker">
             </ng-template>
             <div *ngIf="false else fleaflickerTemplate"></div>
           </mat-tab>
           <mat-tab *ngIf="configService.getConfigOptionByKey('allow_espn_login')?.configValue === 'true'">
             <ng-template mat-tab-label>
-              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(3)'>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(3)' alt="ESPN Fantasy">
             </ng-template>
             <div *ngIf="false else espnTemplate"></div>
           </mat-tab>
           <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ffpc_login')?.configValue === 'true'">
             <ng-template mat-tab-label>
-              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(4)'>
+              <img width="30px" height="30px" [src]='displayService.getImageForPlatform(4)' alt="FFPC">
             </ng-template>
             <div *ngIf="false else ffpcTemplate"></div>
           </mat-tab>
@@ -61,19 +61,19 @@
           <mat-label>Select Platform</mat-label>
           <mat-select [(ngModel)]="selectedTab">
             <mat-select-trigger>
-              <img class="dropdown-img" [src]='getSelectedImage()'>
+              <img class="dropdown-img" [src]='getSelectedImage()' alt="Fantasy Platform">
               <span style="padding-left: 15px">{{getSelectedPlatformName()}}</span>
             </mat-select-trigger>
             <mat-option value="0">
-              <img class="dropdown-img" [src]='displayService.getImageForPlatform(0)'><span style="padding-left: 15px">Sleeper</span></mat-option>
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(0)' alt="Sleeper"><span style="padding-left: 15px">Sleeper</span></mat-option>
             <mat-option value="1" *ngIf="configService.getConfigOptionByKey('allow_mfl_login')?.configValue === 'true'">
-              <img class="dropdown-img" [src]='displayService.getImageForPlatform(1)'><span style="padding-left: 15px">MyFantasyLeague</span></mat-option>
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(1)' alt="MyFantasyLeague"><span style="padding-left: 15px">MyFantasyLeague</span></mat-option>
             <mat-option value="2" *ngIf="configService.getConfigOptionByKey('allow_ff_login')?.configValue === 'true'">
-              <img class="dropdown-img" [src]='displayService.getImageForPlatform(2)'><span style="padding-left: 15px">Fleaflicker</span></mat-option>
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(2)' alt="FleaFlicker"><span style="padding-left: 15px">Fleaflicker</span></mat-option>
             <mat-option value="3" *ngIf="configService.getConfigOptionByKey('allow_espn_login')?.configValue === 'true'">
-              <img class="dropdown-img" [src]='displayService.getImageForPlatform(3)'><span style="padding-left: 15px">ESPN</span></mat-option>
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(3)' alt="ESPN Fantasy"><span style="padding-left: 15px">ESPN</span></mat-option>
             <mat-option value="4" *ngIf="configService.getConfigOptionByKey('allow_ffpc_login')?.configValue === 'true'">
-              <img class="dropdown-img" [src]='displayService.getImageForPlatform(4)'><span style="padding-left: 15px">FFPC</span></mat-option>
+              <img class="dropdown-img" [src]='displayService.getImageForPlatform(4)' alt="FFPC"><span style="padding-left: 15px">FFPC</span></mat-option>
           </mat-select>
         </mat-form-field>
         <ng-container [ngSwitch]="selectedTab">

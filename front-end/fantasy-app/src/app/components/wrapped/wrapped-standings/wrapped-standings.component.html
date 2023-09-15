@@ -56,7 +56,7 @@
 <div *ngIf="wrappedService.frameNumber === baseFrame + 6">
   <div [@fadeGrowStagger]="rivalQuotes.length + 4" *ngIf="showContent" class="wrapped-context-high">
     <div  class="center-text wrapped-header-style">But only one can bring home the championship</div>
-    <div class="center-text extra-card-padding"> <img #image [src]="winner.owner.avatar"
+    <div class="center-text extra-card-padding"> <img #image [src]="winner.owner.avatar" alt="Fantasy Team Avatar"
       onerror="style.display = 'none'" style="width: clamp(200px, 5vw, 500px);"></div>
     <div class="center-text wrapped-header-style extra-card-padding">Congrats {{winner.owner?.teamName}}!</div>
     <div class="center-text wrapped-header-style extra-card-padding">You had an incredible season! Here are some quotes from rivals...</div>

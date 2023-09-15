@@ -17,7 +17,7 @@
   <div class="flex-details-container margin-top-50">
     <div class="flex-item-details grid-15">
       <div class="profile--pic">
-        <img #image [src]="selectedTeam?.owner?.avatar"
+        <img #image [src]="selectedTeam?.owner?.avatar" alt="fantasy team avatar"
              (error)="image.hidden = true" [hidden]="image.hidden" class="responsive">
       </div>
     </div>
@@ -267,7 +267,7 @@
             <img mat-card-image #image
                  [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player?.sleeper_id + '.jpg'"
                   onerror="this.src='https://www.pff.com/images/webui/player_default.png';" style="max-width: 300px"
-                 class="responsive center-img">
+                 class="responsive center-img" alt="football player image">
             <mat-card-content class="center-text">
               <div class="small-text__light">Trade Value</div>
               <div class="mid-bold-text">{{leagueService?.selectedLeague?.isSuperflex ? player.sf_trade_value : player.trade_value}}</div>

@@ -11,7 +11,7 @@
             <td></td>
             <td class="wrapped-rank" *ngIf="!iconRank">{{content.rank}}</td>
             <td class="wrapped-rank-icon" *ngIf="iconRank"><mat-icon style="font-size: clamp(50px, 5vw, 200px);">{{content.rank}}</mat-icon></td>
-            <td class="wrapped-img"><img #image [src]="content.image"
+            <td class="wrapped-img"><img #image [src]="content.image" alt="Fantasy Team Avatar"
                 onerror="style.display = 'none'" style="width: clamp(50px, 5vw, 200px);"></td>
             <td>
                 <div class="wrapped-header">
