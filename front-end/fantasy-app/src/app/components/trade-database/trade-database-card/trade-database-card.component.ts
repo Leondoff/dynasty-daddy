@@ -31,7 +31,7 @@ export class TradeDatabaseCardComponent implements OnInit {
 
         const daysAgo = Math.floor(timeDifference / (1000 * 3600 * 24));
 
-        this.dateString = daysAgo === 0 ? 'Today' : `${daysAgo} days ago`;
+        this.dateString = daysAgo === 0 ? 'Today' : `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
 
         switch (Number(this.trade.ppr)) {
             case 1:

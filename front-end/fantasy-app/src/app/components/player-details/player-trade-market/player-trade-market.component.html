@@ -1,0 +1,66 @@
+<div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
+    <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="80%" class="item">
+        <mat-card style="max-height: 360px">
+            <div class="mid-bold-text center-text margin-bot-10">Trade Value Metrics</div>
+            <div class="insight__row">
+                <div class="text__light">Trades in the Past Week</div>
+                <div class="mid-bold-text">{{tradeVolumeCache['lastWeekVol'] || 0}}</div>
+            </div>
+            <div class="insight__row">
+                <div class="text__light">Volume % Change (Week)</div>
+                <div class="mid-bold-text">{{tradeVolumeCache['lastWeekPer']}}%</div>
+            </div>
+            <div class="insight__row">
+                <div class="text__light">Trades In the Past Month</div>
+                <div class="mid-bold-text">{{tradeVolumeCache['monthVol'] || 0}}</div>
+            </div>
+            <div class="insight__row">
+                <div class="text__light">Volume % Change (Month)</div>
+                <div class="mid-bold-text">{{tradeVolumeCache['monthPer'] || 0}}%</div>
+            </div>
+            <div class="insight__row">
+                <div class="text__light">Volume Overall Rank</div>
+                <div class="mid-bold-text">{{tradeVolumeCache['ovRank'] || '-'}}</div>
+            </div>
+            <div class="insight__row">
+                <div class="text__light">Overall Rank Change</div>
+                <div class="mid-bold-text">{{tradeVolumeCache['ovRankChange'] > 0 ? '+' :''}}{{tradeVolumeCache['ovRankChange'] || 0}}</div>
+            </div>
+            <div class="insight__row">
+                <div class="text__light">Volume Position Rank</div>
+                <div class="mid-bold-text">{{tradeVolumeCache['posRank'] || '-'}}</div>
+            </div>
+            <div class="insight__row">
+                <div class="text__light">Position Rank Change</div>
+                <div class="mid-bold-text">{{tradeVolumeCache['posRankChange'] > 0 ? '+' :''}}{{tradeVolumeCache['posRankChange'] || 0}}</div>
+            </div>
+        </mat-card>
+    </div>
+    <div fxFlex="60%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" style="display: block">
+        <mat-card>
+            <div class="margin-bot-10 center-text"><span class="mid-bold-text">Weekly Trade Volume</span></div>
+            <div style="display: block; height: 300px" *ngIf="lineChartData.length > 0">
+                <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+                    [legend]="lineChartLegend" [chartType]="lineChartType" [colors]="chartColors"
+                    [plugins]="lineChartPlugins">
+                </canvas>
+            </div>
+            <div *ngIf="lineChartData.length == 0">
+                <div style="min-height: 300px" class="center-spinner">
+                    <mat-spinner></mat-spinner>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+</div>
+<div class="center-text mid-bold-text">Recent Trades</div>
+<div>
+    <div class="margin-top-50" fxLayout="row wrap" fxLayoutAlign="center" *ngIf="tradeData?.['playertrades']">
+        <div *ngFor="let trade of tradeData?.['playertrades']" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="100%" class="trade-res-card">
+            <trade-database-card [trade]="trade"></trade-database-card>
+        </div>
+    </div>
+    <div class="margin-top-25 center-text">
+        <button mat-button [routerLink]="['../../trade/database']">View More Trades</button>
+    </div>
+</div>

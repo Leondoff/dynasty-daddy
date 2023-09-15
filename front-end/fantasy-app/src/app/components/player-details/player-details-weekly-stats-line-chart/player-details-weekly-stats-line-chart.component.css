@@ -7,21 +7,6 @@
   min-width: 300px;
 }
 
-.insight__row {
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.insight__row div:last-child {
-  text-align: right;
-}
-
-.insight__row div {
-  flex: 1 1 auto;
-}
-
 .mat-column-name {
   min-width: 150px;
 }

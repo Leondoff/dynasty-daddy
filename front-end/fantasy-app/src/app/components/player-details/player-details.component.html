@@ -1,4 +1,4 @@
-<div  *ngIf="isPlayerStatsGenerated()" class="table-container">
+<div  *ngIf="isPlayerStatsGenerated() && playerDetailStatus === 1" class="table-container">
 
   <div class="margin-top-10">
     <span class="link--text__no__underline mid-bold-text" style="padding-right: 3px" [routerLink]="['../../values']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav">Players</span>
@@ -90,6 +90,12 @@
       </div>
       <app-player-details-insights [selectedPlayer]="selectedPlayer" [selectedPlayerValues]="historicalTradeValue" [selectedMarket]="playerService.selectedMarket" [isSuperflex]="isSuperflex"></app-player-details-insights>
     </mat-tab>
+    <mat-tab label="{{configService.isMobile ? 'Trade' : 'Trade Market'}}">
+      <div class="mid-bold-text margin-top-10 center-text">Player Trade Market</div>
+      <div class="margin-top-10 center-text">Trade value and recent trades including {{selectedPlayer.full_name}}.
+      </div>
+      <player-trade-market [tradeData]="tradeData"></player-trade-market>
+    </mat-tab>
     <mat-tab label="{{configService.isMobile ? 'Logs' : 'Game Logs'}}">
       <app-player-details-weekly-box-scores-table *ngIf="isPlayerStatsGenerated()" [selectedPlayer]="selectedPlayer"></app-player-details-weekly-box-scores-table>
     </mat-tab>
@@ -102,7 +108,7 @@
   </mat-tab-group>
 </div>
 
-<div *ngIf="!isPlayerStatsGenerated()">
+<div *ngIf="!isPlayerStatsGenerated() || playerDetailStatus === 0">
   <div style="min-height: 300px" class="center-spinner">
     <mat-spinner></mat-spinner>
   </div>

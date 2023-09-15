@@ -61,9 +61,11 @@ export const GetTradeDetailsForPlayer = async (playerId) => {
   const query = `
     WITH PlayerTrades AS (
       SELECT trades.*,
+            l.*,
             pi.sleeper_id as playerId
       FROM trades
-      JOIN player_ids pi ON '${playerId}' = pi.name_id
+      LEFT JOIN player_ids pi ON '${playerId}' = pi.name_id
+      LEFT JOIN league_info l ON trades.league_id = l. league_id
       WHERE
           pi.sleeper_id = ANY(sideA) OR pi.sleeper_id = ANY(sideB)
       ORDER BY transaction_date DESC

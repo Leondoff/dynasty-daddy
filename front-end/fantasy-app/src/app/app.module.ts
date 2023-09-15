@@ -128,6 +128,7 @@ import { AffiliateBannerComponent } from './components/sub-components/affiliate-
 import { TradeDatabaseComponent } from './components/trade-database/trade-database.component';
 import { TradeDatabaseCardComponent } from './components/trade-database/trade-database-card/trade-database-card.component';
 import { BubblePackingChartComponent } from './components/sub-components/bubble-packing-chart/bubble-packing-chart.component';
+import { PlayerTradeMarketComponent } from './components/player-details/player-trade-market/player-trade-market.component';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -170,6 +171,7 @@ let UniversalDeviceDetectorService;
     PlayoffCalculatorSelectableGameCardComponent,
     FooterComponent,
     AboutComponent,
+    PlayerTradeMarketComponent,
     PlayerDetailsInsightsComponent,
     PlayerDetailsProfileComponent,
     PlayerStatisticsComponent,
