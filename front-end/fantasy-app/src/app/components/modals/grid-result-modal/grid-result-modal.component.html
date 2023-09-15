@@ -25,7 +25,7 @@
                         <td *ngFor="let col of row; let j = index" class="result-grid" style="position: relative;"
                             [ngStyle]="resultGrid[j][i] || toggleAnswers ? {'background': gridGameService.getCellColor(!toggleAnswers ? resultGrid[j][i]?.percent : 100)} : {'background-color': '#1d1d28'}">
                             <div *ngIf="toggleAnswers && selectedCellStat == -1" style="cursor: pointer;" (click)="openStatsForCell(i, j)">
-                                <img [src]="gridGameService.globalCommonAnsMapping[i * 3 + j]?.img" onerror="this.src='https://static.www.nfl.com/image/private/f_auto,q_auto/league/y9boy7grhaidqmrckryz'" class="player-grid-img">
+                                <img [src]="gridGameService.globalCommonAnsMapping[i * 3 + j]?.img" onerror="this.src='https://static.www.nfl.com/image/private/f_auto,q_auto/league/y9boy7grhaidqmrckryz'" alt="Football Player" class="player-grid-img">
                                 <div class="center-text player-name-text ">{{gridGameService.globalCommonAnsMapping[i * 3 + j]?.name}}</div>
                                 <div class="player-percent">{{gridGameService.globalCommonAnsMapping[i * 3 + j]?.percent | percent:'1.2-2'}}</div>
                             </div>
@@ -75,7 +75,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let player of cellStatList" [ngClass]="{'selected_player_stats': player.player_id == cellStatSelectedPlayerId}">
-                <td class="player-name-table"> <img [src]="player.img" onerror="this.src='https://static.www.nfl.com/image/private/f_auto,q_auto/league/y9boy7grhaidqmrckryz'" class="player-image-table">{{ player.name }}</td>
+                <td class="player-name-table"> <img [src]="player.img" onerror="this.src='https://static.www.nfl.com/image/private/f_auto,q_auto/league/y9boy7grhaidqmrckryz'" alt="Football Player" class="player-image-table">{{ player.name }}</td>
                 <td class="player-percent-table" style="background: {{getProbColor(player.percent)}}">{{ player.percent | percent:'1.2-2' }}</td>
               </tr>
             </tbody>

@@ -8,7 +8,7 @@
   <table style="width:100%">
     <tr>
       <td class="td-game--team" *ngIf="team1 && team1.owner">
-        <img #image [src]="team1?.owner?.avatar"
+        <img #image [src]="team1?.owner?.avatar" alt="Fantasy Team Avatar"
              onerror="style.display = 'none'" class="games-image">
         <span>
           {{team1.owner?.teamName | truncate:30}}
@@ -28,7 +28,7 @@
     </tr>
     <tr>
       <td class="td-game--team" *ngIf="team2 && team2.owner">
-        <img #image [src]="team2?.owner?.avatar"
+        <img #image [src]="team2?.owner?.avatar" alt="Fantasy Team Avatar"
              onerror="style.display = 'none'" class="games-image">
         <span>
           {{team2.owner?.teamName | truncate:30}}
