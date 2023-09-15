@@ -131,16 +131,15 @@ export class PlayerTradeMarketComponent implements OnInit, AfterViewInit {
         if (this.tradeData?.['mat_vw_trade_agg']) {
             for (let ind = 1; ind <= 8; ind++) {
                 const dataPoint = this.tradeData?.['mat_vw_trade_agg']?.find(t => t.week_interval == ind)
-                console.log(this.tradeData, dataPoint);
                 dataList.push(dataPoint?.count || 0);
                 this.lineChartLabels.push(ind === 1 ? 'Past 7 Days' : `${(ind - 1) * 7}-${ind * 7} Days Ago`);
             }
             // reverse data
-            this.lineChartData.push({ label: 'Trade Volume', data: dataList });
-            this.lineChartLabels.reverse();
+            this.lineChartData.push({ label: 'Trade Volume', data: dataList.reverse() });
+            this.lineChartData.reverse();
             if (dataList[dataList.length - 1] === null ?
-                dataList[dataList.length - 2] < dataList[0]
-                : dataList[dataList.length - 1] < dataList[0]) {
+                dataList[dataList.length - 2] > dataList[0]
+                : dataList[dataList.length - 1] > dataList[0]) {
                 this.chartColors = [
                     {
                         backgroundColor: 'rgba(87, 235, 161, 0.25)',
