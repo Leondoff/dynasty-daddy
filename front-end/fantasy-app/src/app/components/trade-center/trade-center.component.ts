@@ -69,7 +69,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   public combinedPlayerList: FantasyPlayer[] = [];
 
   /** is super flex toggle for trade package */
-  public isSuperFlex: boolean;
+  public isSuperFlex: boolean = true;
 
   /** hide/show the advance trade calculator settings */
   public toggleAdvancedSettings: boolean = false;
@@ -150,10 +150,10 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     this.team1PlayerList = this.tradeTool.tradePackage?.team1Assets || [];
     this.team2PlayerList = this.tradeTool.tradePackage?.team2Assets || [];
     // weird issue with setting || true for is superflex
+    this.isSuperFlex = this.leagueService.selectedLeague ?
+      this.leagueService.selectedLeague.isSuperflex : this.isSuperFlex;
     if (this.tradeTool.tradePackage) {
-      this.isSuperFlex = this.tradeTool.tradePackage?.isSuperFlex;
-    } else {
-      this.isSuperFlex = this.leagueService.selectedLeague?.isSuperflex || true;
+      this.isSuperFlex = this.tradeTool.tradePackage.isSuperFlex;
     }
     this.acceptanceVariance = this.tradeTool.tradePackage?.acceptanceVariance || 5;
 
@@ -484,6 +484,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   private switchLeagueTradePackage(): void {
     this.team2Rankings = null;
     this.team1Rankings = null;
+    this.isSuperFlex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : this.isSuperFlex;
     if (this.tradeTool.tradePackage) {
       this.tradeTool.tradePackage.team2UserId = null;
       this.tradeTool.tradePackage.team1UserId = null;
