@@ -10,6 +10,8 @@ import { ConfigService } from '../../services/init/config.service';
 import { PlayerInsights } from '../model/playerInsights';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { PageService } from 'src/app/services/utilities/page.service';
+import { ChartDataSets } from 'chart.js';
+import { Status } from '../model/status';
 
 @Component({
   selector: 'app-player-details',
@@ -20,6 +22,9 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
 
   pageDescription = 'An in depth look into a player from fantasy stats to player trade values to athletic profiles.';
 
+  /** player detail status */
+  playerDetailStatus: Status = Status.LOADING;
+
   /** did players load */
   playersLoaded: boolean;
 
@@ -28,6 +33,9 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
 
   /** selected player insights */
   selectedPlayerInsights: PlayerInsights;
+
+  /** player trade market data */
+  tradeData: any;
 
   /** historical player value data */
   historicalTradeValue: FantasyPlayerDataPoint[];
@@ -59,6 +67,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      this.playerDetailStatus = Status.LOADING;
       this.historicalTradeValue = null;
       this.playerProfile = null;
       this.profileUpdatedDate = null;
@@ -86,6 +95,8 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
           this.historicalTradeValue = data.historicalData;
           this.playerProfile = data.profile[0]
           this.profileUpdatedDate = data.profile[0]?.last_updated?.substring(0, 10);
+          this.tradeData = data.tradeData[0];
+          this.playerDetailStatus = Status.DONE;
         }
         ),
         this.route.queryParams.subscribe(params => {

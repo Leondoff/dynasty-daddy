@@ -28,21 +28,6 @@
   padding-left: 15px;
 }
 
-.insight__row {
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.insight__row div:last-child {
-  text-align: right;
-}
-
-.insight__row div {
-  flex: 1 1 auto;
-}
-
 .open-window-button {
   font-size: 18px;
   cursor: pointer;
