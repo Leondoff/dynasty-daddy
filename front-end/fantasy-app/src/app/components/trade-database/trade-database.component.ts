@@ -86,7 +86,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         private fantasyPlayerApiService: FantasyPlayerApiService,
         private leagueSwitchService: LeagueSwitchService) {
         super();
-        this.pageService.setUpPageSEO('Trade Database',
+        this.pageService.setUpPageSEO('Fantasy Football Trade Database',
         ['fantasy football trade databse', 'fantasy trade', 'trade database', 'trade data', 'database', 'free trade database'],
         this.pageDescription)
     }
