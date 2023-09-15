@@ -12,12 +12,16 @@ export class PageService {
 
     GRIDIRON_IMG = 'https://i.ibb.co/mNk4j0H/SEO-Image-1.jpg';
 
+    defaultKeywords: string[] = ['fantasy', 'player', 'sleeper', 'rankings', 'analyzer', 'league', 'trade calulator', 'dynasty',
+     'football', 'player rankings', 'free fantasy tool', 'trade analyzer', 'league analyzer', 'league power rankings', 'fantasy simulator'];
+
     constructor(
         private meta: Meta,
         private title: Title) {}
 
-    setUpPageSEO(title: string, keywords: string[], description: string): void {
+    setUpPageSEO(title: string, keywords: string[], description: string): void { 
         this.title.setTitle(title + this.DYNASTY_DADDY_BOILERPLATE);
+        const keywordList = [...this.defaultKeywords, ...keywords];
         let img = this.DYNASTY_DADDY_IMG;
         let url = '';
         if (title.includes('Immaculate')) {
@@ -25,7 +29,7 @@ export class PageService {
             img = this.GRIDIRON_IMG;
         }
         if (this.meta.getTag('keywords')) {
-            this.meta.updateTag({ name: 'keywords', content: keywords.join(', ') });
+            this.meta.updateTag({ name: 'keywords', content: keywordList.join(', ') });
             this.meta.updateTag({ name: 'description', content: description });
             this.meta.updateTag({ name: 'og:description', content: description});
             this.meta.updateTag({ name: 'twitter:description', content: description});
@@ -35,7 +39,7 @@ export class PageService {
             this.meta.updateTag({ name: 'twitter:description', content: 'https://dynasty-daddy.com/' + url});
         } else {
             this.meta.addTags([
-                { name: 'keywords', content: keywords.join(', ') },
+                { name: 'keywords', content: keywordList.join(', ') },
                 { name: 'description', content: description },
                 { name: 'og:title', content: title},
                 { name: 'og:description', content: description},

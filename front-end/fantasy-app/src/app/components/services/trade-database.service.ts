@@ -45,6 +45,8 @@ export class TradeDatabaseService {
   }
 
   resetFilters(): void {
+    this.sideAPlayers = [];
+    this.sideBPlayers = [];
     this.selectedQbFormat.setValue([1, 2]);
     this.selectedStartersFormat.setValue([6, 7, 8, 9, 10, 11, 12, 13, 14]);
     this.selectedTeamFormat.setValue([4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]);
