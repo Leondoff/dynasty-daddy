@@ -53,9 +53,9 @@
         </mat-card>
     </div>
 </div>
-<div class="center-text mid-bold-text">Recent Trades</div>
+<div class="center-text mid-bold-text margin-top-25">Recent Trades</div>
 <div>
-    <div class="margin-top-50" fxLayout="row wrap" fxLayoutAlign="center" *ngIf="tradeData?.['playertrades']">
+    <div class="margin-top-25" fxLayout="row wrap" fxLayoutAlign="center" *ngIf="tradeData?.['playertrades']">
         <div *ngFor="let trade of tradeData?.['playertrades']" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="100%" class="trade-res-card">
             <trade-database-card [trade]="trade"></trade-database-card>
         </div>
