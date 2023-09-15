@@ -439,7 +439,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   /**
    * selection made for team 2 filter
    */
-  selectionMadeTeam1(): void {
+  selectionMadeTeam1(team1: string): void {
+    this.selectedTeam1 = team1;
     this.team1Rankings = this.powerRankingsService.findTeamFromRankingsByUserId(this.selectedTeam1);
     this.team1PlayerList = [];
     this.processTrade();
@@ -448,7 +449,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   /**
    * selection made for team 2 filter
    */
-  selectionMadeTeam2(): void {
+  selectionMadeTeam2(team2: string): void {
+    this.selectedTeam2 = team2;
     this.team2Rankings = this.powerRankingsService.findTeamFromRankingsByUserId(this.selectedTeam2);
     this.team2PlayerList = [];
     this.processTrade();

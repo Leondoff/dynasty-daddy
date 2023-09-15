@@ -275,13 +275,13 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         this.tradeDatabaseService.selectedQbFormat
             .setValue([this.leagueService.selectedLeague.isSuperflex ? 2 : 1]);
         this.tradeDatabaseService.selectedScoringFormat
-            .setValue([this.leagueService.selectedLeague.scoringSettings.rec]);
+            .setValue([this.leagueService.selectedLeague.scoringSettings.rec || 1]);
         this.tradeDatabaseService.selectedStartersFormat
-            .setValue([this.leagueService.selectedLeague.starters]);
+            .setValue([this.leagueService.selectedLeague.starters || 9]);
         this.tradeDatabaseService.selectedTeamFormat
-            .setValue([this.leagueService.selectedLeague.totalRosters]);
+            .setValue([this.leagueService.selectedLeague.totalRosters || 12]);
         this.tradeDatabaseService.selectedTepFormat
-            .setValue([this.leagueService.selectedLeague.scoringSettings.bonusRecTE])
+            .setValue([this.leagueService.selectedLeague.scoringSettings.bonusRecTE || 0])
         this.changeFilters();
     }
 
