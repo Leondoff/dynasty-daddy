@@ -44,6 +44,12 @@
         <priority>1.0</priority>
     </url>
     <url>
+        <loc>https://dynasty-daddy.com/players/trade/database</loc>
+        <lastmod>2023-09-15T03:24:23+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
         <loc>https://dynasty-daddy.com/league/rankings</loc>
         <lastmod>2023-09-15T03:24:23+00:00</lastmod>
         <changefreq>daily</changefreq>

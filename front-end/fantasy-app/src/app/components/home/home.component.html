@@ -181,67 +181,73 @@
 
   <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/rankings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">stacked_bar_chart</mat-icon>Power Rankings</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/rankings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav">Power Rankings</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Using fantasy market data, Dynasty Daddy will rank all teams by overall value, starter value, and position group. The data will be visualized in a chart as well as a collapsable table. This table can be expanded, sorted, and searched to enable more precise power rankings without being bombarded with a ton of numbers.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/probability']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">calculate</mat-icon>Playoff Calculator</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/probability']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav">Playoff Calculator</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Calculates Weekly & Season probabilities based on teams' schedules. Using 10,000 simulations, Dynasty Daddy determines a team's odds to make the playoffs, make the finals, win the finals, record, and more. You can also select winners for upcoming weeks to see how the playoffs shake out depending on who wins each match-up.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/trade']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">compare_arrows</mat-icon>Trade Calculator</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/trade']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav">Trade Calculator</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Using player values, you can build trades to maximize your teams value. It will filter out player recommendations based on the teams selected in trades. This unlocks the ability to quickly find valid trades while using consistent player values. Additional power ranking data will appear when signed in to inform the user on team positional rankings as well.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/draft']" [queryParams]="leagueSwitchService.buildQueryParams()"  gaEvent="nav_draft_center" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">storage</mat-icon>Draft Center <span class="warning__alert small-text__light">Beta</span></div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/draft']" [queryParams]="leagueSwitchService.buildQueryParams()"  gaEvent="nav_draft_center" gaCategory="page_nav">Draft Center</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Generate Draft Recaps of your league drafts to see who made the best value draft picks. Using the redraft keeper candidate tool, determine which players are the best to keep. Also check out the early version of the mock draft tool, where you can create your own mock drafts using fantasy market values!
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/trade/finder']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">person_search</mat-icon>Trade Finder</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/trade/finder']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav">Trade Finder</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Find trades for players you want to trade soon. Be able to generate trades quickly and navigate to the Trade Calculator if you want to dig into a particular offer more! Trade packages generated use our trade calculator logic under the surface to guarantee that we are creating the most realistic trades as possible.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/standings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">leaderboard</mat-icon>Standings</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/standings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav">Standings</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Display advanced league standings & metrics to understand how each team is performing. View strength of schedule, close match ups, highest scoring weeks, and more! Additional schedule comparison insights are also on this page.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/portfolio']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_portfolio" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">account_balance</mat-icon>Fantasy Portfolio  <span class="warning__alert small-text__light">Beta</span></div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/portfolio']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_portfolio" gaCategory="page_nav">Fantasy Portfolio</h2>
       <div class="center-text margin-top-25 margin-bot-50">
        Track your fantasy player portfolio's value over time. Break down what players you have invested the most into and diversify your player portfolio accross all leagues. Select which fantasy market to value players at and make sure you are building a portfolio for long term success.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/values']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">trending_up</mat-icon>Player Values</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/values']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav">Player Rankings</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         View up to date player values from the current day. Filter on free agents, rookies and search for particular players. Navigate to team & player pages for more details on specific teams or players. Player values are updated every day to guarantee you are receiving up to date values to make your fantasy football decisions.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/comparison']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">insights</mat-icon>Player Comparison Tool</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/comparison']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">Player Comparison Tool</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Compare player values overtime to get more insight into how the player's value is trending. Add & query to make personalized views to meed the needs of you research. This tool can also display trade packages from the trade calculator!
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/format']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_league_format" gaCategory="page_nav"><mat-icon class="home-icon" style="padding-right: 35px">line_axis</mat-icon>League Format Tool</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/format']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_league_format" gaCategory="page_nav">League Format Tool</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Identify positional advantages for your league by looking at historical quality starts and WoRP for your league's settings. The League Format Tool enables you to create your own data visualizations and tables to dive deep into your league format to find positional advantages and sleepers. This tool supports K, Team Defense, & IDP as well.
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <div class="center-text mid-bold-text"><mat-icon class="home-icon" style="padding-right: 35px">redeem</mat-icon>Wrapped</div>
+      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./players/trade/database']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_database" gaCategory="page_nav">Trade Database</h2>
+      <div class="center-text margin-top-25 margin-bot-50">
+        The Trade Database is a powerful tool giving you access to a treasure trove of completed trades and statistics at your fingertips, helping you make strategic trade decisions and dominate your fantasy league. Pulling over 300,000 trades from 50,000+ leagues daily to give you up to date trades from across the fantasy space. 
+      </div>
+    </div>
+    <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
+      <h2 class="center-text mid-bold-text">Fantasy Wrapped</h2>
       <div class="center-text margin-top-25 margin-bot-50">
         Creates a Spotify Wrapped style recap for your fantasy league. Recapping the best fantasy trades, transactions, and teams in your league in a visually pleasing presentation that can easily be shared with league mates and others on social media.
       </div>

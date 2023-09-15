@@ -14,6 +14,7 @@ import { LeagueType } from "src/app/model/league/LeagueDTO";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { BarChartColorPalette, ComparisonColorPalette, TierColorPalette } from "src/app/services/utilities/color.service";
 import { ConfigService } from "src/app/services/init/config.service";
+import { PageService } from "src/app/services/utilities/page.service";
 
 @Component({
     selector: 'app-trade-database',
@@ -81,9 +82,13 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         private route: ActivatedRoute,
         public configService: ConfigService,
         public leagueService: LeagueService,
+        private pageService: PageService,
         private fantasyPlayerApiService: FantasyPlayerApiService,
         private leagueSwitchService: LeagueSwitchService) {
         super();
+        this.pageService.setUpPageSEO('Trade Database',
+        ['fantasy football trade databse', 'fantasy trade', 'trade database', 'trade data', 'database', 'free trade database'],
+        this.pageDescription)
     }
 
     ngOnInit(): void {
