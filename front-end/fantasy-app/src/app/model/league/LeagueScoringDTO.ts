@@ -235,13 +235,36 @@ export class LeagueScoringDTO {
       }
     }
     // evaluate rec premiums
-    if (mflCache['TE'] && mflCache['TE']['rec'] > this.rec)
-      this.bonusRecTE = mflCache['TE']['rec'] - this.rec;
-    if (mflCache['RB'] && mflCache['RB']['rec'] > this.rec)
-      this.bonusRecRB = mflCache['RB']['rec'] - this.rec;
-    if (mflCache['WR'] && mflCache['WR']['rec'] > this.rec)
-      this.bonusRecWR = mflCache['WR']['rec'] - this.rec;
+    if (mflCache['TE'])
+      this.checkMFLCache(mflCache, 'TE') ?
+        this.bonusRecTE = mflCache['TE']['rec'] :
+        this.bonusRecTE = mflCache['TE']['rec'] - this.rec;
+    if (mflCache['RB'])
+      this.checkMFLCache(mflCache, 'RB') ?
+        this.bonusRecTE = mflCache['RB']['rec'] :
+        this.bonusRecTE = mflCache['RB']['rec'] - this.rec;
+    if (mflCache['WR'])
+      this.checkMFLCache(mflCache, 'WR') ?
+        this.bonusRecTE = mflCache['WR']['rec'] :
+        this.bonusRecTE = mflCache['WR']['rec'] - this.rec;
     return this;
+  }
+
+  /**
+   * mfl helper function that checks if the league is configured odd
+   * if there are two pos categories we need to factor that in
+   * @param mflCache 
+   * @param pos 
+   */
+  private checkMFLCache(mflCache: {}, pos: string): boolean {
+    for (const key in mflCache) {
+      if (mflCache.hasOwnProperty(key)) {
+        if (key.includes(pos) && key !== pos) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   fromESPN(scoringSettings: any[]): LeagueScoringDTO {
@@ -268,9 +291,14 @@ export class LeagueScoringDTO {
                   if (!ffCache[pos]) {
                     ffCache[pos] = {}
                   };
-                  ffCache[pos][met] = metNum;
+                  if (ffCache[pos][met]) {
+                    ffCache[pos][met] += metNum;
+                  } else {
+                    ffCache[pos][met] = metNum;
+                  }
                 });
-                this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum        
+                if ((rule?.applyTo || [].includes('WR')))
+                  this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum
               } else {
                 this[met] = rule?.pointsPer?.value || rule?.points?.value || 0;
               }
