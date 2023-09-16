@@ -26,8 +26,3 @@ app.get('*', (req, res) => {
 
 // Start the app by listening on the default Heroku port
 app.listen(process.env.PORT || 4200);
-
-// const { PORT=4200, LOCAL_ADDRESS='0.0.0.0' } = process.env
-// app.listen(PORT, LOCAL_ADDRESS, () => {
-//   console.log('server listening at', LOCAL_ADDRESS, ':', PORT);
-// });

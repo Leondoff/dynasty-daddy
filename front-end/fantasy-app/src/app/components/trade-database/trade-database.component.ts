@@ -4,7 +4,7 @@ import { FormControl, UntypedFormControl } from "@angular/forms";
 import { ReplaySubject, Subject } from "rxjs";
 import { FantasyPlayer } from "src/app/model/assets/FantasyPlayer";
 import { PlayerService } from "src/app/services/player.service";
-import { takeUntil } from "rxjs/operators";
+import { delay, takeUntil } from "rxjs/operators";
 import { LeagueSwitchService } from "../services/league-switch.service";
 import { ActivatedRoute } from "@angular/router";
 import { TradeDatabaseService } from "../services/trade-database.service";
@@ -129,7 +129,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
     private initializeTradeDB(): void {
         // load recent trade volume for bubble pack
         this.tradeVolumeStatus = Status.LOADING;
-        this.addSubscriptions(this.fantasyPlayerApiService.loadRecentTradeVolume().subscribe(res => {
+        this.addSubscriptions(this.fantasyPlayerApiService.loadRecentTradeVolume().pipe(delay(300)).subscribe(res => {
             this.volumeData = [];
             res.sort((a, b) => Number(b.count) - Number(a.count)).slice(0, this.configService.isMobile ? 30 : 50).forEach(p => {
                 const player = this.playerService.getPlayerByPlayerPlatformId(p.id)

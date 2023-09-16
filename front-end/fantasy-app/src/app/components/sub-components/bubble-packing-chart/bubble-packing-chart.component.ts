@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, Renderer2 } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, Renderer2 } from "@angular/core";
 import * as d3 from 'd3';
 import { ConfigService } from "src/app/services/init/config.service";
 
@@ -15,6 +15,14 @@ export class BubblePackingChartComponent implements AfterViewInit {
     @Output()
     circleClicked = new EventEmitter<string>();
 
+    private circles: any;
+    private labels: any;
+    private svg: any;
+    private width: number;
+    private height: number = 460;
+    private simulation: any;
+    private infoText: any;
+
     constructor(private elementRef: ElementRef,
         private configService: ConfigService,
         private renderer: Renderer2
@@ -24,10 +32,63 @@ export class BubblePackingChartComponent implements AfterViewInit {
         this.createVisualization();
     }
 
+    @HostListener('window:resize', ['$event'])
+    onResize(event: Event): void {
+        this.updateVisualization();
+    }
+
+    updateVisualization(): void {
+        // Get the new width based on the window size
+        this.width = parseInt(d3.select('#bubble_chart').style('width'), 10);
+
+        // Update the SVG width
+        d3.select('svg')
+            .attr('width', this.width);
+
+        // Using reduce to find min and max values
+        const minMaxValues = this.data.reduce((acc, current) => {
+            if (current.value < acc.min) {
+                acc.min = current.value;
+            }
+            if (current.value > acc.max) {
+                acc.max = current.value;
+            }
+
+            return acc;
+        }, { min: Infinity, max: -Infinity });
+
+        const size = d3.scaleLinear()
+            .domain([minMaxValues.min, minMaxValues.max])
+            .range([16, 62])
+
+        this.circles = this.svg.selectAll('circle')
+            .attr('cx', this.width / 2)
+            .attr('cy', this.height / 2)
+
+        // Update the force simulation with the new center coordinates
+        this.simulation = d3.forceSimulation(this.data)
+            .force('center', d3.forceCenter().x(this.width / 2).y(this.height / 2)) // Adjust the center coordinates
+            .force('charge', d3.forceManyBody().strength(10))
+            .force('collide', d3.forceCollide().strength(0.2).radius((d: any) => size(d.value) + 1).iterations(1))
+            .on('tick', () => {
+                this.circles.each((d: any, i: number, nodes: any) => {
+                    this.renderer.setAttribute(nodes[i], 'cx', d.x.toString());
+                    this.renderer.setAttribute(nodes[i], 'cy', d.y.toString());
+                });
+                this.labels.each((d: any, i: number, nodes: any) => {
+                    this.renderer.setAttribute(nodes[i], 'dx', d.x.toString());
+                    this.renderer.setAttribute(nodes[i], 'dy', d.y.toString());
+                });
+            });
+
+        this.infoText = d3.select('svg text.tspan')
+            .attr('x', this.width - 10)
+            .attr('y', this.height - 30);
+    }
+
     createVisualization(): void {
 
-        const width = parseInt(d3.select('#bubble_chart').style('width'), 10);
-        const height = 460;
+        this.width = parseInt(d3.select('#bubble_chart').style('width'), 10);
 
         // Using reduce to find min and max values
         const minMaxValues = this.data.reduce((acc, current) => {
@@ -77,23 +138,23 @@ export class BubblePackingChartComponent implements AfterViewInit {
         };
 
         // simulation code and dragging logic
-        const simulation = d3.forceSimulation(this.data)
-            .force('center', d3.forceCenter().x(width / 2).y(height / 2))
+        this.simulation = d3.forceSimulation(this.data)
+            .force('center', d3.forceCenter().x(this.width / 2).y(this.height / 2))
             .force('charge', d3.forceManyBody().strength(15))
             .force('collide', d3.forceCollide().strength(0.2).radius((d: any) => size(d.value) + 1).iterations(1))
             .on('tick', () => {
-                circles.each((d: any, i: number, nodes: any) => {
+                this.circles.each((d: any, i: number, nodes: any) => {
                     this.renderer.setAttribute(nodes[i], 'cx', d.x.toString());
                     this.renderer.setAttribute(nodes[i], 'cy', d.y.toString());
                 });
-                labels.each((d: any, i: number, nodes: any) => {
+                this.labels.each((d: any, i: number, nodes: any) => {
                     this.renderer.setAttribute(nodes[i], 'dx', d.x.toString());
                     this.renderer.setAttribute(nodes[i], 'dy', d.y.toString());
                 });
             });
 
         const dragstarted = (event: any, d: any) => {
-            if (!event.active) simulation.alphaTarget(.03).restart();
+            if (!event.active) this.simulation.alphaTarget(.03).restart();
             d.fx = d.x;
             d.fy = d.y;
         }
@@ -102,15 +163,15 @@ export class BubblePackingChartComponent implements AfterViewInit {
             d.fy = event.y;
         }
         const dragended = (event: any, d: any) => {
-            if (!event.active) simulation.alphaTarget(.03);
+            if (!event.active) this.simulation.alphaTarget(.03);
             d.fx = null;
             d.fy = null;
         }
 
         // Append the SVG to the component's element
-        const svg = d3.select(this.elementRef.nativeElement).append('svg')
-            .attr('width', width)
-            .attr('height', height);
+        this.svg = d3.select(this.elementRef.nativeElement).append('svg')
+            .attr('width', this.width)
+            .attr('height', this.height);
 
         // Create a tooltip
         const bubbleTooltip = d3.select(this.elementRef.nativeElement)
@@ -125,13 +186,13 @@ export class BubblePackingChartComponent implements AfterViewInit {
             .style('padding', '5px')
             .style('color', 'black');
 
-        const circles = svg.selectAll('circle')
+        this.circles = this.svg.selectAll('circle')
             .data(this.data)
             .enter()
             .append('circle')
             .attr("class", "node")
-            .attr('cx', width / 2)
-            .attr('cy', height / 2)
+            .attr('cx', this.width / 2)
+            .attr('cy', this.height / 2)
             .attr('r', (d: any) => size(d.value))
             .style('fill', (d: any) => d.color)
             .style("fill-opacity", 0.8)
@@ -147,7 +208,7 @@ export class BubblePackingChartComponent implements AfterViewInit {
                 .on("drag", dragged)
                 .on("end", dragended));
 
-        const labels = svg.selectAll('text')
+        this.labels = this.svg.selectAll('text')
             .data(this.data)
             .enter()
             .append('text')
@@ -172,25 +233,26 @@ export class BubblePackingChartComponent implements AfterViewInit {
                 .on("end", dragended));
 
 
-        const infoText = svg
+        this.infoText = this.svg
             .append("text")
-            .attr("x", width - 10)
-            .attr("y", height - 30)
+            .attr("x", this.width - 10)
+            .attr("y", this.height - 30)
             .attr("text-anchor", "end")
             .attr("alignment-baseline", "ideographic")
             .attr("fill", "#484863")
             .attr("font-size", "12px");
 
-        infoText
+        this.infoText
             .append("tspan")
-            .attr("x", width - 10)
+            .attr("x", this.width - 10)
             .text("Player trade volume from the past week");
 
-        infoText
+        this.infoText
             .append("tspan")
-            .attr("x", width - 10)
+            .attr("x", this.width - 10)
             .attr("dy", "1.2em")
             .text("Hover, drag, & click for more");
-
     }
+
+
 }

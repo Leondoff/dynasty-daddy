@@ -103,7 +103,6 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
 
       posPlayerList.forEach(player => {
         processedNameIds.push(player.name_id);
-        // console.log(pos, player.name_id, weeklyPointsDict[Number(player.sleeper_id)]);
         pointsForStartersList.push(weeklyPointsDict[player.sleeper_id].pts);
       });
       pointsPerPostionArray[pos] = {
@@ -125,7 +124,6 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
       replacementLevelDict[pos] = replacementPlayers.length > 0
         ? mean(replacementPlayers.map(p =>
           weeklyPointsDict[p.sleeper_id].pts || 0)) : 0;
-      // console.log(pos, avgDepth, replacementLevelDict[pos]);
     });
 
     // team averages based on line up
@@ -222,7 +220,7 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
       winsPercentPerWeek.push(cumulativeStdNormalProbability(playerZ));
       weeklyWorp += cumulativeStdNormalProbability(playerZ)
           - replacementLevelWinPer[week][p.position];
-      // console.log(week, ` Team {${teamPointDict[week].total}, ${teamPointDict[week].stdDev}}`, p.position, teamPointDict[week].posGroups[p.position], `Points: {${weeklyPointsDict[p.sleeper_id]}, ${valueAddedTotal}, ${cumulativeStdNormalProbability(playerZ)}}`, `Rep: {pts: ${teamPointDict[week].repLevel[p.position]}, win% ${replacementLevelWinPer[week][p.position]}}, WORP: {Weekly: ${cumulativeStdNormalProbability(playerZ) - replacementLevelWinPer[week][p.position]}, Total: ${weeklyWorp}}`);
+      // console.debug(week, ` Team {${teamPointDict[week].total}, ${teamPointDict[week].stdDev}}`, p.position, teamPointDict[week].posGroups[p.position], `Points: {${weeklyPointsDict[p.sleeper_id]}, ${valueAddedTotal}, ${cumulativeStdNormalProbability(playerZ)}}`, `Rep: {pts: ${teamPointDict[week].repLevel[p.position]}, win% ${replacementLevelWinPer[week][p.position]}}, WORP: {Weekly: ${cumulativeStdNormalProbability(playerZ) - replacementLevelWinPer[week][p.position]}, Total: ${weeklyWorp}}`);
     });
     const playerPercent = winsPercentPerWeek.length > 0
       ? mean(winsPercentPerWeek) : 0;
