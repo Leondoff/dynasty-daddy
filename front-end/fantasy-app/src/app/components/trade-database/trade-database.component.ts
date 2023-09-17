@@ -187,9 +187,9 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         // filter the players
         filterSubscription.next(
             this.playerList
-                .filter(player => (((player?.full_name?.toLowerCase().indexOf(filterCtrl.value) > -1
-                    || player?.owner?.ownerName?.toLowerCase().indexOf(filterCtrl.value) > -1
-                    || player?.position?.toLowerCase().indexOf(filterCtrl.value) > -1))
+                .filter(player => (((player?.full_name?.toLowerCase().indexOf(filterCtrl.value.toLowerCase()) > -1
+                    || player?.owner?.ownerName?.toLowerCase().indexOf(filterCtrl.value.toLowerCase()) > -1
+                    || player?.position?.toLowerCase().indexOf(filterCtrl.value.toLowerCase()) > -1))
                     && ((player.position == 'PI' && player.name_id.includes('mid'))
                         || !this.tradeDatabaseService.sideAPlayers.map(p => p.name_id).includes(player.name_id)
                         && !this.tradeDatabaseService.sideBPlayers.map(p => p.name_id).includes(player.name_id)))).slice(0, 10));
