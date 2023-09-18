@@ -215,6 +215,20 @@ def ScrapeTrades(leagueType, isAllTime = False):
     # update mat view for fantasy calc values
     cursor.execute(
     '''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_trade_agg;''')
+    
+    # update table count metrics in config table
+    updateTradeCount = '''UPDATE config
+        SET config_value = (SELECT COUNT(*) FROM trades)
+        WHERE config_key = 'trade_count';
+        '''
+
+    cursor.execute(updateTradeCount)
+
+    updateLeagueCount = '''UPDATE config
+        SET config_value = (SELECT COUNT(*) FROM league_info)
+        WHERE config_key = 'league_count';
+        '''
+
+    cursor.execute(updateLeagueCount)
 
 ScrapeTrades(['Dynasty', 'Redraft'], False)
-    
