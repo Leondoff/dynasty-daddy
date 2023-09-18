@@ -25,6 +25,8 @@ export const ConfigKeyDictionary = {
   GRIDIRON_GRID_COMPLETED: 'daily_grid_completed',
   GRIDIRON_WRITE_BACK: 'daily_grid_write_back',
   LEAGUE_FORMAT_SEASON: 'league_format_default_season',
+  TRADE_COUNT: 'trade_count',
+  LEAGUE_COUNT: 'league_count'
 } as const;
 
 /**

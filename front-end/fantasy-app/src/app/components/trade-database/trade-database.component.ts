@@ -12,8 +12,8 @@ import { Status } from "../model/status";
 import { LeagueService } from "src/app/services/league.service";
 import { LeagueType } from "src/app/model/league/LeagueDTO";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
-import { BarChartColorPalette, ComparisonColorPalette, TierColorPalette } from "src/app/services/utilities/color.service";
-import { ConfigService } from "src/app/services/init/config.service";
+import { ComparisonColorPalette } from "src/app/services/utilities/color.service";
+import { ConfigKeyDictionary, ConfigService } from "src/app/services/init/config.service";
 import { PageService } from "src/app/services/utilities/page.service";
 
 @Component({
@@ -77,6 +77,10 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
     /** volume data formatted for circle pack */
     public volumeData: any[] = [];
 
+    public tradeCount: number;
+
+    public leagueCount: number;
+
     constructor(private playerService: PlayerService,
         public tradeDatabaseService: TradeDatabaseService,
         private route: ActivatedRoute,
@@ -87,8 +91,9 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         private leagueSwitchService: LeagueSwitchService) {
         super();
         this.pageService.setUpPageSEO('Fantasy Football Trade Database',
-        ['fantasy football trade databse', 'fantasy trade', 'trade database', 'trade data', 'database', 'free trade database'],
-        this.pageDescription)
+            ['fantasy football trade databse', 'fantasy trade', 'trade database', 'trade data', 'database',
+                'free trade database', 'trade finder', 'dlf trade finder'],
+            this.pageDescription)
     }
 
     ngOnInit(): void {
@@ -151,6 +156,8 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
             });
             this.tradeVolumeStatus = Status.DONE;
         }))
+        this.tradeCount = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.TRADE_COUNT)?.configValue || 300000);
+        this.leagueCount = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_COUNT)?.configValue || 50000);
         this.playerList = this.playerService.unfilteredPlayerValues
             .filter(p => p.position != 'PI' || p.position == 'PI' && p.name_id.includes('mid')).slice()
         // load the initial player list
