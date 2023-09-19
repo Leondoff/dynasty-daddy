@@ -101,7 +101,7 @@ export class TradeCenterPlayerValuesComponent extends BaseComponent implements O
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < 41; i++) {
+    for (let i = 0; i <= 41; i++) {
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - (41 - i));
