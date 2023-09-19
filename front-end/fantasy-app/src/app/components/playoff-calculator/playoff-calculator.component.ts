@@ -51,6 +51,7 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
 
   /** selectable metrics */
   selectableMetrics: { display: string, value: string, isDisabled: boolean }[] = [
+    { display: 'Current record', value: 'currentRecord', isDisabled: false },
     { display: 'Projected record', value: 'record', isDisabled: false },
     { display: 'Make playoffs', value: 'makePlayoffs', isDisabled: true },
     { display: 'Win division', value: 'winDivision', isDisabled: false },
@@ -277,21 +278,20 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     const playoffRounds = this.leagueService.getPlayoffRoundsCount();
     this.updateDisabledSelectedMetrics();
     if (this.selectedWeek >= this.leagueService.selectedLeague.playoffStartWeek) {
+      const recordCols = ['currentRecord', 'makePlayoffs'];
       const playoffRoundMetrics = ['makeConfChamp', 'makeChampionship', 'winChampionship'];
-      defaultMetrics = this.buildMetricsListOnValues(['makePlayoffs'].concat(playoffRoundMetrics.slice(3 - playoffRounds, 3)));
+      defaultMetrics = this.buildMetricsListOnValues(recordCols.concat(playoffRoundMetrics.slice(3 - playoffRounds, 3)));
     } else {
-      defaultMetrics = this.buildMetricsListOnValues(['record', 'makePlayoffs', 'winDivision', 'getBye', 'winChampionship']);
+      const recordCols = this.selectedWeek == 1 ? ['record'] : ['currentRecord', 'record'];
+      defaultMetrics = this.buildMetricsListOnValues(recordCols.concat(['makePlayoffs', 'winDivision', 'getBye', 'winChampionship']));
       if (this.leagueService.selectedLeague.playoffTeams % 4 === 0) {
-        defaultMetrics.splice(3, 1);
+        defaultMetrics.splice(4, 1);
       }
       if (this.leagueService.selectedLeague.divisions < 2) {
-        defaultMetrics.splice(2, 1);
+        defaultMetrics.splice(3, 1);
       }
       if (defaultMetrics.length <= 3) {
-        defaultMetrics = this.buildMetricsListOnValues(['record', 'makePlayoffs', 'makeConfChamp', 'makeChampionship', 'winChampionship']);
-      }
-      if (this.configService.isMobile) {
-        defaultMetrics.splice(0, 1);
+        defaultMetrics = this.buildMetricsListOnValues(recordCols.concat(['makePlayoffs', 'makeConfChamp', 'makeChampionship', 'winChampionship']));
       }
     }
     return defaultMetrics;
@@ -318,24 +318,26 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     if (this.selectedWeek >= this.leagueService.selectedLeague.playoffStartWeek) {
       // disable during season metrics
       this.selectableMetrics[0].isDisabled = true;
-      this.selectableMetrics[2].isDisabled = true;
+      this.selectableMetrics[1].isDisabled = true;
       this.selectableMetrics[3].isDisabled = true;
       this.selectableMetrics[4].isDisabled = true;
       this.selectableMetrics[5].isDisabled = true;
       this.selectableMetrics[6].isDisabled = true;
+      this.selectableMetrics[7].isDisabled = true;
     } else {
       this.selectableMetrics[0].isDisabled = false;
-      this.selectableMetrics[2].isDisabled = false;
+      this.selectableMetrics[1].isDisabled = false;
       this.selectableMetrics[3].isDisabled = false;
       this.selectableMetrics[4].isDisabled = false;
       this.selectableMetrics[5].isDisabled = false;
       this.selectableMetrics[6].isDisabled = false;
+      this.selectableMetrics[7].isDisabled = false;
     }
     if (this.leagueService.selectedLeague.divisions <= 1) {
-      this.selectableMetrics[2].isDisabled = true;
+      this.selectableMetrics[3].isDisabled = true;
     }
     if (this.leagueService.selectedLeague.playoffTeams % 4 === 0) {
-      this.selectableMetrics[3].isDisabled = true;
+      this.selectableMetrics[4].isDisabled = true;
     }
   }
 }

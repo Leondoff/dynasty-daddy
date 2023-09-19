@@ -1,12 +1,12 @@
-import {AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {LeagueService} from '../../../services/league.service';
-import {PowerRankingsService} from '../../services/power-rankings.service';
-import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
-import {PlayoffCalculatorService} from '../../services/playoff-calculator.service';
-import {ColorService} from '../../../services/utilities/color.service';
-import {ConfigService} from '../../../services/init/config.service';
-import {LeagueSwitchService} from '../../services/league-switch.service';
+import { AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { LeagueService } from '../../../services/league.service';
+import { PowerRankingsService } from '../../services/power-rankings.service';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { PlayoffCalculatorService } from '../../services/playoff-calculator.service';
+import { ColorService } from '../../../services/utilities/color.service';
+import { ConfigService } from '../../../services/init/config.service';
+import { LeagueSwitchService } from '../../services/league-switch.service';
 
 @Component({
   selector: 'app-playoff-calculator-season-table',
@@ -30,11 +30,11 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   public dataSource: MatTableDataSource<any>;
 
   constructor(public leagueService: LeagueService,
-              public powerRankingsService: PowerRankingsService,
-              public leagueSwitchService: LeagueSwitchService,
-              public playoffCalculatorService: PlayoffCalculatorService,
-              private colorService: ColorService,
-              public configService: ConfigService) {
+    public powerRankingsService: PowerRankingsService,
+    public leagueSwitchService: LeagueSwitchService,
+    public playoffCalculatorService: PlayoffCalculatorService,
+    private colorService: ColorService,
+    public configService: ConfigService) {
   }
 
   /** team properties like name division value */
@@ -44,7 +44,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   ratingsCols = ['teamRating'];
 
   /** probability properties */
-  probabilityCols = ['record', 'makePlayoffs', 'winDivision', 'getBye', 'winChampionship'];
+  probabilityCols = ['currentRecord', 'record', 'makePlayoffs', 'winDivision', 'getBye', 'winChampionship'];
 
   /** combined properties to display */
   divisionTableCols = [];
@@ -74,6 +74,9 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
         case 'record':
           return this.playoffCalculatorService.teamsProjectedRecord[item.team.roster.rosterId]?.projWins
             + this.playoffCalculatorService.teamsProjectedRecord[item.team.roster.rosterId]?.medianWins;
+        case 'currentRecord':
+          const recordStr = this.getActualRecord(item.team.roster.rosterId);
+          return Number(recordStr.split('-')[0] || 0);
         case 'makePlayoffs':
           return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakingPlayoffs;
         case 'winDivision':
@@ -116,7 +119,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
    * get color for probability
    * @param prob percent
    */
-  getProbColor(prob: number): string {    
+  getProbColor(prob: number): string {
     return this.probGradient[prob];
   }
 
@@ -151,7 +154,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   getProjRecord(rosterId: number): string {
     if (this.leagueService.selectedLeague.medianWins) {
       return (this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.projWins +
-          this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.medianWins) + ' - '
+        this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.medianWins) + ' - '
         + (this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.projLoss +
           this.playoffCalculatorService.teamsProjectedRecord[rosterId]?.medianLoss);
     }
@@ -169,8 +172,8 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
     const lossesAtDate = this.playoffCalculatorService.getLossesAtWeek(rosterId, this.forecastWeek - 1);
     if (this.leagueService.selectedLeague.medianWins) {
       return (this.playoffCalculatorService.selectedGameResults[rosterId].selectedWins +
-          this.playoffCalculatorService.selectedGameResults[rosterId].selectedMedianWins +
-          winsAtDate.totalWins) + ' - '
+        this.playoffCalculatorService.selectedGameResults[rosterId].selectedMedianWins +
+        winsAtDate.totalWins) + ' - '
         + (this.playoffCalculatorService.selectedGameResults[rosterId].selectedLosses +
           this.playoffCalculatorService.selectedGameResults[rosterId].selectedMedianLosses +
           lossesAtDate.totalLosses);

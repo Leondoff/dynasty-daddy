@@ -97,7 +97,7 @@ export class NflService {
    */
   getCompletedWeekForSeason(season: string): number {
     const seasonNum = Number(season);
-    if (new Date().getFullYear() > seasonNum + 1 || (new Date().getFullYear() === seasonNum + 1 && new Date().getMonth() <= 7)) {
+    if (new Date().getFullYear() > seasonNum || (new Date().getFullYear() === seasonNum + 1 && new Date().getMonth() <= 7)) {
       return seasonNum < 2021 ? 17 : 18;
     }
     return this.stateOfNFL.completedWeek;

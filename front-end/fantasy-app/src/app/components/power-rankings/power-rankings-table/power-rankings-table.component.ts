@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { TeamPowerRanking, TeamRankingTier } from '../../model/powerRankings';
+import { TeamPowerRanking } from '../../model/powerRankings';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
@@ -124,6 +124,8 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         rank: team.overallRank,
         isGreen: team.overallRank < this.alertThreshold,
         isRed: team.overallRank > this.alertThreshold * 2,
+        wins: team.team.roster.teamMetrics?.wins || 0,
+        losses: team.team.roster.teamMetrics?.losses || 0,
         rosters: {}
       }
       team.roster.forEach((group) => {
