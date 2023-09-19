@@ -44,7 +44,7 @@ export class PlayoffCalculatorService {
   NUMBER_OF_SIMULATIONS = 10000;
 
   /** forecast model from radio group */
-  forecastModel: ForecastTypes = ForecastTypes.ELO_ADJUSTED;
+  forecastModel: ForecastTypes = ForecastTypes.ADP_STARTER;
 
   constructor(
     private leagueService: LeagueService,
