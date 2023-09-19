@@ -20,7 +20,7 @@ COPY back-end/scripts/PlayerScripts/KeepTradeCutService.py /app/KeepTradeCutServ
 COPY back-end/scripts/PlayerScripts/TradeDatabaseService.py /app/TradeDatabaseService.py
 
 # schedule cron jobs
-RUN echo "00 4 * * * /usr/local/bin/python /app/TradeDatabaseService.py >> /var/log/trade_cron.log 2>&1" >> /etc/cron.d/trade-crontab
+RUN echo "00 */6 * * * /usr/local/bin/python /app/TradeDatabaseService.py >> /var/log/trade_cron.log 2>&1" >> /etc/cron.d/trade-crontab
 RUN echo "00 8 * * * /usr/local/bin/python /app/DailyCronJob.py >> /var/log/cron.log 2>&1" >> /etc/cron.d/ktc-crontab
 
 # Combine the contents of both crontabs into a single file
