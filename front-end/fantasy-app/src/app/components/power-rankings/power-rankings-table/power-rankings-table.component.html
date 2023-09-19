@@ -196,6 +196,12 @@
                     class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].tier}}</span>
                   </div>
                 </div>
+                <div>
+                  <span class="small-text__light">Record: </span>
+                  <div><span
+                    class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].wins}}-{{powerRankingCache[element.team.roster.rosterId].losses}}</span>
+                  </div>
+                </div>
                 <div class="margin-top-10">
                   <button mat-icon-button matTooltip="Copy roster to clipboard" matTooltipPosition="above" (click)="copyWholeFromTeam(element)"><mat-icon>copy_all</mat-icon></button>
                 </div>

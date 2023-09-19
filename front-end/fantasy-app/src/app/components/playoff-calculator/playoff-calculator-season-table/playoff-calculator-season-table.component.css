@@ -1,6 +1,7 @@
 .mat-column-teamRating,
 .mat-column-eloChange,
 .mat-column-record,
+.mat-column-currentRecord,
 .mat-column-winChampionship,
 .mat-column-winDivision,
 .mat-column-getBye,
@@ -15,6 +16,7 @@
 }
 
 .mat-column-record,
+.mat-column-currentRecord,
 .mat-column-winChampionship,
 .mat-column-winDivision,
 .mat-column-getBye,

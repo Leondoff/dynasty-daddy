@@ -1,4 +1,4 @@
-<div class="playoff-calc-table-container" [ngStyle]="divisionTableCols.indexOf('teamDivision') !== -1?{'max-width': '1600px', 'min-width': '500px'} : {'max-width': '1200px', 'min-width': '500px'}">
+<div class="playoff-calc-table-container" [ngStyle]="divisionTableCols.indexOf('teamDivision') !== -1?{'max-width': '1600px', 'min-width': '800px'} : {'max-width': '1200px', 'min-width': '800px'}">
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort matSortActive="teamRating" matSortDirection="desc">
 
     <ng-container matColumnDef="teamRating">
@@ -14,17 +14,28 @@
     <ng-container matColumnDef="teamName">
       <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
       <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
-        <img #image [src]="team?.team?.owner?.avatar" alt="Fantasy Team Avatar"
-             onerror="style.display = 'none'" class="table-image" *ngIf="!configService.isMobile">
-        {{team.team.owner?.teamName}}
-        <span *ngIf="(forecastWeek > 1 || playoffCalculatorService.forceShowRecord) && !configService.isMobile"
-              class="small-text__light" style="padding-left: 5px">{{getActualRecord(team.team.roster.rosterId)}}</span>
+        <div class="team-image">
+          <img #image [src]="team?.team?.owner?.avatar" alt="Fantasy Team Avatar"
+               onerror="style.display = 'none'" class="table-image" *ngIf="!configService.isMobile">
+        </div>
+        <div>
+          <div class="owner-name">{{team.team.owner?.ownerName|truncate:18}}
+            <!-- <span *ngIf="(forecastWeek > 1 || playoffCalculatorService.forceShowRecord) && !configService.isMobile"
+                 class="small-text__light" style="padding-left: 5px">{{getActualRecord(team.team.roster.rosterId)}}</span> -->
+          </div>
+          <div class="small-text__light">{{team.team.owner?.teamName|truncate:18}}</div>
+        </div>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="teamDivision">
       <mat-header-cell *matHeaderCellDef>Team Division</mat-header-cell>
-      <mat-cell *matCellDef="let team">{{leagueService.selectedLeague.divisionNames[playoffCalculatorService.getDivisionByRosterId(team.team.roster.rosterId)?.divisionId - 1] || '-'}}</mat-cell>
+      <mat-cell *matCellDef="let team">{{leagueService.selectedLeague.divisionNames[playoffCalculatorService.getDivisionByRosterId(team.team.roster.rosterId)?.divisionId - 1] || '-' | truncate:18}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="currentRecord">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Current Record</mat-header-cell>
+      <mat-cell *matCellDef="let team">{{getActualRecord(team.team.roster.rosterId)}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="record">
