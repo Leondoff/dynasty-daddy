@@ -77,7 +77,7 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
       case 1:
         this.selectedVisualizations.setValue(['overall']);
         this.powerRankingService.powerRankingsTableView = PowerRankingTableView.Starters;
-        this.selectedMetrics.setValue(['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank']);
+        this.powerRankingService.selectedMetrics.setValue(['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank']);
         break;
       default:
         const cols = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
@@ -86,7 +86,7 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
           cols.push('draftRank');
         }
         this.selectedVisualizations.setValue(['overall']);
-        this.selectedMetrics.setValue(cols);
+        this.powerRankingService.selectedMetrics.setValue(cols);
     }
     this.refreshPowerRankingsView();
   }
@@ -107,7 +107,6 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
    * Refresh selected metrics and visualizations in service
    */
   refreshPowerRankingsView(): void {
-    this.powerRankingService.powerRankingsTableCols = this.selectedMetrics.value;
     this.powerRankingService.powerRankingsVisualizations = this.selectedVisualizations.value;
   }
 

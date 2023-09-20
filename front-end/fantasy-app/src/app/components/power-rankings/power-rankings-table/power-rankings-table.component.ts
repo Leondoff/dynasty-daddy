@@ -16,6 +16,7 @@ import { SimpleTextModal } from '../../sub-components/simple-text-modal/simple-t
 import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
 import { MatDialog } from '@angular/material/dialog';
 import { GoogleAnalyticsService } from 'ngx-google-analytics';
+import { UntypedFormControl } from '@angular/forms';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -48,6 +49,26 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
 
   // toggles the advanced setting bar
   showAdvancedSettings: boolean = false;
+
+  // available metrics to select for table
+  availableMetrics: any[] = [
+    { key: 'owner', display: 'Fantasy Manager' },
+    { key: 'team', display: 'NFL Team' },
+    { key: 'record', display: 'Record' },
+    { key: 'tier', display: 'Fantasy Tier' },
+    { key: 'overallRank', display: 'Overall Rank' },
+    { key: 'starterRank', display: 'NFL Team' },
+    { key: 'qbStarterRank', display: 'QB Contender Rank' },
+    { key: 'qbRank', display: 'QB Dynasty Rank' },
+    { key: 'rbStarterRank', display: 'RB Contender Rank' },
+    { key: 'rbRank', display: 'RB Dynasty Rank' },
+    { key: 'wrStarterRank', display: 'WR Contender Rank' },
+    { key: 'wrRank', display: 'WR Dynasty Rank' },
+    { key: 'teStarterRank', display: 'TE Contender Rank' },
+    { key: 'teRank', display: 'TE Dynasty Rank' },
+    { key: 'flexStarterRank', display: 'Flex Contender Rank' },
+    { key: 'draftRank', display: 'Draft Capital Rank' },
+  ];
 
   // datasource for mat table
   dataSource: MatTableDataSource<TeamPowerRanking> = new MatTableDataSource<TeamPowerRanking>();
@@ -241,7 +262,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     this.clipboard.copy(allPlayersRoster);
   }
 
-
   /**
    * get list of players by position
    * @param pos string
@@ -331,6 +351,8 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         return item.picks.rank;
       } else if (property === 'overallRank') {
         return item.overallRank;
+      } else if (property === 'record') {
+        return item.team?.roster?.teamMetrics?.wins || 0;
       } else {
         return item[property];
       }

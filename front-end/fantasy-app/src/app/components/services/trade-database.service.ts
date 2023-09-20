@@ -38,6 +38,9 @@ export class TradeDatabaseService {
   /** trade results */
   tradeSearchResults: TradeDatabaseItem[] = [];
 
+  /** reload search when values change */
+  reloadSearch: boolean = true;
+
   /** trade database page */
   tradePage: number = 1;
 
