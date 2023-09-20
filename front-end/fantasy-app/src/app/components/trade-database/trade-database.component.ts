@@ -4,7 +4,7 @@ import { FormControl, UntypedFormControl } from "@angular/forms";
 import { ReplaySubject, Subject } from "rxjs";
 import { FantasyPlayer } from "src/app/model/assets/FantasyPlayer";
 import { PlayerService } from "src/app/services/player.service";
-import { delay, takeUntil } from "rxjs/operators";
+import { delay, distinctUntilChanged, takeUntil } from "rxjs/operators";
 import { LeagueSwitchService } from "../services/league-switch.service";
 import { ActivatedRoute } from "@angular/router";
 import { TradeDatabaseService } from "../services/trade-database.service";
@@ -107,7 +107,25 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         }),
             this.route.queryParams.subscribe(params => {
                 this.leagueSwitchService.loadFromQueryParams(params);
-            })
+            }),
+            this.tradeDatabaseService.selectedLeagueTypeFormat.valueChanges
+                .pipe(distinctUntilChanged())
+                .subscribe(() => (this.tradeDatabaseService.reloadSearch = true)),
+            this.tradeDatabaseService.selectedScoringFormat.valueChanges
+                .pipe(distinctUntilChanged())
+                .subscribe(() => (this.tradeDatabaseService.reloadSearch = true)),
+            this.tradeDatabaseService.selectedQbFormat.valueChanges
+                .pipe(distinctUntilChanged())
+                .subscribe(() => (this.tradeDatabaseService.reloadSearch = true)),
+            this.tradeDatabaseService.selectedTeamFormat.valueChanges
+                .pipe(distinctUntilChanged())
+                .subscribe(() => (this.tradeDatabaseService.reloadSearch = true)),
+            this.tradeDatabaseService.selectedTepFormat.valueChanges
+                .pipe(distinctUntilChanged())
+                .subscribe(() => (this.tradeDatabaseService.reloadSearch = true)),
+            this.tradeDatabaseService.selectedStartersFormat.valueChanges
+                .pipe(distinctUntilChanged())
+                .subscribe(() => (this.tradeDatabaseService.reloadSearch = true)),
         );
     }
 
@@ -209,6 +227,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
     addPlayerToSideA(player: FantasyPlayer): void {
         this.tradeDatabaseService.sideAPlayers.push(player)
         this.filterPlayers(this.player2FilterCtrl, this.filteredSideBPlayers);
+        this.tradeDatabaseService.reloadSearch = true;
     }
 
     /**
@@ -218,6 +237,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
     addPlayerToSideB(player: FantasyPlayer): void {
         this.tradeDatabaseService.sideBPlayers.push(player)
         this.filterPlayers(this.playerFilterCtrl, this.filteredSideAPlayers);
+        this.tradeDatabaseService.reloadSearch = true;
     }
 
     /**
@@ -246,6 +266,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         this.addSubscriptions(this.tradeDatabaseService.searchTradeDatabase(this.tradeDatabaseService.tradePage, 12).subscribe(res => {
             this.tradeDatabaseService.tradeSearchResults = res;
             this.tradeSearchStatus = Status.DONE;
+            this.tradeDatabaseService.reloadSearch = false;
         }))
     }
 

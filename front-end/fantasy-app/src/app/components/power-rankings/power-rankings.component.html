@@ -22,7 +22,7 @@
     <app-power-rankings-chart [powerRankings]="powerRankingService.powerRankings" [selectedOrder]="powerRankingService.powerRankingChartOption" [selectedMarket]="playersService.selectedMarket"></app-power-rankings-chart>
   </div>
   <div>
-    <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="leagueService.selectedLeague.isSuperflex" [columnsToDisplay]="powerRankingService.powerRankingsTableCols"></app-power-rankings-table>
+    <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="leagueService.selectedLeague.isSuperflex" [columnsToDisplay]="powerRankingService.selectedMetrics.value"></app-power-rankings-table>
   </div>
   <div class="small-text__light center-text margin-top-15">{{leagueService.selectedLeague.name}} • {{leagueService.selectedLeague.totalRosters}} Teams • Start {{leagueService.selectedLeague.starters}}</div>
 </div>
