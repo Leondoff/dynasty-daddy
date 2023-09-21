@@ -2,8 +2,6 @@ import json
 import psycopg2
 import requests
 
-espnPosMap = {1: 'QB', 2: 'RB', 3: 'WR', 4: 'TE'}
-
 def updatePlayerGamelogs(season, week = None):
     
     baseUrl = 'https://api.sleeper.app/v1/stats/nfl/regular/' + str(season) + '/'
@@ -38,4 +36,4 @@ def updatePlayerGamelogs(season, week = None):
             print('Gamelog inserted for the following season: ' + str(season) + ' week ' + str(num))
     conn.commit()
 
-updatePlayerGamelogs(2023, 1)
+updatePlayerGamelogs(2023, 2)
