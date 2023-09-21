@@ -127,6 +127,15 @@ def ScrapeTrades(leagueType, isAllTime = False):
         WHERE EXTRACT(YEAR FROM created_at) = %s
             AND league_type = ANY(%s::league_type_v2[]);
     """
+    # special query to only run for past 7 days
+    # leagueQuery = """
+    #     SELECT *
+    #     FROM league_info
+    #     WHERE EXTRACT(YEAR FROM created_at) = %s
+    #         AND league_type = ANY(%s::league_type_v2[])
+    #         AND DATE_PART('day', CURRENT_DATE - created_at) <= 7;
+    # """
+    
     cursor.execute(leagueQuery, (season, leagueType))
     leagues = cursor.fetchall()
     

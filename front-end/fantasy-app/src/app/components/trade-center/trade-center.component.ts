@@ -348,6 +348,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     if (player) {
       this.team2PlayerList.push(player);
       this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
+      if (this.team2PlayerList.length == 0) {
+        this.team2Rankings = null;
+      }
       this.processTrade();
     }
   }
@@ -359,6 +362,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   removePlayerFromTeam1(index: number): void {
     this.team1PlayerList.splice(index, 1);
     this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
+    if (this.team1PlayerList.length == 0) {
+      this.team1Rankings = null;
+    }
     this.processTrade();
   }
 
