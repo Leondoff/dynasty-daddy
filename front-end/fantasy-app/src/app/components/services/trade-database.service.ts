@@ -66,7 +66,7 @@ export class TradeDatabaseService {
     return this.fantasyPlayerApiService.searchTradeDatabase(
       this.sideAPlayers.map(p => p.position == 'PI' ? p.name_id : p.sleeper_id),
       this.sideBPlayers.map(p => p.position == 'PI' ? p.name_id : p.sleeper_id),
-      this.selectedQbFormat.value,
+      this.selectedQbFormat.value.map(v => v === 2),
       this.selectedStartersFormat.value,
       this.selectedTeamFormat.value,
       this.selectedLeagueTypeFormat.value,
