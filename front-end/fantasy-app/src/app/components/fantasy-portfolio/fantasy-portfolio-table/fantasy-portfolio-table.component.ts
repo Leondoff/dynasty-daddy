@@ -169,13 +169,13 @@ export class FantasyPortfolioTableComponent implements OnInit, OnChanges {
   getPriceDisplay(player: FantasyPlayer): string {
     switch (this.priceSetting) {
       case 'SF/STD': {
-        return `${player.sf_trade_value} / ${player.trade_value}`
+        return `${player.sf_trade_value || 0} / ${player.trade_value || 0}`
       }
       case 'SF': {
-        return `${player.sf_trade_value}`;
+        return `${player.sf_trade_value || 0}`;
       }
       default: {
-        return `${player.trade_value}`;
+        return `${player.trade_value || 0}`;
       }
     }
   }

@@ -59,7 +59,7 @@
               ]
             },
             "development": {
-              "optimization": false,
+              "optimization": true,
               "outputHashing": "none",
               "sourceMap": false,
               "namedChunks": false,
@@ -68,7 +68,7 @@
               "statsJson": false,
               "progress": true,
               "vendorChunk": true,
-              "buildOptimizer": false
+              "buildOptimizer": true
             }
           },
           "defaultConfiguration": "production"

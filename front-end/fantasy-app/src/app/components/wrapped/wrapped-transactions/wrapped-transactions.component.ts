@@ -86,7 +86,6 @@ export class WrappedTransactionsComponent implements OnInit {
         team1Adds: favorsTeam1 ? fleeceTradesList[i].adds.map(p => p.playerName) : fleeceTradesList[i].drops.map(p => p.playerName),
         team2Adds: favorsTeam1 ? fleeceTradesList[i].drops.map(p => p.playerName) : fleeceTradesList[i].adds.map(p => p.playerName)
       });
-      console.log(favorsTeam1, tradeTeam1.owner.teamName, tradeTeam2.owner.teamName, fleeceTradesList[i], this.biggestFleeces)
     }
     setInterval(() => {
       this.showContent = true;

@@ -90,7 +90,7 @@ export class StandingsComponent extends BaseComponent implements OnInit {
         this.matchupService.getMostPointsForInWeek(this.leagueService.selectedLeague.startWeek, endWeek);
       }
       if (!this.isTransactionAggComplete()) {
-        this.transactionService.generateTransactionAggregate(endWeek);
+        this.transactionService.generateTransactionAggregate(endWeek + 1);
       }
     }
   }

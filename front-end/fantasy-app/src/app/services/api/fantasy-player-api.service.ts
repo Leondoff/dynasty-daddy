@@ -315,8 +315,8 @@ export class FantasyPlayerApiService {
    * @param page number page
    * @param pageLength page length
    */
-  searchTradeDatabase(sideA: string[], sideB: string[], isSuperFlex: boolean[], starters: number[], teams: number[], leagueType: string, ppr: number[], tep: number[], page: number, pageLength: number): Observable<any[]> {
-    return this.http.post<any>(this.fantasyPlayerApiConfigService.searchTradeDatabaseEndpoint, { sideA, sideB, isSuperFlex, starters, teams, leagueType, ppr, tep, page, pageLength })
+  searchTradeDatabase(sideA: string[], sideB: string[], isSuperflex: boolean[], starters: number[], teams: number[], leagueType: string, ppr: number[], tep: number[], page: number, pageLength: number): Observable<any[]> {
+    return this.http.post<any>(this.fantasyPlayerApiConfigService.searchTradeDatabaseEndpoint, { sideA, sideB, isSuperflex, starters, teams, leagueType, ppr, tep, page, pageLength })
       .pipe(map(res => {
         return res;
       }));
