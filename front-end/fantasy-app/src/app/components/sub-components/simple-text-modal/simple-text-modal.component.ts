@@ -7,7 +7,7 @@ import { SimpleTextCategory } from "src/app/model/toolHelpModel";
     templateUrl: './simple-text-modal.component.html',
     styleUrls: ['./simple-text-modal.component.css']
 })
-export class SimpleTextModal implements OnInit {
+export class SimpleTextModalComponent implements OnInit {
 
     headerText: string = '';
 

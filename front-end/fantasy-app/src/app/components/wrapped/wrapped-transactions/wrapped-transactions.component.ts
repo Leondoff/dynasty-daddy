@@ -67,16 +67,18 @@ export class WrappedTransactionsComponent implements OnInit {
     // Biggest Trades
     for (let i = 0; i < (this.wrappedService.transactionsDict['trades'].length > 3 ? 3 : this.wrappedService.transactionsDict['trades'].length); i++) {
       if (this.wrappedService.transactionsDict['trades'][i].rosterIds.length !== 2) continue;
-      const tradeTeam1 = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['trades'][i].rosterIds[0])
-      const tradeTeam2 = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['trades'][i].rosterIds[1])
+      const isTeam1 = this.wrappedService.transactionsDict['trades'][i].adds[0].rosterId == this.wrappedService.transactionsDict['trades'][i].rosterIds[0];
+      const tradeTeam1 = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['trades'][i].rosterIds[isTeam1 ? 0 : 1])
+      const tradeTeam2 = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['trades'][i].rosterIds[isTeam1 ? 1 : 0])
       this.biggestTrades.push({ team1: tradeTeam1.owner.teamName, team2: tradeTeam2.owner.teamName, team1Adds: this.wrappedService.transactionsDict['trades'][i].adds.map(p => p.playerName), team2Adds: this.wrappedService.transactionsDict['trades'][i].drops.map(p => p.playerName) });
     }
     // Fleeces of the Year
     const fleeceTradesList = this.wrappedService.transactionsDict['trades'].filter(trade => Math.abs(trade.netValue) >= 3000).sort((a, b) => Math.abs(b.netValue) / ((b.adds.reduce((p, x) => p + x.value, 0) + b.drops.reduce((p, x) => p + x.value, 0)) || 1) - (Math.abs(a.netValue) / (a.adds.reduce((p, x) => p + x.value, 0) + a.drops.reduce((p, x) => p + x.value, 0)) || 1)).filter(trade => Math.abs(trade.netValue) >= 3000);
     for (let i = 0; i < (fleeceTradesList.length > 3 ? 3 : fleeceTradesList.length); i++) {
       if (fleeceTradesList[i].rosterIds.length !== 2) continue;
-      const tradeTeam1 = this.leagueService.getTeamByRosterId(fleeceTradesList[i].rosterIds[0])
-      const tradeTeam2 = this.leagueService.getTeamByRosterId(fleeceTradesList[i].rosterIds[1])
+      const isTeam1 = fleeceTradesList[i].adds[0].rosterId == fleeceTradesList[i].rosterIds[0];
+      const tradeTeam1 = this.leagueService.getTeamByRosterId(fleeceTradesList[i].rosterIds[isTeam1 ? 0 : 1])
+      const tradeTeam2 = this.leagueService.getTeamByRosterId(fleeceTradesList[i].rosterIds[isTeam1 ? 1 : 0])
       const favorsTeam1 = fleeceTradesList[i].netValue > 0;
       this.biggestFleeces.push({
         team1: favorsTeam1 ? tradeTeam1.owner.teamName : tradeTeam2.owner.teamName,
@@ -84,6 +86,7 @@ export class WrappedTransactionsComponent implements OnInit {
         team1Adds: favorsTeam1 ? fleeceTradesList[i].adds.map(p => p.playerName) : fleeceTradesList[i].drops.map(p => p.playerName),
         team2Adds: favorsTeam1 ? fleeceTradesList[i].drops.map(p => p.playerName) : fleeceTradesList[i].adds.map(p => p.playerName)
       });
+      console.log(favorsTeam1, tradeTeam1.owner.teamName, tradeTeam2.owner.teamName, fleeceTradesList[i], this.biggestFleeces)
     }
     setInterval(() => {
       this.showContent = true;
