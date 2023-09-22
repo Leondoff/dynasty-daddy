@@ -1,5 +1,5 @@
 import { OnInit, Component, Input } from "@angular/core";
-import { SimpleTextModal } from "../simple-text-modal/simple-text-modal.component";
+import { SimpleTextModalComponent} from "../simple-text-modal/simple-text-modal.component";
 import { ConfigService } from "src/app/services/init/config.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DataSourcesInfo } from "src/app/model/toolHelpModel";
@@ -23,7 +23,7 @@ export class DataSourcesButtonComponent implements OnInit {
      * Open how to play modal
      */
     openDataSourcesModal(): void {
-        this.dialog.open(SimpleTextModal
+        this.dialog.open(SimpleTextModalComponent
             , {
                 minHeight: '350px',
                 minWidth: this.configService.isMobile ? '200px' : '500px',

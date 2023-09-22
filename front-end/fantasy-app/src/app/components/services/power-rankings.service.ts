@@ -649,7 +649,6 @@ export class PowerRankingsService {
         }
     }
     this.selectedMetrics.setValue(powerRankingsTableCols);
-    console.log(this.selectedMetrics);
   }
 
 }

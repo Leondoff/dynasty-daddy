@@ -8,7 +8,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { SearchGridPlayerModal } from "../modals/search-grid-player-modal/search-grid-player-modal.component";
 import { GridResultModalComponent } from "../modals/grid-result-modal/grid-result-modal.component";
 import { PageService } from "src/app/services/utilities/page.service";
-import { SimpleTextModal } from "../sub-components/simple-text-modal/simple-text-modal.component";
+import { SimpleTextModalComponent} from "../sub-components/simple-text-modal/simple-text-modal.component";
 import { Observable } from "rxjs";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 
@@ -318,7 +318,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      * Open how to play modal
      */
     openHowToPlay(): void {
-        this.dialog.open(SimpleTextModal
+        this.dialog.open(SimpleTextModalComponent
             , {
                 minHeight: '350px',
                 minWidth: this.configService.isMobile ? '200px' : '500px',

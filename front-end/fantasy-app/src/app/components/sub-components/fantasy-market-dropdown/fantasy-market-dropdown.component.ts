@@ -3,8 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 import { ConfigService } from 'src/app/services/init/config.service';
 import { PlayerService } from 'src/app/services/player.service';
-import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
-import { SimpleTextModal } from '../simple-text-modal/simple-text-modal.component';
 import { GoogleAnalyticsService } from 'ngx-google-analytics';
 
 @Component({
@@ -12,7 +10,7 @@ import { GoogleAnalyticsService } from 'ngx-google-analytics';
     templateUrl: './fantasy-market-dropdown.component.html',
     styleUrls: ['./fantasy-market-dropdown.component.css']
 })
-export class FantasyMarketDropdown implements OnInit {
+export class FantasyMarketDropdownComponent implements OnInit {
 
     @Input()
     selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;

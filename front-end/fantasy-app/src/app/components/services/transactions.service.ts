@@ -201,11 +201,13 @@ export class TransactionsService {
       this.leagueService.leagueTeamDetails.map(it => it.roster.rosterId).forEach(rosterId => {
         this.transactionAggregate[rosterId] = {actions: 0, trades: 0};
       });
-      for (let i = this.leagueService.selectedLeague.startWeek; i <= endWeek; i++) {
+      for (let i = 0; i <= endWeek; i++) {
         if (this.leagueService.selectedLeague.leagueTransactions[i]) {
           this.leagueService.selectedLeague.leagueTransactions[i]?.map(transaction => {
             transaction?.rosterIds?.map(team => {
-              transaction.type === 'trade' ? this.transactionAggregate[team].trades++ : this.transactionAggregate[team].actions++;
+              if (this.transactionAggregate[team]) {
+                transaction.type === 'trade' ? this.transactionAggregate[team].trades++ : this.transactionAggregate[team].actions++;
+              }
             });
           });
         }
