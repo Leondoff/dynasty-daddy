@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { AboutComponent } from './components/about/about.component';
 import { TradeCenterComponent } from './components/trade-center/trade-center.component';
-import { WrappedComponent } from './components/wrapped/wrapped.component';
 import { StandardPageComponent } from './components/standard-page/standard-page.component';
 import { PowerRankingsComponent } from './components/power-rankings/power-rankings.component';
 
