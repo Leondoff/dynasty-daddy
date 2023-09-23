@@ -176,10 +176,30 @@ CREATE TABLE player_grid (
     end_date VARCHAR(5),
     stats_json jsonb,
     gsis_id VARCHAR(10),
-    pfr_id varchar(10)
+    pfr_id varchar(10),
+    search_name TEXT,
 );
 
 create index player_grid_uindex on player_grid (name);
+create index player_grid_search_uindex on player_grid (search_name);
+
+CREATE OR REPLACE FUNCTION update_search_name()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.search_name := LOWER(REGEXP_REPLACE(NEW.name, '[^a-zA-Z0-9 ]+', '', 'g'));
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_search_name_trigger
+BEFORE INSERT OR UPDATE ON player_grid
+FOR EACH ROW
+EXECUTE FUNCTION update_search_name();
+
+ALTER TABLE player_grid ENABLE TRIGGER update_search_name_trigger;
+
+UPDATE player_grid SET name = name;
+
 
 -- historical gridirons table
 create table historical_gridirons (

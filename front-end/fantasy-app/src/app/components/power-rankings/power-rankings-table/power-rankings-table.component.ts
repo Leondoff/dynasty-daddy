@@ -12,7 +12,7 @@ import { DisplayService } from '../../../services/utilities/display.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { PowerRankingMarket, PowerRankingTableView, PowerRankingsService } from '../../services/power-rankings.service';
 import { BaseComponent } from '../../base-component.abstract';
-import { SimpleTextModal } from '../../sub-components/simple-text-modal/simple-text-modal.component';
+import { SimpleTextModalComponent } from '../../sub-components/simple-text-modal/simple-text-modal.component';
 import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
 import { MatDialog } from '@angular/material/dialog';
 import { GoogleAnalyticsService } from 'ngx-google-analytics';
@@ -392,7 +392,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   }
 
   openDataSourcesModal(): void {
-    this.dialog.open(SimpleTextModal
+    this.dialog.open(SimpleTextModalComponent
       , {
         minHeight: '350px',
         minWidth: this.configService.isMobile ? '200px' : '500px',

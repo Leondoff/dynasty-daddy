@@ -36,10 +36,10 @@ export const GetSearchPlayersInGrid = async (search) => {
       awards_json,
       headshot_url
     FROM player_grid
-    WHERE name ILIKE $1
+    WHERE search_name ILIKE $1
     LIMIT 15;
   `;
-  const formattedSearch = search.replace(/\u2018|\u2019/g, '\'');
+  const formattedSearch = search.replace(/[^a-zA-Z0-9\s]/g, '');
   const searchString = `%${formattedSearch}%`;
   const values = [ searchString ];
 

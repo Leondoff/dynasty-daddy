@@ -5,13 +5,22 @@
   <mat-list-item [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-button" gaEvent="nav_wrapped" gaCategory="page_nav" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true'">
     <mat-icon class="header-icon">redeem</mat-icon><span> Wrapped</span>
   </mat-list-item>
-    <mat-form-field color="accent" class="sidebar-search">
-      <mat-label>Search...</mat-label>
-      <input matInput type="text" (keyup)="filterSearch()" [(ngModel)]="searchVal" class="mat-dropdown-wide-250">
-      <button mat-button *ngIf="searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="resetSearchValue()">
-        <mat-icon>close</mat-icon>
+  <div class="player-item-container">
+    <span class="player-item-left">
+      <mat-form-field color="accent" class="sidebar-search">
+        <mat-label>Search...</mat-label>
+        <input matInput type="text" (keyup)="filterSearch()" [(ngModel)]="searchVal" class="mat-dropdown-wide-250">
+        <button mat-button *ngIf="searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="resetSearchValue()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </span>
+    <span class="player-item-right lock-icon">
+      <button mat-icon-button matTooltip="Locks the sidebar from closing on navigation" *ngIf="!configService.isMobile" (click)="isSidebarLocked = !isSidebarLocked">
+        <mat-icon>{{isSidebarLocked ? 'lock' : 'lock_open'}}</mat-icon>
       </button>
-    </mat-form-field>
+    </span>
+  </div>
   <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="searchVal == '' || (isInSearch('Power Rankings') || isInSearch('League Standings') || isInSearch('Playoff Calculator') || isInSearch('Trade Finder') || isInSearch('Draft Center') || isInSearch('Fantasy Portfolio') || isInSearch('Mock Draft'))">
       <mat-expansion-panel-header>
           League Tools
@@ -25,11 +34,11 @@
           <mat-icon>calculate</mat-icon>Playoff Calculator</a>
         <a mat-list-item [routerLink]="['./league/trade/finder']" *ngIf="searchVal == '' || isInSearch('Trade Finder')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav">
           <mat-icon>person_search</mat-icon>Trade Finder</a>
-        <a mat-list-item [routerLink]="['./league/draft']" *ngIf="searchVal == '' || isInSearch('Draft Center') || isInSearch('Mock Draft')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_draft_center" gaCategory="page_nav">
+        <a mat-list-item [routerLink]="['./league/draft']" *ngIf="searchVal == '' || isInSearch('Draft Center') || isInSearch('Mock Draft')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_draft_center" gaCategory="page_nav">
           <mat-icon>storage</mat-icon>Draft Center</a>
-        <a mat-list-item [routerLink]="['./league/portfolio']" *ngIf="searchVal == '' || isInSearch('Fantasy Portfolio')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_portfolio" gaCategory="page_nav">
+        <a mat-list-item [routerLink]="['./league/portfolio']" *ngIf="searchVal == '' || isInSearch('Fantasy Portfolio')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_portfolio" gaCategory="page_nav">
           <mat-icon>account_balance</mat-icon>Fantasy Portfolio</a>
-        <a mat-list-item [routerLink]="['./league/format']" *ngIf="(searchVal == '' || isInSearch('League Format Tool'))" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()"gaEvent="nav_league_format" gaCategory="page_nav">
+        <a mat-list-item [routerLink]="['./league/format']" *ngIf="(searchVal == '' || isInSearch('League Format Tool'))" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_league_format" gaCategory="page_nav">
           <mat-icon>line_axis</mat-icon>League Format <mat-chip-list><mat-chip class="sidebar-new-alert">New</mat-chip></mat-chip-list></a>
       </mat-nav-list>
   </mat-expansion-panel>

@@ -7,7 +7,7 @@ import { LeagueSwitchService } from '../../services/league-switch.service';
   templateUrl: './login-error.component.html',
   styleUrls: ['./login-error.component.css']
 })
-export class LoginErrorComponenet implements OnInit {
+export class LoginErrorComponent implements OnInit {
 
   @Input()
   errorHeader = 'Please select a league.';

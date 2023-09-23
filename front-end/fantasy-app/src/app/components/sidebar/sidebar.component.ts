@@ -35,6 +35,9 @@ export class SidebarComponent extends BaseComponent implements OnInit {
   /** filtered teams for sidebar */
   filteredTeams: LeagueTeam[] = [];
 
+  /** locks sidebar from closing on nav */
+  isSidebarLocked: boolean = false;
+
   /** roster review link */
   ROSTER_REVIEW_LINK: string = 'https://forms.gle/7Uud44CMJbccrjAw7';
 
@@ -46,8 +49,8 @@ export class SidebarComponent extends BaseComponent implements OnInit {
 
   /** data sources url */
   dataSources: string[] = ['https://keeptradecut.com', 'https://fantasycalc.com',
-  'https://dynastyprocess.com', 'https://www.dynastysuperflex.com', 'https://www.playerprofiler.com/',
-  'https://overthecap.com/', 'https://ras.football/', 'https://nflverse.nflverse.com/'];
+    'https://dynastyprocess.com', 'https://www.dynastysuperflex.com', 'https://www.playerprofiler.com/',
+    'https://overthecap.com/', 'https://ras.football/', 'https://nflverse.nflverse.com/'];
 
   constructor(public leagueService: LeagueService,
     public playerService: PlayerService,
@@ -112,7 +115,9 @@ export class SidebarComponent extends BaseComponent implements OnInit {
    * toggle sidebar menu
    */
   toggle() {
-    this.toggleMenu.emit();
+    if (this.configService.isMobile || !this.isSidebarLocked) {
+      this.toggleMenu.emit();
+    }
   }
 
   /**
@@ -159,7 +164,7 @@ export class SidebarComponent extends BaseComponent implements OnInit {
    */
   isDataSourceInSearch(): boolean {
     return this.dataSources.some(source => this.isInSearch(source));
-  }  
+  }
 
   /**
    * Open roster review form
