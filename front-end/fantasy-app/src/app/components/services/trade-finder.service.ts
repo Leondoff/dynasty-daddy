@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {FantasyMarket, FantasyPlayer} from '../../model/assets/FantasyPlayer';
-import {TradePackage} from '../model/tradePackage';
-import {TradeService} from './trade.service';
+import { Injectable } from '@angular/core';
+import { FantasyMarket, FantasyPlayer } from '../../model/assets/FantasyPlayer';
+import { TradePackage } from '../model/tradePackage';
+import { TradeService } from './trade.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,13 @@ export class TradeFinderService {
   selectedTeamUserId: string;
 
   selectedPlayers: FantasyPlayer[] = [];
+
+  selectedPickIndex: number[] = [];
+
+  /**
+   * list of currently generated trade packages
+   */
+  tradeList: TradePackage[] = [];
 
   constructor(private tradeService: TradeService) {
   }

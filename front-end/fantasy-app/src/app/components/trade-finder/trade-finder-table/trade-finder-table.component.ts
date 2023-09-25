@@ -67,14 +67,25 @@ export class TradeFinderTableComponent implements OnInit, OnChanges {
    * @param asset player to add/remove
    * @param index index of player
    */
-  addAssetToTrade(event: any, asset: FantasyPlayer, index: number): void {
+  addAssetToTrade(event: any, asset: FantasyPlayer, index: any): void {
     if (event.checked) {
       this.tradeFinderService.selectedPlayers.push(asset);
+      if (asset.position == 'PI') {
+        this.tradeFinderService.selectedPickIndex.push(index);
+      }
     } else {
       const removeIndex = this.tradeFinderService.selectedPlayers.map(item => item.name_id).indexOf(asset.name_id);
       if (removeIndex >= 0) {
         this.tradeFinderService.selectedPlayers.splice(removeIndex, 1);
       }
+    }
+  }
+
+  isChecked(asset: FantasyPlayer, index: number): boolean {
+    if (asset.position != 'PI') {
+      return this.tradeFinderService.selectedPlayers.map(p => p.name_id).includes(asset.name_id);
+    } else {
+      return this.tradeFinderService.selectedPickIndex.includes(index);
     }
   }
 }
