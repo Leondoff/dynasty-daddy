@@ -7,7 +7,7 @@
     <span class="button-left">
       <mat-form-field appearance="outline" color="accent">
         <mat-label>Select a Team</mat-label>
-        <mat-select [(ngModel)]="tradeFinderService.selectedTeamUserId" (selectionChange)="setUpTradeFinder()">
+        <mat-select [(ngModel)]="tradeFinderService.selectedTeamUserId" (selectionChange)="resetTradeFinder()">
           <mat-option *ngFor="let team of leagueService.leagueTeamDetails"
                       [value]="team.owner.userId">{{team.owner.teamName}} - {{team.owner.ownerName}}</mat-option>
         </mat-select>
@@ -65,7 +65,7 @@
     </div>
 
     <div class="margin-top-50" fxLayout="row wrap" fxLayoutAlign="center">
-      <div style="padding: 4px" fxFlex="50%" fxFlex.xs="100%" fxFlex.sm="100%" *ngFor="let trade of tradeList">
+      <div style="padding: 4px" fxFlex="50%" fxFlex.xs="100%" fxFlex.sm="100%" *ngFor="let trade of tradeFinderService.tradeList">
         <app-trade-finder-card [tradePackage]="trade" [owner]="this.leagueService.getTeamByUserId(trade.team2UserId)?.owner"></app-trade-finder-card>
       </div>
     </div>

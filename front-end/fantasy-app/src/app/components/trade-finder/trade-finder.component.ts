@@ -6,7 +6,6 @@ import { TradeFinderService } from '../services/trade-finder.service';
 import { LeagueService } from '../../services/league.service';
 import { FantasyPlayer } from '../../model/assets/FantasyPlayer';
 import { PowerRankingsService } from '../services/power-rankings.service';
-import { TradePackage } from '../model/tradePackage';
 import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from '../../services/init/config.service';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
@@ -21,11 +20,6 @@ import { PageService } from 'src/app/services/utilities/page.service';
 export class TradeFinderComponent extends BaseComponent implements OnInit {
 
   pageDescription = 'Find fantasy football trades across your league and bulk analyze what trades to pursue. Filter what positions and teams to include in the results.'
-
-  /**
-   * list of currently generated trade packages
-   */
-  tradeList: TradePackage[] = [];
 
   /** list of team players */
   teamPlayers: FantasyPlayer[] = [];
@@ -63,7 +57,7 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
   ) {
     super();
     this.pageService.setUpPageSEO('Trade Finder',
-      ['fantasy trade analyzer', 'fantasy trade calculator', 'fantasy trade finder', 'dynasty trade calculator'],
+      ['fantasy trade analyzer', 'fantasy trade calculator', 'fantasy trade finder', 'dynasty trade calculator', 'trade finder'],
       this.pageDescription)
   }
 
@@ -86,11 +80,19 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
   }
 
   /**
+   * reset trade finder values and then set up trade finder
+   */
+  resetTradeFinder(): void {
+    this.tradeFinderService.selectedPlayers = [];
+    this.tradeFinderService.tradeList = [];
+    this.tradeFinderService.selectedPickIndex = [];
+    this.setUpTradeFinder();
+  }
+
+  /**
    * reset the trade finder component values
    */
   setUpTradeFinder(): void {
-    this.tradeFinderService.selectedPlayers = [];
-    this.tradeList = [];
     this.availableTeams = this.setAvailableTeams()
     this.includedTeams.setValue(this.availableTeams);
     this.teamPlayers = this.filterPlayersByTeam();
@@ -105,7 +107,7 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
    * handles generating all the trade offers
    */
   generateTradeOffers(): void {
-    this.tradeList = [];
+    this.tradeFinderService.tradeList = [];
     const excludedTeams = this.availableTeams
       .filter(team => !this.includedTeams.value.includes(team))
       .map(team => team.userId)
@@ -119,7 +121,7 @@ export class TradeFinderComponent extends BaseComponent implements OnInit {
     );
     // filters trades with no players or duplicate trades out
     // TODO do we want to couple this logic in the trade finder service?
-    this.tradeList = trades.filter(trade => trade.team2Assets.length > 0)
+    this.tradeFinderService.tradeList = trades.filter(trade => trade.team2Assets.length > 0)
       .filter((value, index, self) =>
         index === self.findIndex((t) => (
           JSON.stringify(t.team2Assets) === JSON.stringify(value.team2Assets)
