@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { LeagueService } from '../../services/league.service';
-import { ConfigService } from '../../services/init/config.service';
+import { ConfigService, LocalStorageDictionary } from '../../services/init/config.service';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { PlayerService } from 'src/app/services/player.service';
 import { BaseComponent } from '../base-component.abstract';
@@ -60,6 +60,7 @@ export class SidebarComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isSidebarLocked = localStorage?.getItem(LocalStorageDictionary.SIDEBAR_LOCK_ITEM) == 'true' || false;
     this.addSubscriptions(this.playerService.playerValuesUpdated$.subscribe(() => {
       this.formatTrendingPlayers(this.isTrendingByNumber);
     }),
@@ -171,5 +172,13 @@ export class SidebarComponent extends BaseComponent implements OnInit {
    */
   openUrl(url: string = this.ROSTER_REVIEW_LINK): void {
     window.open(url, "_blank");
+  }
+
+  /**
+   * update lock and store to browser
+   */
+  updateLock(): void {
+    this.isSidebarLocked = !this.isSidebarLocked;
+    localStorage.setItem(LocalStorageDictionary.SIDEBAR_LOCK_ITEM, String(this.isSidebarLocked));
   }
 }
