@@ -60,7 +60,8 @@ export class GridGameService {
     'Florida State': 52,
     'Texas': 251,
     'Oklahoma': 201,
-    'Notre Dame': 87
+    'Notre Dame': 87,
+    'Miami': 2390
   }
 
   /** guesses left to make */

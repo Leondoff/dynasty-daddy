@@ -39,7 +39,8 @@ export const LocalStorageDictionary = {
   MFL_USERNAME_ITEM: 'mfl_username',
   FF_USERNAME_ITEM:'ff_username',
   FFPC_USERNAME_ITEM: 'ffpc_username',
-  GRIDIRON_ITEM: 'gridiron'
+  GRIDIRON_ITEM: 'gridiron',
+  SIDEBAR_LOCK_ITEM: 'sidebar_lock'
 } as const;
 
 @Injectable({

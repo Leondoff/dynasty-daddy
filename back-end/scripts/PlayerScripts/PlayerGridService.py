@@ -13,7 +13,7 @@ SupportedXTypes = ['award', 'stat', 'stat', 'stat']
 SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET',
                   'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']
 
-SupportedColleges = ['Michigan', 'Texas Christian', 'Georgia', 'Ohio State', 'Florida', 'Alabama', 'Southern California', 'Louisiana State',
+SupportedColleges = ['Michigan', 'Texas Christian', 'Georgia', 'Ohio State', 'Florida', 'Alabama', 'Southern California', 'Louisiana State', 'Miami',
                      'Clemson', 'South Carolina', 'North Carolina State', 'North Carolina', 'Wisconsin', 'Oregon', 'Florida State', 'Texas', 'Oklahoma', 'Notre Dame']
 
 SupportedJerseyNumbers = ['12', '18', '89', '85', '26', '22', '27', '95',

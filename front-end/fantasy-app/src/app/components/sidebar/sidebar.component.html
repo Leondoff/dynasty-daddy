@@ -16,7 +16,7 @@
       </mat-form-field>
     </span>
     <span class="player-item-right lock-icon">
-      <button mat-icon-button matTooltip="Locks the sidebar from closing on navigation" *ngIf="!configService.isMobile" (click)="isSidebarLocked = !isSidebarLocked">
+      <button mat-icon-button matTooltip="Locks the sidebar from closing on navigation" *ngIf="!configService.isMobile" (click)="updateLock()">
         <mat-icon>{{isSidebarLocked ? 'lock' : 'lock_open'}}</mat-icon>
       </button>
     </span>
