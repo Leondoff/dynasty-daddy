@@ -27,7 +27,7 @@ import { PageService } from 'src/app/services/utilities/page.service';
 })
 export class TradeCenterComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  pageDescription = 'Build fantasy trades with our trade calculator using KeepTradeCut, FantasyCalc, DynastyProcess, and more. Log into your league and the fantasy trade analyzer will update based on your league\'s rosters.'
+  pageDescription = 'Our fantasy football trade analyzer allows you to quickly choose the players using values from KeepTradeCut, FantasyCalc, DynastyProcess, and more! Log into your league to filter trades, and generate updated power rankings.';
 
   /** list of players */
   protected players: FantasyPlayer[] = [];
