@@ -30,10 +30,12 @@ def updatePlayerGamelogs(season, week = None):
             gamelog_json = json.dumps(gamelog)
             gamelogInsertSQL = '''
                 INSERT INTO player_gamelogs (season, week, gamelog_json)
-                VALUES (%s, %s, %s);
+                VALUES (%s, %s, %s)
+                ON CONFLICT (season, week)
+                DO UPDATE SET gamelog_json = EXCLUDED.gamelog_json;
             '''
             cursor.execute(gamelogInsertSQL, (season, num, gamelog_json))
             print('Gamelog inserted for the following season: ' + str(season) + ' week ' + str(num))
     conn.commit()
 
-updatePlayerGamelogs(2023, 2)
+updatePlayerGamelogs(2023, 4)

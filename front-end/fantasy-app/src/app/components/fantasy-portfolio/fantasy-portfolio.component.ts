@@ -25,7 +25,7 @@ import { PageService } from 'src/app/services/utilities/page.service';
 })
 export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
 
-    pageDescription = 'Measure your player rostership and exposure across multiple leagues to diversify risk.';
+    pageDescription = 'Measure your player rostership and exposure across multiple fantasy football leagues to diversify risk.';
 
     /** Loading status for the portfolio tool */
     portfolioStatus: Status = Status.LOADING;
@@ -60,7 +60,8 @@ export class FantasyPortfolioComponent extends BaseComponent implements OnInit {
         public portfolioService: PortfolioService) {
         super();
         this.pageService.setUpPageSEO('Fantasy Portfolio',
-        ['fantasy portfolio', 'fantasy rostership', 'fantasy dynastygm', 'dynasty portfolio'],
+        ['fantasy portfolio', 'fantasy rostership', 'fantasy dynastygm', 'dynasty portfolio',
+            'dynastyGM', 'dynasty nerds', 'dynasty planet', 'rostership'],
         this.pageDescription)
     }
 

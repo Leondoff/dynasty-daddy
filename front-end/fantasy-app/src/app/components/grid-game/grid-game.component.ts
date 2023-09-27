@@ -75,7 +75,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         super();
         this.pageService.setUpPageSEO('NFL Immaculate Gridiron',
             ['nfl', 'immaculate', 'grid', 'trivia', 'football', 'game', 'nfl trivia',
-                'immaculate grid', 'grid trivia', 'nfl game',
+                'immaculate grid', 'grid trivia', 'nfl game', 'football trivia',
                 'crossover', 'pro football reference', 'daily grid', 'weddle'],
             this.pageDescription)
     }

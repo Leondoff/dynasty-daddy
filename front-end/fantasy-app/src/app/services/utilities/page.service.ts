@@ -12,7 +12,7 @@ export class PageService {
 
     GRIDIRON_IMG = 'https://i.ibb.co/mNk4j0H/SEO-Image-1.jpg';
 
-    defaultKeywords: string[] = ['fantasy', 'player', 'sleeper', 'rankings', 'analyzer', 'league', 'trade calulator', 'dynasty',
+    defaultKeywords: string[] = ['fantasy', 'player', 'sleeper', 'rankings', 'analyzer', 'league', 'trade calulator', 'dynasty', 'redraft', 'keeper',
      'football', 'player rankings', 'free fantasy tool', 'trade analyzer', 'league analyzer', 'league power rankings', 'fantasy simulator'];
 
     constructor(
@@ -20,7 +20,11 @@ export class PageService {
         private title: Title) {}
 
     setUpPageSEO(title: string, keywords: string[], description: string): void { 
-        this.title.setTitle(title + this.DYNASTY_DADDY_BOILERPLATE);
+        if (title == 'Home') {
+            this.title.setTitle('Dynasty Daddy - Fantasy Football Tools, and Rankings');
+        } else {
+            this.title.setTitle(title + this.DYNASTY_DADDY_BOILERPLATE);
+        }
         const keywordList = [...this.defaultKeywords, ...keywords];
         let img = this.DYNASTY_DADDY_IMG;
         let url = '';
