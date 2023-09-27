@@ -101,7 +101,9 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     public leagueSwitchService: LeagueSwitchService) {
     super();
     this.pageService.setUpPageSEO('Home',
-      ['Dynasty', 'fantasy', 'football', 'ranker', 'trade'],
+      ['dynasty', 'fantasy', 'football', 'ranker', 'trade', 'sleeper', 'espn fantasy',
+        'myfantasyleague', 'mfl', 'yahoo fantasy', 'ffpc', 'keeptradecut', 'fantasycalc',
+        'dynastysuperflex', 'dynastyprocess', 'sleeper fantasy football', 'fleaflicker fantasy'],
       this.pageDescription);
   }
 

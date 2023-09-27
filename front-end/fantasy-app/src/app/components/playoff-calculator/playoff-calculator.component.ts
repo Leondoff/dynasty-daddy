@@ -86,9 +86,9 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     private pageService: PageService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
-    this.pageService.setUpPageSEO('Fantasy Football Playoff Calculator | Dynasty Daddy',
+    this.pageService.setUpPageSEO('Fantasy Football Playoff Calculator',
       ['fantasy league simulator', 'playoff calculator', 'fantasy playoff calculator', 'league simulator', 'fantasy league simulator', 'fantasy football simulator',
-      'fantasy fooball playoff odds'],
+      'fantasy fooball playoff odds', 'fantasy football league simulator'],
       this.pageDescription)
   }
 
