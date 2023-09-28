@@ -86,6 +86,10 @@ def SetNewPlayerGrid():
     if customGridString[0][0] != '{}':
         customGrid = json.loads(customGridString[0][0])
         output_dict = customGrid
+        setTodaysGridStatement = '''UPDATE config
+            SET
+            config_value = \'{}\' WHERE config_key = \'daily_grid_custom_grid\';'''
+        cursor.execute(setTodaysGridStatement)
     else:
         # filter out yesterdays teams from teams
         cursor.execute(
