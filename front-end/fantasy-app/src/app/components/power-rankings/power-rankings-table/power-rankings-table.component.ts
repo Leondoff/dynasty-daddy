@@ -309,8 +309,8 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     }
     );
     // update table with filtered results
-    this.createNewTableDataSource(filteredRows);
     this.powerRankingsService.expandedElement = filteredRows.map(t => t.team.owner);
+    this.createNewTableDataSource(filteredRows);
   }
 
   /**

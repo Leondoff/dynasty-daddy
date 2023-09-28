@@ -9,7 +9,7 @@
   </div>
   <div class="margin-top-10">
     <div [ngClass]="{'button-left': !configService.isMobile, 'margin-top-10': configService.isMobile}">
-      <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" [ngClass]="{'mat-dropdown-wide-300': !configService.isMobile}" color="accent">
+      <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" color="accent">
         <mat-label>Search Player</mat-label>
         <input matInput type="text" (keyup)="updatePlayerFilters()" [(ngModel)]="searchVal">
       </mat-form-field>
