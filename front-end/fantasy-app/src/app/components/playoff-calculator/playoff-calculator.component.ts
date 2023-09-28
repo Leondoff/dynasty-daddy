@@ -23,7 +23,7 @@ import { PageService } from 'src/app/services/utilities/page.service';
 })
 export class PlayoffCalculatorComponent extends BaseComponent implements OnInit {
 
-  pageDescription = 'Simulate your fantasy football seasons to see what teams have the best odds to win it all! Calculate game probability and playoff odds based on current week. Updated every week to be more accurate.';
+  pageDescription = 'Our fantasy league simulator runs 10,000 fantasy seasons to see what teams have the best odds to win it all! Choose between ADP and ELO models for playoff odds as well as winners for upcoming match-ups.';
 
   /** upcoming match ups prob */
   upcomingMatchUps: MatchUpProbability[][] = [];
