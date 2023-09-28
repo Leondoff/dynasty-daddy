@@ -19,7 +19,7 @@ import { LeagueType } from 'src/app/model/league/LeagueDTO';
 })
 export class PowerRankingsComponent extends BaseComponent implements OnInit {
 
-  pageDescription = 'Team power rankings are determined by fantasy market player values and yearly player average ADP.'
+  pageDescription = 'Our fantasy team ranker uses fantasy trade values and ADP to give you a complete fantasy football power rankings view.'
 
   /** Error generating power rankings message */
   creatingPRErrMsg = 'Error creating Power Rankings. Try again.'
