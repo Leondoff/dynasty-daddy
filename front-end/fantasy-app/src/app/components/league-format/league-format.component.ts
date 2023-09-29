@@ -23,7 +23,7 @@ import { QueryService } from "src/app/services/utilities/query.service";
 export class LeagueFormatComponent extends BaseComponent implements OnInit {
 
     /** page description and SEO */
-    pageDescription = 'Identify positional advantages for your league by looking at historical quality starts and WoRP for your league\'s settings.';
+    pageDescription = 'Identify positional advantages for your league by looking at historical quality starts and WoRP/WAR for your league\'s settings.';
 
     /** league format loading status */
     leagueFormatStatus: Status = Status.LOADING;
@@ -80,7 +80,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     ];
 
     availableVisualizations: any[] = [
-        { key: 'worp', display: 'Wins Over Replacement (WoRP)', type: 'line' },
+        { key: 'worp', display: 'Wins Over Replacement (WoRP/WAR)', type: 'line' },
         { key: 'worppg', display: 'WoRP Per Game', type: 'line' },
         { key: 'percent', display: 'Player Win Percent', type: 'line' },
         { key: 'pts', display: 'Fantasy Points', type: 'line' },
@@ -112,7 +112,9 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         private playerService: PlayerService) {
         super();
         this.pageService.setUpPageSEO('League Format Tool',
-            ['fantasy league format', 'worp tool', 'player worp', 'bestball', 'vorp', 'war'],
+            ['fantasy league format', 'fantasy war tool', 'fantasy war',
+                'fantasy football stats', 'fantasy football war',
+                'worp tool', 'player worp', 'bestball', 'vorp', 'war'],
             this.pageDescription)
     }
 
