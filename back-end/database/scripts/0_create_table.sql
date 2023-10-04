@@ -260,3 +260,21 @@ CREATE INDEX idx_sideA ON trades USING GIN (sideA);
 CREATE INDEX idx_sideB ON trades USING GIN (sideB);
 CREATE INDEX idx_trade_league_id ON trades (league_id);
 create index inx_trade_transaction_date on trades (transaction_date);
+
+-- Create the users table
+CREATE TABLE users (
+    user_id VARCHAR(10) PRIMARY KEY,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    image_url TEXT,
+    leagues JSONB[] DEFAULT '{}'::JSONB[],
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+create index inx_trade_user_id on users (user_id);
+
+-- add trigger to player metadata table
+CREATE TRIGGER users_updated_at BEFORE
+UPDATE
+    ON users FOR EACH ROW EXECUTE PROCEDURE trigger_get_current_timestamp();
