@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 require('events').EventEmitter.defaultMaxListeners = 15;
 
 dotenv.config();
-export const connectionString = process.env.DATABASE_URL || process.env.CONNECTION_STRING;
 
 export const DB_USER = process.env.DO_DB_USER;
 export const DB_PWD = process.env.DO_DB_PASSWORD;
