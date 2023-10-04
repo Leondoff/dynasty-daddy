@@ -19,7 +19,7 @@ jobs:
       - name: Debug Environment Variables
         run: |
           echo "PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}"
-          echo "DB DATABASE: ${{ secrets.DB_DATABASE }}"
+          echo "DB DATABASE: ${{ secrets.DO_DATABASE }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v1
