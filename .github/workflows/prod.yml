@@ -15,6 +15,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        
+      - name: Debug Environment Variables
+        run: |
+          echo "PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v1
@@ -24,7 +28,6 @@ jobs:
           repository: jmtimper/dynasty-daddy-back-end
           dockerfile: ./back-end/express-api/Dockerfile
           tags: latest
-        secrets: inherit
 
   build-and-deploy-front:
     name: Build and Deploy Front-end

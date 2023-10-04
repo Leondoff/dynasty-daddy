@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { AddLeaguesToUser, CreateNewUser, FindUserById } from '../middleware';
-import { PATREON_CLIENT_ID, PATREON_CLIENT_SECRET, PATREON_REDIRECT_URL } from '../settings';
+import { DB_DB, PATREON_CLIENT_ID, PATREON_CLIENT_SECRET, PATREON_REDIRECT_URL } from '../settings';
 
 const AdminIds = ['53401676'];
 
@@ -8,6 +8,7 @@ export const GetTokenForPatreonCodeEndpoint = async (req, res) => {
   const { code } = req.query;
 
   try {
+    console.log('CLIENT - ', PATREON_CLIENT_ID, DB_DB);
     // Step 1: Get the access token
     const tokenResponse = await axios.post(
       'https://www.patreon.com/api/oauth2/token',
