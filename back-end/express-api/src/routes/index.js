@@ -45,6 +45,8 @@ import {
   AddLeaguesToDatabaseEndpoint,
   GetTradesFromSearchEndpoint,
   GetRecentTradeVolumeEndpoint,
+  GetTokenForPatreonCodeEndpoint,
+  AddLeaguesToUserEndpoint,
 } from '../controllers';
 
 const indexRouter = express.Router();
@@ -67,6 +69,7 @@ indexRouter.get('/grid/results', FetchAllGridResultsEndpoint);
 indexRouter.post('/league/add', AddLeaguesToDatabaseEndpoint);
 indexRouter.post('/trade/search', GetTradesFromSearchEndpoint);
 indexRouter.get('/trade/volume', GetRecentTradeVolumeEndpoint);
+indexRouter.post('/user/leagues', AddLeaguesToUserEndpoint);
 
 // MFL Wrapper Endpoints
 indexRouter.post('/mfl/league', GetMFLLeagueEndpoint);
@@ -101,5 +104,8 @@ indexRouter.get('/ffpc/schedule', GetFFPCScheduleEndpoint);
 indexRouter.get('/ffpc/leagueStandings', GetFFPCStandingsEndpoint);
 indexRouter.get('/ffpc/draftResults', GetFFPCDraftEndpoint);
 indexRouter.get('/ffpc/user', GetFFPCUserLeaguesEndpoint);
+
+// Patreon Wrapper Endpoints
+indexRouter.get('/patreon/token', GetTokenForPatreonCodeEndpoint);
 
 export default indexRouter;

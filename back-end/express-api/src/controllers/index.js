@@ -7,3 +7,4 @@ export * from './leagueFormatController';
 export * from './ffpcWrapperController';
 export * from './gridController';
 export * from './tradeController';
+export * from './userController';

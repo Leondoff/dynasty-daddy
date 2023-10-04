@@ -6,6 +6,7 @@ import { MflApiConfigService } from './api/mfl/mfl-api-config.service';
 import { FleaflickerApiConfigService } from './api/fleaflicker/fleaflicker-api-config.service';
 import { ESPNApiConfigService } from './api/espn/espn-api-config.service';
 import { FFPCApiConfigService } from './api/ffpc/ffpc-api-config.service';
+import { PatreonAPIConfigService } from './api/patreon/patreon-api-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class EndpointsService {
 
   constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
     private sleeperApiConfigService: SleeperApiConfigService,
+    private patreonApiConfigService: PatreonAPIConfigService,
     private mflAPIConfigService: MflApiConfigService,
     private fleaflickerApiConfigService: FleaflickerApiConfigService,
     private ffpcApiConfigService: FFPCApiConfigService,
@@ -92,5 +94,8 @@ export class EndpointsService {
 
     // ESPN Endpoints
     this.espnApiConfigService.getESPNLeagueEndpoint = 'https://fantasy.espn.com/apis/v3/games/ffl/seasons/SELECTED_YEAR/segments/0/leagues/LEAGUE_ID?view=mDraftDetail&view=mLiveScoring&view=mMatchupScore&view=mPendingTransactions&view=mPositionalRatings&view=mRoster&view=mSettings&view=mTeam&view=modular&view=mNav'
+  
+    // Patreon Endpoints
+    this.patreonApiConfigService.getTokenForCodeEndpoint = this.baseUrl + '/v1/patreon/token';    
   }
 }
