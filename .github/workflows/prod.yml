@@ -24,6 +24,7 @@ jobs:
           repository: jmtimper/dynasty-daddy-back-end
           dockerfile: ./back-end/express-api/Dockerfile
           tags: latest
+        secrets: inherit
 
   build-and-deploy-front:
     name: Build and Deploy Front-end
