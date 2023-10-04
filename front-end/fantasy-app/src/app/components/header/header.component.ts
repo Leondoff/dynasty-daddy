@@ -4,6 +4,7 @@ import { BaseComponent } from '../base-component.abstract';
 import { ConfigService } from '../../services/init/config.service';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -43,4 +44,5 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   toggle() {
       this.toggleMenu.emit();
   }
+
 }

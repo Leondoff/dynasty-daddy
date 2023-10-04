@@ -6,7 +6,7 @@ import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
 import { LeagueTeam } from '../../../model/league/LeagueTeam';
 import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
 import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
-import { map, mergeMap, concatMap, retry, catchError, delay, switchMap, toArray } from 'rxjs/operators';
+import { map, mergeMap, concatMap, catchError, delay, switchMap, toArray } from 'rxjs/operators';
 import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
 import { LeagueRawDraftOrderDTO } from '../../../model/league/LeagueRawDraftOrderDTO';
 import { TeamMetrics } from '../../../model/league/TeamMetrics';

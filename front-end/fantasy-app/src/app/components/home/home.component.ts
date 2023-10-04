@@ -17,6 +17,7 @@ import { DisplayService } from 'src/app/services/utilities/display.service';
 import { PageService } from 'src/app/services/utilities/page.service';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -97,6 +98,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     private ffpcService: FFPCService,
     private dialog: MatDialog,
     private pageService: PageService,
+    private userService: UserService,
     private fleaflickerService: FleaflickerService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
@@ -120,6 +122,10 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     }
     this.addSubscriptions(
       this.route.queryParams.subscribe(params => {
+        const code = params['code'];
+        if (code) {
+          this.userService.handleOAuthCallback();
+        }
         this.leagueSwitchService.loadFromQueryParams(params);
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(_ => {
