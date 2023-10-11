@@ -13,7 +13,7 @@ import { LeagueService } from "src/app/services/league.service";
 import { LeagueType } from "src/app/model/league/LeagueDTO";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { ComparisonColorPalette } from "src/app/services/utilities/color.service";
-import { ConfigKeyDictionary, ConfigService } from "src/app/services/init/config.service";
+import { ConfigKeyDictionary, ConfigService, LocalStorageDictionary } from "src/app/services/init/config.service";
 import { PageService } from "src/app/services/utilities/page.service";
 
 @Component({
@@ -152,6 +152,9 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
     private initializeTradeDB(): void {
         // load recent trade volume for bubble pack
         this.tradeVolumeStatus = Status.LOADING;
+        if (localStorage.getItem(LocalStorageDictionary.TRADE_DB_LEAGUE_TYPE)) {
+            this.getValuesFromBrowser();
+        }
         this.addSubscriptions(this.fantasyPlayerApiService.loadRecentTradeVolume().pipe(delay(300)).subscribe(res => {
             this.volumeData = [];
             res.sort((a, b) => Number(b.count) - Number(a.count)).slice(0, this.configService.isMobile ? 30 : 50).forEach(p => {
@@ -263,6 +266,18 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
      */
     searchTradeDatabase(): void {
         this.tradeSearchStatus = Status.LOADING;
+        localStorage.setItem(LocalStorageDictionary.TRADE_DB_LEAGUE_TYPE,
+            this.tradeDatabaseService.selectedLeagueTypeFormat.value);
+        localStorage.setItem(LocalStorageDictionary.TRADE_DB_QB_FORMAT,
+            this.tradeDatabaseService.selectedQbFormat.value);
+        localStorage.setItem(LocalStorageDictionary.TRADE_DB_SCORING_FORMAT,
+            this.tradeDatabaseService.selectedScoringFormat.value);
+        localStorage.setItem(LocalStorageDictionary.TRADE_DB_STARTER_FORMAT,
+            this.tradeDatabaseService.selectedStartersFormat.value);
+        localStorage.setItem(LocalStorageDictionary.TRADE_DB_TEAM_FORMAT,
+            this.tradeDatabaseService.selectedTeamFormat.value);
+        localStorage.setItem(LocalStorageDictionary.TRADE_DB_TEP_FORMAT,
+            this.tradeDatabaseService.selectedTepFormat.value);
         this.addSubscriptions(this.tradeDatabaseService.searchTradeDatabase(this.tradeDatabaseService.tradePage, 12).subscribe(res => {
             this.tradeDatabaseService.tradeSearchResults = res;
             this.tradeSearchStatus = Status.DONE;
@@ -327,5 +342,28 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
     ngOnDestroy(): void {
         this._onDestroy.next();
         this._onDestroy.complete();
+    }
+
+    /**
+     * Get values from local storage
+     */
+    private getValuesFromBrowser(): void {
+        this.tradeDatabaseService.selectedScoringFormat.setValue(
+            localStorage.getItem(LocalStorageDictionary.TRADE_DB_SCORING_FORMAT)
+                .split(',').map(n => Number(n)));
+        this.tradeDatabaseService.selectedQbFormat.setValue(
+            localStorage.getItem(LocalStorageDictionary.TRADE_DB_QB_FORMAT)
+                .split(',').map(n => Number(n)));
+        this.tradeDatabaseService.selectedTepFormat.setValue(
+            localStorage.getItem(LocalStorageDictionary.TRADE_DB_TEP_FORMAT)
+                .split(',').map(n => Number(n)));
+        this.tradeDatabaseService.selectedStartersFormat.setValue(
+            localStorage.getItem(LocalStorageDictionary.TRADE_DB_STARTER_FORMAT)
+                .split(',').map(n => Number(n)));
+        this.tradeDatabaseService.selectedLeagueTypeFormat.setValue(
+            localStorage.getItem(LocalStorageDictionary.TRADE_DB_LEAGUE_TYPE));
+        this.tradeDatabaseService.selectedTeamFormat.setValue(
+            localStorage.getItem(LocalStorageDictionary.TRADE_DB_TEAM_FORMAT)
+                .split(',').map(n => Number(n)));
     }
 }
