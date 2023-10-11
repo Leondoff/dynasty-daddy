@@ -12,6 +12,9 @@ jobs:
   build-and-deploy-back:
     name: Build and Deploy Back-end
     runs-on: ubuntu-latest
+    env:
+      PATREON_CLIENT_SECRET: ${{ secrets.PATREON_CLIENT_SECRET }}
+      PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

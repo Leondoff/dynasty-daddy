@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { AddLeaguesToUser, CreateNewUser, FindUserById } from '../middleware';
-import { DB_DB, PATREON_CLIENT_ID, PATREON_CLIENT_SECRET, PATREON_REDIRECT_URL } from '../settings';
+import { PATREON_CLIENT_ID, PATREON_CLIENT_SECRET, PATREON_REDIRECT_URL } from '../settings';
 
 const AdminIds = ['53401676'];
 
