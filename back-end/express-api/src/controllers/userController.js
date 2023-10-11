@@ -8,7 +8,7 @@ export const GetTokenForPatreonCodeEndpoint = async (req, res) => {
   const { code } = req.query;
 
   try {
-    console.log('CLIENT - ', process.env, PATREON_CLIENT_ID, PATREON_CLIENT_SECRET);
+    console.log('CLIENT - ', PATREON_CLIENT_ID);
     // Step 1: Get the access token
     const tokenResponse = await axios.post(
       'https://www.patreon.com/api/oauth2/token',
