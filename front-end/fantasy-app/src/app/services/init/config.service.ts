@@ -40,7 +40,13 @@ export const LocalStorageDictionary = {
   FF_USERNAME_ITEM:'ff_username',
   FFPC_USERNAME_ITEM: 'ffpc_username',
   GRIDIRON_ITEM: 'gridiron',
-  SIDEBAR_LOCK_ITEM: 'sidebar_lock'
+  SIDEBAR_LOCK_ITEM: 'sidebar_lock',
+  TRADE_DB_SCORING_FORMAT: 'scoring_format',
+  TRADE_DB_TEP_FORMAT: 'tep_format',
+  TRADE_DB_LEAGUE_TYPE: 'league_type',
+  TRADE_DB_QB_FORMAT: 'qb_format',
+  TRADE_DB_TEAM_FORMAT: 'team_format',
+  TRADE_DB_STARTER_FORMAT: 'starter_format',
 } as const;
 
 @Injectable({

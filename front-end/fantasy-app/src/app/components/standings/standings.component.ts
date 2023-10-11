@@ -1,18 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {LeagueService} from '../../services/league.service';
-import {PlayoffCalculatorService} from '../services/playoff-calculator.service';
-import {LeagueTeam} from '../../model/league/LeagueTeam';
-import {MatchupService} from '../services/matchup.service';
-import {ConfigService} from '../../services/init/config.service';
-import {MatchUpUI} from '../model/matchup';
-import {TransactionsService} from '../services/transactions.service';
-import {BaseComponent} from '../base-component.abstract';
-import {LeagueSwitchService} from '../services/league-switch.service';
-import {PowerRankingsService} from '../services/power-rankings.service';
-import {ActivatedRoute} from '@angular/router';
-import {NflService} from '../../services/utilities/nfl.service';
-import {LeaguePlatform} from '../../model/league/FantasyPlatformDTO';
-import {PlayerService} from "../../services/player.service";
+import { Component, OnInit } from '@angular/core';
+import { LeagueService } from '../../services/league.service';
+import { PlayoffCalculatorService } from '../services/playoff-calculator.service';
+import { LeagueTeam } from '../../model/league/LeagueTeam';
+import { MatchupService } from '../services/matchup.service';
+import { ConfigService } from '../../services/init/config.service';
+import { MatchUpUI } from '../model/matchup';
+import { TransactionsService } from '../services/transactions.service';
+import { BaseComponent } from '../base-component.abstract';
+import { LeagueSwitchService } from '../services/league-switch.service';
+import { PowerRankingsService } from '../services/power-rankings.service';
+import { ActivatedRoute } from '@angular/router';
+import { NflService } from '../../services/utilities/nfl.service';
+import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
+import { PlayerService } from "../../services/player.service";
 import { PageService } from 'src/app/services/utilities/page.service';
 
 @Component({
@@ -31,20 +31,20 @@ export class StandingsComponent extends BaseComponent implements OnInit {
   leagueNotStartedErrMsg = 'Cannot generate standings because league hasn\'t started.'
 
   constructor(public leagueService: LeagueService,
-              public playoffCalculatorService: PlayoffCalculatorService,
-              public matchupService: MatchupService,
-              public configService: ConfigService,
-              private route: ActivatedRoute,
-              public powerRankingsService: PowerRankingsService,
-              private playerService: PlayerService,
-              private nflService: NflService,
-              private pageService: PageService,
-              public leagueSwitchService: LeagueSwitchService,
-              public transactionService: TransactionsService) {
+    public playoffCalculatorService: PlayoffCalculatorService,
+    public matchupService: MatchupService,
+    public configService: ConfigService,
+    private route: ActivatedRoute,
+    public powerRankingsService: PowerRankingsService,
+    private playerService: PlayerService,
+    private nflService: NflService,
+    private pageService: PageService,
+    public leagueSwitchService: LeagueSwitchService,
+    public transactionService: TransactionsService) {
     super();
     this.pageService.setUpPageSEO('Fantasy League Standings',
-    ['League Standings', 'fantasy football stats', 'fantasy league stats'],
-    this.pageDescription)
+      ['League Standings', 'fantasy football stats', 'fantasy league stats'],
+      this.pageDescription)
   }
 
   divisionTableCols = ['teamName', 'record', 'pf', 'ppf', 'pot'];
@@ -59,11 +59,11 @@ export class StandingsComponent extends BaseComponent implements OnInit {
     this.playerService.loadPlayerValuesForToday();
     this.setUpStandings();
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
-          this.setUpStandings();
-        }
-      ), this.route.queryParams.subscribe(params => {
-        this.leagueSwitchService.loadFromQueryParams(params);
-      })
+      this.setUpStandings();
+    }
+    ), this.route.queryParams.subscribe(params => {
+      this.leagueSwitchService.loadFromQueryParams(params);
+    })
     );
   }
 
