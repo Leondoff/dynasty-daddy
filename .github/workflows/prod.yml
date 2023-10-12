@@ -24,7 +24,7 @@ jobs:
           repository: jmtimper/dynasty-daddy-back-end
           dockerfile: ./back-end/express-api/Dockerfile
           tags: latest
-          secrets: |
+          build-args: |
             "PATREON_CLIENT_SECRET: ${{ secrets.PATREON_CLIENT_SECRET }}"
             "PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}"
 

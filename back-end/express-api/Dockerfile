@@ -10,10 +10,10 @@ RUN touch /run/secrets/PATREON_CLIENT_SECRET
 RUN touch /run/secrets/PATREON_CLIENT_ID
 
 # Set environment variables by reading secrets into files
-RUN --mount=type=secret,id=PATREON_CLIENT_SECRET \
-  --mount=type=secret,id=PATREON_CLIENT_ID \
-   export PATREON_CLIENT_SECRET=$(cat /run/secrets/PATREON_CLIENT_SECRET) && \
-   export PATREON_CLIENT_ID=$(cat /run/secrets/PATREON_CLIENT_ID)
+ARG PATREON_CLIENT_SECRET
+ENV PATREON_CLIENT_SECRET ${PATREON_CLIENT_SECRET}
+ARG PATREON_CLIENT_ID
+ENV PATREON_CLIENT_ID ${PATREON_CLIENT_ID}
 
 RUN npm install
 # Copy our app
