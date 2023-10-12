@@ -5,12 +5,16 @@ WORKDIR /usr/src/app
 # Copy package json and install dependencies
 COPY back-end/express-api/package*.json ./
 
+# List secrets to verify their presence
+RUN --mount=type=secret,id=PATREON_CLIENT_SECRET ls -la /run/secrets/ && \
+    --mount=type=secret,id=PATREON_CLIENT_ID ls -la /run/secrets/
+
 # Set environment variables by reading secrets into files
-RUN --mount=type=secret,id=PATREON_CLIENT_SECRET \
-  --mount=type=secret,id=PATREON_CLIENT_ID, required ls -la /run/secrets/ \
-   export PATREON_CLIENT_SECRET=$(cat /run/secrets/PATREON_CLIENT_SECRET) && \
-   export PATREON_CLIENT_ID=$(cat /run/secrets/PATREON_CLIENT_ID) && \
-   npm install
+RUN --mount=type=secret,id=PATREON_CLIENT_SECRET cat /run/secrets/PATREON_CLIENT_SECRET > /usr/src/app/patreon_client_secret && \
+    --mount=type=secret,id=PATREON_CLIENT_ID cat /run/secrets/PATREON_CLIENT_ID > /usr/src/app/patreon_client_id
+
+# Install npm dependencies
+RUN npm install
 
 # Copy our app
 COPY back-end/express-api .
