@@ -7,11 +7,11 @@ COPY back-end/express-api/package*.json ./
 
 # Set environment variables by reading secrets into files
 RUN --mount=type=secret,id=PATREON_CLIENT_SECRET \
-  --mount=type=secret,id=PATREON_CLIENT_ID \
-  cat /run/secrets/PATREON_CLIENT_SECRET > /usr/src/app/patreon_client_secret && \
-  cat /run/secrets/PATREON_CLIENT_ID > /usr/src/app/patreon_client_id
+  --mount=type=secret,id=PATREON_CLIENT_ID, required ls -la /run/secrets/ \
+   export PATREON_CLIENT_SECRET=$(cat /run/secrets/PATREON_CLIENT_SECRET) && \
+   export PATREON_CLIENT_ID=$(cat /run/secrets/PATREON_CLIENT_ID) && \
+   npm install
 
-RUN npm install
 # Copy our app
 COPY back-end/express-api .
 # Expose port to access server
