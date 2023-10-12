@@ -5,10 +5,6 @@ WORKDIR /usr/src/app
 # Copy package json and install dependencies
 COPY back-end/express-api/package*.json ./
 
-# Create empty files for secrets
-RUN touch /run/secrets/PATREON_CLIENT_SECRET
-RUN touch /run/secrets/PATREON_CLIENT_ID
-
 # Set environment variables by reading secrets into files
 ARG PATREON_CLIENT_SECRET
 ENV PATREON_CLIENT_SECRET ${PATREON_CLIENT_SECRET}
