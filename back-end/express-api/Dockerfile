@@ -4,11 +4,15 @@ FROM node:lts-alpine
 WORKDIR /usr/src/app
 # Copy package json and install dependencies
 COPY back-end/express-api/package*.json ./
-RUN ls -l
+
+RUN --mount=type=secret,id=PATREON_CLIENT_SECRET \
+  --mount=type=secret,id=PATREON_CLIENT_ID \
+   export PATREON_CLIENT_SECRET=$(cat /run/secrets/PATREON_CLIENT_SECRET) && \
+   export PATREON_CLIENT_ID=$(cat /run/secrets/PATREON_CLIENT_ID)
+
 RUN npm install
 # Copy our app
 COPY back-end/express-api .
-RUN ls -l
 # Expose port to access server
 #EXPOSE 8080
 # Command to run our app
