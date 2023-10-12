@@ -19,6 +19,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v1
         with:
+          context: .
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: jmtimper/dynasty-daddy-back-end
