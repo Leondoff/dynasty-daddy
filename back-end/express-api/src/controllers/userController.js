@@ -61,11 +61,10 @@ export const GetTokenForPatreonCodeEndpoint = async (req, res) => {
     // Return the identity data as JSON
     res.status(identityResponse.status).json(userData);
   } catch (err) {
-    console.log(err);
     if (err.message === 'Didn\'t find Dynasty Daddy Tier.') {
       res.status(409).json(err.message);
     } else {
-      res.status(500).json(err.message);
+      res.status(500).json(err.response.data || err.message);
     }
   }
 };
