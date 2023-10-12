@@ -7,6 +7,7 @@ const AdminIds = ['53401676'];
 export const GetTokenForPatreonCodeEndpoint = async (req, res) => {
   const { code } = req.query;
 
+  console.log('CLIENT - ', PATREON_CLIENT_ID);
   try {
     // Step 1: Get the access token
     const tokenResponse = await axios.post(

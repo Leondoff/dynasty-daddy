@@ -19,7 +19,7 @@ import { PageService } from 'src/app/services/utilities/page.service';
 })
 export class TradeFinderComponent extends BaseComponent implements OnInit {
 
-  pageDescription = 'Find fantasy football trades across your league and bulk analyze what trades to pursue. Filter what positions and teams to include in the results.'
+  pageDescription = 'Our fantasy football trade finder find trades across your league and analyzes all trades to help speed up the trade creation process. Filter what positions and teams to include in the results.'
 
   /** list of team players */
   teamPlayers: FantasyPlayer[] = [];
