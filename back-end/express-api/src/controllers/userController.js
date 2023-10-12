@@ -8,12 +8,6 @@ export const GetTokenForPatreonCodeEndpoint = async (req, res) => {
   const { code } = req.query;
 
   try {
-    console.log({
-      code,
-      grant_type: 'authorization_code',
-      client_id: PATREON_CLIENT_ID,
-      redirect_uri: PATREON_REDIRECT_URL,
-    });
     // Step 1: Get the access token
     const tokenResponse = await axios.post(
       'https://www.patreon.com/api/oauth2/token',
@@ -67,7 +61,7 @@ export const GetTokenForPatreonCodeEndpoint = async (req, res) => {
     // Return the identity data as JSON
     res.status(identityResponse.status).json(userData);
   } catch (err) {
-    console.log(err.stack);
+    console.log(err);
     if (err.message === 'Didn\'t find Dynasty Daddy Tier.') {
       res.status(409).json(err.message);
     } else {
