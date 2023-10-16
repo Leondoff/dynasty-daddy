@@ -88,6 +88,21 @@
            [dataSource]="dataSource" multiTemplateDataRows
            class="mat-elevation-z8" matSort>
 
+           <ng-container matColumnDef="teamOwner">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Team</th>
+            <td mat-cell *matCellDef="let element" class="team-owner-container">
+                <div class="team-owner-image">
+                    <img #image [src]="element?.team?.owner?.avatar" alt="Fantasy Team Avatar"
+                         onerror="style.display = 'none'" class="table-image" *ngIf="!configService.isMobile">
+                </div>
+                <div class="team-owner-details">
+                    <div>{{element.team.owner?.teamName | truncate: configService.isMobile ? 18 : 30}}</div>
+                    <div class="small-text__light">{{element.team.owner?.ownerName | truncate: configService.isMobile ? 16 : 24}}</div>
+                </div>
+            </td>
+        </ng-container>
+        
+
       <ng-container matColumnDef="team">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Team</th>
         <td mat-cell *matCellDef="let element"> {{element.team.owner?.teamName | truncate:22}} </td>
@@ -143,27 +158,27 @@
 
       <ng-container matColumnDef="qbStarterRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>QB Contender Rank</th>
-        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['QB'].rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['QB'].starterRank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="rbStarterRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>RB Contender Rank</th>
-        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['RB'].rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['RB'].starterRank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="wrStarterRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>WR Contender Rank</th>
-        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['WR'].rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['WR'].starterRank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="teStarterRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>TE Contender Rank</th>
-        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['TE'].rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['TE'].starterRank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="flexStarterRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>FLEX Contender Rank</th>
-        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['FLEX'].rank}} </td>
+        <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rosters['FLEX'].starterRank}} </td>
       </ng-container>
 
       <ng-container matColumnDef="draftRank">

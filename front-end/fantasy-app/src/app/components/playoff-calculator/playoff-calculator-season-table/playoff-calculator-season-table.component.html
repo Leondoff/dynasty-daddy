@@ -14,12 +14,12 @@
     <ng-container matColumnDef="teamName">
       <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
       <mat-cell *matCellDef="let team" class="link--text__no__underline" [routerLink]="['../team', team.team.owner?.ownerName]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page" gaCategory="page_nav">
-        <div class="team-image">
+        <div>
           <img #image [src]="team?.team?.owner?.avatar" alt="Fantasy Team Avatar"
                onerror="style.display = 'none'" class="table-image" *ngIf="!configService.isMobile">
         </div>
         <div>
-          <div class="owner-name">{{team.team.owner?.teamName|truncate:18}}
+          <div>{{team.team.owner?.teamName|truncate:18}}
           </div>
           <div class="small-text__light">{{team.team.owner?.ownerName|truncate:18}}</div>
         </div>

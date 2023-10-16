@@ -16,7 +16,6 @@ import { SimpleTextModalComponent } from '../../sub-components/simple-text-modal
 import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
 import { MatDialog } from '@angular/material/dialog';
 import { GoogleAnalyticsService } from 'ngx-google-analytics';
-import { UntypedFormControl } from '@angular/forms';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -52,6 +51,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
 
   // available metrics to select for table
   availableMetrics: any[] = [
+    { key: 'teamOwner', display: 'Fantasy Team + Manager' },
     { key: 'owner', display: 'Fantasy Manager' },
     { key: 'team', display: 'NFL Team' },
     { key: 'record', display: 'Record' },
@@ -150,35 +150,21 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         rosters: {}
       }
       team.roster.forEach((group) => {
-        switch (this.powerRankingsService.powerRankingsTableView) {
-          case PowerRankingTableView.Starters: {
-            this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
-              value: group.starterValue,
-              rank: group.starterRank,
-              isRed: group.starterRank > this.alertThreshold * 2,
-              isGreen: group.starterRank < this.alertThreshold
-            }
-            break;
-          }
-          default: {
-            this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
-              value: this.isSuperFlex ? group.sfTradeValue : group.tradeValue,
-              rank: group.rank,
-              isRed: group.rank > this.alertThreshold * 2,
-              isGreen: group.rank < this.alertThreshold
-            }
-            break;
-          }
+        this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
+          value: group.starterValue,
+          rank: group.rank,
+          starterRank: group.starterRank,
+          starterValue: group.starterValue,
+          isRed: group.starterRank > this.alertThreshold * 2,
+          isGreen: group.starterRank < this.alertThreshold
         }
       });
       // Rank Contenders Flex
-      if (PowerRankingTableView.Starters) {
-        this.powerRankingCache[team.team.roster.rosterId].rosters['FLEX'] = {
-          value: team.flexStarterValue,
-          rank: team.flexStarterRank,
-          isRed: team.flexStarterRank > this.alertThreshold * 2,
-          isGreen: team.flexStarterRank < this.alertThreshold
-        }
+      this.powerRankingCache[team.team.roster.rosterId].rosters['FLEX'] = {
+        starterValue: team.flexStarterValue,
+        starterRank: team.flexStarterRank,
+        isRed: team.flexStarterRank > this.alertThreshold * 2,
+        isGreen: team.flexStarterRank < this.alertThreshold
       }
       this.powerRankingCache[team.team.roster.rosterId].rosters[team.picks.position] = {
         value: this.isSuperFlex ? team.picks.sfTradeValue : team.picks.tradeValue,
@@ -325,7 +311,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
 
     // sorting algorithm
     this.dataSource.sortingDataAccessor = (item, property) => {
-      if (property === 'team') {
+      if (property === 'team' || property === 'teamOwner') {
         return item.team.owner?.teamName;
       } else if (property === 'owner') {
         return item.team.owner?.ownerName;

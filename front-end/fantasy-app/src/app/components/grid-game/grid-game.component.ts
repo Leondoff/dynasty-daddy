@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { BaseComponent } from "../base-component.abstract";
 import { ConfigKeyDictionary, ConfigService, LocalStorageDictionary } from "src/app/services/init/config.service";
 import { Status } from "../model/status";
-import { LeagueService } from "src/app/services/league.service";
 import { GridGameService } from "../services/grid.service";
 import { MatDialog } from "@angular/material/dialog";
 import { SearchGridPlayerModal } from "../modals/search-grid-player-modal/search-grid-player-modal.component";
@@ -67,7 +66,6 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         'specialTds2']
 
     constructor(public configService: ConfigService,
-        private leagueService: LeagueService,
         private dialog: MatDialog,
         private pageService: PageService,
         private fantasyPlayerApiService: FantasyPlayerApiService,
@@ -81,10 +79,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        if (this.leagueService.leagueStatus === 'LOADING') {
-            this.gridGameService.status = Status.LOADING;
-            this.leagueService.leagueStatus = 'NONE';
-        }
+        this.gridGameService.status = Status.LOADING;
         this.addSubscriptions(
             this.configService.configValuesLoaded$.subscribe(_ => {
                 this.initGridGame();

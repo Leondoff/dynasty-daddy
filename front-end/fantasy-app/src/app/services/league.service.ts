@@ -39,7 +39,7 @@ export class LeagueService {
   selectedYear: string;
 
   /** is league loaded */
-  leagueStatus: string = 'LOADING';
+  leagueStatus: string = 'NONE';
 
   /** selected league team data */
   leagueTeamDetails: LeagueTeam[] = [];
@@ -74,9 +74,8 @@ export class LeagueService {
   /**
    * returns true if league is loaded
    */
-  isLeagueLoaded(): boolean {
-    return this.leagueStatus === 'DONE';
-  }
+  isLeagueLoaded = () =>
+    this.leagueStatus === 'DONE' && this.selectedLeague;
 
   /**
    * loads team data, roster, and draft picks by league

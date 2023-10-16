@@ -25,16 +25,16 @@
     <app-power-rankings-table [powerRankings]="powerRankingService.powerRankings" [isSuperFlex]="leagueService.selectedLeague.isSuperflex" [columnsToDisplay]="powerRankingService.selectedMetrics.value"></app-power-rankings-table>
   </div>
   <div class="small-text__light center-text margin-top-15">{{leagueService.selectedLeague.name}} • {{leagueService.selectedLeague.totalRosters}} Teams • Start {{leagueService.selectedLeague.starters}}</div>
-</div>
 
-<div class="center-text margin-top-50"*ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length > 0">
-  <button mat-stroked-button (click)="exportPowerRankings()" gaEvent="click_export_power_rankings" gaCategory="click"><mat-icon>download</mat-icon> Download Power Rankings</button>
+  <div class="center-text margin-top-50">
+    <button mat-stroked-button (click)="exportPowerRankings()" gaEvent="click_export_power_rankings" gaCategory="click"><mat-icon>download</mat-icon> Download Power Rankings</button>
+  </div>  
 </div>
 
 <div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">
   <mat-spinner></mat-spinner>
 </div>
 
-<app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="leagueService.leagueStatus === 'NONE'"></app-login-error>
+<app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="leagueService.leagueStatus === 'NONE' || !leagueService.selectedLeague"></app-login-error>
 
 <app-login-error [errorHeader]="creatingPRErrMsg" *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length === 0"></app-login-error>

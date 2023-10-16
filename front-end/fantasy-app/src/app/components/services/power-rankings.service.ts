@@ -29,7 +29,7 @@ export class PowerRankingsService {
     this.playerService.playerValuesUpdated$
       .pipe(takeUntil(this._onDestroy))
       .subscribe(() => {
-        if (this.leagueService.isLeagueLoaded() && this.leagueService.selectedLeague) {
+        if (this.leagueService.isLeagueLoaded()) {
           this.reset();
           this.mapPowerRankings(
             this.leagueService.leagueTeamDetails,
@@ -50,10 +50,7 @@ export class PowerRankingsService {
   positionGroups: string[] = ['QB', 'RB', 'WR', 'TE'];
 
   /** power ranking table cols to display */
-  selectedMetrics = new UntypedFormControl([
-    'team', 'owner', 'tier', 'overallRank',
-    'starterRank', 'qbRank', 'rbRank', 'wrRank',
-    'teRank', 'draftRank']);
+  selectedMetrics = new UntypedFormControl([]);
 
   /** TODO add custom visualizations to power rankings */
   powerRankingsVisualizations: string[] = ['overall'];
@@ -629,11 +626,14 @@ export class PowerRankingsService {
    * Load presets for format tool
    * @param type preset to load
    */
-  loadDefaultPreset(type: number = 2): void {
+  loadPRPreset(type: number = PowerRankingTableView.TradeValues): void {
     let powerRankingsTableCols = [];
+    const isPreseason = this.powerRankings[0].team.roster.teamMetrics.wins === 0
+      && this.powerRankings[0].team.roster.teamMetrics.wins === 0;
+    const startCols = isPreseason ? ['teamOwner'] : ['teamOwner', 'record'];
     switch (type) {
-      case 0:
-        powerRankingsTableCols = ['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank'];
+      case PowerRankingTableView.Starters:
+        powerRankingsTableCols = [...startCols, 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank'];
         this.rankingMarket = PowerRankingMarket.ADP;
         this.powerRankingsTableView = PowerRankingTableView.Starters;
         this.playerService.loadPlayerValuesForFantasyMarket$(FantasyMarket.FantasyCalcRedraft).subscribe(() => {
@@ -641,7 +641,7 @@ export class PowerRankingsService {
         })
         break;
       default:
-        powerRankingsTableCols = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+        powerRankingsTableCols = [...startCols, 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
         this.rankingMarket = Number(this.playerService.selectedMarket);
         this.powerRankingsTableView = PowerRankingTableView.TradeValues;
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {

@@ -89,3 +89,18 @@ tr.power-ranking-element-row:not(.power-ranking-expanded-row):active {
 .fantasy-market-pr {
   width: 160px;
 }
+
+// Team Owner column styling with image
+.mat-column-teamOwner {
+  min-width: 160px;
+}
+
+.team-owner-container {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.team-owner-details {
+  text-align: left;
+}
