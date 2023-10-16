@@ -78,7 +78,7 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
         this.getSelectedTeam();
       })
     );
-    if (this.leagueService.isLeagueLoaded() && this.leagueService.selectedLeague) {
+    if (this.leagueService.isLeagueLoaded()) {
       this.getSelectedTeam();
     }
   }

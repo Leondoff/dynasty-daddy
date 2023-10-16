@@ -176,7 +176,7 @@ export class FFPCService {
         newLeague.leagueId = league.leagueID;
         newLeague.name = league?.leagueName;
         newLeague.type = this.getFFPCLeagueType(league.ffpcLeagueTypeID)
-        newLeague.leaguePlatform = LeaguePlatform.MFL;
+        newLeague.leaguePlatform = LeaguePlatform.FFPC;
         newLeague.metadata['teamId'] = league?.teamID;
         newLeague.metadata['status'] = Status.LOADING;
         leagues.push(newLeague);

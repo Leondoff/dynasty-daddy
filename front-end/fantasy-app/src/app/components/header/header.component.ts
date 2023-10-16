@@ -34,6 +34,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   loadLeagueFromHeader(leagueId: string): void {
     const league = this.leagueService.leagueUser.leagues.find(l => l.leagueId == leagueId);
+
     if (league.leaguePlatform === LeaguePlatform.SLEEPER) {
       this.leagueSwitchService.loadLeague(league);
     } else {

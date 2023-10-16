@@ -188,7 +188,6 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   fetchUserInfo(platform: LeaguePlatform): void {
     let username: string;
     let password: string;
-
     switch (platform) {
       case LeaguePlatform.SLEEPER:
         username = this.usernameInput;

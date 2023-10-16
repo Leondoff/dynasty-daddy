@@ -73,22 +73,8 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
    * @param type preset to load
    */
   loadPreset(type: number = 0): void {
-    switch (type) {
-      case 1:
-        this.selectedVisualizations.setValue(['overall']);
-        this.powerRankingService.powerRankingsTableView = PowerRankingTableView.Starters;
-        this.powerRankingService.selectedMetrics.setValue(['team', 'owner', 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank']);
-        break;
-      default:
-        const cols = ['team', 'owner', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
-        this.powerRankingService.powerRankingsTableView = PowerRankingTableView.TradeValues;
-        if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
-          cols.push('draftRank');
-        }
-        this.selectedVisualizations.setValue(['overall']);
-        this.powerRankingService.selectedMetrics.setValue(cols);
-    }
-    this.refreshPowerRankingsView();
+    this.powerRankingService.loadPRPreset(type);
+    this.powerRankingService.powerRankingsVisualizations = this.selectedVisualizations.value;
   }
 
   mapPowerRankings(): void {
@@ -101,13 +87,6 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
         this.leagueService.selectedLeague.leaguePlatform
       );
     }
-  }
-
-  /**
-   * Refresh selected metrics and visualizations in service
-   */
-  refreshPowerRankingsView(): void {
-    this.powerRankingService.powerRankingsVisualizations = this.selectedVisualizations.value;
   }
 
   /**

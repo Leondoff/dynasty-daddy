@@ -76,4 +76,4 @@
   <mat-spinner></mat-spinner>
 </div>
 
-<app-login-error [errorHeader]="errorHeaderMsg" *ngIf="leagueService.leagueStatus === 'NONE' || (leagueService.leagueStatus === 'DONE' && teamPlayers.length === 0)"></app-login-error>
+<app-login-error [errorHeader]="errorHeaderMsg" *ngIf="!leagueService.isLeagueLoaded() && leagueService.leagueStatus !== 'LOADING'"></app-login-error>
