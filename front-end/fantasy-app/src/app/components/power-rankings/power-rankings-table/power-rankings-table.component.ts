@@ -338,7 +338,8 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
       } else if (property === 'overallRank') {
         return item.overallRank;
       } else if (property === 'record') {
-        return item.team?.roster?.teamMetrics?.wins || 0;
+        return (item.team?.roster?.teamMetrics?.wins || 0) * 1000
+          + (item.team?.roster?.teamMetrics?.fpts || 0);
       } else {
         return item[property];
       }
