@@ -21,9 +21,6 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
   powerRankings: TeamPowerRanking[];
 
   @Input()
-  selectedOrder: PowerRankingOrder = PowerRankingOrder.OVERALL;
-
-  @Input()
   selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
   /**
@@ -103,26 +100,9 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
   refreshChart(): void {
     this.dataLabels = [];
     this.powerRankings.sort((a, b) => {
-      switch (this.selectedOrder) {
-        case PowerRankingOrder.ELO_STARTER:
-          return b.eloAdpValueStarter - a.eloAdpValueStarter;
-        case PowerRankingOrder.QB_RANK:
-          return a.roster[0].rank - b.roster[0].rank;
-        case PowerRankingOrder.RB_RANK:
-          return a.roster[1].rank - b.roster[1].rank;
-        case PowerRankingOrder.WR_RANK:
-          return a.roster[2].rank - b.roster[2].rank;
-        case PowerRankingOrder.TE_RANK:
-          return a.roster[3].rank - b.roster[3].rank;
-        case PowerRankingOrder.PICK_RANK:
-          return a.picks.rank - b.picks.rank;
-        case PowerRankingOrder.STARTER:
-          return b.adpValueStarter - a.adpValueStarter;
-        default:
-          return !this.leagueService.selectedLeague?.isSuperflex ?
-            b.tradeValueOverall - a.tradeValueOverall :
-            b.sfTradeValueOverall - a.sfTradeValueOverall;
-      }
+      return !this.leagueService.selectedLeague?.isSuperflex ?
+        b.tradeValueOverall - a.tradeValueOverall :
+        b.sfTradeValueOverall - a.sfTradeValueOverall;
     });
     for (const team of this.powerRankings) {
       this.dataLabels.push(team.team.owner?.ownerName);
@@ -157,15 +137,4 @@ export class PowerRankingsChartComponent implements OnInit, OnChanges {
       }
     }
   }
-}
-
-export enum PowerRankingOrder {
-  OVERALL,
-  STARTER,
-  ELO_STARTER,
-  QB_RANK,
-  RB_RANK,
-  WR_RANK,
-  TE_RANK,
-  PICK_RANK
 }

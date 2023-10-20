@@ -1,0 +1,47 @@
+@import "../../../styles.scss";
+
+.community-box {
+  border: 1px solid grey;
+  min-width: 350px;
+  min-height: 500px;
+}
+
+.discord-widget {
+  padding: 4px;
+}
+
+.edit-button {
+  font-size: large;
+  vertical-align: top;
+  padding-left: 5px;
+  cursor: pointer;
+}
+
+::ng-deep .platform-tabs .mat-tab-label {
+  min-height: 5px !important;
+  margin: 3px !important;
+  width: 90px !important;
+  min-width: 5px !important;
+}
+
+.dropdown-img {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
+.home-button {
+  margin: 1%;
+}
+
+.sign-in-button {
+  min-height: 50px !important;
+
+  .mat-button {
+    margin-left: 15px !important;
+    min-width: unset !important;
+    width: 36px !important;
+    height: 36px !important;
+    padding: unset !important;
+  }
+}

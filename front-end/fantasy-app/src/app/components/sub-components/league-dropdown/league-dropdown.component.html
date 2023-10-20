@@ -1,0 +1,17 @@
+<mat-form-field appearance="standard" color="accent" style="font-size: 14px;"
+*ngIf="leagues?.length > 0" [ngStyle]="configService.isMobile && isHeader ? {'max-width': '90px;'} : {}">
+<mat-label>Select a league</mat-label>
+<mat-select [(ngModel)]="leagueId" (selectionChange)="loadLeagueFromHeader($event.value)">
+  <mat-option *ngIf="leagues?.length > 10">
+    <ngx-mat-select-search [formControl]="leagueFilterCtrl" placeholderLabel="Search Leagues..." noEntriesFoundLabel=""></ngx-mat-select-search>
+    <mat-icon ngxMatSelectSearchClear>close</mat-icon>
+  </mat-option>
+  <mat-option *ngFor="let league of filteredLeagues;"
+    [value]="league.leagueId" class="multiline-mat-option">
+  <div>
+    {{league.name|truncate:25}}
+  </div>
+  <div class="small-text__light">{{displayService.leagueTypes[league.type]}}•{{league.totalRosters}}{{league.totalRosters ? ' Team•' : ''}}{{league.season}}•{{displayService.getNameForPlatform(league.leaguePlatform)}}</div>
+  </mat-option>
+</mat-select>
+</mat-form-field>

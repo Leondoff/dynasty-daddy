@@ -6,6 +6,7 @@ import { PlayerService } from 'src/app/services/player.service';
 import { BaseComponent } from '../base-component.abstract';
 import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { LeagueTeam } from 'src/app/model/league/LeagueTeam';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -54,6 +55,7 @@ export class SidebarComponent extends BaseComponent implements OnInit {
 
   constructor(public leagueService: LeagueService,
     public playerService: PlayerService,
+    public userService: UserService,
     public configService: ConfigService,
     public leagueSwitchService: LeagueSwitchService) {
     super();

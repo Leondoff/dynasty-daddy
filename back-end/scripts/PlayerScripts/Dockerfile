@@ -18,13 +18,19 @@ COPY back-end/scripts/PlayerScripts/PlayerGridService.py /app/PlayerGridService.
 COPY back-end/scripts/PlayerScripts/InsertNonOffensePlayersService.py /app/InsertNonOffensePlayersService.py
 COPY back-end/scripts/PlayerScripts/KeepTradeCutService.py /app/KeepTradeCutService.py
 COPY back-end/scripts/PlayerScripts/TradeDatabaseService.py /app/TradeDatabaseService.py
+COPY back-end/scripts/PlayerScripts/NumberFireService.py /app/NumberFireService.py
+COPY back-end/scripts/PlayerScripts/FantasyGuysService.py /app/FantasyGuysService.py
+COPY back-end/scripts/PlayerScripts/ESPNService.py /app/ESPNService.py
+COPY back-end/scripts/PlayerScripts/DatabaseConnService.py /app/DatabaseConnService.py
+COPY back-end/scripts/PlayerScripts/PlayerRankingsJob.py /app/PlayerRankingsJob.py
 
 # schedule cron jobs
 RUN echo "00 */6 * * * /usr/local/bin/python /app/TradeDatabaseService.py >> /var/log/trade_cron.log 2>&1" >> /etc/cron.d/trade-crontab
 RUN echo "00 8 * * * /usr/local/bin/python /app/DailyCronJob.py >> /var/log/cron.log 2>&1" >> /etc/cron.d/ktc-crontab
+RUN echo "00 7 * * * /usr/local/bin/python /app/PlayerRankingsJob.py >> /var/log/rankings_cron.log 2>&1" >> /etc/cron.d/rankings_crontab
 
 # Combine the contents of both crontabs into a single file
-RUN cat /etc/cron.d/ktc-crontab /etc/cron.d/trade-crontab > /etc/cron.d/combined-crontab
+RUN cat /etc/cron.d/ktc-crontab /etc/cron.d/trade-crontab /etc/cron.d/rankings_crontab > /etc/cron.d/combined-crontab
 
 # Apply the combined crontab
 RUN crontab /etc/cron.d/combined-crontab
@@ -35,5 +41,6 @@ RUN chmod 0644 /etc/cron.d/combined-crontab
 # create log files
 RUN touch /var/log/cron.log
 RUN touch /var/log/trade_cron.log
+RUN touch /var/log/rankings_cron.log
 
 CMD printenv > /etc/environment && cron -f && tail -f /var/log/cron.log

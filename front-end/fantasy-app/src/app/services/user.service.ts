@@ -1,6 +1,15 @@
 import { Injectable } from '@angular/core'
 import { PatreonApiService } from './api/patreon/patreon-api.service';
 import { environment } from 'src/environments';
+import { PatreonUser } from '../model/user/User';
+import { Status } from '../components/model/status';
+import { LeagueService } from './league.service';
+import { LeagueDTO } from '../model/league/LeagueDTO';
+import { Subject } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { SimpleTextModalComponent } from '../components/sub-components/simple-text-modal/simple-text-modal.component';
+import { ConfigService } from './init/config.service';
+import { DynastyDaddyClubTutorial } from '../model/toolHelpModel';
 
 @Injectable({
     providedIn: 'root'
@@ -11,9 +20,24 @@ export class UserService {
 
     private patreonRedirectUri = environment.loginRedirect;
 
+    /** emits changes when changes to the user are made */
+    userLeaguesChanged$: Subject<void> = new Subject<void>();
+
+    /** user data of patreon user */
+    user: PatreonUser = null;
+
+    /** error message from log in */
+    errMsg: string = '';
+
+    /** loading status */
+    loading: Status = Status.DONE;
+
     constructor(
-        private patreonApiService: PatreonApiService
-    ) {}
+        private leagueService: LeagueService,
+        private patreonApiService: PatreonApiService,
+        private dialog: MatDialog,
+        private configService: ConfigService
+    ) { }
 
     async loginWithPatreon(): Promise<void> {
         // Redirect the user to the Patreon OAuth authorization URL
@@ -21,13 +45,37 @@ export class UserService {
     }
 
     async handleOAuthCallback(): Promise<any> {
+        this.errMsg = '';
         // Extract the OAuth code from the URL query parameters
         const code = new URLSearchParams(window.location.search).get('code');
         if (code) {
             // Use Axios to exchange the OAuth code for an access token
-            this.patreonApiService.getTokenFromPatreonToken(code).subscribe(accessToken => {
-                console.log(accessToken) 
-            })
+            this.loading = Status.LOADING;
+            this.patreonApiService.getUserFromPatreon(code).subscribe(
+                (user) => {
+                    this.user = user;
+                    this.updateLeagueUser();
+                    this.loading = Status.DONE;
+                    if (this.user.leagues.length === 0) {
+                        this.dialog.open(SimpleTextModalComponent
+                            , {
+                                minHeight: '350px',
+                                minWidth: this.configService.isMobile ? '200px' : '500px',
+                                data: {
+                                    headerText: 'How to Add Leagues',
+                                    categoryList: DynastyDaddyClubTutorial
+                                }
+                            }
+                        );
+                    }
+                },
+                (error) => {
+                    this.loading = Status.DONE;
+                    if (error.status === 401) {
+                      this.errMsg = 'No membership is found for this account.';
+                    }
+                }
+            );
         }
 
         return null;
@@ -40,8 +88,76 @@ export class UserService {
             client_id: this.patreonClientId,
             redirect_uri: this.patreonRedirectUri,
             response_type: 'code',
+            scope: 'identity identity.memberships'
         });
 
         return `${authUrl}?${queryParams.toString()}`;
+    }
+
+    /**
+     * Add leagues to DD Club account
+     * @param leagues leagues to add
+     */
+    addLeaguesToPatreonUser(leagues: LeagueDTO[]): void {
+        const formattedLeagues = leagues.map(l => l.toPatreonLeagueObj());
+        const combinedList = this.combineLeagueArrays(this.user?.leagues || [], formattedLeagues);
+        this.setLeaguesForUser(combinedList);
+    }
+
+    /**
+     * Sets the patreon user with the leagues
+     * @param leagues leagues to set
+     */
+    setLeaguesForUser(leagues: any[]): void {
+        this.patreonApiService.addLeaguesToUser(leagues, this.user.userId).subscribe(res => {
+            this.user.leagues = leagues;
+            this.updateLeagueUser();
+            this.userLeaguesChanged$.next();
+        });
+    }
+
+    /**
+     * Helper function to update a league user
+     * object with the patreon user data
+     */
+    private updateLeagueUser(): void {
+
+        const userData = {
+            username: this.user.firstName + ' ' + this.user.lastName,
+            user_id: this.user.userId,
+            avatar: this.user.imageUrl
+        }
+        const leagues = this.user.leagues.map(l => new LeagueDTO().fromPatreon(l));
+
+        this.leagueService.leagueUser = {leagues: leagues, userData: userData, leaguePlatform: 0};
+    }
+
+    /**
+     * Combine leagues for a club user
+     * @param array1 list of existing leagues
+     * @param array2 list of leagues to add
+     */
+    private combineLeagueArrays(array1: any[], array2: any[]) {
+        // Create a map to store items by a unique key
+        const map = new Map();
+
+        // Helper function to add an item to the map
+        function addItemToMap(item) {
+            const key = `${item.id}-${item.season}-${item.platform}`;
+            if (!map.has(key)) {
+                map.set(key, item);
+            }
+        }
+
+        // Iterate through the first array and add items to the map
+        array1.forEach(addItemToMap);
+
+        // Iterate through the second array and add items to the map
+        array2.forEach(addItemToMap);
+
+        // Convert the map values back to an array
+        const combinedArray = Array.from(map.values());
+
+        return combinedArray;
     }
 }

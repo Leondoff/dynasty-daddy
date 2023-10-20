@@ -1,12 +1,12 @@
 <div class="center-text margin-top-50">
     <div class="warning__alert">{{errorHeader}}</div>
     <br>
-    <button *ngIf="!leagueService.leagueUser" mat-raised-button color="warn" gaEvent="nav_home_page" gaCategory="page_nav" (click)="openUrl()">Choose League</button>
-    <mat-form-field appearance="standard" color="accent" style="font-size: 14px;" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-      <mat-label>Select a league</mat-label>
-      <mat-select (selectionChange)="leagueSwitchService.loadLeague($event.value)">
-        <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                    [value]="league">{{league.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div *ngIf="!leagueService.leagueUser">
+      <button mat-raised-button class="patreon_button" (click)="userService.loginWithPatreon()">
+        Login via <img src="assets/patreon-tile.svg" alt="patreon-icon" class="logo">
+      </button>
+      <div class="mid-bold-text margin-top-25 margin-bot-25">OR</div>
+      <button mat-raised-button color="warn" gaEvent="nav_home_page" gaCategory="page_nav" (click)="openUrl()">Choose League</button>
+    </div>
+    <league-dropdown [leagues]="leagueService.leagueUser?.leagues"></league-dropdown>
 </div>

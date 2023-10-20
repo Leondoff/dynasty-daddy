@@ -16,6 +16,9 @@ import { SimpleTextModalComponent } from '../../sub-components/simple-text-modal
 import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
 import { MatDialog } from '@angular/material/dialog';
 import { GoogleAnalyticsService } from 'ngx-google-analytics';
+import { UserService } from 'src/app/services/user.service';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -70,6 +73,20 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     { key: 'draftRank', display: 'Draft Capital Rank' },
   ];
 
+  /** available rankings to select for Power Rankings */
+  availableRankings: any[] = [
+    { key: 'avg_adp', display: 'Average ADP ', class: '' },
+    { key: 'fantasypro_adp', display: 'FantasyPros\'s ADP', class: 'child-opt' },
+    { key: 'bb10_adp', display: 'BestBall10\'s ADP', class: 'child-opt' },
+    { key: 'rtsports_adp', display: 'Real Time Fantasy\'s ADP', class: 'child-opt' },
+    { key: 'underdog_adp', display: 'Underdog Fantasy\'s ADP', class: 'child-opt' },
+    { key: 'drafters_adp', display: 'Drafter\'s ADP', class: 'child-opt' },
+    { key: 'avg_ros', display: 'Average Rest Of Season (RoS)', class: '' },
+    { key: 'espn_ros', display: 'ESPN\'s RoS', class: 'child-opt' },
+    { key: 'fantasyguys_ros', display: 'FantasyGuys\' RoS', class: 'child-opt' },
+    { key: 'numberfire_ros', display: 'NumberFire\'s Ros', class: 'child-opt' },
+  ];
+
   // datasource for mat table
   dataSource: MatTableDataSource<TeamPowerRanking> = new MatTableDataSource<TeamPowerRanking>();
 
@@ -91,6 +108,9 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   /** Player cache for power rankings */
   playerCache = {};
 
+  /** subject for handling search */
+  private searchSubject$: Subject<void> = new Subject();
+
   constructor(public leagueService: LeagueService,
     public configService: ConfigService,
     public playerService: PlayerService,
@@ -98,6 +118,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     public leagueSwitchService: LeagueSwitchService,
     public displayService: DisplayService,
     private dialog: MatDialog,
+    public userService: UserService,
     private gaService: GoogleAnalyticsService,
     private clipboard: Clipboard) {
     super();
@@ -107,6 +128,13 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     this.alertThreshold = this.powerRankings.length / 3;
     this.createNewTableDataSource(this.powerRankings);
     this.refreshPowerRankingCache();
+    this.addSubscriptions(
+      this.searchSubject$.pipe(
+        debounceTime(500)
+      ).subscribe(_ => {
+        this.searchFilterPowerRankings();
+      })
+    );
   }
 
   ngOnChanges(): void {
@@ -188,6 +216,14 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
       }
     });
     return flag;
+  }
+
+  /**
+   * On Key Up event handler
+   * @param searchTextValue search term
+   */
+  onKeyUp() {
+    this.searchSubject$.next();
   }
 
   /**
@@ -369,7 +405,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
    */
   updateFantasyMarket($event): void {
     this.gaService.event('click', `click_${$event.value}`, 'fantasy_market')
-    this.powerRankingsService.rankingMarket = $event.value;
+    this.powerRankingsService.rankingMarket = $event.value || this.powerRankingsService.rankingMarket;
     if (this.powerRankingsService.rankingMarket !== PowerRankingMarket.ADP) {
       this.addSubscriptions(this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
         this.playerService.selectedMarket = this.powerRankingsService.rankingMarket.valueOf();
@@ -389,5 +425,14 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         }
       }
     );
+  }
+
+  /** get the display name for selected rankings */
+  getDisplayNameForRankings = () =>
+    this.availableRankings.find(r => r.key == this.powerRankingsService.selectedRankings)?.display;
+
+  /** update the season rankings for power rankings */
+  updateRankings(): void {
+    this.playerService.playerValuesUpdated$.next();
   }
 }

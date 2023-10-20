@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios, { HttpStatusCode } from 'axios';
 
 const sendFleaFlickerRequest = async (leagueId, metadata, callType, res) => {
   await axios.get(`https://www.fleaflicker.com/api/${callType}?sport=NFL&league_id=${leagueId}${metadata}`)
@@ -6,7 +6,7 @@ const sendFleaFlickerRequest = async (leagueId, metadata, callType, res) => {
       res.status(response.status).json(response.data);
     })
     .catch((err) => {
-      res.status(500).json(err);
+      res.status(HttpStatusCode.InternalServerError).json(err);
     });
 };
 
@@ -57,6 +57,6 @@ export const GetUserLeaguesEndpoint = async (req, res) => {
       res.status(response.status).json(response.data);
     })
     .catch((err) => {
-      res.status(500).json(err);
+      res.status(HttpStatusCode.InternalServerError).json(err);
     });
 };

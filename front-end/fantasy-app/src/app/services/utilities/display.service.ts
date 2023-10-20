@@ -78,6 +78,25 @@ export class DisplayService {
   }
 
   /**
+   * returns string of platform to display
+   * @param platform 
+   */
+  getNameForPlatform(platform: LeaguePlatform): string {
+    switch (platform) {
+      case LeaguePlatform.ESPN:
+        return 'ESPN';
+      case LeaguePlatform.FFPC:
+        return 'FFPC';
+      case LeaguePlatform.FLEAFLICKER:
+        return 'FleaFlicker';
+      case LeaguePlatform.MFL:
+        return 'MFL';
+      default:
+        return 'Sleeper';
+    }
+  }
+
+  /**
    * Get string for league type
    * @param leagueType league type number
    * @returns 
@@ -129,5 +148,17 @@ export class DisplayService {
       default:
         return '-';
     }
+  }
+
+  /**
+   * returns number of days since the date
+   * @param date string for date
+   */
+  getDaysSinceDateString(date: string): number { 
+    const transactionDate = new Date(date);
+    const currentDate = new Date();
+    const timeDifference = currentDate.getTime() - transactionDate.getTime();
+
+    return Math.floor(timeDifference / (1000 * 3600 * 24));
   }
 }

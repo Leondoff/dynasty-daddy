@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { LeagueService } from 'src/app/services/league.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-login-error',
@@ -14,6 +15,7 @@ export class LoginErrorComponent implements OnInit {
   errorHeader = 'Please select a league.';
 
   constructor(public leagueService: LeagueService,
+    public userService: UserService,
     private router: Router,
     public leagueSwitchService: LeagueSwitchService) {
 

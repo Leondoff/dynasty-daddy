@@ -61,10 +61,11 @@ export const PowerRankingsTutorial: SimpleTextCategory[] = [
         ]
     },
     {
-        title: '⚙ Advanced Options (Desktop only)',
+        title: '⚙ Advanced Options',
         list: [
-            'Order Chart - This dropdown controls what order the chart will be sorted from left-to-right based on the selected metric. The default is overall value.',
-            'Fantasy Market - This dropdown controls what fantasy market\'s values are used to create the power rankings.'
+            'Contender Rankings - This dropdown sets what current season rankings are used to generate your league\'s starter value. By default it will be the average across our sources.',
+            'Fantasy Market - This dropdown controls what fantasy market\'s values are used to create the power rankings.',
+            'Customize Table - This dropdown let\'s you set what columns you want to display on the table (desktop only)'
         ]
     }
 ]
@@ -271,7 +272,34 @@ export const DataSourcesInfo: SimpleTextCategory[] = [
         link: 'https://nflverse.nflverse.com/',
         list: [
             'The nflverse is a set of packages dedicated to data of the National Football League. The nflverse package is designed to make it easy to install and load core packages from the nflverse in a single command.',
-            'Dynasty Daddy uses the the play-by-play data for creating stat thresholds for the immaculate gridiron.'
+            'Dynasty Daddy uses the play-by-play data for creating stat thresholds for the immaculate gridiron.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'ESPN',
+        link: 'https://www.espn.com/',
+        list: [
+            'Visit ESPN for live scores, highlights and sports news. Stream exclusive games on ESPN+ and play fantasy sports.',
+            'Dynasty Daddy uses the rest of season rankings data.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'FantasyGuys',
+        link: 'https://www.footballguys.com/',
+        list: [
+            'Win more. Save time. And take control of your fantasy football season with Footballguys.',
+            'Dynasty Daddy uses the rest of season rankings data.'
+        ],
+        type: 'list'
+    },
+    {
+        title: 'NumberFire',
+        link: 'https://www.numberfire.com/',
+        list: [
+            'NumnerFire uses the powers of quantitative analysis to deliver the best projections and rankings for daily fantasy sports, including NFL, MLB, NBA and more!',
+            'Dynasty Daddy uses the rest of season rankings data.'
         ],
         type: 'list'
     },
@@ -280,7 +308,6 @@ export const DataSourcesInfo: SimpleTextCategory[] = [
         type: 'text'
     },
 ];
-
 
 export const TradeDatabaseTutorial: SimpleTextCategory[] = [
     {
@@ -319,4 +346,31 @@ export const TradeDatabaseTutorial: SimpleTextCategory[] = [
             'Starter Count - Include trades based on how many offensive starters are in the league.'
         ]
     }
+];
+
+export const DynastyDaddyClubTutorial: SimpleTextCategory[] = [
+    {
+        title: 'Overview',
+        list: [
+            'The Dynasty Daddy Club is the premium Dynasty Daddy Experience with exclusive access to Features, Discord Channels, Shows, and More.',
+        ]
+    },
+    {
+        title: 'How To Add Leagues',
+        list: [
+            'First, navigate on the home page to the platform you want to add.',
+            'Login through your fantasy platform like usual.',
+            'You will see a ♣ icon start pulsing next to the \'sign in\' button. This means you can add leagues to your account.',
+            'Click the ♣ icon to add the leagues.',
+            'You will now see those leagues in your Dynasty Daddy Club Account. After adding them, our site will remember them so in the future you only have to log in via your Dynasty Daddy Club Account.'
+        ]
+    },
+    {
+        title: 'How To Remove Leagues',
+        list: [
+            'Through the header, click the ♣ icon or the \'User Settings\' sidebar option',
+            'Once at the \'User Settings\' page, click the trash can icon to delete the league',
+            'After making all the changes you want, click the \'Save\' button at the bottom and your leagues are now removed from your account.'
+        ]
+    },
 ];

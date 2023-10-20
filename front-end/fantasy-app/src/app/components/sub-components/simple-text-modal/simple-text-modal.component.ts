@@ -16,7 +16,7 @@ export class SimpleTextModalComponent implements OnInit {
     constructor(
         private dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: { headerText: string, categoryList: SimpleTextCategory[] }
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.headerText = this.data.headerText;
