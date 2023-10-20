@@ -83,6 +83,7 @@ export class UserService {
 
     private getPatreonAuthorizationUrl(): string {
         const authUrl = 'https://www.patreon.com/oauth2/authorize';
+        console.log(this.patreonRedirectUri);
 
         const queryParams = new URLSearchParams({
             client_id: this.patreonClientId,
