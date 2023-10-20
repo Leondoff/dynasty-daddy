@@ -47,6 +47,7 @@ export const LocalStorageDictionary = {
   TRADE_DB_QB_FORMAT: 'qb_format',
   TRADE_DB_TEAM_FORMAT: 'team_format',
   TRADE_DB_STARTER_FORMAT: 'starter_format',
+  SELECTED_LOGIN_METHOD: 'login_method'
 } as const;
 
 @Injectable({

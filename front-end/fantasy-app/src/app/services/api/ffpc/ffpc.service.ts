@@ -175,7 +175,8 @@ export class FFPCService {
         const newLeague = new LeagueDTO()
         newLeague.leagueId = league.leagueID;
         newLeague.name = league?.leagueName;
-        newLeague.type = this.getFFPCLeagueType(league.ffpcLeagueTypeID)
+        newLeague.season = season;
+        newLeague.type = this.getFFPCLeagueType(league.ffpcLeagueTypeID);
         newLeague.leaguePlatform = LeaguePlatform.FFPC;
         newLeague.metadata['teamId'] = league?.teamID;
         newLeague.metadata['status'] = Status.LOADING;

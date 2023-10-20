@@ -5,7 +5,6 @@ import { SharedModule } from "../shared/shared.module";
 import { TradeDatabaseComponent } from "src/app/components/trade-database/trade-database.component";
 import { BubblePackingChartComponent } from "src/app/components/sub-components/bubble-packing-chart/bubble-packing-chart.component";
 import { PlayerDetailsComponent } from "src/app/components/player-details/player-details.component";
-import { PlayerComparison } from "src/app/components/model/playerComparison";
 import { PlayerComparisonsComponent } from "src/app/components/player-comparisons/player-comparisons.component";
 import { PlayerValuesComponent } from "src/app/components/player-values/player-values.component";
 import { KtcTableComponent } from "src/app/components/player-values/ktc-table/ktc-table.component";

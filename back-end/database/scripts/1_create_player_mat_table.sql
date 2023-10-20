@@ -39,7 +39,11 @@ From
             pa.bb10_adp,
             pa.rtsports_adp,
             pa.underdog_adp,
-            pa.drafters_adp
+            pa.drafters_adp,
+            pa.espn_ros,
+            pa.fantasyguys_ros,
+            pa.numberfire_ros,
+            pa.avg_ros
         from
             player_info
             left join player_values pv on player_info.name_id = pv.name_id

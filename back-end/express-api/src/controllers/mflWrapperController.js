@@ -1,4 +1,5 @@
 /* eslint-disable prefer-destructuring */
+import { HttpStatusCode } from 'axios';
 import { FormatMFLLeagues } from '../models/mfl';
 
 const axios = require('axios');
@@ -17,7 +18,7 @@ const sendMFLRequest = async (year, leagueId, baseUrl, mflUserId, callType, res)
       res.status(response.status).json(response.data);
     })
     .catch((err) => {
-      res.status(500).json(err);
+      res.status(HttpStatusCode.InternalServerError).json(err);
     });
 };
 
@@ -37,7 +38,7 @@ const sendMFLImportRequest = async (
       res.status(response.status).json(response.data);
     })
     .catch((err) => {
-      res.status(500).json(err);
+      res.status(HttpStatusCode.InternalServerError).json(err);
     });
 };
 
@@ -154,7 +155,7 @@ export const GetMFLLeaguesForUserEndpoint = async (req, res) => {
     const match = response.data.match(regex);
 
     if (!match || !match[1]) {
-      return res.status(500).json('Unable to find MFL_USER_ID. Make sure your username & password are correct.');
+      return res.status(HttpStatusCode.InternalServerError).json('Unable to find MFL_USER_ID. Make sure your username & password are correct.');
     }
 
     mflUserId = match[1];
@@ -166,7 +167,7 @@ export const GetMFLLeaguesForUserEndpoint = async (req, res) => {
     const formattedLeagues = await FormatMFLLeagues(leaguesResponse.data.leagues);
     res.status(leaguesResponse.status).json({ leagues: formattedLeagues, mfl_user_id: mflUserId });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(HttpStatusCode.InternalServerError).json(err);
   }
 };
 
@@ -177,7 +178,7 @@ export const PostMFLWaiverEndpoint = async (req, res) => {
   const dropPlayerId = req.body.DROP;
   const mflUserId = req.body.mflUserId;
   if (!mflUserId) {
-    return res.status(400).json('MFL User Id not set. Try logging in again.');
+    return res.status(HttpStatusCode.BadRequest).json('MFL User Id not set. Try logging in again.');
   }
   return sendMFLImportRequest(year, leagueId, url, mflUserId, 'fcfsWaiver', `&DROP=${dropPlayerId}`, res);
 };

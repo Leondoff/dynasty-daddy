@@ -173,6 +173,15 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
  * @param {*} format league starter dict
  */
 export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, teamPointDict, format) => {
+  // // replacement level wins? Do i need this? full season
+  // const rlPoints = {};
+  // SUPER_FLEX_POS.forEach(pos => {
+  //   const weeklyRepPoints = [];
+  //   Object.entries(teamPointDict).map(async ([_, weeklyTeamPointDict]) => {
+  //     weeklyRepPoints.push(weeklyTeamPointDict.repLevel[pos]);
+  //   });
+  //   rlPoints[pos] = mean(weeklyRepPoints);
+  // });
   const posList = (await getPositionsToProcess(format)).filter(p =>
     !FLEX_TYPES.includes(p));
   // weekly WoRP calculation
@@ -199,7 +208,7 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
     const winsPercentPerWeek = [];
     Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
       const posPointsPerWeek = teamPointDict[week].posGroups[p.position];
-      const playerPointsPerWeek = weeklyPointsDict[p.sleeper_id] && weeklyPointsDict[p.sleeper_id].gamelog.gp === 1
+      const playerPointsPerWeek = weeklyPointsDict[p.sleeper_id]
         ? weeklyPointsDict[p.sleeper_id].pts : teamPointDict[week].repLevel[p.position];
       const valueAddedTotal = teamPointDict[week].total
           - posPointsPerWeek.avg + playerPointsPerWeek;

@@ -237,6 +237,32 @@ export class LeagueDTO {
     return this;
   }
 
+  fromPatreon(league: any): LeagueDTO {
+    this.leagueId = league.id;
+    this.name = league.name;
+    this.season = league.season;
+    this.leaguePlatform = league.platform;
+    this.type = league.type;
+    this.totalRosters = league.teams;
+    this.starters = league.starters;
+    return this;
+  }
+
+  /**
+   * format leagueDTO to object for patreon
+   */
+  toPatreonLeagueObj(): any {
+    return {
+      name: this.name,
+      id: this.leagueId,
+      season: this.season,
+      platform: this.leaguePlatform,
+      type: this.type,
+      teams: this.totalRosters,
+      starters: this.starters
+    }
+  }
+
   /**
    * Set the division and division length for a league
    * @param divisions string array of division names

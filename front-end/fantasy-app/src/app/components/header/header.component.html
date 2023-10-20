@@ -13,7 +13,7 @@
     </button>
     <span style="cursor: pointer" (click)="toggle()"><img class="header-img" src="https://i.ibb.co/1TV6bnw/favicon.png" alt="DD" title="Dynasty Daddy"><span style="padding-left: 10px">{{configService.isMobile && leagueService.leagueUser?.leagues.length ? '' : 'Dynasty Daddy'}}</span></span>
     <span class="spacer"></span>
-    <ng-container *ngIf="!configService.isMobile">
+    <ng-container *ngIf="!configService.isMobile && !userService.user">
       <button *ngIf="leagueService.isLeagueLoaded()" mat-button matSuffix mat-icon-button matTooltip="Open League"
         matTooltipPosition="below" aria-label="Clear" (click)="leagueService.openLeague()">
         <mat-icon>offline_share</mat-icon>
@@ -35,13 +35,13 @@
         League' : 'Select Username'}}</button>
 
     </ng-container>
-    <mat-form-field appearance="standard" color="accent" style="font-size: 14px;"
-      *ngIf="leagueService.leagueUser?.leagues.length > 0" [ngStyle]="configService.isMobile ? {'max-width': '90px;'} : {}">
-      <mat-label>Select a league</mat-label>
-      <mat-select [(ngModel)]="leagueId" (selectionChange)="loadLeagueFromHeader($event.value)">
-        <mat-option *ngFor="let league of leagueService.leagueUser?.leagues;"
-        [value]="league.leagueId">{{configService.isMobile ? (league.name | truncate:15) : league.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <ng-container *ngIf="userService.user">
+      <button mat-button matSuffix mat-icon-button matTooltip="User Settings"
+      matTooltipPosition="below" aria-label="Clear" [routerLink]="['./user/settings']"
+      [queryParams]="leagueSwitchService.buildQueryParams()">
+      <img src="assets/clubs.svg" alt="user-settings" class="club-logo">
+    </button>
+    </ng-container>
+    <league-dropdown [leagues]="leagueService.leagueUser?.leagues" [leagueId]="leagueService.selectedLeague?.leagueId" [isHeader]="true"></league-dropdown>
   </mat-toolbar>
 </div>

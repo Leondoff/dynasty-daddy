@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { PatreonAPIConfigService } from "./patreon-api-config.service";
 import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+import { Observable, throwError } from "rxjs";
+import { PatreonUser } from "src/app/model/user/User";
 
 @Injectable({
     providedIn: 'root'
@@ -16,12 +17,23 @@ export class PatreonApiService {
 
     }
 
-    getTokenFromPatreonToken(code: string): Observable<any> {
-        return this.http.get<any>(this.patreonApiConfigService.getTokenForCodeEndpoint + '?code=' + code).pipe(map(
-            (token: any) => {
-                return token;
-            }
-        ));
+    getUserFromPatreon(code: string): Observable<PatreonUser> {
+        return this.http.get<any>(this.patreonApiConfigService.getUserFromPatreonEndpoint + '?code=' + code).pipe(
+            map((user: any) => {
+                return new PatreonUser(user);
+            }),
+            catchError((error) => {
+                return throwError(error);
+            })
+        );
+    }
+
+    addLeaguesToUser(leagues: any[], userId: string): Observable<any> {
+        return this.http.post<any>(this.patreonApiConfigService.addLeaguesToUserEndpoint, { leagues, "id": userId }).pipe(
+            map((res: any) => {
+                return res;
+            })
+        );
     }
 
 }

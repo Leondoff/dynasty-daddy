@@ -1,3 +1,4 @@
+import { HttpStatusCode } from 'axios';
 import {
   CalculatePlayerConsistencyForSeason,
   CalculateWORPForSeason,
@@ -38,8 +39,8 @@ export const GetLeagueFormatForLeague = async (req, res) => {
         };
       }
     });
-    res.status(200).json(leagueFormat);
+    res.status(HttpStatusCode.Ok).json(leagueFormat);
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };

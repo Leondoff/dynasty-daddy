@@ -37,6 +37,7 @@ import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { AffiliateBannerComponent } from "src/app/components/sub-components/affiliate-banner/affiliate-banner.component";
 import { DataSourcesButtonComponent } from "src/app/components/sub-components/data-sources-button/data-sources-button.component";
 import { FantasyMarketDropdownComponent } from "src/app/components/sub-components/fantasy-market-dropdown/fantasy-market-dropdown.component";
+import { LeagueDropdownComponent } from "src/app/components/sub-components/league-dropdown/league-dropdown.component";
 import {LoginErrorComponent } from "src/app/components/sub-components/login-error/login-error.component";
 import { SimpleTextModalComponent } from "src/app/components/sub-components/simple-text-modal/simple-text-modal.component";
 import { ToolHelpComponent } from "src/app/components/sub-components/tool-help/tool-help.component";
@@ -93,6 +94,7 @@ const DECLARATIONS = [
     SimpleTextModalComponent,
     TruncatePipe,
     HighLightSearchPipe,
+    LeagueDropdownComponent,
 ]
 
 @NgModule({

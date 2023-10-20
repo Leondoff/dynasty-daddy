@@ -1,0 +1,84 @@
+<h1 class="margin-top-10 large-bold-header-text center-text">User Settings</h1>
+<div class="center-text margin-top-10">
+    {{pageDescription}}
+</div>
+
+<div [hidden]="!userService.user">
+    <div class="flex-details-container margin-top-50">
+        <div class="flex-item-details grid-25">
+            <div>
+                <img #image [src]="userService.user?.imageUrl" alt="Patreon"
+                    onerror="this.src='https://www.pff.com/images/webui/player_default.png';" [hidden]="image.hidden"
+                    class="responsive">
+            </div>
+        </div>
+        <div class="flex-item-details grid-60">
+            <div>
+                <div class="small-text__light user-stat">First Name</div>
+                <div class="mid-bold-text">{{userService.user?.firstName || '-'}}</div>
+                <div class="small-text__light user-stat">Last Name</div>
+                <div class="mid-bold-text">{{userService.user?.lastName || '-'}}</div>
+                <div class="small-text__light user-stat">Profile Age</div>
+                <div class="mid-bold-text">{{displayService.getDaysSinceDateString(userService.user?.createdAt) + ' Days Ago' || '-'}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <mat-tab-group mat-align-tabs="center" class="margin-top-25">
+            <mat-tab label="{{configService.isMobile ? 'Leagues' : 'Linked Leagues'}}">
+                <div class="mid-bold-text margin-top-10 center-text">Manage Linked Leagues</div>
+                <div class="margin-top-10 center-text">Remove, and sort your leagues linked to your account.
+                </div>
+                <div class="margin-top-25" [hidden]="!(userService.user?.leagues?.length > 0)">
+                    <table mat-table [dataSource]="leagueDatasource" matSort class="mat-elevation-z8">
+
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                            <td mat-cell *matCellDef="let league">{{league.name}}</td>
+                        </ng-container>
+        
+                        <ng-container matColumnDef="type">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+                            <td mat-cell *matCellDef="let league">{{displayService.getLeagueTypeFromTypeNumber(league.type)}}</td>
+                        </ng-container>
+        
+                        <ng-container matColumnDef="teams">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Team Count</th>
+                            <td mat-cell *matCellDef="let league">{{league.teams ? league.teams + ' teams' : '-'}}</td>
+                        </ng-container>
+        
+                        <ng-container matColumnDef="year">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Season</th>
+                            <td mat-cell *matCellDef="let league">{{league.season}}</td>
+                        </ng-container>
+        
+                        <ng-container matColumnDef="platform">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Platform</th>
+                            <td mat-cell *matCellDef="let league">{{displayService.getNameForPlatform(league.platform)}}</td>
+                        </ng-container>
+        
+                        <ng-container matColumnDef="delete">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let league"><mat-icon (click)="isLeagueDeleted(league.id) ? undoDeleteLeague(league.id) : deleteLeague(league.id)" style="cursor: pointer;">{{isLeagueDeleted(league.id) ? 'undo' : 'delete'}}</mat-icon></td>
+                        </ng-container>
+        
+                        <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayColumns;"
+                            [ngClass]="{'mat-table-highlight': isLeagueDeleted(row.id)}"
+                        ></tr>
+                    </table>
+                    <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+                    <div class="center-text margin-top-15">
+                        <button mat-raised-button color="accent" [disabled]="changesLoading == 0" (click)="saveChanges()">
+                            <span *ngIf="changesLoading == 1">Save</span>
+                            <mat-icon *ngIf="changesLoading == 0"><mat-spinner color="primary" diameter="20">
+                        </mat-spinner></mat-icon></button>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
+
+<app-login-error [errorHeader]="'Dynasty Daddy Club Account is not linked.'" *ngIf="!userService.user"></app-login-error>

@@ -1,4 +1,5 @@
+import { HttpStatusCode } from 'axios';
 import { testEnvironmentVariable } from '../settings';
 
 export const indexPage = (req, res) =>
-  res.status(200).json({ message: testEnvironmentVariable });
+  res.status(HttpStatusCode.Ok).json({ message: testEnvironmentVariable });

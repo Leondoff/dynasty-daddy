@@ -54,7 +54,11 @@ export const GetCurrentPlayerValues = async () => {
       mp.bb10_adp,
       mp.rtsports_adp,
       mp.underdog_adp,
-      mp.drafters_adp
+      mp.drafters_adp,
+      mp.avg_ros,
+      mp.espn_ros,
+      mp.fantasyguys_ros,
+      mp.numberfire_ros
   FROM
       mat_vw_players mp
   LEFT JOIN

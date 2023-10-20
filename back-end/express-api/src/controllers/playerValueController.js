@@ -1,3 +1,4 @@
+import { HttpStatusCode } from 'axios';
 import {
   GetCurrentPlayerValues,
   GetHistoricalPlayerValuesDatapoint,
@@ -18,9 +19,9 @@ import {
 export const GetCurrentPlayerValuesEndpoint = async (req, res) => {
   try {
     const data = await GetCurrentPlayerValues();
-    res.status(200).json(data.rows);
+    res.status(HttpStatusCode.Ok).json(data.rows);
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };
 
@@ -35,11 +36,11 @@ export const GetPlayerValueForMarketEndpoint = async (req, res) => {
   try {
     const data = await GetPlayerValuesForMarket(market);
     if (data == null) {
-      res.status(400).json(`Unsupported market type: ${market}`);
+      res.status(HttpStatusCode.BadRequest).json(`Unsupported market type: ${market}`);
     }
-    res.status(200).json(data.rows);
+    res.status(HttpStatusCode.Ok).json(data.rows);
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };
 

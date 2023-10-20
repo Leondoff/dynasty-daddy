@@ -104,3 +104,22 @@ tr.power-ranking-element-row:not(.power-ranking-expanded-row):active {
 .team-owner-details {
   text-align: left;
 }
+
+.child-opt {
+  padding-left: 32px !important;
+}
+
+.dropdown-mobile {
+  width: 120px;
+  padding-left: 10px;
+}
+
+.search-players {
+  line-height: 1.2;
+}
+
+.search-players-desktop {
+  margin: 0 2px;
+  line-height: 2;
+  width: clamp(120px, 20vw, 300px);
+}

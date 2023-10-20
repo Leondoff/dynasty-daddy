@@ -11,7 +11,6 @@ import { NflService } from '../../services/utilities/nfl.service';
 import { StatService } from '../../services/utilities/stat.service';
 import { LeagueType } from '../../model/league/LeagueDTO';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
-import { PowerRankingOrder } from '../power-rankings/power-rankings-chart/power-rankings-chart.component';
 import { UntypedFormControl } from '@angular/forms';
 
 @Injectable({
@@ -52,6 +51,9 @@ export class PowerRankingsService {
   /** power ranking table cols to display */
   selectedMetrics = new UntypedFormControl([]);
 
+  /** power rankings selected rankings */
+  selectedRankings: string = 'avg_adp';
+
   /** TODO add custom visualizations to power rankings */
   powerRankingsVisualizations: string[] = ['overall'];
 
@@ -66,13 +68,10 @@ export class PowerRankingsService {
 
   /** rederaft ranking metric options */
   redraftRankingMetricOptions: {}[] = [
-    { 'value': PowerRankingMarket.ADP, 'display': 'Average ADP' },
+    { 'value': PowerRankingMarket.ADP, 'display': 'Selected Season Rankings' },
     { 'value': PowerRankingMarket.KeepTradeCutRedraft, 'display': 'KeepTradeCut (Redraft)' },
     { 'value': PowerRankingMarket.FantasyCalcRedraft, 'display': 'FantasyCalc (Redraft)' },
   ]
-
-  /** power rankings table filter options */
-  powerRankingChartOption: PowerRankingOrder = PowerRankingOrder.OVERALL;
 
   /** rankings options */
   rankingMarket: PowerRankingMarket = PowerRankingMarket.KeepTradeCut;
@@ -98,16 +97,16 @@ export class PowerRankingsService {
    * @param player2
    * @private
    */
-  private static getBetterPlayer(player1: FantasyPlayer, player2: FantasyPlayer): FantasyPlayer {
+  private getBetterPlayer(player1: FantasyPlayer, player2: FantasyPlayer): FantasyPlayer {
     // flex te's aren't as valuable
     const teModifier = 3;
     if (player1 && player2) {
-      const player1ADP = player1.position === 'TE' ? player1.avg_adp * teModifier : player1.avg_adp;
-      const player2ADP = player2.position === 'TE' ? player2.avg_adp * teModifier : player2.avg_adp;
+      const player1ADP = player1.position === 'TE' ? player1?.[this.selectedRankings] * teModifier : player1?.[this.selectedRankings];
+      const player2ADP = player2.position === 'TE' ? player2?.[this.selectedRankings] * teModifier : player2?.[this.selectedRankings];
       if (player1ADP < player2ADP) {
-        return player1.avg_adp === 0 ? player2 : player1;
+        return player1?.[this.selectedRankings] === 0 ? player2 : player1;
       } else {
-        return player2.avg_adp === 0 ? player1 : player2;
+        return player2?.[this.selectedRankings] === 0 ? player1 : player2;
       }
     } else if (player1) {
       return player1;
@@ -309,28 +308,28 @@ export class PowerRankingsService {
       {
         const adpSortedQBs = this.sortPlayersByADP(team.roster[PositionGroup.QB].players);
         const starters = this.getHealthyPlayersFromList(adpSortedQBs, teamRosterCount[PositionGroup.QB]);
-        team.roster[PositionGroup.QB].starterValue = starters.reduce((t, s) => t + s.avg_adp, 0);
+        team.roster[PositionGroup.QB].starterValue = starters.reduce((t, s) => t + s?.[this.selectedRankings], 0);
         team.starters.push(...starters);
       }
       if (teamRosterCount[PositionGroup.RB] > 0) // rb
       {
         const adpSortedRBs = this.sortPlayersByADP(team.roster[PositionGroup.RB].players);
         const starters = this.getHealthyPlayersFromList(adpSortedRBs, teamRosterCount[PositionGroup.RB]);
-        team.roster[PositionGroup.RB].starterValue = starters.reduce((t, s) => t + s.avg_adp, 0);
+        team.roster[PositionGroup.RB].starterValue = starters.reduce((t, s) => t + s?.[this.selectedRankings], 0);
         team.starters.push(...this.getHealthyPlayersFromList(adpSortedRBs, teamRosterCount[PositionGroup.RB]));
       }
       if (teamRosterCount[PositionGroup.WR] > 0) // wr
       {
         const adpSortedWRs = this.sortPlayersByADP(team.roster[PositionGroup.WR].players);
         const starters = this.getHealthyPlayersFromList(adpSortedWRs, teamRosterCount[PositionGroup.WR]);
-        team.roster[PositionGroup.WR].starterValue = starters.reduce((t, s) => t + s.avg_adp, 0);
+        team.roster[PositionGroup.WR].starterValue = starters.reduce((t, s) => t + s?.[this.selectedRankings], 0);
         team.starters.push(...this.getHealthyPlayersFromList(adpSortedWRs, teamRosterCount[PositionGroup.WR]));
       }
       if (teamRosterCount[PositionGroup.TE] > 0) // te
       {
         const adpSortedTEs = this.sortPlayersByADP(team.roster[PositionGroup.TE].players);
         const starters = this.getHealthyPlayersFromList(adpSortedTEs, teamRosterCount[PositionGroup.TE]);
-        team.roster[PositionGroup.TE].starterValue = starters.reduce((t, s) => t + s.avg_adp, 0);
+        team.roster[PositionGroup.TE].starterValue = starters.reduce((t, s) => t + s?.[this.selectedRankings], 0);
         team.starters.push(...this.getHealthyPlayersFromList(adpSortedTEs, teamRosterCount[PositionGroup.TE]));
       }
       if (teamRosterCount[4] > 0) // flex
@@ -343,14 +342,14 @@ export class PowerRankingsService {
         const superFlexQB = this.getHealthyPlayersFromList(adpSortedQBs, 1, team.starters);
         if (superFlexQB.length > 0) {
           team.starters.push(...superFlexQB);
-          team.roster[PositionGroup.QB].starterValue += superFlexQB.reduce((v, qb) => v + qb.avg_adp, 0);
+          team.roster[PositionGroup.QB].starterValue += superFlexQB.reduce((v, qb) => v + qb?.[this.selectedRankings], 0);
           teamRosterCount[PositionGroup.QB]++;
         } else {
           teamRosterCount = this.getBestAvailableFlex(teamRosterCount[5], teamRosterCount, team);
         }
       }
       for (const starter of team.starters) {
-        team.adpValueStarter = Math.round(team.adpValueStarter + (starter.avg_adp || 100));
+        team.adpValueStarter = Math.round(team.adpValueStarter + (starter?.[this.selectedRankings] || 100));
         worstTeamStarterValue = Math.max(worstTeamStarterValue, team.adpValueStarter);
       }
     });
@@ -365,7 +364,7 @@ export class PowerRankingsService {
    * @param players
    */
   sortPlayersByADP(players: FantasyPlayer[]): FantasyPlayer[] {
-    return players.slice().sort((a, b) => (a.avg_adp || 100) - (b.avg_adp || 100));
+    return players.slice().sort((a, b) => (a?.[this.selectedRankings] || 100) - (b?.[this.selectedRankings] || 100));
   }
 
   /**
@@ -518,7 +517,7 @@ export class PowerRankingsService {
       const topRb = this.sortPlayersByADP(team.roster[1]?.players)[processedPlayers[1]];
       const topWr = this.sortPlayersByADP(team.roster[2]?.players)[processedPlayers[2]];
       const topTe = this.sortPlayersByADP(team.roster[3]?.players)[processedPlayers[3]];
-      const flexPlayer = PowerRankingsService.getBetterPlayer(topTe, PowerRankingsService.getBetterPlayer(topRb, topWr));
+      const flexPlayer = this.getBetterPlayer(topTe, this.getBetterPlayer(topRb, topWr));
       // if no player is found return
       if (!flexPlayer) {
         return teamRosterCount;
@@ -527,7 +526,7 @@ export class PowerRankingsService {
       const activeFlex = this.getHealthyPlayersFromList([flexPlayer], 1, team.starters);
       if (activeFlex.length > 0) {
         team.starters.push(flexPlayer);
-        team.flexStarterValue += flexPlayer.avg_adp
+        team.flexStarterValue += flexPlayer?.[this.selectedRankings]
         teamRosterCount[this.positionGroups.indexOf(flexPlayer.position)]++;
         selectedCount++;
       }
@@ -643,6 +642,12 @@ export class PowerRankingsService {
       default:
         powerRankingsTableCols = [...startCols, 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
         this.rankingMarket = Number(this.playerService.selectedMarket);
+        if (this.playerService.selectedMarket == FantasyMarket.FantasyCalcRedraft || this.playerService.selectedMarket == FantasyMarket.KeepTradeCutRedraft) {
+          this.playerService.loadPlayerValuesForFantasyMarket$(FantasyMarket.KeepTradeCut).subscribe(() => {
+            this.playerService.selectedMarket = FantasyMarket.KeepTradeCut;
+            this.rankingMarket = PowerRankingMarket.KeepTradeCut;
+          })
+        }
         this.powerRankingsTableView = PowerRankingTableView.TradeValues;
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
           powerRankingsTableCols.push('draftRank');
@@ -650,7 +655,6 @@ export class PowerRankingsService {
     }
     this.selectedMetrics.setValue(powerRankingsTableCols);
   }
-
 }
 
 export enum PowerRankingMarket {

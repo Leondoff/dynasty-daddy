@@ -292,6 +292,7 @@ export class MflService {
         const newLeague = new LeagueDTO()
         newLeague.leagueId = league.league_id;
         newLeague.name = league?.name;
+        newLeague.season = season;
         newLeague.leaguePlatform = LeaguePlatform.MFL;
         newLeague.metadata['teamId'] = this.formatRosterId(league?.franchise_id);
         newLeague.metadata['status'] = Status.LOADING;

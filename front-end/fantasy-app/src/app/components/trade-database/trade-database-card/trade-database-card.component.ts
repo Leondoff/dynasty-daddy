@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { TradeDatabaseItem } from "src/app/model/assets/TradeDatabase";
 import { PlayerService } from "src/app/services/player.service";
 import { ColorService } from "src/app/services/utilities/color.service";
+import { DisplayService } from "src/app/services/utilities/display.service";
 
 @Component({
     selector: 'trade-database-card',
@@ -20,16 +21,13 @@ export class TradeDatabaseCardComponent implements OnInit {
     pprStr: string;
 
     constructor(public colorService: ColorService,
+        private displayService: DisplayService,
         private playerService: PlayerService) {
 
     }
 
     ngOnInit(): void {
-        const transactionDate = new Date(this.trade.transaction_date);
-        const currentDate = new Date();
-        const timeDifference = currentDate.getTime() - transactionDate.getTime();
-
-        const daysAgo = Math.floor(timeDifference / (1000 * 3600 * 24));
+        const daysAgo = this.displayService.getDaysSinceDateString(this.trade.transaction_date);
 
         this.dateString = daysAgo <= 0 ? 'Today' : `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
 

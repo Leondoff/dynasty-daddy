@@ -22,32 +22,38 @@
       <div class="mid-bold-text">Let's get started!</div>
       <!-- Desktop platform select -->
       <div *ngIf="!configService.isMobile">
-        <mat-tab-group mat-align-tabs="center" class="margin-top-25" selectedIndex="{{selectedTab}}">
-          <mat-tab>
+        <mat-tab-group mat-align-tabs="center" class="margin-top-25 platform-tabs" selectedIndex="{{getDesktopPlatformTab()}}">
+          <mat-tab [tabIndex]="-1">
+            <ng-template mat-tab-label>
+              <img width="30px" height="30px" src='assets/patreon-tile.svg' alt="Patreon">
+            </ng-template>
+            <div *ngIf="false else patreonTemplate"></div>
+          </mat-tab>
+          <mat-tab [tabIndex]="0">
             <ng-template mat-tab-label>
               <img width="30px" height="30px" [src]='displayService.getImageForPlatform(0)' alt="Sleeper">
             </ng-template>
             <div *ngIf="false else sleeperTemplate"></div>
           </mat-tab>
-          <mat-tab *ngIf="configService.getConfigOptionByKey('allow_mfl_login')?.configValue === 'true'">
+          <mat-tab [tabIndex]="1">
             <ng-template mat-tab-label>
               <img width="30px" height="30px" [src]='displayService.getImageForPlatform(1)' alt="MyFantasyLeague">
             </ng-template>
             <div *ngIf="false else mflTemplate"></div>
           </mat-tab>
-          <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ff_login')?.configValue === 'true'">
+          <mat-tab [tabIndex]="2">
             <ng-template mat-tab-label>
               <img width="30px" height="30px" [src]='displayService.getImageForPlatform(2)' alt="Fleaflicker">
             </ng-template>
             <div *ngIf="false else fleaflickerTemplate"></div>
           </mat-tab>
-          <mat-tab *ngIf="configService.getConfigOptionByKey('allow_espn_login')?.configValue === 'true'">
+          <mat-tab [tabIndex]="3">
             <ng-template mat-tab-label>
               <img width="30px" height="30px" [src]='displayService.getImageForPlatform(3)' alt="ESPN Fantasy">
             </ng-template>
             <div *ngIf="false else espnTemplate"></div>
           </mat-tab>
-          <mat-tab *ngIf="configService.getConfigOptionByKey('allow_ffpc_login')?.configValue === 'true'">
+          <mat-tab [tabIndex]="4">
             <ng-template mat-tab-label>
               <img width="30px" height="30px" [src]='displayService.getImageForPlatform(4)' alt="FFPC">
             </ng-template>
@@ -64,6 +70,8 @@
               <img class="dropdown-img" [src]='getSelectedImage()' alt="Fantasy Platform">
               <span style="padding-left: 15px">{{getSelectedPlatformName()}}</span>
             </mat-select-trigger>
+            <mat-option value="-1">
+              <img class="dropdown-img" src='assets/patreon-tile.svg' alt="Patreon"><span style="padding-left: 15px">Patreon</span></mat-option>
             <mat-option value="0">
               <img class="dropdown-img" [src]='displayService.getImageForPlatform(0)' alt="Sleeper"><span style="padding-left: 15px">Sleeper</span></mat-option>
             <mat-option value="1" *ngIf="configService.getConfigOptionByKey('allow_mfl_login')?.configValue === 'true'">
@@ -92,6 +100,9 @@
           <div *ngSwitchCase="'4'">
             <div *ngIf="false else ffpcTemplate"></div>
           </div>
+          <div *ngSwitchCase="'-1'">
+            <div *ngIf="false else patreonTemplate"></div>
+          </div>
         </ng-container>
       </div>
       <div *ngIf="leagueService.leagueStatus === 'LOADING'" class="center-spinner margin-top-25">
@@ -102,9 +113,10 @@
           <div *ngIf="leagueService.leagueUser && leagueService.leagueUser?.userData.username !== 'undefined'">Congratulations<span class="warning__alert"> {{leagueService.leagueUser?.userData.username}}</span>!</div> The
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.season}}</span> season of
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.name}}</span> was loaded successfully from
-          <span class="warning__alert">{{getPlatformDisplayName()}}</span>!
+          <span class="warning__alert">{{displayService.getNameForPlatform(leagueService?.selectedLeague?.leaguePlatform)}}</span>!
         </div>
         <div *ngIf="leagueService.selectedLeague" class="margin-top-25">
+          <div class="margin-bot-10">Check out our league tools below!</div>
           <button mat-stroked-button [routerLink]="['./league/rankings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav" class="home-button">Power Rankings</button>
           <button mat-stroked-button [routerLink]="['./players/trade']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav" class="home-button">Trade Calculator</button>
         </div>
@@ -200,7 +212,7 @@
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/draft']" [queryParams]="leagueSwitchService.buildQueryParams()"  gaEvent="nav_draft_center" gaCategory="page_nav">Draft Center</h2>
+      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/draft']" [queryParams]="leagueSwitchService.buildQueryParams()"  gaEvent="nav_draft_center" gaCategory="page_nav">Draft Center</div>
       <div class="center-text margin-top-25 margin-bot-50">
         Generate Draft Recaps of your league drafts to see who made the best value draft picks. Using the redraft keeper candidate tool, determine which players are the best to keep. Also check out the early version of the mock draft tool, where you can create your own mock drafts using fantasy market values!
       </div>
@@ -212,7 +224,7 @@
       </div>
     </div>
     <div class="flex-item-home" fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%">
-      <h2 class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/standings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav">Standings</h2>
+      <div class="center-text mid-bold-text link--text__no__underline" [routerLink]="['./league/standings']" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav">Standings</div>
       <div class="center-text margin-top-25 margin-bot-50">
         Display advanced league standings & metrics to understand how each team is performing. View strength of schedule, close match ups, highest scoring weeks, and more! Additional schedule comparison insights are also on this page.
       </div>
@@ -262,6 +274,55 @@
   </div>
 </div>
 
+<!-- Patreon Login Component -->
+<ng-template #patreonTemplate>
+  <div style="overflow: hidden !important;">
+    <br>
+      <div class="margin-bot-20 center-text">
+        <span class="mid-bold-text">Dynasty Daddy Club</span>
+        <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 0">
+          <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
+        </span>
+      </div>
+    <div>
+      <div *ngIf="userService.user">
+        <tool-help [toolName]="'Dynasty Daddy Club'"></tool-help>
+
+        <div class="margin-top-10">Welcome {{userService.user.leagues.length > 0 ? 'Back' : ''}}</div>
+        <div class="mid-bold-text">{{leagueService.leagueUser.userData.username}}</div>
+
+        <div class="margin-top-25">
+          <span *ngIf="leagueService.leagueUser?.leagues"></span> We found <span
+          class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to your Dynasty Daddy Club Account.
+        </div>
+
+        <div class="mat-form-field-center">
+          <league-dropdown [leagues]="leagueService.leagueUser?.leagues" [leagueId]="leagueService.selectedLeague?.leagueId"></league-dropdown>
+        </div>
+      </div>
+      <div *ngIf="!userService.user && userService.loading === 0" style="text-align: -webkit-center;">
+        <mat-spinner color="accent" [diameter]="30"></mat-spinner>
+      </div>
+      <div *ngIf="!userService.user && userService.loading === 1">
+        <button mat-raised-button class="patreon_button" (click)="userService.loginWithPatreon()">
+            Login via <img src="assets/patreon-tile.svg" alt="patreon-icon" class="logo">
+        </button>
+        <div *ngIf="userService.errMsg != ''" class="warning__alert margin-bot-10 margin-top-10">
+          {{userService.errMsg}}
+        </div>
+
+        <div class="margin-top-10">Not a member? <span class="link--text__dot__underline warning__alert" (click)="openPatreon()">Click here to join!</span></div>
+        <div class="margin-top-25 mid-bold-text">What do you get?</div>
+        <div class="margin-top-15">Cross-Platform Single Login League Management</div>
+        <div>Early access to features in development</div>
+        <div>Weekly Mailbag Video from Jeremy</div>
+        <div>Exclusive Discord Role + Channels</div>
+        <div>Behind-the-scenes Dev Posts & Videos</div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
 <!-- Sleeper Login Component -->
 <ng-template #sleeperTemplate>
   <div style="overflow: hidden !important;">
@@ -294,9 +355,14 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div>
+      <div class="sign-in-button">
         <button mat-raised-button [disabled]="!usernameInput"
                 color="accent" (click)="fetchUserInfo(0)" gaEvent="login_sleeper_username" gaCategory="platform_login">Sign In
+        </button>
+        <button mat-button *ngIf="userService.user" [disabled]="usernameInput !== leagueService.leagueUser?.userData?.username || leagueService.leagueUser?.leaguePlatform !== 0 || clubAddedAlready"
+                [ngClass]="{'pulse-button': usernameInput === leagueService.leagueUser?.userData?.username && leagueService.leagueUser?.leaguePlatform === 0 && !clubAddedAlready}"
+                matTooltip="Add Leagues to User" matTooltipPosition="below" 
+                color="accent" (click)="addLeaguesToClub()" gaEvent="sync_sleeper_user" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
       </div>
       <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 0">
@@ -305,13 +371,7 @@
         </div>
         <br>
         <div class="mat-form-field-center">
-          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-            <mat-label>Select a league</mat-label>
-            <mat-select [(ngModel)]="leagueSwitchService.selectedLeague" (selectionChange)="leagueSwitchService.loadLeague($event.value)" [disabled]="leagueService.leagueStatus === 'LOADING'">
-              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                          [value]="league">{{league.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <league-dropdown [leagues]="leagueService.leagueUser?.leagues" [leagueId]="leagueService.selectedLeague?.leagueId"></league-dropdown>
         </div>
       </div>
     </div>
@@ -323,9 +383,14 @@
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
-      <div>
-        <button mat-raised-button [disabled]="!sleeperLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
+      <div class="sign-in-button">
+        <button mat-raised-button [disabled]="!sleeperLeagueIdInput || sleeperLeagueIdInput === leagueService.selectedLeague?.leagueId"
                 color="accent" (click)="loginWithSleeperLeagueId()"gaEvent="login_sleeper_league_id" gaCategory="platform_login">Sign In
+        </button>
+        <button mat-button *ngIf="userService.user" [disabled]="!sleeperLeagueIdInput || sleeperLeagueIdInput !== leagueService.selectedLeague?.leagueId || clubAddedAlready"
+          [ngClass]="{'pulse-button': sleeperLeagueIdInput === leagueService.selectedLeague?.leagueId && !clubAddedAlready}"
+                matTooltip="Add League to User" matTooltipPosition="below" 
+                color="accent" (click)="addLeaguesToClub([leagueService.selectedLeague])" gaEvent="sync_sleeper" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
       </div>
     </div>
@@ -343,7 +408,7 @@
   <div style="overflow: hidden !important;">
     <br>
     <div class="margin-bot-20 center-text">
-      <span class="mid-bold-text">MyFantasyLeague <span class="warning__alert small-text__light">Beta</span></span>
+      <span class="mid-bold-text">MyFantasyLeague</span>
       <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 1">
         <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
       </span>
@@ -371,9 +436,14 @@
           </button>
         </mat-form-field>
       </div>
-      <div>
+      <div class="sign-in-button">
         <button mat-raised-button [disabled]="!mflUsernameInput || !mflPasswordInput"
                 color="accent" (click)="fetchUserInfo(1)" gaEvent="login_mfl_username" gaCategory="platform_login">Sign In
+        </button>
+        <button mat-button *ngIf="userService.user" [disabled]="mflUsernameInput !== leagueService.leagueUser?.userData?.username || leagueService.leagueUser?.leaguePlatform != 1 || clubAddedAlready"
+              [ngClass]="{'pulse-button': mflUsernameInput === leagueService.leagueUser?.userData?.username && leagueService.leagueUser?.leaguePlatform === 1 && !clubAddedAlready}"
+              matTooltip="Add Leagues to User" matTooltipPosition="below" 
+              color="accent" (click)="addLeaguesToClub()" gaEvent="sync_mfl_user" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
         <div class="margin-top-10 small-text__light">
           We do not store any personal data, it is only passed to the MFL to retrieve data.
@@ -385,13 +455,7 @@
         </div>
         <br>
         <div class="mat-form-field-center">
-          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-            <mat-label>Select a league</mat-label>
-            <mat-select [(ngModel)]="mflLeagueIdInput" (selectionChange)="loginWithMFLLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
-              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                          [value]="league.leagueId">{{league.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <league-dropdown [leagues]="leagueService.leagueUser?.leagues" [leagueId]="leagueService.selectedLeague?.leagueId"></league-dropdown>
         </div>
       </div>
     </div>
@@ -411,9 +475,14 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div>
+      <div class="sign-in-button">
         <button mat-raised-button [disabled]="!mflLeagueIdInput"
                 color="accent" (click)="loginWithMFLLeagueId()" gaEvent="login_mfl_league_id" gaCategory="platform_login">Sign In
+        </button>
+        <button mat-button *ngIf="userService.user" [disabled]="mflLeagueIdInput !== leagueService.selectedLeague?.leagueId || clubAddedAlready"
+          [ngClass]="{'pulse-button': mflLeagueIdInput === leagueService.selectedLeague?.leagueId && !clubAddedAlready}"
+                matTooltip="Add League to User" matTooltipPosition="below" 
+                color="accent" (click)="addLeaguesToClub([leagueService.selectedLeague])" gaEvent="sync_mfl_league" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="club-icon" class="club-logo">
         </button>
       </div>
     </div>
@@ -425,7 +494,7 @@
   <div style="overflow: hidden !important;">
     <br>
       <div class="margin-bot-20 center-text">
-        <span class="mid-bold-text">Fleaflicker <span class="warning__alert small-text__light">Beta</span></span>
+        <span class="mid-bold-text">Fleaflicker</span>
         <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 2">
           <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
         </span>
@@ -452,9 +521,14 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div>
+      <div class="sign-in-button">
         <button mat-raised-button [disabled]="!fleaflickerEmail"
                 color="accent" (click)="fetchUserInfo(2)" gaEvent="login_ff_email" gaCategory="platform_login">Sign In
+        </button>
+        <button mat-button *ngIf="userService.user" [disabled]="fleaflickerEmail !== leagueService.leagueUser?.userData?.username || leagueService.leagueUser?.leaguePlatform != 2 || clubAddedAlready"
+          [ngClass]="{'pulse-button': fleaflickerEmail === leagueService.leagueUser?.userData?.username && leagueService.leagueUser?.leaguePlatform === 2 && !clubAddedAlready}"
+                matTooltip="Add Leagues to User" matTooltipPosition="below" 
+                color="accent" (click)="addLeaguesToClub()" gaEvent="sync_ff_user" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
       </div>
       <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 2">
@@ -463,13 +537,7 @@
         </div>
         <br>
         <div class="mat-form-field-center">
-          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-            <mat-label>Select a league</mat-label>
-            <mat-select [(ngModel)]="fleaflickerLeagueIdInput" (selectionChange)="loginWithFleaflickerLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
-              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                          [value]="league.leagueId">{{league.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <league-dropdown [leagues]="leagueService.leagueUser?.leagues" [leagueId]="leagueService.selectedLeague?.leagueId"></league-dropdown>
         </div>
       </div>
     </div>
@@ -493,6 +561,11 @@
         <button mat-raised-button [disabled]="!fleaflickerLeagueIdInput || usernameInput === leagueService.selectedLeague?.leagueId"
                 color="accent" (click)="loginWithFleaflickerLeagueId()" gaEvent="login_ff_league_id" gaCategory="platform_login">Sign In
         </button>
+        <button mat-button *ngIf="userService.user" [disabled]="!fleaflickerLeagueIdInput || fleaflickerLeagueIdInput !== leagueService.selectedLeague?.leagueId || clubAddedAlready"
+              [ngClass]="{'pulse-button': fleaflickerLeagueIdInput === leagueService.selectedLeague?.leagueId && !clubAddedAlready}"
+              matTooltip="Add League to User" matTooltipPosition="below" 
+              color="accent" (click)="addLeaguesToClub([leagueService.selectedLeague])" gaEvent="sync_ff_league" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
+        </button> 
       </div>
     </div>
   </div>
@@ -503,7 +576,7 @@
   <div style="overflow: hidden !important;">
     <br>
       <div class="margin-bot-20 center-text">
-        <span class="mid-bold-text">ESPN <span class="warning__alert small-text__light">Beta</span></span>
+        <span class="mid-bold-text">ESPN</span>
         <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 3">
           <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
         </span>
@@ -527,9 +600,14 @@
       <div *ngIf="errorMsg != ''" class="warning__alert margin-bot-10">
         {{errorMsg}}
       </div>
-      <div>
-        <button mat-raised-button [disabled]="!espnLeagueId || usernameInput === leagueService.selectedLeague?.leagueId"
+      <div class="sign-in-button">
+        <button mat-raised-button [disabled]="!espnLeagueId || espnLeagueId === leagueService.selectedLeague?.leagueId"
                 color="accent" (click)="loginWithESPNLeagueId()" gaEvent="login_espn_league_id" gaCategory="platform_login">Sign In
+        </button>
+        <button mat-button *ngIf="userService.user" [disabled]="!espnLeagueId || espnLeagueId !== leagueService.selectedLeague?.leagueId || clubAddedAlready"
+          [ngClass]="{'pulse-button': espnLeagueId === leagueService.selectedLeague?.leagueId && !clubAddedAlready}"
+                matTooltip="Add League to User" matTooltipPosition="below" 
+                color="accent" (click)="addLeaguesToClub([leagueService.selectedLeague])" gaEvent="sync_espn_league" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
       </div>
     </div>
@@ -541,7 +619,7 @@
   <div style="overflow: hidden !important;">
     <br>
     <div class="margin-bot-20 center-text">
-      <span class="mid-bold-text">FFPC <span class="warning__alert small-text__light">Beta</span></span>
+      <span class="mid-bold-text">FFPC</span>
       <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 4">
         <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
       </span>
@@ -568,9 +646,14 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div>
+      <div class="sign-in-button">
         <button mat-raised-button [disabled]="!ffpcLoginMethod"
                 color="accent" (click)="fetchUserInfo(4)" gaEvent="login_ffpc_email" gaCategory="platform_login">Sign In
+        </button>
+        <button mat-button *ngIf="userService.user" [disabled]="ffpcEmail !== leagueService.leagueUser?.userData?.username || leagueService.leagueUser?.leaguePlatform != 4 || clubAddedAlready"
+          [ngClass]="{'pulse-button': ffpcEmail === leagueService.leagueUser?.userData?.username && leagueService.leagueUser?.leaguePlatform === 4 && !clubAddedAlready}"
+                matTooltip="Add Leagues to User" matTooltipPosition="below" 
+                color="accent" (click)="addLeaguesToClub()" gaEvent="sync_ffpc_user" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
       </div>
       <div class="margin-top-25" *ngIf="leagueService.leagueUser && leagueService.leagueUser.leaguePlatform === 4">
@@ -579,13 +662,7 @@
         </div>
         <br>
         <div class="mat-form-field-center">
-          <mat-form-field appearance="standard" color="accent" *ngIf="leagueService.leagueUser?.leagues.length > 0">
-            <mat-label>Select a league</mat-label>
-            <mat-select [(ngModel)]="ffpcLeagueId" (selectionChange)="loginWithFFPCLeagueId()" [disabled]="leagueService.leagueStatus === 'LOADING'">
-              <mat-option *ngFor="let league of leagueService.leagueUser?.leagues"
-                          [value]="league.leagueId">{{league.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <league-dropdown [leagues]="leagueService.leagueUser?.leagues" [leagueId]="leagueService.selectedLeague?.leagueId"></league-dropdown>
         </div>
       </div>
     </div>
@@ -605,9 +682,14 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div>
-        <button mat-raised-button [disabled]="!ffpcLeagueId || usernameInput === leagueService.selectedLeague?.leagueId"
+      <div class="sign-in-button">
+        <button mat-raised-button [disabled]="!ffpcLeagueId || ffpcLeagueId === leagueService.selectedLeague?.leagueId"
                 color="accent" (click)="loginWithFFPCLeagueId()" gaEvent="login_ffpc_league_id" gaCategory="platform_login">Sign In
+        </button>
+        <button mat-button *ngIf="userService.user" [disabled]="!ffpcLeagueId || ffpcLeagueId !== leagueService.selectedLeague?.leagueId || clubAddedAlready"
+          [ngClass]="{'pulse-button': ffpcLeagueId === leagueService.selectedLeague?.leagueId && !clubAddedAlready}"
+                matTooltip="Add League to User" matTooltipPosition="below" 
+                color="accent" (click)="addLeaguesToClub([leagueService.selectedLeague])" gaEvent="sync_ffpc_league" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
       </div>
     </div>
