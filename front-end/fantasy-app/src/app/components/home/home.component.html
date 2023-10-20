@@ -289,7 +289,7 @@
         <tool-help [toolName]="'Dynasty Daddy Club'"></tool-help>
 
         <div class="margin-top-10">Welcome {{userService.user.leagues.length > 0 ? 'Back' : ''}}</div>
-        <div class="mid-bold-text">{{leagueService.leagueUser.userData.username}}</div>
+        <div class="mid-bold-text">{{userService.user.firstName}} {{userService.user.lastName}}</div>
 
         <div class="margin-top-25">
           <span *ngIf="leagueService.leagueUser?.leagues"></span> We found <span
