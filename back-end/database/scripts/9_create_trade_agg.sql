@@ -1,3 +1,5 @@
+DROP MATERIALIZED VIEW if EXISTS mat_vw_trade_agg;
+
 CREATE MATERIALIZED VIEW mat_vw_trade_agg AS
 WITH combined AS (
     SELECT unnest(sideA) AS id, transaction_date

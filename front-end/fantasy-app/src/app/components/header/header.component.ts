@@ -5,6 +5,7 @@ import { ConfigService } from '../../services/init/config.service';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
 import { UserService } from 'src/app/services/user.service';
+import { DisplayService } from 'src/app/services/utilities/display.service';
 
 @Component({
   selector: 'app-header',
@@ -22,6 +23,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   constructor(public leagueService: LeagueService,
     public configService: ConfigService,
+    public displayService: DisplayService,
+    public userService: UserService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -45,5 +48,4 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   toggle() {
       this.toggleMenu.emit();
   }
-
 }

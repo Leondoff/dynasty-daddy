@@ -53,6 +53,10 @@ export class FantasyPlayer {
   rtsports_adp: number = null;
   underdog_adp: number = null;
   drafters_adp: number = null;
+  avg_ros: number = null;
+  numberfire_ros: number = null;
+  espn_ros: number = null;
+  fantasyguys: number = null;
 
   constructor() {}
 

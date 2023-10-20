@@ -5,6 +5,8 @@ require('events').EventEmitter.defaultMaxListeners = 15;
 
 dotenv.config();
 
+export const PATREON_TIER_ID = '25070cd2-0231-42e0-aba5-2959cc42e9bf';
+
 export const DB_USER = process.env.DO_DB_USER;
 export const DB_PWD = process.env.DO_DB_PASSWORD;
 export const DB_HOST = process.env.DO_DB_HOST;

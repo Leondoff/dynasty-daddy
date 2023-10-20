@@ -18,11 +18,12 @@ import { PageService } from 'src/app/services/utilities/page.service';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
+import { LeagueDTO } from 'src/app/model/league/LeagueDTO';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent extends BaseComponent implements OnInit, AfterViewInit {
 
@@ -87,18 +88,21 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
 
   errorMsg: string = '';
 
+  /** club added already is toggled when clicked */
+  clubAddedAlready: boolean = false;
+
   constructor(private sleeperApiService: SleeperApiService,
     public leagueService: LeagueService,
     private playersService: PlayerService,
-    private displayService: DisplayService,
+    public displayService: DisplayService,
     public configService: ConfigService,
+    public userService: UserService,
     private route: ActivatedRoute,
     private mflService: MflService,
     private espnService: ESPNService,
     private ffpcService: FFPCService,
     private dialog: MatDialog,
     private pageService: PageService,
-    private userService: UserService,
     private fleaflickerService: FleaflickerService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
@@ -124,6 +128,8 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
       this.route.queryParams.subscribe(params => {
         const code = params['code'];
         if (code) {
+          this.selectedTab = '-1';
+          localStorage.setItem(LocalStorageDictionary.SELECTED_LOGIN_METHOD, '-1')
           this.userService.handleOAuthCallback();
         }
         this.leagueSwitchService.loadFromQueryParams(params);
@@ -131,6 +137,12 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
       this.leagueSwitchService.leagueChanged$.subscribe(_ => {
         this.selectedYear = this.leagueService?.selectedYear ||
           this.leagueService?.selectedLeague?.season || this.supportedYears[1];
+        if (!this.userService.user) {
+          localStorage.setItem(LocalStorageDictionary.SELECTED_LOGIN_METHOD,
+            this.leagueService.selectedLeague?.leaguePlatform?.toString())
+        } else {
+          localStorage.setItem(LocalStorageDictionary.SELECTED_LOGIN_METHOD, '-1')
+        }
         this.setUpForms();
       })
     );
@@ -142,8 +154,12 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    */
   private setUpForms(): void {
     this.leagueSwitchService.selectedLeague = this.leagueService.selectedLeague || null;
+    // patreon is -1, rest is just the platform enum
+    this.selectedTab = this.userService.user ? '-1' :
+      localStorage.getItem(LocalStorageDictionary.SELECTED_LOGIN_METHOD) || '-1';
     if (this.leagueService.selectedLeague) {
-      this.selectedTab = this.leagueService.selectedLeague.leaguePlatform.toString();
+      this.selectedTab = this.userService.user ? '-1' :
+        this.leagueService.selectedLeague.leaguePlatform.toString();
       switch (this.leagueService.selectedLeague.leaguePlatform) {
         case LeaguePlatform.MFL:
           this.mflLeagueIdInput = this.leagueService.selectedLeague.leagueId;
@@ -172,9 +188,14 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   }
 
   /**
+   * get desktop tab id
+   */
+  getDesktopPlatformTab = () =>
+    (Number(this.selectedTab) + 1).toString();
+
+  /**
    * Wraps refresh call to twitter for pulling timeline
    */
-
   loadTwitterTimeline(): void {
     this.dynastyDaddySocials = 'twitter';
     (<any>window)?.twttr?.widgets?.load();
@@ -188,6 +209,8 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   fetchUserInfo(platform: LeaguePlatform): void {
     let username: string;
     let password: string;
+    this.clubAddedAlready = false;
+
     switch (platform) {
       case LeaguePlatform.SLEEPER:
         username = this.usernameInput;
@@ -229,6 +252,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * loads fleaflicker data for user
    */
   loginWithESPNLeagueId(year?: string, leagueId?: string): void {
+    this.clubAddedAlready = false;
     this.errorMsg = '';
     this.espnService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.espnLeagueId)
       .pipe(
@@ -246,13 +270,13 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
       );
   }
 
-
   /**
    * loads ffpc data for user
    * @param year season
    * @param leagueId ffpc league id
    */
   loginWithFFPCLeagueId(year?: string, leagueId?: string): void {
+    this.clubAddedAlready = false;
     this.ffpcService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.ffpcLeagueId).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(leagueData);
     });
@@ -285,6 +309,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * @param demoId string of demo league id
    */
   loginWithSleeperLeagueId(demoId?: string): void {
+    this.clubAddedAlready = false;
     this.sleeperApiService.getSleeperLeagueByLeagueId(demoId || this.sleeperLeagueIdInput).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(leagueData);
     });
@@ -346,6 +371,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    * handles logging in with mfl league id
    */
   loginWithMFLLeagueId(year: string = this.selectedYear, leagueId: string = this.mflLeagueIdInput): void {
+    this.clubAddedAlready = false;
     const formattedLeagueId = leagueId?.split('#')[0] || leagueId;
     this.mflService.loadLeagueFromId$(year, formattedLeagueId).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(leagueData);
@@ -357,36 +383,25 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
  * @param demoId string of demo league id
  */
   loginWithFleaflickerLeagueId(year?: string, leagueId?: string): void {
+    this.clubAddedAlready = false;
     this.fleaflickerService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.fleaflickerLeagueIdInput).subscribe(leagueData => {
       this.leagueSwitchService.loadLeague(leagueData);
     });
   }
 
-  /**
- * get platform display name
- */
-  getPlatformDisplayName(): string {
-    switch (this.leagueService?.selectedLeague?.leaguePlatform) {
-      case LeaguePlatform.MFL:
-        return 'MyFantasyLeague';
-      case LeaguePlatform.FLEAFLICKER:
-        return 'Fleaflicker';
-      case LeaguePlatform.SLEEPER:
-        return 'Sleeper';
-      case LeaguePlatform.FFPC:
-        return 'FFPC';
-      default:
-        return 'League';
-    }
-  }
-
   /** mat menu for mobile doesn't update without wrapper function */
   getSelectedImage(): string {
+    if (this.selectedTab == '-1') {
+      return 'assets/patreon-tile.svg';
+    }
     return this.displayService.getImageForPlatform(Number(this.selectedTab));
   }
 
   /** mat menu for mobile doesn't update without wrapper function */
   getSelectedPlatformName(): string {
+    if (this.selectedTab == '-1') {
+      return 'Patreon';
+    }
     return this.displayService.getDisplayNameForPlatform(Number(this.selectedTab));
   }
 
@@ -396,5 +411,19 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
    */
   openSlideUrl(slide: any): void {
     window.open(slide.url, '_blank');
+  }
+
+  /**
+   * open patreon for user
+   */
+  openPatreon = () =>
+    window.open('https://www.patreon.com/DynastyDaddy', '_blank');
+
+  /**
+   * Add Leagues to a Club user
+   */
+  addLeaguesToClub(leagues: LeagueDTO[] = this.leagueService.leagueUser.leagues): void {
+    this.clubAddedAlready = true;
+    this.userService.addLeaguesToPatreonUser(leagues);
   }
 }

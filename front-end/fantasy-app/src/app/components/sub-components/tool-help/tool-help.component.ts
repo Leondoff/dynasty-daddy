@@ -1,8 +1,8 @@
 import { OnInit, Component, Input } from "@angular/core";
-import { SimpleTextModalComponent} from "../simple-text-modal/simple-text-modal.component";
+import { SimpleTextModalComponent } from "../simple-text-modal/simple-text-modal.component";
 import { ConfigService } from "src/app/services/init/config.service";
 import { MatDialog } from "@angular/material/dialog";
-import { FooterTutorial, LeagueFormatTutorial, PlayoffCalculatorTutorial, PowerRankingsTutorial, SimpleTextCategory, TradeCalculatorTutorial, TradeDatabaseTutorial } from "src/app/model/toolHelpModel";
+import { DynastyDaddyClubTutorial, FooterTutorial, LeagueFormatTutorial, PlayoffCalculatorTutorial, PowerRankingsTutorial, SimpleTextCategory, TradeCalculatorTutorial, TradeDatabaseTutorial } from "src/app/model/toolHelpModel";
 
 @Component({
     selector: 'tool-help',
@@ -36,6 +36,9 @@ export class ToolHelpComponent implements OnInit {
             case ToolsHelp.TradeDatabase:
                 this.categoryList = TradeDatabaseTutorial;
                 break;
+            case ToolsHelp.DynastyDaddyClub:
+                this.categoryList = DynastyDaddyClubTutorial;
+                break;
             default:
                 this.categoryList = PowerRankingsTutorial;
         }
@@ -65,4 +68,5 @@ enum ToolsHelp {
     LeagueFormat = 'League Format',
     TradeCalculator = 'Trade Calculator',
     TradeDatabase = 'Trade Database',
+    DynastyDaddyClub = 'Dynasty Daddy Club'
 };

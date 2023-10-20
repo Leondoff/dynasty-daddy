@@ -67,3 +67,6 @@ FANTASY_CALC_STD_REDRAFT_URL = "https://api.fantasycalc.com/values/current?isDyn
 
 # Sleeper apis
 SLEEPER_BASE_URL = "https://api.sleeper.app/v1/league/"
+
+# TODO update URL with new season
+ESPN_ROS_URL = "https://www.espn.com/fantasy/football/story/_/id/38386367/fantasy-football-2023-updated-rest-season-rankings"

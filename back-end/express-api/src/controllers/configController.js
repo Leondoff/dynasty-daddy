@@ -1,3 +1,4 @@
+import { HttpStatusCode } from 'axios';
 import { GetConfigTableData } from '../repository';
 
 /**
@@ -6,8 +7,8 @@ import { GetConfigTableData } from '../repository';
 export const GetConfigValuesEndpoint = async (req, res) => {
   try {
     const data = await GetConfigTableData();
-    res.status(200).json(data.rows);
+    res.status(HttpStatusCode.Ok).json(data.rows);
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };

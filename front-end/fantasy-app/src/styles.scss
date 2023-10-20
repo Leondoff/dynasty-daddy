@@ -697,6 +697,23 @@ hr.dark {
   color: mat.get-color-from-palette($mat-accent, main);
 }
 
+.patreon_button {
+  color: #052D49;
+  background-color: #F96854;
+
+  .logo {
+    width: 28px;
+    height: 28px;
+    vertical-align: middle;
+  }
+}
+
+.club-logo {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
 /**
  * mat dropdowns
  */
@@ -714,6 +731,10 @@ hr.dark {
 
 .mat-dropdown-wide-100 {
   width: 100px;
+}
+
+.mat-dropdown-wide-120 {
+  width: 120px;
 }
 
 .mat-dropdown-wide-100-percent {
@@ -987,8 +1008,12 @@ tr.table-detail-row {
   color: mat.get-color-from-palette($mat-warn, main);
 }
 
-.mat-tab-body-content {
-  overflow-y: hidden !important;
+::ng-deep .mat-option.multiline-mat-option {
+  white-space: normal !important;
+  line-height: normal !important;
+  height: unset !important;
+  padding-top: 0.9em !important;
+  padding-bottom: 0.9em !important;
 }
 
 // button stylings

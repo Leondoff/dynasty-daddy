@@ -52,6 +52,8 @@ export class FleaflickerService {
         const newLeague = new LeagueDTO()
         newLeague.leagueId = league.id
         newLeague.name = league?.name;
+        newLeague.season = year;
+        newLeague.totalRosters = league.capacity;
         newLeague.leaguePlatform = LeaguePlatform.FLEAFLICKER;
         newLeague.metadata['teamId'] = league?.ownedTeam?.id;
         newLeague.metadata['status'] = Status.LOADING;

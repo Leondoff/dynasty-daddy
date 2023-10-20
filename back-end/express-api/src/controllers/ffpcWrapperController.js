@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios, { HttpStatusCode } from 'axios';
+
 const xmlJs = require('xml-js');
 
 function nativeType(value) {
@@ -46,7 +47,7 @@ const sendFFPCRequest = async (leagueId, metadata, callType, res) => {
       res.status(response.status).json(JSON.parse(responseJSON));
     })
     .catch((err) => {
-      res.status(500);
+      res.status(HttpStatusCode.InternalServerError);
     });
 };
 
@@ -88,6 +89,6 @@ export const GetFFPCUserLeaguesEndpoint = async (req, res) => {
       res.status(response.status).json(JSON.parse(responseJSON));
     })
     .catch((err) => {
-      res.status(500).json(err);
+      res.status(HttpStatusCode.InternalServerError).json(err);
     });
 };

@@ -107,6 +107,10 @@ CREATE TABLE player_adp (
     underdog_adp int,
     drafters_adp int,
     avg_adp decimal,
+    espn_ros int,
+    fantasyguys_ros int,
+    numberfire_ros int,
+    avg_ros decimal,
     updated_at timestamp not null default CURRENT_TIMESTAMP,
     created_at timestamp not null default CURRENT_TIMESTAMP
 );

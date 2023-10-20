@@ -59,6 +59,15 @@
             <mat-icon>insights</mat-icon>Player Comparison</a>
       </mat-nav-list>
   </mat-expansion-panel>
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="userService.user && (searchVal == '' || isInSearch('Dynasty Daddy Club') || isInSearch('User Settings'))">
+    <mat-expansion-panel-header>
+      <img src="assets/clubs.svg" alt="patreon-icon" class="club-logo"> Dynasty Daddy Club
+    </mat-expansion-panel-header>
+    <mat-nav-list>
+      <a mat-list-item [routerLink]="['./user/settings']" *ngIf="userService.user && (searchVal == '' || isInSearch('User Settings'))" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_user_settings" gaCategory="page_nav">
+        <mat-icon>settings</mat-icon>User Settings</a>
+    </mat-nav-list>
+</mat-expansion-panel>
   <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar>
   </mat-list-item>
@@ -109,6 +118,9 @@
   </mat-list-item>
   <mat-list-item *ngIf="leagueService.isLeagueLoaded() && (searchVal == '' || isInSearch('Refresh League'))" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-icon>refresh</mat-icon><span> Refresh League</span>
+  </mat-list-item>
+  <mat-list-item *ngIf="!userService.user && (searchVal == '' || isInSearch('Dynasty Daddy Club'))" (click)="openUrl('https://www.patreon.com/DynastyDaddy')" gaEvent="click_dynasty_daddy_club" gaCategory="nav_patreon">
+    <img src="assets/clubs.svg" alt="patreon-icon" class="club-logo"><span> Dynasty Daddy Club</span>
   </mat-list-item>
   <mat-list-item *ngIf="searchVal == '' || isInSearch('Roster Review')" (click)="openUrl()" gaEvent="click_roster_review" gaCategory="nav_sponsor">
     <mat-icon>paid</mat-icon><span> Roster Review</span>
