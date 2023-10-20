@@ -293,7 +293,7 @@
 
         <div class="margin-top-25">
           <span *ngIf="leagueService.leagueUser?.leagues"></span> We found <span
-          class="warning__alert">{{leagueService.leagueUser?.leagues.length}}</span> leagues linked to your Dynasty Daddy Club Account.
+          class="warning__alert">{{leagueService.leagueUser?.leagues.length || 0}}</span> leagues linked to your Dynasty Daddy Club Account.
         </div>
 
         <div class="mat-form-field-center">

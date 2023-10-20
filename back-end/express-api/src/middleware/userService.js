@@ -3,7 +3,7 @@ import axios from 'axios';
 import { GetUserById, PersistNewUser, UpdateUserLeagues } from '../repository';
 import { PATREON_CLIENT_ID, PATREON_CLIENT_SECRET, PATREON_REDIRECT_URL, PATREON_TIER_ID } from '../settings';
 
-const AdminIds = ['53401676'];
+const AdminIds = ['53401676', '71505590'];
 
 /**
  * Removes any non alpha-numeric, whitespace, or () in string
@@ -40,7 +40,7 @@ export const HandleUserRequest = async (code) => {
 
   // Step 2: Use the access token to fetch user identity
   const identityResponse = await axios.get(
-    'https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields%5Buser%5D=email,first_name,full_name,image_url,last_name,thumb_url,url,vanity,is_email_verified&fields%5Bmember%5D=currently_entitled_amount_cents,lifetime_support_cents,campaign_lifetime_support_cents,last_charge_status,patron_status,last_charge_date,pledge_relationship_start,pledge_cadence',
+    'https://www.patreon.com/api/oauth2/v2/identity?include=memberships.campaign&fields%5Buser%5D=email,first_name,full_name,image_url,last_name,thumb_url,url,vanity,is_email_verified&fields%5Bmember%5D=currently_entitled_amount_cents,lifetime_support_cents,campaign_lifetime_support_cents,last_charge_status,patron_status,last_charge_date,pledge_relationship_start,pledge_cadence&fields%5Bcampaign%5D=pledge_url',
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -51,10 +51,10 @@ export const HandleUserRequest = async (code) => {
   const memberships = identityResponse.data.included;
   const userId = userObj.id;
   const ddMembership = memberships?.find(p =>
-    p.id === PATREON_TIER_ID);
-  if ((!ddMembership
-    || (ddMembership.attributes.patron_status !== 'active_patron'
-      && ddMembership.attributes.currently_entitled_amount_cents === 0))
+    p.relationships?.campaign?.data?.id === PATREON_TIER_ID);
+  if ((!ddMembership || !ddMembership?.attributes?.currently_entitled_amount_cents
+    || (ddMembership?.attributes?.patron_status !== 'active_patron'
+      && ddMembership?.attributes?.currently_entitled_amount_cents === 0))
     && !AdminIds.includes(userId)) {
     throw Error('Didn\'t find Dynasty Daddy Tier.');
   }
@@ -63,9 +63,9 @@ export const HandleUserRequest = async (code) => {
   if (userData === undefined) {
     userData = await PersistNewUser(
       userId,
-      userObj.attributes.first_name,
-      userObj.attributes.last_name,
-      userObj.attributes.image_url
+      userObj?.attributes?.first_name,
+      userObj?.attributes?.last_name,
+      userObj?.attributes?.image_url
     );
   }
 
