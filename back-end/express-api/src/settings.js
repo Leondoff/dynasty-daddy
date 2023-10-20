@@ -14,7 +14,7 @@ export const DB_DB = process.env.DO_DATABASE;
 export const DB_PORT = process.env.DO_DB_PORT;
 export const PATREON_CLIENT_SECRET = process.env.PATREON_CLIENT_SECRET;
 export const PATREON_CLIENT_ID = process.env.PATREON_CLIENT_ID;
-export const PATREON_REDIRECT_URL = 'https://dynasty-daddy.com/';
+export const PATREON_REDIRECT_URL = 'https://dynasty-daddy.com';
 
 // local values to database
 // export const DB_USER = 'postgres';
