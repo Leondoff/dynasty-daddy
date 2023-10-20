@@ -17,7 +17,6 @@ const escapeString = async (inputString) =>
  * @param {*} code Oauth2 Code for user
  */
 export const HandleUserRequest = async (code) => {
-  console.log('REDIRECT - ', PATREON_REDIRECT_URL)
   // Step 1: Get the access token
   const tokenResponse = await axios.post(
     'https://www.patreon.com/api/oauth2/token',
