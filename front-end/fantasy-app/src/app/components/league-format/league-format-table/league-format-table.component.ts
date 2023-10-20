@@ -37,8 +37,6 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
 
     columnsToDisplay: string[];
 
-    dragDisabled = true;
-
     /** color gradient */
     perGradient: string[] = [];
 
