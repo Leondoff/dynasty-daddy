@@ -11,7 +11,7 @@
   <div>
     {{league.name|truncate:25}}
   </div>
-  <div class="small-text__light">{{displayService.leagueTypes[league.type]}}•{{league.totalRosters}}{{league.totalRosters ? ' Team•' : ''}}{{league.season}}•{{displayService.getNameForPlatform(league.leaguePlatform)}}</div>
+  <div class="small-text__light">{{displayService.leagueTypes[league.type]}} • {{league.totalRosters}}{{league.totalRosters ? ' Team • ' : ''}}{{league.season}} • {{displayService.getNameForPlatform(league.leaguePlatform)}}</div>
   </mat-option>
 </mat-select>
 </mat-form-field>

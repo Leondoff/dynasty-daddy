@@ -24,7 +24,7 @@ import { PageService } from "src/app/services/utilities/page.service";
 export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnDestroy {
 
     /** page description and SEO */
-    pageDescription = 'Search from over a quarter million fantasy football trades from actual leagues. The database updates every 6 hours.';
+    pageDescription = 'Search from over a quarter million fantasy football trades from actual leagues. The database updates every 8 hours.';
 
     /** control for the selected player */
     public playerCtrl: UntypedFormControl = new UntypedFormControl();

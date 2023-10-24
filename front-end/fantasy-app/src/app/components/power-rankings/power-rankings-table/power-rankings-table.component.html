@@ -233,9 +233,9 @@
               <div *ngFor="let positionGroup of element.roster;" class="grid-16">
                 <div>
               <span><span class="small-text__light">{{positionGroup.position}} Value: </span> <span
-                class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].value | number : '1.0-1'}}</span></span>
+                class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position][isTradeValue ? 'value' : 'starterValue'] | number : '1.0-1'}}</span></span>
                   <div class="small-text__light"> Rank: <span
-                    [ngClass]="{'success__alert': powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].isGreen, 'warning__alert': powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].isRed}">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].rank}}</span>
+                    [ngClass]="{'success__alert': powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].isGreen, 'warning__alert': powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position].isRed}">{{powerRankingCache[element.team.roster.rosterId].rosters[positionGroup.position][isTradeValue ? 'rank' : 'starterRank']}}</span>
                   </div>
                 </div>
                 <hr class="dark">

@@ -15,6 +15,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { PlayerService } from "../../services/player.service";
 import { DownloadService } from 'src/app/services/utilities/download.service';
 import { PageService } from 'src/app/services/utilities/page.service';
+import { delay, tap } from 'rxjs/operators';
+import { Status } from '../model/status';
 
 @Component({
   selector: 'app-playoff-calculator',
@@ -48,6 +50,9 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
 
   /** playoff machine start week */
   playoffMachineWeek: number;
+
+  /** playoff calc status for extra delay */
+  playoffCalcStatus: Status = Status.DONE;
 
   /** selectable metrics */
   selectableMetrics: { display: string, value: string, isDisabled: boolean }[] = [
@@ -88,19 +93,24 @@ export class PlayoffCalculatorComponent extends BaseComponent implements OnInit 
     super();
     this.pageService.setUpPageSEO('Fantasy Football Playoff Calculator',
       ['fantasy league simulator', 'playoff calculator', 'fantasy playoff calculator', 'league simulator', 'fantasy league simulator', 'fantasy football simulator',
-      'fantasy fooball playoff odds', 'fantasy football league simulator'],
+        'fantasy fooball playoff odds', 'fantasy football league simulator'],
       this.pageDescription)
   }
 
   ngOnInit(): void {
     this.playerService.loadPlayerValuesForToday();
     this.initPlayoffCalc();
-    this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
-      this.initPlayoffCalc();
-    }
-    ), this.route.queryParams.subscribe(params => {
-      this.leagueSwitchService.loadFromQueryParams(params);
-    })
+    this.addSubscriptions(this.leagueSwitchService.leagueChanged$.pipe(
+      tap(() => {
+        this.playoffCalcStatus = Status.LOADING;
+      }),
+      delay(500)).subscribe(() => {
+        this.initPlayoffCalc();
+        this.playoffCalcStatus = Status.DONE;
+      }),
+      this.route.queryParams.subscribe(params => {
+        this.leagueSwitchService.loadFromQueryParams(params);
+      })
     );
   }
 
