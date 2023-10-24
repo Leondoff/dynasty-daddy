@@ -108,6 +108,9 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   /** Player cache for power rankings */
   playerCache = {};
 
+  /** is trade value selected for expandable table */
+  isTradeValue: boolean;
+
   /** subject for handling search */
   private searchSubject$: Subject<void> = new Subject();
 
@@ -149,6 +152,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
    */
   refreshPowerRankingCache(): void {
     this.playerCache = {};
+    this.isTradeValue = this.powerRankingsService.rankingMarket !== PowerRankingMarket.ADP;
 
     // sort rosters by selected metric
     this.powerRankingsService.powerRankings = this.powerRankingsService.sortTeamPowerRankingGroups(
@@ -179,7 +183,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
       }
       team.roster.forEach((group) => {
         this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
-          value: group.starterValue,
+          value: this.isSuperFlex ? group.sfTradeValue : group.tradeValue,
           rank: group.rank,
           starterRank: group.starterRank,
           starterValue: group.starterValue,

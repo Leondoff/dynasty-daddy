@@ -628,8 +628,9 @@ export class PowerRankingsService {
   loadPRPreset(type: number = PowerRankingTableView.TradeValues): void {
     let powerRankingsTableCols = [];
     const isPreseason = this.powerRankings[0].team.roster.teamMetrics.wins === 0
-      && this.powerRankings[0].team.roster.teamMetrics.wins === 0;
+      && this.powerRankings[0].team.roster.teamMetrics.losses === 0;
     const startCols = isPreseason ? ['teamOwner'] : ['teamOwner', 'record'];
+    this.selectedRankings = isPreseason ? 'avg_adp' : 'avg_ros';
     switch (type) {
       case PowerRankingTableView.Starters:
         powerRankingsTableCols = [...startCols, 'tier', 'starterRank', 'qbStarterRank', 'rbStarterRank', 'wrStarterRank', 'teStarterRank', 'flexStarterRank'];

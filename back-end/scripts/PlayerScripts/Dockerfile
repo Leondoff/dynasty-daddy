@@ -25,7 +25,7 @@ COPY back-end/scripts/PlayerScripts/DatabaseConnService.py /app/DatabaseConnServ
 COPY back-end/scripts/PlayerScripts/PlayerRankingsJob.py /app/PlayerRankingsJob.py
 
 # schedule cron jobs
-RUN echo "00 */6 * * * /usr/local/bin/python /app/TradeDatabaseService.py >> /var/log/trade_cron.log 2>&1" >> /etc/cron.d/trade-crontab
+RUN echo "0 0,8,16 * * * /usr/local/bin/python /app/TradeDatabaseService.py >> /var/log/trade_cron.log 2>&1" >> /etc/cron.d/trade-crontab
 RUN echo "00 8 * * * /usr/local/bin/python /app/DailyCronJob.py >> /var/log/cron.log 2>&1" >> /etc/cron.d/ktc-crontab
 RUN echo "00 7 * * * /usr/local/bin/python /app/PlayerRankingsJob.py >> /var/log/rankings_cron.log 2>&1" >> /etc/cron.d/rankings_crontab
 

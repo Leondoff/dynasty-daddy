@@ -321,7 +321,7 @@ export const TradeDatabaseTutorial: SimpleTextCategory[] = [
     {
         title: 'Trade Volume Chart',
         list: [
-            'The Trade Volume Chart is a circle pack chart showing the top 50 (30 for mobile) most traded players in the past week and updated every 6 hours.',
+            'The Trade Volume Chart is a circle pack chart showing the top 50 (30 for mobile) most traded players in the past week and updated every 8 hours.',
             'You can hover over a circle to pull up information in a tooltip or drag around the circles (that\'s mainly just for fun 😆).',
             'By clicking the circle, a trade database search for that player will be triggered returning results for that player.'
         ]
