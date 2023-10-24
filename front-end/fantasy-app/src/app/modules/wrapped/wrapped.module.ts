@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { GridGameComponent } from "src/app/components/grid-game/grid-game.component";
 import { SharedModule } from "../shared/shared.module";
 import { WrappedCardComponent } from "src/app/components/wrapped/wrapped-card/wrapped-card.component";
 import { WrappedCardSummaryComponent } from "src/app/components/wrapped/wrapped-card-summary/wrapped-card-summary.component";
@@ -12,6 +11,7 @@ import { WrappedFinishComponent } from "src/app/components/wrapped/wrapped-finis
 import { WrappedStandingsComponent } from "src/app/components/wrapped/wrapped-standings/wrapped-standings.component";
 import { WrappedWelcomeComponent } from "src/app/components/wrapped/wrapped-welcome/wrapped-welcome.component";
 import { WrappedTransactionsComponent } from "src/app/components/wrapped/wrapped-transactions/wrapped-transactions.component";
+import { WrappedCardSummaryUserComponent } from "src/app/components/wrapped/wrapped-card-summary-user/wrapped-card-summary-user.component";
 
 @NgModule({
   imports: [
@@ -30,7 +30,8 @@ import { WrappedTransactionsComponent } from "src/app/components/wrapped/wrapped
     WrappedFinishComponent,
     WrappedStandingsComponent,
     WrappedWelcomeComponent,
-    WrappedTransactionsComponent
+    WrappedTransactionsComponent,
+    WrappedCardSummaryUserComponent,
   ]
 })
 export class WrappedModule {

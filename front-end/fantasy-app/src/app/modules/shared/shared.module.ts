@@ -42,6 +42,7 @@ import {LoginErrorComponent } from "src/app/components/sub-components/login-erro
 import { SimpleTextModalComponent } from "src/app/components/sub-components/simple-text-modal/simple-text-modal.component";
 import { ToolHelpComponent } from "src/app/components/sub-components/tool-help/tool-help.component";
 import { TradeDatabaseCardComponent } from "src/app/components/trade-database/trade-database-card/trade-database-card.component";
+import { AccentNumberPipe } from "src/app/pipes/accentNumber.pipe";
 import { HighLightSearchPipe } from "src/app/pipes/high-light-search.pipe";
 import { TruncatePipe } from "src/app/pipes/truncate.pipe";
 
@@ -95,6 +96,7 @@ const DECLARATIONS = [
     TruncatePipe,
     HighLightSearchPipe,
     LeagueDropdownComponent,
+    AccentNumberPipe
 ]
 
 @NgModule({

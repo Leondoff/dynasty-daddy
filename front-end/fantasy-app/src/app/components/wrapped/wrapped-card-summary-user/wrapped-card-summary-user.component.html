@@ -1,0 +1,59 @@
+<div>
+    <div class="center-text wrapped-header-style">
+        {{content.user}}
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
+        <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block; text-align-last: end;">
+            <img #image [src]="content.img" alt="Fantasy Team Avatar"
+            onerror="style.display = 'none'" class="wrapped-details-img">
+        </div>
+        <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block" class="wrapped-details box-padding">
+            <div class="wrapped-row-padding-text"></div>
+            <div class="wrapped-row-padding-text">Record</div>
+            <div class="wrapped-details-accent">{{content.wins}}-{{content.losses}}</div>
+            <div class="wrapped-row-padding-text">Points For</div>
+            <div class="wrapped-details-accent">{{content.fpts}}</div>
+            <div class="wrapped-row-padding-text">High-Low PPG</div>
+            <div class="wrapped-details-accent">{{content.ptsRange || '-'}}</div>
+            <div class="wrapped-row-padding-text">All-League Play</div>
+            <div class="wrapped-details-accent">{{content.allPlayRecord || '-'}}</div>
+        </div>
+        <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block; text-align-last: end;" class="wrapped-details box-padding">
+            <div class="wrapped-row-padding-text"></div>
+            <div class="wrapped-row-padding-text">Total Waivers</div>
+            <div class="wrapped-details-accent" style="font-size: clamp(18px, 2.5vw, 72px);">{{content.totalWaivers}}</div>
+        </div>
+        <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block" class="wrapped-details box-padding">
+            <div class="wrapped-row-padding-text"></div>
+            <div class="wrapped-row-padding-text">Trades Made</div>
+            <div class="wrapped-details-accent" style="font-size: clamp(18px, 2.5vw, 72px);">{{content.totalTrades}}</div>
+        </div>
+        <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block; text-align-last: end;" class="wrapped-details box-padding" [ngStyle]="content.bestTrade ? {} : {'text-align-last': 'center'}">
+            <div class="wrapped-row-padding-text">Best Players</div>
+            <div class="wrapped-details-small" *ngFor="let player of content.bestPerformers; let i = index;">{{i+1}}. {{configService.isMobile ? player.firstName[0] + '.' : player.firstName}} {{player.lastName}} ({{player.points}})</div>
+            <div class="wrapped-row-padding-text">Best Win</div>
+            <div class="wrapped-details-small">{{biggestWinString}}</div>
+            <div class="wrapped-row-padding-text">Worst Loss</div>
+            <div class="wrapped-details-small">{{worstLossString}}</div>
+        </div>
+        <div fxFlex="50%" fxFlex.xs="50%" fxFlex.sm="50%" class="item" style="display: block" class="wrapped-details box-padding" *ngIf="content.bestTrade">
+            <div class="wrapped-row-padding-text">Biggest Trade</div>
+                <div class="wrapped-details-accent">
+                    {{content.bestTrade.team1}}
+                </div>
+                <div class="wrapped-details-small" *ngFor="let p of content.bestTrade.team1Adds">
+                    {{p}}
+                </div>
+                <div class="wrapped-details-accent">
+                    {{content.bestTrade.team2}}
+                </div>
+                <div class="wrapped-details-small" *ngFor="let p of content.bestTrade.team2Adds">
+                    {{p}}
+                </div>
+        </div>
+    </div>
+    <div class="wrapped-row-padding-text"></div>
+    <div class="wrapped-row-padding-text wrapped-details" style="text-align: center; color: white;">
+        Thank you for spending your season with Dynasty Daddy!
+    </div>
+</div>

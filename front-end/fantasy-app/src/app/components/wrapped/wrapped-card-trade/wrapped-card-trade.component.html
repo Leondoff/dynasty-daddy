@@ -10,19 +10,19 @@
         <tr>
             <td></td>
             <td style="vertical-align: text-top;">
-                <div class="wrapped-header">
+                <div class="wrapped-header" [ngClass]="{'success__alert': showTradeWinner}">
                     <mat-icon class="wrapped-trade-icon-small" *ngIf="showTradeWinner">trending_up</mat-icon>
                     {{content.team1}}
                 </div>
-                <div *ngFor="let p of content.team1Adds" class="wrapped-details">{{p}}</div>
+                <div *ngFor="let p of team1Adds" class="wrapped-details">{{p}}</div>
             </td>            
             <td class="center-text"><mat-icon class="wrapped-trade-icon">swap_horiz</mat-icon></td>
             <td style="vertical-align: text-top;">
-                <div class="wrapped-header">
+                <div class="wrapped-header" [ngClass]="{'warning__alert': showTradeWinner}">
                     <mat-icon class="wrapped-trade-icon-small" *ngIf="showTradeWinner">trending_down</mat-icon>
                     {{content.team2}}
                 </div>
-                <div *ngFor="let p of content.team2Adds" class="wrapped-details">{{p}}</div>
+                <div *ngFor="let p of team2Adds" class="wrapped-details">{{p}}</div>
             </td>            
             <td></td>
         </tr>

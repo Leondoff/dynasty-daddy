@@ -6,7 +6,7 @@ import { WrappedCardTradeContent } from "../wrapped-card-trade/wrapped-card-trad
 import { WrappedCardContent } from "../wrapped-card/wrapped-card.component";
 
 @Component({
-    selector: 'app-wrapped-summary-trade',
+    selector: 'app-wrapped-summary',
     templateUrl: './wrapped-card-summary.component.html',
     styleUrls: ['./wrapped-card-summary.component.css']
 })

@@ -1,0 +1,36 @@
+.wrapped-details {
+    color: #cdcdcd;
+    text-align: start;
+    vertical-align: top;
+    font-size: clamp(10px, 1.2vw, 32px);
+}
+
+.wrapped-details-small {
+    color: white;
+    text-align: start;
+    vertical-align: text-top;
+    font-size: clamp(8px, 0.8vw, 24px);
+}
+
+.wrapped-details-accent {
+    color: white;
+    font-weight: bold;
+    font-size: clamp(12px, 1.8vw, 48px);
+}
+
+.wrapped-details-img {
+    width: clamp(150px, 20vw, 500px);
+    vertical-align: middle;
+    text-align-last: end;
+    padding-left: clamp(10px, 1vw, 75px);
+    padding-right: clamp(10px, 1vw, 75px);
+}
+
+.box-padding {
+    padding-left: clamp(10px, 1vw, 75px);
+    padding-right: clamp(10px, 1vw, 75px);
+}
+
+.wrapped-row-padding-text {
+    padding-top: clamp(1px, 1.5vh, 10px);
+}
