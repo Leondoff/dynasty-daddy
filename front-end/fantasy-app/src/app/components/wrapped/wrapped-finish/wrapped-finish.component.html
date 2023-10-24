@@ -11,10 +11,25 @@
   </div>
 
   <div *ngIf="wrappedService.frameNumber === baseFrame + 1">
-    <app-wrapped-summary-trade class='wrapped-context-high' @fadeSlideInOut [content]="summaryCard"></app-wrapped-summary-trade>
+    <app-wrapped-summary class='wrapped-context-high' @fadeSlideInOut [content]="summaryCard"></app-wrapped-summary>
     
     <div class="wrapped-context-next" *ngIf="showNext">
-      <div @fadeSlideInOut class="center-text" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="wrapped-top-icon">close</mat-icon></div>
+      <div @fadeSlideInOut class="center-text" (click)="nextFrame()"><mat-icon class="wrapped-top-icon">arrow_forward</mat-icon></div>
+    </div>
+  </div>
+
+
+  <div *ngIf="wrappedService.frameNumber === baseFrame + 2">
+    <div class="center-text">
+      <button mat-button [matMenuTriggerFor]="menu">Select Team Recap</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let t of teams" (click)="setTeamRecap(t?.rosterId)">{{t?.teamName}}</button>
+      </mat-menu>
+    </div>
+    <app-wrapped-summary-user class='wrapped-context-high' @fadeSlideInOut [content]="summaryUserCard"></app-wrapped-summary-user>
+    
+    <div class="wrapped-context-next" *ngIf="showNext">
+      <div @fadeSlideInOut class="center-text"><mat-icon  [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-top-icon">close</mat-icon></div>
     </div>
   </div>
 </div>

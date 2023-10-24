@@ -106,7 +106,7 @@ export class WrappedStandingsComponent implements OnInit {
     const mostPointsForTeam = this.leagueService.getTeamByRosterId(mostPointsMatchUp.rosterId);
     this.superlatives.push({ rank: '', details: 'Any given sunday - Single Game High: ' + mostPointsMatchUp.points, header: mostPointsForTeam.owner.teamName, image: mostPointsForTeam.owner.avatar });
     // best record
-    const recordTeam = teams.sort((a, b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins)
+    const recordTeam = teams.sort((a, b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins || b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts);
     for (let i = 0; i < 4; i++) {
       this.topTeams.push({ rank: '#' + (i + 1), details: 'Record: ' + recordTeam[i].roster.teamMetrics.wins + '-' + recordTeam[i].roster.teamMetrics.losses + ' | Avg PPG: ' + Math.round(recordTeam[i].roster.teamMetrics.fpts / completedWeek), header: recordTeam[i].owner.teamName, image: recordTeam[i].owner.avatar });
     }

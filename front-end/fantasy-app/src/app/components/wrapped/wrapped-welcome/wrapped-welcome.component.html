@@ -1,6 +1,6 @@
 
 <div [@fadeGrowStagger]="items.length + 1" class="wrapped-context" *ngIf="showContent">
-  <div *ngFor="let i of items" class="center-text welcome-text">{{i}}</div>
+  <div *ngFor="let i of items; let ind = index" class="center-text welcome-text" [ngClass]="{'fantasy-wrapped': ind === 1, 'fantasy-league': ind === 3}">{{i}}</div>
 </div>
 
 <div class="wrapped-context-next" *ngIf="showNext">

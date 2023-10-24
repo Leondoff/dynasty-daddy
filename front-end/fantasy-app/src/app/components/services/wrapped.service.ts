@@ -60,9 +60,9 @@ export class WrappedService {
    * @returns 
    */
   sortBySeasonWinner(teams: LeagueTeam[], teamPlayoffOdds: {}): LeagueTeam[] {
-    return teams.slice().sort((a, b) => teamPlayoffOdds[b.roster.rosterId].timesWinChampionship - teamPlayoffOdds[a.roster.rosterId].timesWinChampionship ||
-      teamPlayoffOdds[b.roster.rosterId].timesMakeChampionship - teamPlayoffOdds[a.roster.rosterId].timesMakeChampionship ||
-      teamPlayoffOdds[b.roster.rosterId].timesMakeConfRd - teamPlayoffOdds[a.roster.rosterId].timesMakeConfRd
+    return teams.slice().sort((a, b) => teamPlayoffOdds[b.roster.rosterId]?.timesWinChampionship - teamPlayoffOdds[a.roster.rosterId]?.timesWinChampionship ||
+      teamPlayoffOdds[b.roster.rosterId]?.timesMakeChampionship - teamPlayoffOdds[a.roster.rosterId]?.timesMakeChampionship ||
+      teamPlayoffOdds[b.roster.rosterId]?.timesMakeConfRd - teamPlayoffOdds[a.roster.rosterId]?.timesMakeConfRd
     );
   }
 }

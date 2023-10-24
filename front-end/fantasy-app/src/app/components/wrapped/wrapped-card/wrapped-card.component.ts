@@ -4,7 +4,7 @@ import { ConfigService } from "src/app/services/init/config.service";
 @Component({
     selector: 'app-wrapped-card',
     templateUrl: './wrapped-card.component.html',
-    styleUrls: ['./wrapped-card.component.css']
+    styleUrls: ['./wrapped-card.component.scss']
 })
   export class WrappedCardComponent implements OnInit {
 
@@ -20,7 +20,6 @@ import { ConfigService } from "src/app/services/init/config.service";
     }
 
 }
-
 
 export class WrappedCardContent{
     image: string;

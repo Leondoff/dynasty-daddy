@@ -6,19 +6,19 @@ import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
 @Component({
     selector: 'app-wrapped-welcome',
     templateUrl: './wrapped-welcome.component.html',
-    styleUrls: ['./wrapped-welcome.component.css'],
+    styleUrls: ['./wrapped-welcome.component.scss'],
     animations: [FadeSlideInOut, FadeGrowStagger]
 })
   export class WrappedWelcomeComponent implements OnInit {
 
-    items = ['Welcome to','Dynasty Daddy Wrapped']
+    items = ['Welcome to','Fantasy Wrapped','for']
     showNext = false;
     showContent = false;
 
-    constructor(private leagueService: LeagueService, private wrappedService: WrappedService) {}
+    constructor(private leagueService: LeagueService) {}
     
     ngOnInit(): void {
-      this.items.push('for ' + this.leagueService.selectedLeague.name);
+      this.items.push(this.leagueService.selectedLeague.name);
       setInterval(()=> {
         this.showContent = true;
       } ,1000);

@@ -19,7 +19,7 @@ export class WrappedTransactionsComponent implements OnInit {
   baseFrame: number;
 
   /** total transactions text */
-  totalTransactions = ['As the season progressed, your league kept making moves.'];
+  totalTransactions = ['Through the season, the waivers went wild'];
 
   /** Trades intro text array */
   tradesIntro = [];
@@ -48,7 +48,7 @@ export class WrappedTransactionsComponent implements OnInit {
     this.wrappedService.calculateTransactionStatistics();
     // total transactions
     this.totalTransactions.push('There were ' + this.wrappedService.transactionsDict['total'] + ' transactions this season!');
-    this.totalTransactions.push('Some were better than others...');
+    this.totalTransactions.push('Let\'s see who found the biggest edge...');
     // Most/least transactions
     const mostTransactionsTeam = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['max_id']);
     this.transactionsWinners.push({ rank: 'Most', details: 'Most Transactions (' + this.wrappedService.transactionsDict['max'] + ') - Waiver Warrior', header: mostTransactionsTeam.owner.teamName, image: mostTransactionsTeam.owner.avatar })

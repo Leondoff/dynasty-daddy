@@ -1,14 +1,5 @@
-.wrapped-rank {
-    text-align: end;
-    font-size: clamp(18px, 6vw, 72px);
-    position: relative;
-    z-index: 1;
-}
-
-.wrapped-rank-icon {
-    position: relative;
-    z-index: 1;
-}
+@use '@angular/material' as mat;
+@import "../../../../styles.scss";
 
 .wrapped-header {
     font-size: clamp(12px, 2.2vw, 48px);
@@ -32,3 +23,16 @@
 .wrapped-card-padding {
     padding-top: clamp(2px, 2vh, 15px);
 }
+
+.rank-bottom-center {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(29, 29, 40, 0.9);
+    color: #ffffff;
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 3px;
+  }
+  
