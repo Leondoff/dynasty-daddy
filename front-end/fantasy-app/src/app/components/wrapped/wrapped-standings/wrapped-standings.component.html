@@ -1,7 +1,7 @@
 <!-- standings intro frame -->
 <div *ngIf="wrappedService.frameNumber === baseFrame">
   <div [@fadeGrowStagger]="standingsIntro.length" class="wrapped-context-low" *ngIf="showContent">
-    <div *ngFor="let i of standingsIntro" class="center-text wrapped-header-style">{{i}}</div>
+    <div *ngFor="let i of standingsIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber">{{i}}</div>
   </div>
 </div>
 
@@ -28,7 +28,7 @@
 <!-- team intro frame -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 3">
   <div [@fadeGrowStagger]="teamsIntro.length" class="wrapped-context-low" *ngIf="showContent">
-    <div *ngFor="let i of teamsIntro" class="center-text wrapped-header-style">{{i}}</div>
+    <div *ngFor="let i of teamsIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber">{{i}}</div>
   </div>
 </div>
 
@@ -75,16 +75,15 @@
 </div>
 
 <div class="wrapped-standings">
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
-  <div class="cube" *ngIf="!configService.isMobile"></div>
+  <img src="assets/helmet.svg" alt="Helmet" width="100" height="100" class="cube">
+  <img src="assets/helmet.svg" alt="Helmet" width="100" height="100" class="cube">
+  <img src="assets/helmet.svg" alt="Helmet" width="100" height="100" class="cube">
+  <img src="assets/helmet.svg" alt="Helmet" width="100" height="100" class="cube">
+  <img src="assets/helmet.svg" alt="Helmet" width="100" height="100" class="cube">
+  <img src="assets/football.svg" alt="football" width="100" height="100" class="cube">
+  <img src="assets/football.svg" alt="football" width="100" height="100" class="cube">
+  <img src="assets/football.svg" alt="football" width="100" height="100" class="cube">
+  <img src="assets/football.svg" alt="football" width="100" height="100" class="cube">
+  <img src="assets/football.svg" alt="football" width="100" height="100" class="cube">
+  <img src="assets/football.svg" alt="football" width="100" height="100" class="cube">
 </div>

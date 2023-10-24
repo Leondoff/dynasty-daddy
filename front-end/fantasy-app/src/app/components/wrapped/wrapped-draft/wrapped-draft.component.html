@@ -1,7 +1,7 @@
 <!-- draft intro -->
 <div *ngIf="wrappedService.frameNumber === baseFrame">
   <div [@fadeGrowStagger]="1" class="wrapped-context-low center-text wrapped-header-style" *ngIf="showContent">
-    <div *ngFor="let i of draftIntro" class="center-text wrapped-header-style">{{i}}</div>
+    <div *ngFor="let i of draftIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber"></div>
   </div>
 </div>
 

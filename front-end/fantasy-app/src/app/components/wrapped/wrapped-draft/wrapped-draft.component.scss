@@ -1,4 +1,6 @@
 @use 'sass:math';
+@use '@angular/material' as mat;
+@import "../../../../styles.scss";
 
 .extra-card-padding {
   padding-top: 2vh;
@@ -12,7 +14,7 @@ body {
 .background {
   width: 100vw;
   height: 100vh;
-  background: #3E1E68;
+  background: mat.get-color-from-palette($mat-primary, darker);
 }
 
 $particleSize: 20vmin;
@@ -29,9 +31,10 @@ $amount: 10;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   $colors: (
-    #583C87,
-    #E45A84,
-    #FFACAC
+    mat.get-color-from-palette($mat-primary, lighter),
+    mat.get-color-from-palette($mat-warn, main),
+    mat.get-color-from-palette($mat-accent, main),
+    mat.get-color-from-palette($mat-success, main),
   );
   @for $i from 1 through $amount {
     &:nth-child(#{$i}) {

@@ -1,10 +1,12 @@
+@use '@angular/material' as mat;
+@import "../../../../styles.scss";
 @import url('https://fonts.googleapis.com/css?family=Montserrat:700');
 
 .small-text-style {
   color: white;
   font-weight: bold;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   font-size: clamp(12px, 2vw, 48px);
 }
 
@@ -13,8 +15,9 @@
 }
 
 .wrapped-standings {
-  background-color: #0040C1;
+  background-color: mat.get-color-from-palette($mat-accent, darker);
   height: 100vh;
+  z-index: 1;
   overflow: hidden;
 }
 
@@ -24,7 +27,6 @@
   left: 45vw;
   width: 10px;
   height: 10px;
-  border: solid 1px darken(#0040C1, 8%);
   transform-origin: top left;
   transform: scale(0) rotate(0deg) translate(-50%, -50%);
   animation: cube 12s ease-in forwards infinite;
