@@ -47,45 +47,47 @@ export class WrappedDraftComponent implements OnInit {
   ngOnInit(): void {
     // intro draft text
     this.draftIntro.push('The ' + this.leagueService.selectedLeague.season + ' season started with a draft.');
+    const draftObj = this.leagueService.completedDrafts[0];
     // sort drafts so that the draft with the most picks is selected
     this.leagueService.completedDrafts.sort((b, a) => a.picks.length - b.picks.length)[0];
-    if (this.leagueService.completedDrafts[0] && this.leagueService.completedDrafts[0].picks.length > 0) {
-      this.draftIntro.push('Your league selected ' + this.leagueService.completedDrafts[0].picks.length + ' players.');
+    if (draftObj && draftObj.picks.length > 0) {
+      this.draftIntro.push('Your league selected ' + draftObj.picks.length + ' players.');
       this.draftIntro.push('Let\'s see if one of you has the chops to be an NFL GM.');
     } else {
       this.draftIntro.push('Or I guess it did...');
       this.draftIntro.push('Since we couldn\'t find or load the draft, we\'ll skip over it.');
     }
-    if (this.leagueService.completedDrafts[0] && this.leagueService.completedDrafts[0].picks.length > 0) {
+    if (draftObj && draftObj.picks.length > 0) {
+      const isAuction = draftObj?.draft?.type === 'auction';
       // best/worst overall draft
-      const draftRankings = this.draftService.getTeamsWithBestValueDrafts(this.leagueService.completedDrafts[0]);
+      const draftRankings = this.draftService.getTeamsWithBestValueDrafts(draftObj);
       const bestTeam = draftRankings[0];
       const worstTeam = draftRankings[this.leagueService.selectedLeague.totalRosters - 1];
       this.bestWorstDraft.push({ rank: 'Best', details: 'Draft Savant - added the most value in the draft', header: bestTeam.team.owner.teamName, image: bestTeam.team.owner.avatar });
       this.bestWorstDraft.push({ rank: 'Worst', details: 'The Buster - added the least value in the draft', header: worstTeam.team.owner.teamName, image: worstTeam.team.owner.avatar });
       // best picks in the draft
       const valueToUse = this.leagueService.selectedLeague.isSuperflex ? 'sf_trade_value' : 'trade_value';
-      const sortedPicks = this.leagueService.completedDrafts[0].picks.slice().sort((a, b) => (this.playerService.getPlayerByPlayerPlatformId(b.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0) - (this.playerService.getPlayerByPlayerPlatformId(a.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0));
+      const sortedPicks = draftObj.picks.slice().sort((a, b) => (this.playerService.getPlayerByPlayerPlatformId(b.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0) - (this.playerService.getPlayerByPlayerPlatformId(a.playerId, this.leagueService.selectedLeague.leaguePlatform)?.[valueToUse] || 0));
       for (let i = 0; i < 5; i++) {
         const pick = sortedPicks[i];
         const player = this.leagueService.platformPlayersMap[pick?.playerId];
         const team = this.leagueService.getTeamByRosterId(sortedPicks[i].rosterId);
-        this.bestPicksInTheDraft.push({ rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        this.bestPicksInTheDraft.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount :  'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
       }
       // best value picks
-      const valuePicks = this.draftService.sortPlayersByBestValuePick(this.leagueService.completedDrafts[0]).filter(p => !this.leagueService.platformPlayersMap[p.playerId]);
+      const valuePicks = this.draftService.sortPlayersByBestValuePick(draftObj).filter(p => !this.leagueService.platformPlayersMap[p.playerId]);
       for (let i = 0; i < 5; i++) {
         const pick = valuePicks[i].pick;
         const player = this.leagueService.platformPlayersMap[pick.playerId];
         const team = this.leagueService.getTeamByRosterId(valuePicks[i].pick.rosterId);
-        this.bestValuePicks.push({ rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        this.bestValuePicks.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount :  'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
       }
       // worst value picks
       for (let i = 0; i < 5; i++) {
         const pick = valuePicks[valuePicks.length - i - 1].pick;
         const player = this.leagueService.platformPlayersMap[pick.playerId];
         const team = this.leagueService.getTeamByRosterId(valuePicks[valuePicks.length - i - 1].pick.rosterId);
-        this.worstValuePicks.push({ rank: '#' + (i + 1), details: 'Selected with pick ' + pick.pickNumber + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        this.worstValuePicks.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount :  'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
       }
     }
     setInterval(() => {

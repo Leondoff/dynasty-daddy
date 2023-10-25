@@ -111,6 +111,9 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.displayedColumns = this.configService.isMobile ?
+      [this.selectedDraft.draft.type === 'auction' ? 'bid' : 'pickNumber', 'owner', 'selectedPlayer'] :
+      [this.selectedDraft.draft.type === 'auction' ? 'bid' : 'pickNumber', 'team', 'owner', 'selectedPlayer', 'actions'];
     this.pieChartLegend = !this.configService.isMobile;
     this.pageLength = this.leagueService.selectedLeague.totalRosters;
     this.isSuperFlex = this.leagueService.selectedLeague.isSuperflex;

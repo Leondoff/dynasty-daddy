@@ -261,13 +261,18 @@ export class DraftService {
   /**
    * get value difference in player and pick used to select the player
    * @param pick
-   * @private
+   * @param isAuction default to false
    */
-  getPickValueAdded(pick: LeagueCompletedPickDTO): number {
-    const pickValue = this.getPickValue(pick.round);
+  getPickValueAdded(pick: LeagueCompletedPickDTO, isAuction: boolean = false): number {
     const player = this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
       this.leagueService.selectedLeague.leaguePlatform)
-    return ((this.leagueService.selectedLeague.isSuperflex ? player?.sf_trade_value : player?.trade_value) || 0) - pickValue;
+    const playerValue = this.leagueService.selectedLeague.isSuperflex ? (player?.sf_trade_value || 0) : (player?.trade_value || 0);
+    // if auction count value for dollar spent
+    if (isAuction) {
+      return pick.bidAmount !== 0? playerValue / pick.bidAmount : 0;
+    }
+    const pickValue = this.getPickValue(pick.round);
+    return playerValue - pickValue;
   }
 
   /**
@@ -312,7 +317,7 @@ export class DraftService {
       let valueAdded = 0;
       for (const pick of selectedDraft.picks) {
         if (pick.rosterId === team.roster.rosterId) {
-          valueAdded += this.getPickValueAdded(pick) || 0;
+          valueAdded += this.getPickValueAdded(pick, selectedDraft?.draft?.type === 'auction') || 0;
         }
       }
       teams.push({ team, valueAdded });
@@ -325,16 +330,16 @@ export class DraftService {
   /**
    * get players with best value picks from draft
    * @param selectedDraft completed draft
-   * @returns 
    */
   sortPlayersByBestValuePick(selectedDraft: CompletedDraft): any[] {
+    const isAuction = selectedDraft?.draft?.type === 'auction';
+    const players: { pick: LeagueCompletedPickDTO, valueAdded: number }[] = [];
     if (this.roundPickValue.length === 0) {
       this.generateAVGValuePerRound(selectedDraft);
     }
 
-    const players: { pick: LeagueCompletedPickDTO, valueAdded: number }[] = [];
     for (const pick of selectedDraft.picks) {
-      players.push({ pick, valueAdded: this.getPickValueAdded(pick) });
+      players.push({ pick, valueAdded: this.getPickValueAdded(pick, isAuction) });
     }
     return players.sort((a, b) => {
       return b.valueAdded - a.valueAdded;
