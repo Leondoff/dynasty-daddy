@@ -10,7 +10,7 @@
             <td></td>
             <td class="wrapped-img">
                 <img #image [src]="content.image" alt="Fantasy Team Avatar" onerror="style.display = 'none'" style="width: clamp(50px, 5vw, 200px);">
-                <div class="rank-bottom-center" [attr.data-rank]="content.rank">{{content.rank}}</div>
+                <div [ngClass]="{'rank-bottom-center': content.rank != ''}" [attr.data-rank]="content.rank">{{content.rank}}</div>
             </td>
             <td>
                 <div class="wrapped-header">

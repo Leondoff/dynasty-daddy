@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import { LeagueService } from 'src/app/services/league.service';
-import { WrappedService } from '../../services/wrapped.service';
 import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
 
 @Component({

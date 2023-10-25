@@ -10,6 +10,7 @@ export class LeagueCompletedPickDTO {
   firstName: string;
   lastName: string;
   position: string;
+  bidAmount: number = 0;
 
   constructor() {
   }
@@ -25,6 +26,7 @@ export class LeagueCompletedPickDTO {
     this.firstName = pick?.metadata.first_name;
     this.lastName = pick?.metadata.last_name;
     this.position = pick?.metadata.position;
+    this.bidAmount = Number(pick?.metadata?.amount || 0);
     return this;
   }
 

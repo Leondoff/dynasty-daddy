@@ -5,7 +5,7 @@ export class LeagueRawDraftOrderDTO {
   leagueId: string;
   draftId: string;
   status: string;
-  type: string;
+  type: string = 'linear';
   rounds: number;
   season: string;
   playerType: number;
