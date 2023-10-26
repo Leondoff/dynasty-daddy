@@ -7,7 +7,7 @@
     "start-deploy": "node server.js",
     "build": "ng build",
     "build:stats": "ng build --stats-json",
-    "build-prod": "ng build --configuration production && npm run sentry:sourcemaps",
+    "build-prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src/",
