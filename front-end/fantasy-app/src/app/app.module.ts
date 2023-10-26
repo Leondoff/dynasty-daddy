@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
@@ -25,6 +25,8 @@ import { ConfirmationDialogModal } from './components/modals/confirmation-dialog
 import { SharedModule } from './modules/shared/shared.module';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HomeComponent } from './components/home/home.component';
+import * as Sentry from "@sentry/angular-ivy";
+import { Router } from '@angular/router';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -73,6 +75,21 @@ let UniversalDeviceDetectorService;
     {
       provide: DeviceDetectorService,
       useClass: UniversalDeviceDetectorService
+    },
+    {
+      provide: ErrorHandler,
+      useValue: Sentry.createErrorHandler({
+        showDialog: false,
+      }),
+    }, {
+      provide: Sentry.TraceService,
+      deps: [Router],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [Sentry.TraceService],
+      multi: true,
     },
   ],
   bootstrap: [AppComponent]
