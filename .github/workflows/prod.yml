@@ -31,6 +31,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: dynasty-daddy
+          SENTRY_PROJECT: javascript-angular
+        with:
+          environment: production
       - name: Build and push Docker image
         uses: docker/build-push-action@v1
         with:
