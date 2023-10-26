@@ -1,7 +1,7 @@
 <!-- standings intro frame -->
 <div *ngIf="wrappedService.frameNumber === baseFrame">
   <div [@fadeGrowStagger]="standingsIntro.length" class="wrapped-context-low" *ngIf="showContent">
-    <!-- <div *ngFor="let i of standingsIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber">{{i}}</div> -->
+    <div *ngFor="let i of standingsIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber">{{i}}</div>
   </div>
 </div>
 
@@ -28,7 +28,7 @@
 <!-- team intro frame -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 3">
   <div [@fadeGrowStagger]="teamsIntro.length" class="wrapped-context-low" *ngIf="showContent">
-    <!-- <div *ngFor="let i of teamsIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber">{{i}}</div> -->
+    <div *ngFor="let i of teamsIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber">{{i}}</div>
   </div>
 </div>
 

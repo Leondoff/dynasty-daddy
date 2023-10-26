@@ -10,13 +10,13 @@
             <td></td>
             <td class="wrapped-img">
                 <img #image [src]="content.image" alt="Fantasy Team Avatar" onerror="style.display = 'none'" style="width: clamp(50px, 5vw, 200px);">
-                <!-- <div [ngClass]="{'rank-bottom-center': content.rank != ''}" [attr.data-rank]="content.rank">{{content.rank}}</div> -->
+                <div [ngClass]="{'rank-bottom-center': content.rank != ''}" [attr.data-rank]="content.rank">{{content.rank}}</div>
             </td>
             <td>
                 <div class="wrapped-header">
                     {{content.header}}
                 </div>
-                <!-- <div class="wrapped-details" [innerHTML]="content.details | accentNumber"></div> -->
+                <div class="wrapped-details" [innerHTML]="content.details | accentNumber"></div>
             </td>
             <td></td>
         </tr>

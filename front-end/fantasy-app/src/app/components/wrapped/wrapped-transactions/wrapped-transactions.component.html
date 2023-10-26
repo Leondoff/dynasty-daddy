@@ -1,7 +1,7 @@
 <!-- total transactions frame -->
 <div *ngIf="wrappedService.frameNumber === baseFrame">
   <div [@fadeGrowStagger]="totalTransactions.length" class="wrapped-context-low" *ngIf="showContent">
-    <!-- <div *ngFor="let i of totalTransactions" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber"></div> -->
+    <div *ngFor="let i of totalTransactions" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber"></div>
   </div>
 </div>
 
@@ -30,7 +30,7 @@
 <div *ngIf="wrappedService.frameNumber === baseFrame + 3">
 
   <div [@fadeGrowStagger]="tradesIntro.length" class="wrapped-context-low" *ngIf="showContent">
-    <!-- <div *ngFor="let i of tradesIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber"></div> -->
+    <div *ngFor="let i of tradesIntro" class="center-text wrapped-header-style" [innerHTML]="i | accentNumber"></div>
   </div>
 </div>
 
