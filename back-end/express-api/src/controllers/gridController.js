@@ -42,7 +42,9 @@ export const UpdateGridResultsEndpoint = async (req, res) => {
     res.status(HttpStatusCode.Ok).json({ status: 'OK' });
   } catch (err) {
     if (err.message === 'ERROR - INVALID ID') {
-      res.sendStatus(HttpStatusCode.BadRequest);
+      res.status(HttpStatusCode.BadRequest).json(
+        { status: 'Error', message: 'Invalid Grid ID' }
+      );
     } else {
       res.status(HttpStatusCode.Ok).json(err.stack);
     }
