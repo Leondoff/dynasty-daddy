@@ -39,7 +39,7 @@ export const UpdateGridResultsEndpoint = async (req, res) => {
   try {
     const { playerList, id = -1 } = req.body;
     await UpdateGridResultsWithAnswer(playerList, id);
-    res.sendStatus(HttpStatusCode.Ok);
+    res.status(HttpStatusCode.Ok).json({ status: 'OK' });
   } catch (err) {
     if (err.message === 'ERROR - INVALID ID') {
       res.sendStatus(HttpStatusCode.BadRequest);
