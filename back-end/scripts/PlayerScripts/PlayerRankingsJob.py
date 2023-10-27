@@ -54,7 +54,7 @@ def updatePlayerRankings():
             playerADPStatement = '''INSERT INTO player_adp (fantasyguys_ros) VALUES (%s)
                 ON CONFLICT (name_id) DO UPDATE
                 SET
-                footballguys_ros = %s;'''
+                fantasyguys_ros = %s;'''
             
             cursor.execute(playerADPStatement, (fgRos, fgRos))
 

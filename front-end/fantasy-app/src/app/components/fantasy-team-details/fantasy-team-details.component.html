@@ -32,7 +32,7 @@
       <div class="standings-row" *ngIf="selectedTeam">
         <div class="standings-col vertical-break__right__dark">
           <div class="small-text__light text__light light_bg_color">Tier</div>
-          <div class="mid-bold-text">{{displayService.getTierFromNumber(powerRankingsService.findTeamFromRankingsByRosterId(selectedTeam?.roster.rosterId).tier)}}</div>
+          <div class="mid-bold-text">{{displayService.getTierFromNumber(powerRankingsService.findTeamFromRankingsByRosterId(selectedTeam?.roster.rosterId)?.tier)}}</div>
         </div>
         <div class="standings-col vertical-break__right__dark" *ngIf="!configService.isMobile">
           <div class="small-text__light text__light light_bg_color">Starter Rank</div>

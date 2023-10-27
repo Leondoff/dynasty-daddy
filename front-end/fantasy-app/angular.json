@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "fantasy-app": {
+    "dynasty-daddy": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -28,12 +28,15 @@
               "src/favicon.ico",
               "src/assets",
               "src/sitemap.xml",
-              "src/robots.txt"
+              "src/robots.txt",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "production": {
@@ -79,10 +82,10 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "fantasy-app:build:production"
+              "browserTarget": "dynasty-daddy:build:production"
             },
             "development": {
-              "browserTarget": "fantasy-app:build:development"
+              "browserTarget": "dynasty-daddy:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -90,7 +93,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "fantasy-app:build"
+            "browserTarget": "dynasty-daddy:build"
           }
         },
         "test": {
@@ -102,7 +105,8 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/styles.scss"
@@ -130,10 +134,10 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "fantasy-app:serve:production"
+              "devServerTarget": "dynasty-daddy:serve:production"
             },
             "development": {
-              "devServerTarget": "fantasy-app:serve:development"
+              "devServerTarget": "dynasty-daddy:serve:development"
             }
           },
           "defaultConfiguration": "development"
