@@ -20,6 +20,8 @@ import { TradeValueLineChartComponent } from "src/app/components/player-comparis
 import { FilterPlayerValuesModalComponent } from "src/app/components/modals/filter-player-values-modal/filter-player-values-modal.component";
 import { PlayerQueryBuilderComponent } from "src/app/components/sub-components/player-query-builder/player-query-builder.component";
 import { AddPlayerComparisonModalComponent } from "src/app/components/modals/add-player-comparison-modal/add-player-comparison-modal.component";
+import { TradeCenterPlayerValuesComponent } from "src/app/components/trade-center/trade-center-player-values/trade-center-player-values.component";
+import { TradeCenterComponent } from "src/app/components/trade-center/trade-center.component";
 
 @NgModule({
   imports: [
@@ -31,6 +33,7 @@ import { AddPlayerComparisonModalComponent } from "src/app/components/modals/add
       { path: 'details/:playerNameId', component: PlayerDetailsComponent },
       { path: 'statistics', component: PlayerStatisticsComponent },
       { path: 'comparison', component: PlayerComparisonsComponent },
+      { path: 'trade', component: TradeCenterComponent },
     ]),
   ],
   declarations: [
@@ -52,7 +55,9 @@ import { AddPlayerComparisonModalComponent } from "src/app/components/modals/add
     FilterPlayerValuesModalComponent,
     PlayerComparisonsComponent,
     PlayerQueryBuilderComponent,
-    AddPlayerComparisonModalComponent
+    AddPlayerComparisonModalComponent,
+    TradeCenterComponent,
+    TradeCenterPlayerValuesComponent,
   ]
 })
 export class PlayerToolsModule {

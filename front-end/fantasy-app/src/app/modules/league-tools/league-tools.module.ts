@@ -33,6 +33,9 @@ import { CompletedDraftTableComponent } from "src/app/components/draft/completed
 import { FilterPortfolioModalComponent } from "src/app/components/modals/filter-portfolio-modal/filter-portfolio-modal.component";
 import { EloTeamComparisonModalComponent } from "src/app/components/modals/elo-team-comparison-modal/elo-team-comparison-modal.component";
 import { LeagueLoginModalComponent } from "src/app/components/modals/league-login-modal/league-login-modal.component";
+import { PowerRankingsChartComponent } from "src/app/components/power-rankings/power-rankings-chart/power-rankings-chart.component";
+import { PowerRankingsTableComponent } from "src/app/components/power-rankings/power-rankings-table/power-rankings-table.component";
+import { PowerRankingsComponent } from "src/app/components/power-rankings/power-rankings.component";
 
 @NgModule({
   imports: [
@@ -46,6 +49,7 @@ import { LeagueLoginModalComponent } from "src/app/components/modals/league-logi
       { path: 'standings', component: StandingsComponent },
       { path: 'portfolio', component: FantasyPortfolioComponent },
       { path: 'format', component: LeagueFormatComponent },
+      { path: 'rankings', component: PowerRankingsComponent },
     ]),
   ],
   declarations: [
@@ -82,7 +86,10 @@ import { LeagueLoginModalComponent } from "src/app/components/modals/league-logi
     FilterPortfolioModalComponent,
     EloTeamComparisonModalComponent,
     LeagueLoginModalComponent,
-    FilterPortfolioModalComponent
+    FilterPortfolioModalComponent,
+    PowerRankingsComponent,
+    PowerRankingsTableComponent,
+    PowerRankingsChartComponent,
   ]
 })
 export class LeagueToolsModule {

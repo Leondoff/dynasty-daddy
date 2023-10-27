@@ -10,7 +10,6 @@ import { ConfigService } from '../../services/init/config.service';
 import { PlayerInsights } from '../model/playerInsights';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { PageService } from 'src/app/services/utilities/page.service';
-import { ChartDataSets } from 'chart.js';
 import { Status } from '../model/status';
 
 @Component({
