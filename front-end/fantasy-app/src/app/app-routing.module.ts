@@ -11,14 +11,6 @@ const routes: Routes = [
     path: '',
     children: [
       {
-        path: 'players/trade',
-        component: TradeCenterComponent
-      },
-      {
-        path: 'league/rankings',
-        component: PowerRankingsComponent
-      },
-      {
         path: 'players',
         loadChildren: () =>
           import('./modules/player-tools/player-tools.module').then(

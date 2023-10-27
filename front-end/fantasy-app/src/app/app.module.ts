@@ -40,17 +40,12 @@ let UniversalDeviceDetectorService;
 @NgModule({
   declarations: [
     AppComponent,
-    PowerRankingsComponent,
     HeaderComponent,
-    PowerRankingsTableComponent,
-    PowerRankingsChartComponent,
     FooterComponent,
     AboutComponent,
-    TradeCenterComponent,
     SidebarComponent,
     EditLeagueSettingsModalComponent,
     StandardPageComponent,
-    TradeCenterPlayerValuesComponent,
     ConfirmationDialogModal,
     HomeComponent,
   ],

@@ -296,7 +296,7 @@ export class PlayoffCalculatorService {
           return a.roster.teamMetrics.rank - b.roster.teamMetrics.rank || b.roster.teamMetrics.wins - a.roster.teamMetrics.wins
             || b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts;
         });
-        if (allTeams[0].roster.teamMetrics.rank === 0) {
+        if (allTeams[0] && allTeams[0].roster.teamMetrics.rank === 0) {
           for (let i = 0; i < allTeams.length; i++) {
             allTeams[i].roster.teamMetrics.rank = i + 1;
           }

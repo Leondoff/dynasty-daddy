@@ -13,7 +13,7 @@
     </button>
     <span style="cursor: pointer" (click)="toggle()"><img class="header-img" src="https://i.ibb.co/1TV6bnw/favicon.png" alt="DD" title="Dynasty Daddy"><span style="padding-left: 10px">{{configService.isMobile && leagueService.leagueUser?.leagues.length ? '' : 'Dynasty Daddy'}}</span></span>
     <span class="spacer"></span>
-    <ng-container *ngIf="!configService.isMobile && !userService.user && !leagueService.isLeagueLoaded()">
+    <ng-container *ngIf="!configService.isMobile && !userService.user && !leagueService.isLeagueLoaded && leagueService.leagueStatus !== 'LOADING'">
       <button mat-icon-button (click)="userService.loginWithPatreon()">
         <img src="assets/patreon-tile.svg" alt="patreon-icon" class="club-logo">
     </button>

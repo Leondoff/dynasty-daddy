@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LeagueService } from '../../services/league.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
 import { PowerRankingsService } from '../services/power-rankings.service';
 import { PlayerService } from '../../services/player.service';
@@ -64,23 +64,26 @@ export class FantasyTeamDetailsComponent extends BaseComponent implements OnInit
     public displayService: DisplayService,
     private playersService: PlayerService,
     private pageService: PageService,
+    private activatedRoute: ActivatedRoute,
     public configService: ConfigService) {
     super();
   }
 
   ngOnInit(): void {
-    this.playersService.loadPlayerValuesForToday();
-    this.addSubscriptions(
-      this.route.queryParams.subscribe(params => {
-        this.leagueSwitchService.loadFromQueryParams(params);
-      }),
-      this.matchUpService.matchUpsLoaded$.subscribe(() => {
+    this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      this.playersService.loadPlayerValuesForToday();
+      this.addSubscriptions(
+        this.route.queryParams.subscribe(params => {
+          this.leagueSwitchService.loadFromQueryParams(params);
+        }),
+        this.matchUpService.matchUpsLoaded$.subscribe(() => {
+          this.getSelectedTeam();
+        })
+      );
+      if (this.leagueService.isLeagueLoaded()) {
         this.getSelectedTeam();
-      })
-    );
-    if (this.leagueService.isLeagueLoaded()) {
-      this.getSelectedTeam();
-    }
+      }
+    });
   }
 
   /**
