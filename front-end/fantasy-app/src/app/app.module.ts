@@ -27,7 +27,6 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HomeComponent } from './components/home/home.component';
 import * as Sentry from "@sentry/angular-ivy";
 import { Router } from '@angular/router';
-import { ServiceWorkerModule } from '@angular/service-worker';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -58,12 +57,6 @@ let UniversalDeviceDetectorService;
     AppRoutingModule,
     NgxGoogleAnalyticsModule.forRoot(environment.gaMeasurementId),
     NgxGoogleAnalyticsRouterModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
-      // Register the ServiceWorker as soon as the application is stable
-      // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
-    })
   ],
   providers: [EndpointsService,
     ConfigService,
