@@ -159,8 +159,10 @@ export class PlayerTradeMarketComponent implements OnInit, AfterViewInit {
                 ];
             }
             this.lineChartLabels.reverse();
-            this.chart.chart.data.datasets = this.lineChartData;
-            this.chart.chart.data.labels = this.lineChartLabels;
+            if (this.chart && this.chart.chart) {
+                this.chart.chart.data.datasets = this.lineChartData;
+                this.chart.chart.data.labels = this.lineChartLabels;
+            }
         }
     }
 }

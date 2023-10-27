@@ -14,6 +14,7 @@ import { NflService } from '../../services/utilities/nfl.service';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
 import { PlayerService } from "../../services/player.service";
 import { PageService } from 'src/app/services/utilities/page.service';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-standings',
@@ -58,7 +59,8 @@ export class StandingsComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.playerService.loadPlayerValuesForToday();
     this.setUpStandings();
-    this.addSubscriptions(this.leagueSwitchService.leagueChanged$.subscribe(() => {
+    this.addSubscriptions(this.leagueSwitchService.leagueChanged$.pipe(delay(500))
+    .subscribe(() => {
       this.setUpStandings();
     }
     ), this.route.queryParams.subscribe(params => {

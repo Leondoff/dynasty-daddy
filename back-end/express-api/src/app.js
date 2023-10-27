@@ -8,6 +8,8 @@ const app = express();
 
 const originsWhitelist = [
   'http://localhost:4200',
+  'http://localhost:8080',
+  'https://localhost:8080',
   'https://dynasty-daddy.com'
 ];
 const corsOptions = {
