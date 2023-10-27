@@ -1,7 +1,6 @@
 // @ts-ignore
 import { Component, OnInit } from '@angular/core';
 import { ConfigService } from './services/init/config.service';
-import { PwaService } from './services/utilities/pwa.service';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +11,7 @@ export class AppComponent implements OnInit {
   title = 'dynasty-daddy';
 
   constructor(
-    public configService: ConfigService,
-    public pwa: PwaService) {
+    public configService: ConfigService) {
   }
 
   ngOnInit(): void {
