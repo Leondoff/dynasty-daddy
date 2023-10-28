@@ -11,7 +11,8 @@ export class AppComponent implements OnInit {
   title = 'dynasty-daddy';
 
   constructor(
-    public configService: ConfigService) {
+    public configService: ConfigService
+  ) {
   }
 
   ngOnInit(): void {
