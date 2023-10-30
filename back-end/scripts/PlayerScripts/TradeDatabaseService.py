@@ -27,6 +27,7 @@ def getDBConnection():
     # Creating a cursor object using the cursor() method
     return conn
 
+
 def GetLeagueType(leagueType):
     if (leagueType == 0):
         return 'Redraft'
@@ -35,16 +36,17 @@ def GetLeagueType(leagueType):
     else:
         return 'Dynasty'
 
+
 def FormatPickFromSleeper(pick):
     rd = formatPickNumberTransaction(str(pick.get('round')))
     # 2025late3rdpi
     return pick.get('season') + 'mid' + rd + 'pi'
 
-def ScrapeTrades(leagueType, isAllTime = False):
+def ScrapeTrades(leagueType, isAllTime=False):
     state_of_nfl = requests.get('https://api.sleeper.app/v1/state/nfl').json()
     season = state_of_nfl.get("season")
-    week = state_of_nfl.get("week") if state_of_nfl.get("season_type") != 'pre' else 1 
-    
+    week = state_of_nfl.get("week") if state_of_nfl.get("season_type") != 'pre' else 1
+
     conn = getDBConnection()
     cursor = conn.cursor()
     query = """
@@ -77,7 +79,7 @@ def ScrapeTrades(leagueType, isAllTime = False):
 
                         # Calculate starters
                         starters = sum(1 for position in roster_positions if position in ['QB', 'RB', 'WR', 'TE', 'FLEX', 'SUPER_FLEX'])
-                        
+
                         # Check for SUPER_FLEX in roster positions or more than one QB
                         is_superflex = 'SUPER_FLEX' in roster_positions or roster_positions.count('QB') > 1
                         
@@ -135,21 +137,22 @@ def ScrapeTrades(leagueType, isAllTime = False):
     #         AND league_type = ANY(%s::league_type_v2[])
     #         AND DATE_PART('day', CURRENT_DATE - created_at) <= 7;
     # """
-    
+
     cursor.execute(leagueQuery, (season, leagueType))
     leagues = cursor.fetchall()
-    
+
     iter = 0
     interval = round(len(leagues) / 100)
     print("Start Processing Trades")
-    tradesToProcess = []; 
+    tradesToProcess = []
     for league in leagues:
         try:
+            # MODIFY THIS FOR MANUAL INSERTS
             response = requests.get(SLEEPER_BASE_URL + league[0] + '/transactions/' + str(week))
-        
+
             transaction_data = response.json()
             for transaction in transaction_data:
-                if transaction.get ("type") == "trade" and transaction.get("status") == "complete" and transaction.get("adds") is not None:
+                if transaction.get("type") == "trade" and transaction.get("status") == "complete" and transaction.get("adds") is not None:
                     # if not alltime only update trades for the past 30 hours
                     if isAllTime is False:
                         transactionDate = transaction.get("status_updated")
@@ -196,7 +199,7 @@ def ScrapeTrades(leagueType, isAllTime = False):
         VALUES (%s, %s, %s, to_timestamp(%s / 1000.0), %s, %s)
         ON CONFLICT (transaction_id, platform) DO NOTHING;
     """
-    
+
     conn = getDBConnection()
     cursor = conn.cursor()
     batch_size = 1000
@@ -219,8 +222,11 @@ def ScrapeTrades(leagueType, isAllTime = False):
                 except Exception as inner_e:
                     print(f"Error on row {idx + 1}: {data} \n Error: {inner_e}")
         iter += 1
-        print(f"{batch_size * iter}/{len(tradesToProcess)} Trades Persisted")
-        
+        if batch_size * iter < len(tradesToProcess):
+            print(f"{batch_size * iter}/{len(tradesToProcess)} Trades Persisted")
+        else:
+            print(f"{len(tradesToProcess)}/{len(tradesToProcess)} Trades Persisted")
+
     # update mat view for fantasy calc values
     cursor.execute(
     '''REFRESH MATERIALIZED VIEW CONCURRENTLY mat_vw_trade_agg;''')
@@ -239,5 +245,6 @@ def ScrapeTrades(leagueType, isAllTime = False):
         '''
 
     cursor.execute(updateLeagueCount)
+
 
 ScrapeTrades(['Dynasty', 'Redraft'], False)
