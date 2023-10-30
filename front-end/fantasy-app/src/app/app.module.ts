@@ -28,6 +28,7 @@ import { HomeComponent } from './components/home/home.component';
 import * as Sentry from "@sentry/angular-ivy";
 import { Router } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { PwaService } from './services/utilities/pwa.service';
 
 export function initialize(startupService: StartupService): any {
   return (): Promise<any> => {
@@ -73,6 +74,7 @@ function isIOS17orAbove(): boolean {
   providers: [EndpointsService,
     ConfigService,
     StartupService,
+    PwaService,
     {
       provide: APP_INITIALIZER,
       useFactory: initialize,
