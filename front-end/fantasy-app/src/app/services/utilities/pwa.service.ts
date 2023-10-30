@@ -11,6 +11,11 @@ export class PwaService {
             this.updates.available.subscribe((event) => {
                 this.promptUserToUpdate();
             });
+
+            // Check for updates every 6 hours (6 * 60 * 60 seconds)
+            setInterval(() => {
+                this.checkForUpdates();
+            }, 6 * 60 * 60 * 1000);
         }
     }
 
