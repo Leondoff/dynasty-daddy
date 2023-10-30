@@ -6,19 +6,21 @@ export class PwaService {
 
     promptEvent: any;
 
-    constructor(private swUpdate: SwUpdate) {
-        this.swUpdate.available.subscribe(event => {
-            if (this.askUserToUpdate()) {
-                window.location.reload();
-            }
-        });
-
-        // window.addEventListener('beforeinstallprompt', event => {
-        //     this.promptEvent = event;
-        // });
+    constructor(private updates: SwUpdate) {
+        if (updates.isEnabled) {
+            this.updates.available.subscribe((event) => {
+                this.promptUserToUpdate();
+            });
+        }
     }
 
-    private askUserToUpdate(): boolean {
-        return confirm('Do you wat to update to the latest version?');
+    public checkForUpdates(): void {
+        this.updates.checkForUpdate();
+    }
+
+    private promptUserToUpdate(): void {
+        if (confirm('A new version is available. Update now?')) {
+            document.location.reload();
+        }
     }
 }

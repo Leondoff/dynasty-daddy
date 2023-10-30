@@ -6,6 +6,7 @@ import { ConfigApiService } from '../api/config/config-api.service';
 import { BaseComponent } from '../../components/base-component.abstract';
 import { DisplayService } from '../utilities/display.service';
 import { Subject } from 'rxjs';
+import { PwaService } from '../utilities/pwa.service';
 
 /**
  * dictionary of constant config value keys
@@ -73,6 +74,7 @@ export class ConfigService extends BaseComponent {
   constructor(private endpointsService: EndpointsService,
     private deviceDetectorService: DeviceDetectorService,
     private displayService: DisplayService,
+    private pwaService: PwaService,
     private configApiService: ConfigApiService
   ) {
     super();
@@ -104,6 +106,8 @@ export class ConfigService extends BaseComponent {
   applyConfigs(): void {
     // assign endpoints
     this.endpointsService.assignEndpoints();
+    // set up service worker
+    this.pwaService.checkForUpdates();
     // load config options
     this.addSubscriptions(this.configApiService.fetchAllConfigOptions().subscribe((options) => {
       this.configOptions = options;
