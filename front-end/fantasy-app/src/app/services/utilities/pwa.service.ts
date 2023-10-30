@@ -7,7 +7,7 @@ export class PwaService {
     promptEvent: any;
 
     constructor(private updates: SwUpdate) {
-        if (updates.isEnabled) {
+        if ('serviceWorker' in navigator && updates.isEnabled) {
             this.updates.available.subscribe((event) => {
                 this.promptUserToUpdate();
             });
@@ -20,7 +20,11 @@ export class PwaService {
     }
 
     public checkForUpdates(): void {
-        this.updates.checkForUpdate();
+        if ('serviceWorker' in navigator && this.updates.isEnabled) {
+            this.updates.checkForUpdate();
+        } else {
+            console.warn('Service workers are not supported or disabled in this browser.');
+        }
     }
 
     private promptUserToUpdate(): void {
