@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {ConfigApiConfigService} from './config-api-config.service';
 import {ConfigOption} from '../../../model/config/ConfigOption';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 
 
 @Injectable({
@@ -24,6 +24,10 @@ export class ConfigApiService {
         options.map(option => configOptions.push(new ConfigOption(option.config_key, option.config_value)));
         return configOptions;
       }
-    ));
+    ),
+    catchError(error => {
+      console.error('Error while fetching config options:', error);
+      return throwError('An error occurred while fetching config options.');
+    }));
   }
 }

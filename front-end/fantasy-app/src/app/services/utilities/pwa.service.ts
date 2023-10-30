@@ -4,8 +4,6 @@ import { SwUpdate } from '@angular/service-worker';
 @Injectable()
 export class PwaService {
 
-    promptEvent: any;
-
     constructor(private updates: SwUpdate) {
         if ('serviceWorker' in navigator && updates.isEnabled) {
             this.updates.available.subscribe((event) => {
