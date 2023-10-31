@@ -2,8 +2,7 @@ import { OnInit, Component, Input } from "@angular/core";
 import { SimpleTextModalComponent } from "../simple-text-modal/simple-text-modal.component";
 import { ConfigService } from "src/app/services/init/config.service";
 import { MatDialog } from "@angular/material/dialog";
-import { DynastyDaddyClubTutorial, FooterTutorial, LeagueFormatTutorial, PlayoffCalculatorTutorial, SimpleTextCategory, TradeCalculatorTutorial, TradeDatabaseTutorial } from "src/app/model/toolHelpModel";
-import { HttpClient } from "@angular/common/http";
+import { SimpleTextCategory } from "src/app/model/config/SimpleTextCategory";
 
 @Component({
     selector: 'tool-help',
@@ -15,55 +14,31 @@ export class ToolHelpComponent implements OnInit {
     @Input()
     toolName: ToolsHelp;
 
-    categoryList: SimpleTextCategory[] = [];
-
     constructor(private configService: ConfigService,
-        private http: HttpClient,
         private dialog: MatDialog) {
 
     }
 
     ngOnInit(): void {
-        this.categoryList = [];
-        switch (this.toolName) {
-            case ToolsHelp.PlayoffCalculator:
-                this.categoryList = PlayoffCalculatorTutorial;
-                break;
-            case ToolsHelp.LeagueFormat:
-                this.categoryList = LeagueFormatTutorial;
-                break;
-            case ToolsHelp.TradeCalculator:
-                this.categoryList = TradeCalculatorTutorial;
-                break;
-            case ToolsHelp.TradeDatabase:
-                this.categoryList = TradeDatabaseTutorial;
-                break;
-            case ToolsHelp.DynastyDaddyClub:
-                this.categoryList = DynastyDaddyClubTutorial;
-                break;
-            default:
-                this.http.get('/assets/documentation/power_rankings.json').subscribe(
-                    (data: SimpleTextCategory[]) => {
-                        this.categoryList = data;
-                    });
-        }
-        this.categoryList.push(...FooterTutorial);
     }
 
     /**
      * Open how to play modal
      */
     openHowTo(): void {
-        this.dialog.open(SimpleTextModalComponent
-            , {
-                minHeight: '350px',
-                minWidth: this.configService.isMobile ? '200px' : '500px',
-                data: {
-                    headerText: 'How to use ' + this.toolName,
-                    categoryList: this.categoryList
-                }
-            }
-        );
+        this.configService.loadDocumentation(this.toolName.toLowerCase().replace(' ', '_'))
+            .subscribe(data => {
+                this.dialog.open(SimpleTextModalComponent
+                    , {
+                        minHeight: '350px',
+                        minWidth: this.configService.isMobile ? '200px' : '500px',
+                        data: {
+                            headerText: 'How to use ' + this.toolName,
+                            categoryList: data
+                        }
+                    }
+                );
+            });
     }
 }
 

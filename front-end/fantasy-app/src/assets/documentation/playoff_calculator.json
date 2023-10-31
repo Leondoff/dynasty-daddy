@@ -1,0 +1,30 @@
+[
+    {
+        "title": "Overview",
+        "list": [
+            "The playoff calculator will utilize starter value to generate weekly probablilities for each week and run 10,000 simulations for a season in your league. The Playoff Calculator will update weekly as the season progresses to give the most accurate results for how the season will play out.",
+            "Starter Value - Calculated by selecting the best possible roster based on average ADP. To calculate this value, we use current season (redraft) positional ADPs from multiple sources (Fantasy Pros, BestBall10s, Real Time Fantasy Sports, Underdog Fantasy, and Drafters Fantasy Sports). These ADPs are averaged and summed (with some other math) to create the starter values for each team. These values quantify the strength of a team in the upcoming season. It does factor in significant statuses like IR, SUS, or COV in the starter rank as well. A starter is denoted by the star next to the player's name in the power rankings table."
+        ]
+    },
+    {
+        "title": "Season Tab",
+        "list": [
+            "The table shows each team and selected metrics based on the 10,000 simulations run for your league.",
+            "There are two models available to use for the season simulations: Traditional ADP & Elo-Adjusted ADP.",
+            "Traditional ADP Model: Uses the existing starter value generated from the power rankings page as the team rating for simulations. That rating is generated from a summation of average ADP for all starters.",
+            "Elo-Adjusted ADP Model: This model builds off the existing Traditional ADP Model but adds in the previous week's results. Using an elo algorithm, the team values will update based on the previous teams they beat or lost to. You can track the weekly change in the Change column that shows in the table.",
+            "Using the 'Forcast From' dropdown, you can select what week of the season to run the simulations from. This can be useful to see how the season projections progress throughout the year.",
+            "With the 'Metrics' dropdown, you can manually configure which simulation metrics you want to appear on the table when running simulations.",
+            "The 'Select Future Game Results' button will open a dropdown to let you select future results to see how winning or losing a match-up will impact the playoff changes.",
+            "The download button will export the simulation table to a CSV to make it easy to import into other spreadsheet tools."
+        ]
+    },
+    {
+        "title": "Weekly Tab",
+        "list": [
+            "This tab displays weekly match-ups with a projected chance of winning and the results of the game.",
+            "The upcoming matchups will be at the top and the completed weeks will be at the bottom of the page in reverse order (so the most recent games are at the top).",
+            "Note: Some platforms generate mock playoff matchups during the season and others leave them empty."
+        ]
+    }
+]

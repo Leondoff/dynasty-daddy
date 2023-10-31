@@ -265,7 +265,7 @@
                   <span *ngIf="powerRankingsService.rankingMarket === 100" [ngClass]="{'success__alert': player?.[powerRankingsService.selectedRankings] < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player?.[powerRankingsService.selectedRankings] > (leagueService.selectedLeague.totalRosters * 3) || player?.[powerRankingsService.selectedRankings] == 0) }"> {{player?.[powerRankingsService.selectedRankings] || '-'}}</span>
                 </div>
               </div>
-              <div class="grid-20" *ngIf="leagueService.selectedLeague.type == 2 && this.powerRankingsService.powerRankingsTableView == 0">
+              <div class="grid-20" *ngIf="leagueService.selectedLeague.type == 2 && this.powerRankingsService.powerRankingsTableView != 1">
                 <div>
               <span><span class="small-text__light">Draft Capital: </span><span
                 class="mid-bold-text">{{powerRankingCache[element.team.roster.rosterId].rosters[element.picks.position].value}}</span></span>

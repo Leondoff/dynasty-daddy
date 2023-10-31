@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { SimpleTextCategory } from "src/app/model/toolHelpModel";
+import { SimpleTextCategory } from "src/app/model/config/SimpleTextCategory";
 
 @Component({
     selector: 'simple-text-modal',

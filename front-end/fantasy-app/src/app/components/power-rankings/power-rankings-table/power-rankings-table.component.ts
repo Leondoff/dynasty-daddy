@@ -13,7 +13,6 @@ import { LeagueSwitchService } from '../../services/league-switch.service';
 import { PowerRankingMarket, PowerRankingTableView, PowerRankingsService } from '../../services/power-rankings.service';
 import { BaseComponent } from '../../base-component.abstract';
 import { SimpleTextModalComponent } from '../../sub-components/simple-text-modal/simple-text-modal.component';
-import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from 'src/app/services/user.service';
 import { Subject } from 'rxjs';
@@ -430,16 +429,18 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   }
 
   openDataSourcesModal(): void {
-    this.dialog.open(SimpleTextModalComponent
-      , {
-        minHeight: '350px',
-        minWidth: this.configService.isMobile ? '200px' : '500px',
-        data: {
-          headerText: 'About our Data Sources',
-          categoryList: DataSourcesInfo
+    this.configService.loadDocumentation('data_sources').subscribe(data => {
+      this.dialog.open(SimpleTextModalComponent
+        , {
+          minHeight: '350px',
+          minWidth: this.configService.isMobile ? '200px' : '500px',
+          data: {
+            headerText: 'About our Data Sources',
+            categoryList: data
+          }
         }
-      }
-    );
+      );
+    });
   }
 
   /** get the display name for selected rankings */
