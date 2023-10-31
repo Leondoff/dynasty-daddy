@@ -288,7 +288,8 @@ export class PowerRankingsService {
     teams.forEach((team, teamIndex) => {
       team.overallRank = teamIndex + 1;
     });
-    this.setTeamTiers(teams, isSuperflex);
+    this.setTeamTiers(teams);
+    this.setTeamTiers(teams, false);
   }
 
   /**
@@ -448,27 +449,24 @@ export class PowerRankingsService {
   /**
    * Determine what the tier bins are and assign teams a tier
    * @param teams
-   * @param isSuperflex is league superflex
    * @private
    */
-  private setTeamTiers(teams: TeamPowerRanking[], isSuperflex: boolean): void {
-    // create a map of all starter rankings for teams
-    const ratingsDict = {};
-    teams.forEach(item => {
-      ratingsDict[item.team.roster.rosterId] = item.adpValueStarter;
-    });
-    const groups = this.eloService.bucketSort(teams, 'adpValueStarter', 4);
+  private setTeamTiers(
+    teams: TeamPowerRanking[],
+    isStarter: boolean = true): void {
+    const groups = this.eloService.bucketSort(teams, isStarter ? 'adpValueStarter' :
+      (this.leagueService.selectedLeague.isSuperflex ? 'sfTradeValueOverall' : 'tradeValueOverall'), 4);
     // assign tier based on grouping
     groups.map((group, ind) => {
       // set super team if criteria is met
       if (group.length === 1 && ind === 0) {
-        group[0].tier = ind;
+        group[0][isStarter ? 'tier' : 'valueTier'] = ind;
         // set trust the process if criteria is met
       } else if (group.length === 1 && ind === groups.length - 1) {
-        group[0].tier = 5;
+        group[0][isStarter ? 'tier' : 'valueTier'] = 5;
       } else {
         group.map((team) => {
-          team.tier = ind + 1;
+          team[isStarter ? 'tier' : 'valueTier'] = ind + 1;
         });
       }
     }
@@ -640,6 +638,20 @@ export class PowerRankingsService {
           this.playerService.selectedMarket = FantasyMarket.FantasyCalcRedraft;
         })
         break;
+      case PowerRankingTableView.Experimental:
+        powerRankingsTableCols = [...startCols, 'combinedTier', 'valueTier', 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+        this.rankingMarket = Number(this.playerService.selectedMarket);
+        if (this.playerService.selectedMarket == FantasyMarket.FantasyCalcRedraft || this.playerService.selectedMarket == FantasyMarket.KeepTradeCutRedraft) {
+          this.playerService.loadPlayerValuesForFantasyMarket$(FantasyMarket.KeepTradeCut).subscribe(() => {
+            this.playerService.selectedMarket = FantasyMarket.KeepTradeCut;
+            this.rankingMarket = PowerRankingMarket.KeepTradeCut;
+          })
+        }
+        this.powerRankingsTableView = PowerRankingTableView.Experimental;
+        if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+          powerRankingsTableCols.push('draftRank');
+        }
+        break;
       default:
         powerRankingsTableCols = [...startCols, 'tier', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
         this.rankingMarket = Number(this.playerService.selectedMarket);
@@ -670,5 +682,6 @@ export enum PowerRankingMarket {
 
 export enum PowerRankingTableView {
   TradeValues,
-  Starters
+  Starters,
+  Experimental
 }

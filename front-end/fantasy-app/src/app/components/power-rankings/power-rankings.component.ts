@@ -10,7 +10,7 @@ import { DownloadService } from 'src/app/services/utilities/download.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
 import { PageService } from 'src/app/services/utilities/page.service';
 import { UntypedFormControl } from '@angular/forms';
-import { LeagueType } from 'src/app/model/league/LeagueDTO';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-power-rankings',
@@ -30,7 +30,8 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
   /** Power Rankings Presets */
   powerRankingsPresetOptions = [
     { type: PowerRankingTableView.TradeValues, display: 'Trade Value View' },
-    { type: PowerRankingTableView.Starters, display: 'Contender View' }
+    { type: PowerRankingTableView.Starters, display: 'Contender View' },
+    { type: PowerRankingTableView.Experimental, display: 'Experimental View', isClubOnly: true }
   ]
 
   /** form control for metrics dropdown */
@@ -40,6 +41,7 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
   selectedVisualizations = new UntypedFormControl();
 
   constructor(public leagueService: LeagueService,
+    public userService: UserService,
     public powerRankingService: PowerRankingsService,
     private playersService: PlayerService,
     private downloadService: DownloadService,

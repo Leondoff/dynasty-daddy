@@ -17,7 +17,7 @@ TeamACCException = {
     'OAK': 'LV',
     'HST': 'HOU',
     'BLT': 'BAL',
-    'JAX': 'JAC',
+    'JAC': 'JAX',
     'ARZ': 'ARI',
     'CLV': 'CLE',
     'STL': 'LA',

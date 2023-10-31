@@ -145,7 +145,7 @@ export class FleaflickerService {
       const teams = [];
       leagueWrapper.selectedLeague.metadata.rosters?.forEach((division, ind) => {
         division.teams?.forEach(team => {
-          const owner = team.owners[0];
+          const owner = team.owners?.[0] || {id: team.id, displayName: team.name + ' Owner'};
           const ownerDTO = new LeagueOwnerDTO(owner.id, owner.displayName, team.name, team.logoUrl || PlatformLogos.FLEAFLICKER_LOGO);
           const roster = fleaflickerRosters.find(it => it.team.id === team.id).players;
           this.mapFleaFlickerIdMap(roster);

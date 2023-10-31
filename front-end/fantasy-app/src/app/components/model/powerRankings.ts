@@ -17,6 +17,7 @@ export class TeamPowerRanking {
   flexStarterValue: number = 0;
   flexStarterRank: number;
   tier: number;
+  valueTier: number;
 
   constructor(team: LeagueTeam, players: PositionPowerRanking[], sfTradeValue: number, tradeValue: number, picks: PositionPowerRanking) {
     this.team = team;
@@ -66,6 +67,15 @@ export enum TeamRankingTier {
   Fraud,
   Rebuilding,
   Trust_the_Process
+}
+
+export enum TeamRankingValueTier {
+  Cash_On_Hand,
+  Defensive,
+  Hybrid,
+  Aggressive,
+  Speculative,
+  Overextended
 }
 
 export enum PositionGroup {

@@ -55,28 +55,8 @@ tr.power-ranking-element-row:not(.power-ranking-expanded-row):active {
   justify-content: center;
 }
 
-.contender-mat-chip {
-  background-color: #c59700 !important;
-}
-
-.frisky-mat-chip {
-  background-color: #FF5733 !important;
-}
-
-.fraud-mat-chip {
-  background-color: #C70039 !important;
-}
-
-.rebuilding-mat-chip {
-  background-color: #900C3F !important;
-}
-
-.super-team-mat-chip {
-  background-color: #9DC700 !important;
-}
-
-.trust-the-process-mat-chip {
-  background-color: #581845 !important;
+.mat-column-combinedTier {
+  min-width: 180px;
 }
 
 .icon-source-link {

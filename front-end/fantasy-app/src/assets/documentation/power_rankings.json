@@ -1,0 +1,75 @@
+[
+    {
+        "title": "Overview",
+        "list": [
+            "The \"Load Preset\" button will let you select a specific view for the power rankings tool. For more information on each preset, check the Power Ranking Presets section.",
+            "The chart displays overall value with each color being a specific position room's overall value. You can right-click and save an image of this chart.",
+            "The table displays all teams and their power rankings. Each row can be expanded to show each position room in depth.",
+            "The table can be sorted by field by pressing a field in the header. You may also search for a specific player or team name via the search bar.",
+            "The expand arrow (⤢) will expand or collapse all the expandable rows.",
+            "At the bottom, you can download the power rankings table to a CSV to import into any other spreadsheet application."
+        ]
+    },
+    {
+        "title": "Power Ranking Presets",
+        "list": [
+            "Trade Value View - This view shows each position based on fantasy market trade value. While this view typically is used for dynasty leagues, you can select a redraft fantasy market to generate power rankings with those trade values. [Default for Dynasty/Keeper leagues]",
+            "Contender View - This view shows each position based on the current season outlook using average ADP across multiple platforms. All categories are ranked based on starter value. For more information on each individual metric check the Metric Legend. [Default for Redraft]",
+            "Experimental View - This view features in-development features and metrics. It is only available to the Dynasty Daddy Club (Patreon)."
+        ]
+    },
+    {
+        "title": "Metric Legend",
+        "list": [
+            "Overall Value - Calculated by adding all the selected fantasy market trade values for the entire roster together. This value will sum all players and draft picks on a roster.",
+            "Overall Rank - This value is based on the overall value. All teams are ranked from worst (highest) to best (lowest). This metric is useful for determining a team's flexibility and depth of assets.",
+            "Starter Value - Calculated by selecting the best possible roster based on average ADP. To calculate this value, we use current season (redraft) positional ADPs from multiple sources (Fantasy Pros, BestBall10s, Real-Time Fantasy Sports, Underdog Fantasy, and Drafters Fantasy Sports). These ADPs are averaged and summed (with some other math) to create the starter values for each team. These values quantify the strength of a team in the upcoming season. It does factor in significant status like IR, SUS, or COV in the starter rank as well. A starter is denoted by the star next to the player's name in the power rankings table.",
+            "Starter Rank - This value is based on the starter value. All teams are ranked from worst (highest) to best (lowest). This gives a glimpse into what teams are determined to be the best and what teams are the worst. Using the contender table view (⚙ > Table View), you can update the table to filter all position groups by starter value as well.",
+            "Combined Tiers - This tier is a combined metric of Contender Tiers & Value Tiers.",
+            "Contender Tiers - Contender Tiers are assigned to teams based on their starter value. Starter value is the current season strength of their team based on positional ADP. Using the starter value calculated, all teams in a league are put through a bucket sort algorithm where each team is put into 4 buckets. Each bucket is a contender tier.",
+            "Value Tiers - Value Tiers are assigned to teams based on their overall trade value. Overall trade value is a sum of their overall fantasy market value for all assets on their team. Using the overall trade value, all teams in a league are put through a bucket sort algorithm where each team is put into 4 buckets. Each bucket is a value tier.",
+            "Record - Current record for a team, by default it will show if the season has a game played. When sorting by record, teams with the same record will be sorted by points",
+            "Points For - Current points for a team has scored.",
+            "(Position Group) Value - Calculated by adding all the selected fantasy market trade values for a specific position group. This metric is useful for quickly identifying what position each team is invested heavily in. Ex. QB Value is the fantasy market value of all QBs on a roster.",
+            "(Position Group) Rank - This value is based on the related position group value. All teams are ranked from worst (highest) to best (lowest).",
+            "(Position Group) Contender Value - Calculated by adding the starters' average ADP for a specific position group. This metric is useful for identifying which teams have the strongest starting line-up for the upcoming season.",
+            "(Position Group) Contender Rank - This value is based on the related position group contender value. All teams are ranked from worst (highest) to best (lowest)."
+        ]
+    },
+    {
+        "title": "Contender Tiers",
+        "list": [
+            "Contender - This tier is for teams that rank the highest in the league. A contender has a strong chance of making the playoffs and a good chance to win it all.",
+            "Frisky - This tier is the 2nd highest bucket and holds fringe playoff teams in the league. These teams could be considered wildcard teams or teams that barely miss the playoffs.",
+            "Fraud - This tier is the middling tier and most likely won't make the playoffs. These teams could be exiting a rebuild or tailing off from a contender run.",
+            "Rebuilding - This tier is the bottom tier and holds the teams that are in a deep rebuild. These teams usually end up with high picks and oftentimes skew young.",
+            "Super Team - This tier is when the contender tier bucket only has one team. Meaning this team's starter value is so much higher than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is a clear favorite to win the championship heading into the season.",
+            "Trust the Process - This tier is when the rebuilding tier bucket only has one team. Meaning this team's starter value is so much lower than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is missing many pieces and most likely is aiming for the first pick next year."
+        ]
+    },
+    {
+        "title": "Value Tiers",
+        "list": [
+            "Defensive - This tier is for teams that rank the highest in the league in overall trade value. A defensive value team has a lot of valuable assets on their team and have tons of liquidity when making moves.",
+            "Hybrid - This tier has a mix of valuable assets and aging/win-now pieces. This team still has plenty of room to make moves but has realized some of their assets.",
+            "Aggressive - This tier is a team with less liquidity and more realized pieces. They can make moves but don't have ample flexibility to get a deal done.",
+            "Speculative - This tier is the bottom tier and represents teams with little to no flexibility. These teams usually have taken big risks with their assets and lack any liquidity.",
+            "Cash On Hand - This tier is when the Defensive tier bucket only has one team. Meaning this team's overall value is so much higher than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is has so much liquidity they don't know what to do with!",
+            "Overextended - This tier is when the Speculative tier bucket only has one team. Meaning this team's overall value is so much lower than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is basically the Rams, they pushed all their chips in and lack any sort of flexibility."
+        ]
+    },
+    {
+        "title": "⚙ Advanced Options",
+        "list": [
+            "Contender Rankings - This dropdown sets what current season rankings are used to generate your league's starter value. By default it will be the average across our sources.",
+            "Fantasy Market - This dropdown controls what fantasy market's values are used to create the power rankings.",
+            "Customize Table - This dropdown let's you set what columns you want to display on the table (desktop only)"
+        ]
+    },
+    {
+        "title": "Have more questions?",
+        "list": [
+            "Reach out to Jeremy via the discord, twitter (@dynastydaddyff), or email (jertimperio@gmail.com)."
+        ]
+    }
+]

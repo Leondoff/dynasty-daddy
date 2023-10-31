@@ -12,7 +12,8 @@
         <mat-icon>insert_chart</mat-icon> Load Preset
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item *ngFor="let menu of powerRankingsPresetOptions" (click)="loadPreset(menu.type)">
+        <button mat-menu-item *ngFor="let menu of powerRankingsPresetOptions" (click)="loadPreset(menu.type)" 
+          [disabled]="menu.isClubOnly && !userService.user" [matTooltip]="menu.isClubOnly && !userService.user ? 'Club Members Only' : ''">
           <span>{{menu.display}}</span>
         </button>
       </mat-menu>

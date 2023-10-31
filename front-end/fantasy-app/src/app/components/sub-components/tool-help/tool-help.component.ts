@@ -2,7 +2,8 @@ import { OnInit, Component, Input } from "@angular/core";
 import { SimpleTextModalComponent } from "../simple-text-modal/simple-text-modal.component";
 import { ConfigService } from "src/app/services/init/config.service";
 import { MatDialog } from "@angular/material/dialog";
-import { DynastyDaddyClubTutorial, FooterTutorial, LeagueFormatTutorial, PlayoffCalculatorTutorial, PowerRankingsTutorial, SimpleTextCategory, TradeCalculatorTutorial, TradeDatabaseTutorial } from "src/app/model/toolHelpModel";
+import { DynastyDaddyClubTutorial, FooterTutorial, LeagueFormatTutorial, PlayoffCalculatorTutorial, SimpleTextCategory, TradeCalculatorTutorial, TradeDatabaseTutorial } from "src/app/model/toolHelpModel";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
     selector: 'tool-help',
@@ -17,6 +18,7 @@ export class ToolHelpComponent implements OnInit {
     categoryList: SimpleTextCategory[] = [];
 
     constructor(private configService: ConfigService,
+        private http: HttpClient,
         private dialog: MatDialog) {
 
     }
@@ -40,7 +42,10 @@ export class ToolHelpComponent implements OnInit {
                 this.categoryList = DynastyDaddyClubTutorial;
                 break;
             default:
-                this.categoryList = PowerRankingsTutorial;
+                this.http.get('/assets/documentation/power_rankings.json').subscribe(
+                    (data: SimpleTextCategory[]) => {
+                        this.categoryList = data;
+                    });
         }
         this.categoryList.push(...FooterTutorial);
     }
