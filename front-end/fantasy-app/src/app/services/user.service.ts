@@ -9,7 +9,6 @@ import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { SimpleTextModalComponent } from '../components/sub-components/simple-text-modal/simple-text-modal.component';
 import { ConfigService } from './init/config.service';
-import { DynastyDaddyClubTutorial } from '../model/toolHelpModel';
 
 @Injectable({
     providedIn: 'root'
@@ -57,22 +56,25 @@ export class UserService {
                     this.updateLeagueUser();
                     this.loading = Status.DONE;
                     if (this.user.leagues.length === 0) {
-                        this.dialog.open(SimpleTextModalComponent
-                            , {
-                                minHeight: '350px',
-                                minWidth: this.configService.isMobile ? '200px' : '500px',
-                                data: {
-                                    headerText: 'How to Add Leagues',
-                                    categoryList: DynastyDaddyClubTutorial
-                                }
-                            }
-                        );
+                        this.configService.loadDocumentation('dynasty_daddy_club')
+                            .subscribe(data => {
+                                this.dialog.open(SimpleTextModalComponent
+                                    , {
+                                        minHeight: '350px',
+                                        minWidth: this.configService.isMobile ? '200px' : '500px',
+                                        data: {
+                                            headerText: 'How to Add Leagues',
+                                            categoryList: data
+                                        }
+                                    }
+                                );
+                            });
                     }
                 },
                 (error) => {
                     this.loading = Status.DONE;
                     if (error.status === 401) {
-                      this.errMsg = 'No membership is found for this account.';
+                        this.errMsg = 'No membership is found for this account.';
                     }
                 }
             );
@@ -129,7 +131,7 @@ export class UserService {
         }
         const leagues = this.user.leagues.map(l => new LeagueDTO().fromPatreon(l));
 
-        this.leagueService.leagueUser = {leagues: leagues, userData: userData, leaguePlatform: 0};
+        this.leagueService.leagueUser = { leagues: leagues, userData: userData, leaguePlatform: 0 };
     }
 
     /**

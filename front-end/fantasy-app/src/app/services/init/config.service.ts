@@ -5,8 +5,11 @@ import { ConfigOption } from '../../model/config/ConfigOption';
 import { ConfigApiService } from '../api/config/config-api.service';
 import { BaseComponent } from '../../components/base-component.abstract';
 import { DisplayService } from '../utilities/display.service';
-import { Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { PwaService } from '../utilities/pwa.service';
+import { SimpleTextCategory } from 'src/app/model/config/SimpleTextCategory';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 /**
  * dictionary of constant config value keys
@@ -38,7 +41,7 @@ export const LocalStorageDictionary = {
   PORTFOLIO_MFL_USER_ID_ITEM: 'portfolioMFLUserId',
   SLEEPER_USERNAME_ITEM: 'sleeper_username',
   MFL_USERNAME_ITEM: 'mfl_username',
-  FF_USERNAME_ITEM:'ff_username',
+  FF_USERNAME_ITEM: 'ff_username',
   FFPC_USERNAME_ITEM: 'ffpc_username',
   GRIDIRON_ITEM: 'gridiron',
   SIDEBAR_LOCK_ITEM: 'sidebar_lock',
@@ -74,6 +77,7 @@ export class ConfigService extends BaseComponent {
   constructor(private endpointsService: EndpointsService,
     private deviceDetectorService: DeviceDetectorService,
     private displayService: DisplayService,
+    private http: HttpClient,
     private pwaService: PwaService,
     private configApiService: ConfigApiService
   ) {
@@ -134,6 +138,17 @@ export class ConfigService extends BaseComponent {
    */
   getConfigOptionByKey = (key: string): ConfigOption =>
     this.configOptions.find((option) => option.configKey === key)
+
+  /**
+   * Load document name from file
+   * @param documentName string of document name
+   */
+  loadDocumentation(documentName: string): Observable<SimpleTextCategory[]> {
+    return this.http.get(`/assets/documentation/${documentName}.json`).pipe(map(
+      (data: SimpleTextCategory[]) => {
+        return data;
+      }));
+  }
 }
 
 export class PreferredCreatorSlide { url: string; image: string; alt: string; icon: string }
