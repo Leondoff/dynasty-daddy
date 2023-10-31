@@ -85,11 +85,11 @@ export class PlayerService {
       this.loadPlayerStatsForSeason$().subscribe((_) => {
         this.currentPlayerValuesLoaded$.next();
       }, sleeperError => {
-        console.error(`Could Not Load Player Points from sleeper - ${sleeperError}`);
+        console.error('Could Not Load Player Points from sleeper', sleeperError);
       });
       return of(this.playerValues);
     }, error => {
-      console.error(`Could Not Load Player Values - ${error}`);
+      console.error('Could Not Load Player Values', error);
       return of(null);
     });
   }

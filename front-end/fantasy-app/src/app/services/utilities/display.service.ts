@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
-import { TeamRankingTier } from '../../components/model/powerRankings';
+import { TeamRankingTier, TeamRankingValueTier } from '../../components/model/powerRankings';
 import { LeagueScoringFormat } from 'src/app/model/league/LeagueDTO';
 
 /** League Platform logo URLS */
@@ -36,6 +36,14 @@ export class DisplayService {
    */
   getTierFromNumber(tier: number): string {
     return TeamRankingTier[tier]?.replace(/_/g, ' ') || '-';
+  }
+
+  /**
+ * Get value tier string from number
+ * @param tier string
+ */
+  getValueTierFromNumber(tier: number): string {
+    return TeamRankingValueTier[tier]?.replace(/_/g, ' ') || '-';
   }
 
   /**
@@ -154,7 +162,7 @@ export class DisplayService {
    * returns number of days since the date
    * @param date string for date
    */
-  getDaysSinceDateString(date: string): number { 
+  getDaysSinceDateString(date: string): number {
     const transactionDate = new Date(date);
     const currentDate = new Date();
     const timeDifference = currentDate.getTime() - transactionDate.getTime();

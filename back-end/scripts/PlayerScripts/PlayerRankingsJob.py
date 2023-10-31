@@ -51,11 +51,11 @@ def updatePlayerRankings():
         
         # only add fg if they exist
         if playerFGROS:
-            playerADPStatement = '''INSERT INTO player_adp (fantasyguys_ros) VALUES (%s)
+            playerADPStatement = '''INSERT INTO player_adp (name_id, fantasyguys_ros) VALUES (%s, %s)
                 ON CONFLICT (name_id) DO UPDATE
                 SET
                 fantasyguys_ros = %s;'''
             
-            cursor.execute(playerADPStatement, (fgRos, fgRos))
+            cursor.execute(playerADPStatement, (adp.nameId, fgRos, fgRos))
 
 updatePlayerRankings()

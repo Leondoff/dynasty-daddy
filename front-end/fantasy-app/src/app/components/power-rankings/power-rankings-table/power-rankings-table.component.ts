@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { TeamPowerRanking } from '../../model/powerRankings';
+import { TeamPowerRanking, TeamRankingTier, TeamRankingValueTier } from '../../model/powerRankings';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { FantasyMarket, FantasyPlayer } from '../../../model/assets/FantasyPlayer';
@@ -15,10 +15,10 @@ import { BaseComponent } from '../../base-component.abstract';
 import { SimpleTextModalComponent } from '../../sub-components/simple-text-modal/simple-text-modal.component';
 import { DataSourcesInfo } from 'src/app/model/toolHelpModel';
 import { MatDialog } from '@angular/material/dialog';
-import { GoogleAnalyticsService } from 'ngx-google-analytics';
 import { UserService } from 'src/app/services/user.service';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { TierColorPalette } from 'src/app/services/utilities/color.service';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -58,7 +58,10 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     { key: 'owner', display: 'Fantasy Manager' },
     { key: 'team', display: 'NFL Team' },
     { key: 'record', display: 'Record' },
-    { key: 'tier', display: 'Fantasy Tier' },
+    { key: 'pts', display: 'Points For' },
+    { key: 'combinedTier', display: 'Combined Tier', isClubOnly: true },
+    { key: 'valueTier', display: 'Value Tier', isClubOnly: true },
+    { key: 'tier', display: 'Contender Tier' },
     { key: 'overallRank', display: 'Overall Rank' },
     { key: 'starterRank', display: 'NFL Team' },
     { key: 'qbStarterRank', display: 'QB Contender Rank' },
@@ -70,7 +73,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     { key: 'teStarterRank', display: 'TE Contender Rank' },
     { key: 'teRank', display: 'TE Dynasty Rank' },
     { key: 'flexStarterRank', display: 'Flex Contender Rank' },
-    { key: 'draftRank', display: 'Draft Capital Rank' },
+    { key: 'draftRank', display: 'Draft Capital Rank' }
   ];
 
   /** available rankings to select for Power Rankings */
@@ -122,7 +125,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     public displayService: DisplayService,
     private dialog: MatDialog,
     public userService: UserService,
-    private gaService: GoogleAnalyticsService,
     private clipboard: Clipboard) {
     super();
   }
@@ -173,12 +175,18 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     this.powerRankings.forEach(team => {
       this.powerRankingCache[team.team.roster.rosterId] = {
         tier: this.displayService.getTierFromNumber(team.tier),
+        tierColor: TierColorPalette[team.tier],
+        valueTier: this.displayService.getValueTierFromNumber(team.valueTier),
+        valueTierColor: TierColorPalette[team.valueTier],
+        combinedTierColor: this.getCombinedTierColor(team.tier, team.valueTier),
+        combinedTier: this.displayService.getValueTierFromNumber(team.valueTier) + ' ' + this.displayService.getTierFromNumber(team.tier),
         value: this.isSuperFlex ? team.sfTradeValueOverall : team.tradeValueOverall,
         rank: team.overallRank,
         isGreen: team.overallRank < this.alertThreshold,
         isRed: team.overallRank > this.alertThreshold * 2,
         wins: team.team.roster.teamMetrics?.wins || 0,
         losses: team.team.roster.teamMetrics?.losses || 0,
+        pts: team.team.roster.teamMetrics?.fpts || 0,
         rosters: {}
       }
       team.roster.forEach((group) => {
@@ -380,6 +388,10 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
       } else if (property === 'record') {
         return (item.team?.roster?.teamMetrics?.wins || 0) * 1000
           + (item.team?.roster?.teamMetrics?.fpts || 0);
+      } else if (property === 'pts') {
+        return item.team?.roster?.teamMetrics?.fpts || 0
+      } else if (property === 'combinedTier') {
+        return item.tier || item.valueTier;
       } else {
         return item[property];
       }
@@ -408,7 +420,6 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
    * @param $event 
    */
   updateFantasyMarket($event): void {
-    this.gaService.event('click', `click_${$event.value}`, 'fantasy_market')
     this.powerRankingsService.rankingMarket = $event.value || this.powerRankingsService.rankingMarket;
     if (this.powerRankingsService.rankingMarket !== PowerRankingMarket.ADP) {
       this.addSubscriptions(this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
@@ -439,4 +450,12 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   updateRankings(): void {
     this.playerService.playerValuesUpdated$.next();
   }
+
+  /**
+   * Get gradient color for two tiers
+   * @param tier contender tier to get color for
+   * @param valueTier value tier to get color for
+   */
+  getCombinedTierColor = (tier: TeamRankingTier, valueTier: TeamRankingValueTier) =>
+    `linear-gradient(45deg, ${TierColorPalette[valueTier]}, ${TierColorPalette[tier]})`;
 }
