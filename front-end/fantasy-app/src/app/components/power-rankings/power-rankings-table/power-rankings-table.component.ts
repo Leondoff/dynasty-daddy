@@ -419,7 +419,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
    * @param $event 
    */
   updateFantasyMarket($event): void {
-    this.powerRankingsService.rankingMarket = $event.value || this.powerRankingsService.rankingMarket;
+    this.powerRankingsService.rankingMarket = $event.value;
     if (this.powerRankingsService.rankingMarket !== PowerRankingMarket.ADP) {
       this.addSubscriptions(this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
         this.playerService.selectedMarket = this.powerRankingsService.rankingMarket.valueOf();
@@ -428,6 +428,9 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     this.refreshPowerRankingCache();
   }
 
+  /**
+   * open data sources modal
+   */
   openDataSourcesModal(): void {
     this.configService.loadDocumentation('data_sources').subscribe(data => {
       this.dialog.open(SimpleTextModalComponent
