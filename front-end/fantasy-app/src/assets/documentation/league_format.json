@@ -57,5 +57,11 @@
             "You can select what fields you want to filter on, the operator, and the value threshold to filter on. You can create and/or statements and nested sets of rules to create more complex queries for your data.",
             "After applying an advanced filter, another icon with the filter and a slash will be present. By clicking that icon, the advanced filter will be removed from the data table."
         ]
+    },
+    {
+        "title": "Have more questions?",
+        "list": [
+            "Reach out to Jeremy via the discord, twitter (@dynastydaddyff), or email (jertimperio@gmail.com)."
+        ]
     }
 ]

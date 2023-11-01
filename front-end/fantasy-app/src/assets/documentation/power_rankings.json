@@ -54,8 +54,8 @@
             "Hybrid - This tier has a mix of valuable assets and aging/win-now pieces. This team still has plenty of room to make moves but has realized some of their assets.",
             "Aggressive - This tier is a team with less liquidity and more realized pieces. They can make moves but don't have ample flexibility to get a deal done.",
             "Speculative - This tier is the bottom tier and represents teams with little to no flexibility. These teams usually have taken big risks with their assets and lack any liquidity.",
-            "Cash On Hand - This tier is when the Defensive tier bucket only has one team. Meaning this team's overall value is so much higher than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is has so much liquidity they don't know what to do with!",
-            "Overextended - This tier is when the Speculative tier bucket only has one team. Meaning this team's overall value is so much lower than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is basically the Rams, they pushed all their chips in and lack any sort of flexibility."
+            "Cash On Hand - This tier is when the Defensive tier bucket only has one team. This team's overall value is so much higher than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team has so much liquidity they don't know what to do with it!",
+            "Overextended - This tier is when the Speculative tier bucket only has one team. This team's overall value is so much lower than the rest of the league, that the bucket sort algorithm determined the rest of the league is closer to each other than that team. This team is basically the Rams, they pushed all their chips in and lack any flexibility."
         ]
     },
     {

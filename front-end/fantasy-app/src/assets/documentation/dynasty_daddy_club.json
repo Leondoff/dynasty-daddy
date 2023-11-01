@@ -22,5 +22,11 @@
             "Once at the 'User Settings' page, click the trash can icon to delete the league",
             "After making all the changes you want, click the 'Save' button at the bottom and your leagues are now removed from your account."
         ]
+    },
+    {
+        "title": "Have more questions?",
+        "list": [
+            "Reach out to Jeremy via the discord, twitter (@dynastydaddyff), or email (jertimperio@gmail.com)."
+        ]
     }
 ]

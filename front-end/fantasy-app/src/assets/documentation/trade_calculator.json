@@ -19,5 +19,11 @@
             "When logged in, our calculator will generate a mock power rankings as if the created trade went through.",
             "The arrows will denote if a category has risen or fallen from the proposed trade."
         ]
+    },
+    {
+        "title": "Have more questions?",
+        "list": [
+            "Reach out to Jeremy via the discord, twitter (@dynastydaddyff), or email (jertimperio@gmail.com)."
+        ]
     }
 ]

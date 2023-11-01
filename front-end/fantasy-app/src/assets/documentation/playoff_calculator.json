@@ -26,5 +26,11 @@
             "The upcoming matchups will be at the top and the completed weeks will be at the bottom of the page in reverse order (so the most recent games are at the top).",
             "Note: Some platforms generate mock playoff matchups during the season and others leave them empty."
         ]
+    },
+    {
+        "title": "Have more questions?",
+        "list": [
+            "Reach out to Jeremy via the discord, twitter (@dynastydaddyff), or email (jertimperio@gmail.com)."
+        ]
     }
 ]
