@@ -5,6 +5,7 @@ import { AboutComponent } from './components/about/about.component';
 import { TradeCenterComponent } from './components/trade-center/trade-center.component';
 import { StandardPageComponent } from './components/standard-page/standard-page.component';
 import { PowerRankingsComponent } from './components/power-rankings/power-rankings.component';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 
 const routes: Routes = [
   {
@@ -49,6 +50,10 @@ const routes: Routes = [
       {
         path: 'about',
         component: AboutComponent
+      },
+      {
+        path: 'privacy',
+        component: PrivacyPolicyComponent
       },
       {
         path: 'login',

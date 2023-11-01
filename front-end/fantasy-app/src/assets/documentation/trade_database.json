@@ -34,5 +34,11 @@
             "Team Count - Filter trades based on how many teams are in the league.",
             "Starter Count - Include trades based on how many offensive starters are in the league."
         ]
+    },
+    {
+        "title": "Have more questions?",
+        "list": [
+            "Reach out to Jeremy via the discord, twitter (@dynastydaddyff), or email (jertimperio@gmail.com)."
+        ]
     }
 ]

@@ -309,29 +309,29 @@ export class PowerRankingsService {
       {
         const adpSortedQBs = this.sortPlayersByADP(team.roster[PositionGroup.QB].players);
         const starters = this.getHealthyPlayersFromList(adpSortedQBs, teamRosterCount[PositionGroup.QB]);
-        team.roster[PositionGroup.QB].starterValue = starters.reduce((t, s) => t + s?.[this.selectedRankings], 0);
+        team.roster[PositionGroup.QB].starterValue = starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0);
         team.starters.push(...starters);
       }
       if (teamRosterCount[PositionGroup.RB] > 0) // rb
       {
         const adpSortedRBs = this.sortPlayersByADP(team.roster[PositionGroup.RB].players);
         const starters = this.getHealthyPlayersFromList(adpSortedRBs, teamRosterCount[PositionGroup.RB]);
-        team.roster[PositionGroup.RB].starterValue = starters.reduce((t, s) => t + s?.[this.selectedRankings], 0);
-        team.starters.push(...this.getHealthyPlayersFromList(adpSortedRBs, teamRosterCount[PositionGroup.RB]));
+        team.roster[PositionGroup.RB].starterValue = starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0);
+        team.starters.push(...starters);
       }
       if (teamRosterCount[PositionGroup.WR] > 0) // wr
       {
         const adpSortedWRs = this.sortPlayersByADP(team.roster[PositionGroup.WR].players);
         const starters = this.getHealthyPlayersFromList(adpSortedWRs, teamRosterCount[PositionGroup.WR]);
-        team.roster[PositionGroup.WR].starterValue = starters.reduce((t, s) => t + s?.[this.selectedRankings], 0);
-        team.starters.push(...this.getHealthyPlayersFromList(adpSortedWRs, teamRosterCount[PositionGroup.WR]));
+        team.roster[PositionGroup.WR].starterValue = starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0);
+        team.starters.push(...starters);
       }
       if (teamRosterCount[PositionGroup.TE] > 0) // te
       {
         const adpSortedTEs = this.sortPlayersByADP(team.roster[PositionGroup.TE].players);
         const starters = this.getHealthyPlayersFromList(adpSortedTEs, teamRosterCount[PositionGroup.TE]);
-        team.roster[PositionGroup.TE].starterValue = starters.reduce((t, s) => t + s?.[this.selectedRankings], 0);
-        team.starters.push(...this.getHealthyPlayersFromList(adpSortedTEs, teamRosterCount[PositionGroup.TE]));
+        team.roster[PositionGroup.TE].starterValue = starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0);
+        team.starters.push(...starters);
       }
       if (teamRosterCount[4] > 0) // flex
       {
@@ -343,7 +343,7 @@ export class PowerRankingsService {
         const superFlexQB = this.getHealthyPlayersFromList(adpSortedQBs, 1, team.starters);
         if (superFlexQB.length > 0) {
           team.starters.push(...superFlexQB);
-          team.roster[PositionGroup.QB].starterValue += superFlexQB.reduce((v, qb) => v + qb?.[this.selectedRankings], 0);
+          team.roster[PositionGroup.QB].starterValue += superFlexQB.reduce((v, qb) => v + (qb?.[this.selectedRankings] || 100), 0);
           teamRosterCount[PositionGroup.QB]++;
         } else {
           teamRosterCount = this.getBestAvailableFlex(teamRosterCount[5], teamRosterCount, team);

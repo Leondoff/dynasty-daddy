@@ -2,7 +2,6 @@ import { OnInit, Component, Input } from "@angular/core";
 import { SimpleTextModalComponent } from "../simple-text-modal/simple-text-modal.component";
 import { ConfigService } from "src/app/services/init/config.service";
 import { MatDialog } from "@angular/material/dialog";
-import { SimpleTextCategory } from "src/app/model/config/SimpleTextCategory";
 
 @Component({
     selector: 'tool-help',
