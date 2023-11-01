@@ -59,6 +59,8 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.playersService.loadPlayerValuesForToday();
+    // set the ranking market for the power rankings based off the selected market
+    this.powerRankingService.rankingMarket = this.playersService.selectedMarket.valueOf();
     this.mapPowerRankings();
     // TODO potentially improve how this functions
     this.addSubscriptions(
