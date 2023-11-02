@@ -359,8 +359,8 @@
         <button mat-raised-button [disabled]="!usernameInput"
                 color="accent" (click)="fetchUserInfo(0)" gaEvent="login_sleeper_username" gaCategory="platform_login">Sign In
         </button>
-        <button mat-button *ngIf="userService.user" [disabled]="usernameInput !== leagueService.leagueUser?.userData?.username || leagueService.leagueUser?.leaguePlatform !== 0 || clubAddedAlready"
-                [ngClass]="{'pulse-button': usernameInput === leagueService.leagueUser?.userData?.username && leagueService.leagueUser?.leaguePlatform === 0 && !clubAddedAlready}"
+        <button mat-button *ngIf="userService.user" [disabled]="usernameInput.toLowerCase() !== leagueService.leagueUser?.userData?.username?.toLowerCase() || leagueService.leagueUser?.leaguePlatform !== 0 || clubAddedAlready"
+                [ngClass]="{'pulse-button': usernameInput.toLowerCase() === leagueService.leagueUser?.userData?.username?.toLowerCase() && leagueService.leagueUser?.leaguePlatform === 0 && !clubAddedAlready}"
                 matTooltip="Add Leagues to User" matTooltipPosition="below" 
                 color="accent" (click)="addLeaguesToClub()" gaEvent="sync_sleeper_user" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
@@ -440,8 +440,8 @@
         <button mat-raised-button [disabled]="!mflUsernameInput || !mflPasswordInput"
                 color="accent" (click)="fetchUserInfo(1)" gaEvent="login_mfl_username" gaCategory="platform_login">Sign In
         </button>
-        <button mat-button *ngIf="userService.user" [disabled]="mflUsernameInput !== leagueService.leagueUser?.userData?.username || leagueService.leagueUser?.leaguePlatform != 1 || clubAddedAlready"
-              [ngClass]="{'pulse-button': mflUsernameInput === leagueService.leagueUser?.userData?.username && leagueService.leagueUser?.leaguePlatform === 1 && !clubAddedAlready}"
+        <button mat-button *ngIf="userService.user" [disabled]="mflUsernameInput.toLowerCase() !== leagueService.leagueUser?.userData?.username.toLowerCase() || leagueService.leagueUser?.leaguePlatform != 1 || clubAddedAlready"
+              [ngClass]="{'pulse-button': mflUsernameInput.toLowerCase() === leagueService.leagueUser?.userData?.username.toLowerCase() && leagueService.leagueUser?.leaguePlatform === 1 && !clubAddedAlready}"
               matTooltip="Add Leagues to User" matTooltipPosition="below" 
               color="accent" (click)="addLeaguesToClub()" gaEvent="sync_mfl_user" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
@@ -525,8 +525,8 @@
         <button mat-raised-button [disabled]="!fleaflickerEmail"
                 color="accent" (click)="fetchUserInfo(2)" gaEvent="login_ff_email" gaCategory="platform_login">Sign In
         </button>
-        <button mat-button *ngIf="userService.user" [disabled]="fleaflickerEmail !== leagueService.leagueUser?.userData?.username || leagueService.leagueUser?.leaguePlatform != 2 || clubAddedAlready"
-          [ngClass]="{'pulse-button': fleaflickerEmail === leagueService.leagueUser?.userData?.username && leagueService.leagueUser?.leaguePlatform === 2 && !clubAddedAlready}"
+        <button mat-button *ngIf="userService.user" [disabled]="fleaflickerEmail.toLowerCase() !== leagueService.leagueUser?.userData?.username?.toLowerCase() || leagueService.leagueUser?.leaguePlatform != 2 || clubAddedAlready"
+          [ngClass]="{'pulse-button': fleaflickerEmail.toLowerCase() === leagueService.leagueUser?.userData?.username?.toLowerCase() && leagueService.leagueUser?.leaguePlatform === 2 && !clubAddedAlready}"
                 matTooltip="Add Leagues to User" matTooltipPosition="below" 
                 color="accent" (click)="addLeaguesToClub()" gaEvent="sync_ff_user" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
@@ -650,8 +650,8 @@
         <button mat-raised-button [disabled]="!ffpcLoginMethod"
                 color="accent" (click)="fetchUserInfo(4)" gaEvent="login_ffpc_email" gaCategory="platform_login">Sign In
         </button>
-        <button mat-button *ngIf="userService.user" [disabled]="ffpcEmail !== leagueService.leagueUser?.userData?.username || leagueService.leagueUser?.leaguePlatform != 4 || clubAddedAlready"
-          [ngClass]="{'pulse-button': ffpcEmail === leagueService.leagueUser?.userData?.username && leagueService.leagueUser?.leaguePlatform === 4 && !clubAddedAlready}"
+        <button mat-button *ngIf="userService.user" [disabled]="ffpcEmail.toLowerCase() !== leagueService.leagueUser?.userData?.username?.toLowerCase() || leagueService.leagueUser?.leaguePlatform != 4 || clubAddedAlready"
+          [ngClass]="{'pulse-button': ffpcEmail.toLowerCase() === leagueService.leagueUser?.userData?.username?.toLowerCase() && leagueService.leagueUser?.leaguePlatform === 4 && !clubAddedAlready}"
                 matTooltip="Add Leagues to User" matTooltipPosition="below" 
                 color="accent" (click)="addLeaguesToClub()" gaEvent="sync_ffpc_user" gaCategory="patreon_sync"><img src="assets/clubs.svg" alt="patreon-icon" class="club-logo">
         </button>
