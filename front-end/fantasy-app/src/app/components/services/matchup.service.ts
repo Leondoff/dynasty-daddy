@@ -1,10 +1,11 @@
-import {Injectable} from '@angular/core';
-import {MatchUpUI, ScheduleComp, WeeklyRecordComp} from '../model/matchup';
-import {LeagueTeam} from '../../model/league/LeagueTeam';
-import {ChartDataSets} from 'chart.js';
-import {forkJoin, Observable, of, Subject} from 'rxjs';
-import {LeagueDTO} from '../../model/league/LeagueDTO';
+import { Injectable } from '@angular/core';
+import { MatchUpUI, ScheduleComp, WeeklyRecordComp } from '../model/matchup';
+import { LeagueTeam } from '../../model/league/LeagueTeam';
+import { ChartDataSets } from 'chart.js';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { LeagueDTO } from '../../model/league/LeagueDTO';
 import { LeagueService } from 'src/app/services/league.service';
+import { delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -29,13 +30,16 @@ export class MatchupService {
   /** closest games */
   leagueClosestWins: MatchUpUI[] = [];
 
+  /** luck score for team */
+  teamLuckScore = {}
+
   /** subject when the matchups are loaded */
   matchUpsLoaded$: Subject<void> = new Subject<void>();
 
   /** most points for in week */
-  leagueMostPointsFor: {rosterId: number, points: number, oppRosterId: number, oppPoints: number, details: MatchUpUI}[] = [];
+  leagueMostPointsFor: { rosterId: number, points: number, oppRosterId: number, oppPoints: number, details: MatchUpUI }[] = [];
 
-  constructor(private leagueService: LeagueService) {}
+  constructor(private leagueService: LeagueService) { }
 
   /**
    * initializes matchup data
@@ -43,11 +47,12 @@ export class MatchupService {
    */
   initMatchUpCharts(selectedLeague: LeagueDTO, completedWeek: number = null): Observable<any> {
     return forkJoin([this.generateWeeklyRecords(selectedLeague, completedWeek || selectedLeague.playoffStartWeek),
-      this.generateScheduleComparison(selectedLeague),
-      this.calculateLeagueMatchUps(selectedLeague)]).pipe(() => {
-        this.matchUpsLoaded$.next();
-        return of(true);
-      }
+    this.generateScheduleComparison(selectedLeague),
+    this.calculateLeagueMatchUps(selectedLeague)]).pipe(delay(200)).pipe(() => {
+      this.calculateLuckForTeams();
+      this.matchUpsLoaded$.next();
+      return of(true);
+    }
     );
 
   }
@@ -62,6 +67,33 @@ export class MatchupService {
       this.weeklyComparison.push(this.calculateWeeklyRecordsForTeam(selectedLeague, rosterId, completedWeek));
     });
     return of(this.weeklyComparison);
+  }
+
+  /**
+   * calculate luck score for each team
+   */
+  calculateLuckForTeams(): void {
+    const median = (this.leagueService.selectedLeague.totalRosters - 1) / 2;
+    this.weeklyComparison.forEach(team => {
+      let luckRating = 0;
+      let i = 0;
+      while (team.records[i + 1] && (team.records[i + 1][0] + team.records[i + 1][1]) > 0) {
+        const game = this.leagueMatchUpUI[i].find(game => game.team1RosterId === team.rosterId
+          || game.team2RosterId === team.rosterId);
+        let didWin = false;
+        if (game.team1RosterId === team.rosterId && game.team1Points > game.team2Points ||
+          game.team2RosterId === team.rosterId && game.team2Points > game.team1Points) {
+          didWin = true;
+        }
+        if (didWin) {
+          luckRating += (team.records[i + 1][0] > median ? 0 : median - team.records[i + 1][0]);
+        } else {
+          luckRating -= (team.records[i + 1][0] < median ? 0 : team.records[i + 1][0] - median);
+        }
+        i++;
+      }
+      this.teamLuckScore[team.rosterId] = luckRating;
+    });
   }
 
   /**
@@ -140,7 +172,7 @@ export class MatchupService {
     for (let week = selectedLeague.startWeek; week < weekNumbers; week++) {
       if (selectedLeague.leagueMatchUps && selectedLeague.leagueMatchUps[week] !== undefined) {
         const weekMatchUps: MatchUpUI[] = [];
-        [...new Set( selectedLeague.leagueMatchUps[week].map(game => game.matchupId))].forEach(matchupId => {
+        [...new Set(selectedLeague.leagueMatchUps[week].map(game => game.matchupId))].forEach(matchupId => {
           for (const team1 of selectedLeague.leagueMatchUps[week]) {
             if (team1.matchupId === matchupId) {
               selectedLeague.leagueMatchUps[week].map(team2 => {
@@ -238,10 +270,14 @@ export class MatchupService {
     const mostPointsFor = [];
     for (let i = 0; i < endWeek - startWeek; i++) {
       this.leagueMatchUpUI[i]?.map(matchUp => {
-        mostPointsFor.push({rosterId: matchUp.team1RosterId, points: matchUp.team1Points,
-          oppRosterId: matchUp.team2RosterId, oppPoints: matchUp.team2Points, details: matchUp});
-        mostPointsFor.push({rosterId: matchUp.team2RosterId, points: matchUp.team2Points,
-          oppRosterId: matchUp.team1RosterId, oppPoints: matchUp.team1Points, details: matchUp});
+        mostPointsFor.push({
+          rosterId: matchUp.team1RosterId, points: matchUp.team1Points,
+          oppRosterId: matchUp.team2RosterId, oppPoints: matchUp.team2Points, details: matchUp
+        });
+        mostPointsFor.push({
+          rosterId: matchUp.team2RosterId, points: matchUp.team2Points,
+          oppRosterId: matchUp.team1RosterId, oppPoints: matchUp.team1Points, details: matchUp
+        });
       });
     }
     mostPointsFor.sort((a, b) => {
