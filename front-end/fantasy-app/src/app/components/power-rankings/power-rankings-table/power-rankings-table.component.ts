@@ -18,6 +18,7 @@ import { UserService } from 'src/app/services/user.service';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { TierColorPalette } from 'src/app/services/utilities/color.service';
+import { MatchupService } from '../../services/matchup.service';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -61,6 +62,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     { key: 'combinedTier', display: 'Combined Tier', isClubOnly: true },
     { key: 'valueTier', display: 'Value Tier', isClubOnly: true },
     { key: 'tier', display: 'Contender Tier' },
+    { key: 'luck', display: 'Team Luck', isClubOnly: true },
     { key: 'overallRank', display: 'Overall Rank' },
     { key: 'starterRank', display: 'NFL Team' },
     { key: 'qbStarterRank', display: 'QB Contender Rank' },
@@ -123,6 +125,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     public leagueSwitchService: LeagueSwitchService,
     public displayService: DisplayService,
     private dialog: MatDialog,
+    private matchUpService: MatchupService,
     public userService: UserService,
     private clipboard: Clipboard) {
     super();
@@ -172,7 +175,8 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     });
     this.powerRankingCache = {};
     this.powerRankings.forEach(team => {
-      this.powerRankingCache[team.team.roster.rosterId] = {
+      const rosterId = team.team.roster.rosterId;
+      this.powerRankingCache[rosterId] = {
         tier: this.displayService.getTierFromNumber(team.tier),
         tierColor: TierColorPalette[team.tier],
         valueTier: this.displayService.getValueTierFromNumber(team.valueTier),
@@ -186,10 +190,47 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         wins: team.team.roster.teamMetrics?.wins || 0,
         losses: team.team.roster.teamMetrics?.losses || 0,
         pts: team.team.roster.teamMetrics?.fpts || 0,
-        rosters: {}
+        rosters: {},
       }
+      // format luck column for power rankings
+      const luckScore = this.matchUpService.teamLuckScore[rosterId];
+      let luck, color;
+
+      switch (true) {
+        case luckScore > 5:
+          luck = 'Very Lucky';
+          color = TierColorPalette[0];
+          break;
+        case luckScore > 3:
+          luck = 'Lucky';
+          color = TierColorPalette[1];
+          break;
+        case luckScore > 0:
+          luck = 'Slightly Lucky';
+          color = TierColorPalette[2];
+          break;
+        case luckScore === 0:
+          luck = 'Neutral';
+          color = TierColorPalette[3];
+          break;
+        case luckScore > -3:
+          luck = 'Slightly Unlucky';
+          color = TierColorPalette[4];
+          break;
+        case luckScore > -5:
+          luck = 'UnLucky';
+          color = TierColorPalette[5];
+          break;
+        default:
+          luck = 'Very UnLucky';
+          color = TierColorPalette[6];
+      }
+
+      this.powerRankingCache[rosterId].luck = luck;
+      this.powerRankingCache[rosterId].luckColor = color;
+      // cache power rankings for position groups
       team.roster.forEach((group) => {
-        this.powerRankingCache[team.team.roster.rosterId].rosters[group.position] = {
+        this.powerRankingCache[rosterId].rosters[group.position] = {
           value: this.isSuperFlex ? group.sfTradeValue : group.tradeValue,
           rank: group.rank,
           starterRank: group.starterRank,
@@ -199,13 +240,13 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         }
       });
       // Rank Contenders Flex
-      this.powerRankingCache[team.team.roster.rosterId].rosters['FLEX'] = {
+      this.powerRankingCache[rosterId].rosters['FLEX'] = {
         starterValue: team.flexStarterValue,
         starterRank: team.flexStarterRank,
         isRed: team.flexStarterRank > this.alertThreshold * 2,
         isGreen: team.flexStarterRank < this.alertThreshold
       }
-      this.powerRankingCache[team.team.roster.rosterId].rosters[team.picks.position] = {
+      this.powerRankingCache[rosterId].rosters[team.picks.position] = {
         value: this.isSuperFlex ? team.picks.sfTradeValue : team.picks.tradeValue,
         rank: team.picks.rank,
         isRed: team.picks.rank > this.alertThreshold * 2,

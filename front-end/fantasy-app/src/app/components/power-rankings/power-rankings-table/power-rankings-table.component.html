@@ -129,6 +129,14 @@
           </mat-chip-list></td>
       </ng-container>
 
+      <ng-container matColumnDef="luck">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Luck</th>
+        <td mat-cell *matCellDef="let element"><mat-chip-list>
+          <mat-chip style="background: {{powerRankingCache[element.team.roster.rosterId].luckColor}}">
+            {{powerRankingCache[element.team.roster.rosterId].luck}}</mat-chip>
+          </mat-chip-list></td>
+      </ng-container>
+
       <ng-container matColumnDef="overallRank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Overall Rank</th>
         <td mat-cell *matCellDef="let element"> {{powerRankingCache[element.team.roster.rosterId].rank}} </td>
