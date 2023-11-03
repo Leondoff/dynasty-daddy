@@ -425,6 +425,8 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         return item.picks.rank;
       } else if (property === 'overallRank') {
         return item.overallRank;
+      } else if (property === 'luck') {
+        return this.matchUpService.teamLuckScore[item?.team?.roster?.rosterId];
       } else if (property === 'record') {
         return (item.team?.roster?.teamMetrics?.wins || 0) * 1000
           + (item.team?.roster?.teamMetrics?.fpts || 0);
