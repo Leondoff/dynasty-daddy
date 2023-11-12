@@ -75,7 +75,15 @@ export class MflService {
     observableList.push(
       this.mflApiService.getMFLSchedules(year, leagueId, this.mflUserId, baseURL).pipe(
         map((leagueSchedule) => {
-          leagueMatchUps = this.marshalLeagueMatchUps(leagueSchedule?.schedule?.weeklySchedule);
+          const schedule = leagueSchedule?.schedule?.weeklySchedule;
+          leagueMatchUps = this.marshalLeagueMatchUps(schedule);
+          // check for median
+          if (Array.isArray(schedule[0]?.matchup) &&
+            schedule[0]?.matchup.some(matchUp =>
+              matchUp.franchise.some(franchise => franchise.id === 'AVG'))) {
+            leagueWrapper.selectedLeague.medianWins = true;
+          }
+
           return of(leagueMatchUps);
         })
       )
@@ -453,13 +461,17 @@ export class MflService {
       if (matchUps.matchup) {
         if (Array.isArray(matchUps?.matchup)) {
           matchUps?.matchup?.forEach(matchUp => {
-            teamMatchUps.push(this.marshalMatchUpForTeam(matchUp.franchise[0], matchUpId));
-            teamMatchUps.push(this.marshalMatchUpForTeam(matchUp.franchise[1], matchUpId));
-            matchUpId++;
+            if (matchUp.franchise[0].id != 'AVG' && matchUp.franchise[1].id != 'AVG') {
+              teamMatchUps.push(this.marshalMatchUpForTeam(matchUp.franchise[0], matchUpId));
+              teamMatchUps.push(this.marshalMatchUpForTeam(matchUp.franchise[1], matchUpId));
+              matchUpId++;
+            }
           });
         } else {
-          teamMatchUps.push(this.marshalMatchUpForTeam(matchUps?.matchup?.franchise[0], matchUpId));
-          teamMatchUps.push(this.marshalMatchUpForTeam(matchUps?.matchup?.franchise[1], matchUpId));
+          if (matchUps?.matchup?.franchise[0].id != 'AVG' && matchUps?.matchup?.franchise[1].id != 'AVG') {
+            teamMatchUps.push(this.marshalMatchUpForTeam(matchUps?.matchup?.franchise[0], matchUpId));
+            teamMatchUps.push(this.marshalMatchUpForTeam(matchUps?.matchup?.franchise[1], matchUpId));
+          }
         }
         matchUpsDict[week] = teamMatchUps;
       }
