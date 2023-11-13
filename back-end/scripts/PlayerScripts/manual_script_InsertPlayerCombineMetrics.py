@@ -9,6 +9,11 @@ QB_CONTRACT_LINK = "https://overthecap.com/position/quarterback"
 RB_CONTRACT_LINK = "https://overthecap.com/position/running-back"
 WR_CONTRACT_LINK = "https://overthecap.com/position/wide-receiver"
 TE_CONTRACT_LINK = "https://overthecap.com/position/tight-end"
+LB_CONTRACT_LINK = "https://overthecap.com/position/linebacker"
+S_CONTRACT_LINK = "https://overthecap.com/position/safety"
+CB_CONTRACT_LINK = "https://overthecap.com/position/cornerback"
+DE_CONTRACT_LINK = "https://overthecap.com/position/edge-rusher"
+DL_CONTRACT_LINK = "https://overthecap.com/position/interior-defensive-line"
 
 PLAYER_PROFILER_EXCEPTIONS = {
     "kennethwalkerrb": "kenneth-walker-2",
@@ -191,7 +196,14 @@ def processContractData(conn, nameIdDict):
     rbContractsDict = fetchPlayerContractData(RB_CONTRACT_LINK, 'RB')
     wrContractsDict = fetchPlayerContractData(WR_CONTRACT_LINK, 'WR')
     teContractsDict = fetchPlayerContractData(TE_CONTRACT_LINK, 'TE')
-    contractDict = {**qbContractsDict, **rbContractsDict, **wrContractsDict, **teContractsDict}
+    lbContractsDict = fetchPlayerContractData(LB_CONTRACT_LINK, 'LB')
+    sContractsDict = fetchPlayerContractData(LB_CONTRACT_LINK, 'DB')
+    cbContractsDict = fetchPlayerContractData(CB_CONTRACT_LINK, 'DB')
+    deContractsDict = fetchPlayerContractData(DE_CONTRACT_LINK, 'DL')
+    dlContractsDict = fetchPlayerContractData(DL_CONTRACT_LINK, 'DL')
+    contractDict = {**qbContractsDict, **rbContractsDict, **wrContractsDict, **teContractsDict,
+                    **lbContractsDict, **sContractsDict, **cbContractsDict, **deContractsDict,
+                    **dlContractsDict}
     
     ind = 0
     for nameId, fullName in nameIdDict.items():
