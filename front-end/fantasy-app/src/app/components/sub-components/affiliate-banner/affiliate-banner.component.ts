@@ -15,18 +15,18 @@ export class AffiliateBannerComponent implements OnInit {
   selectedAffiliate: Affiliates = Affiliates.UNDERDOG;
 
   affiliateImgs: {} = {
-    0: ['https://i.ibb.co/RbbfyK0/Dynasty-Daddy-Graphics-728x90-2.jpg',
-      'https://i.ibb.co/xHRrbXr/Dynasty-Daddy-Graphics-728x90.jpg']
+    0: ['assets/ads/DynastyDaddy_Graphics_728x90_2.jpg',
+      'assets/ads/DynastyDaddy_Graphics_728x90.jpg']
   };
 
   mobileImgs: {} = {
-    0: ['https://i.ibb.co/VmmgJMr/Dynasty-Daddy-Graphics-320x50.jpg',
-      'https://i.ibb.co/CnqJ8Sc/Dynasty-Daddy-Graphics-320x50-2.jpg']
+    0: ['assets/ads/DynastyDaddy_Graphics_320x50.jpg',
+      'assets/ads/DynastyDaddy_Graphics_320x50_2.jpg']
   }
 
   wideImgs: {} = {
-    0: ['https://i.ibb.co/FmLJwZJ/Dynasty-Daddy-Graphics-300x100-2.jpg',
-      'https://i.ibb.co/wdRnhyC/Dynasty-Daddy-Graphics-300x100.jpg']
+    0: ['assets/ads/DynastyDaddy_Graphics_300x100_2.jpg',
+      'assets/ads/wdRnhyC/DynastyDaddy_Graphics_300x100.jpg']
   }
 
   affiliateLinks: {} = {
