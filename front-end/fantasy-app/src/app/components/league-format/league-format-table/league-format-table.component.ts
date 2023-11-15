@@ -62,38 +62,39 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
         this.dataSource = new MatTableDataSource(this.players);
         this.setSortForTable();
         this.players.forEach(p => {
+            const playerFormat = this.playerFormatDict[p.name_id];
             this.leagueFormatService.tableCache[p.name_id] = {
                 player: p.full_name,
                 pos: p.position,
                 team: p.team,
                 owner: p?.owner?.ownerName || '-',
                 tradeValue: this.leagueService.selectedLeague.isSuperflex ? p.sf_trade_value : p.trade_value,
-                pts: this.playerFormatDict[p.name_id]?.c?.pts,
-                ppg: Math.round(this.playerFormatDict[p.name_id]?.c?.pts / this.playerFormatDict[p?.name_id]?.c?.week * 100) / 100,
-                worp: this.playerFormatDict[p.name_id]?.w?.worp,
-                worppg: Math.round(this.playerFormatDict[p.name_id]?.w?.worp / this.playerFormatDict[p?.name_id]?.c?.week * 100) / 100,
-                winP: this.playerFormatDict[p.name_id]?.w?.percent,
-                week: this.playerFormatDict[p?.name_id]?.c?.week,
-                spikeHigh: this.playerFormatDict[p?.name_id]?.c?.spikeHigh,
-                spikeMid: this.playerFormatDict[p?.name_id]?.c?.spikeMid,
-                spikeLow: this.playerFormatDict[p?.name_id]?.c?.spikeLow,
-                spikeHighP: this.playerFormatDict[p?.name_id]?.c?.spikeHigh / this.playerFormatDict[p?.name_id]?.c?.week,
-                spikeMidP: this.playerFormatDict[p?.name_id]?.c?.spikeMid / this.playerFormatDict[p?.name_id]?.c?.week,
-                spikeLowP: this.playerFormatDict[p?.name_id]?.c?.spikeLow / this.playerFormatDict[p?.name_id]?.c?.week,
-                opp: this.playerFormatDict[p?.name_id]?.c?.opp,
-                oppg: this.playerFormatDict[p?.name_id]?.c?.week != 0 ?
-                    this.playerFormatDict[p?.name_id]?.c?.opp / this.playerFormatDict[p?.name_id]?.c?.week : 0,
-                ppo: this.playerFormatDict[p?.name_id]?.c?.opp != 0 ?
-                    this.playerFormatDict[p?.name_id]?.c?.pts / this.playerFormatDict[p?.name_id]?.c?.opp : 0,
-                pps: this.playerFormatDict[p?.name_id]?.c?.snp != 0 ? this.playerFormatDict[p?.name_id]?.c?.pts /
-                    this.playerFormatDict[p?.name_id]?.c?.snp : 0,
-                snpP: this.playerFormatDict[p?.name_id]?.c?.snp /
-                    this.playerFormatDict[p?.name_id]?.c?.tmSnp,
+                pts: playerFormat?.c?.pts,
+                ppg: Math.round(playerFormat?.c?.pts / playerFormat?.c?.week * 100) / 100,
+                worp: playerFormat?.w?.worp,
+                worppg: Math.round(playerFormat?.w?.worp / playerFormat?.c?.week * 10000) / 10000,
+                winP: playerFormat?.w?.percent,
+                week: playerFormat?.c?.week,
+                spikeHigh: playerFormat?.c?.spikeHigh,
+                spikeMid: playerFormat?.c?.spikeMid,
+                spikeLow: playerFormat?.c?.spikeLow,
+                spikeHighP: playerFormat?.c?.spikeHigh / playerFormat?.c?.week,
+                spikeMidP: playerFormat?.c?.spikeMid / playerFormat?.c?.week,
+                spikeLowP: playerFormat?.c?.spikeLow / playerFormat?.c?.week,
+                opp: playerFormat?.c?.opp,
+                oppg: playerFormat?.c?.week != 0 ?
+                    playerFormat?.c?.opp / playerFormat?.c?.week : 0,
+                ppo: playerFormat?.c?.opp != 0 ?
+                    playerFormat?.c?.pts / playerFormat?.c?.opp : 0,
+                pps: playerFormat?.c?.snp != 0 ? playerFormat?.c?.pts /
+                    playerFormat?.c?.snp : 0,
+                snpP: playerFormat?.c?.snp /
+                    playerFormat?.c?.tmSnp,
                 snppg:
-                    this.playerFormatDict[p?.name_id]?.c?.week != 0 ?
-                        this.playerFormatDict[p?.name_id]?.c?.snp / this.playerFormatDict[p?.name_id]?.c?.week : 0,
-                worpTier: this.playerFormatDict[p?.name_id]?.w?.worpTier,
-                worpTierDisplay: this.getWoRPTierName(this.playerFormatDict[p?.name_id]?.w?.worpTier),
+                    playerFormat?.c?.week != 0 ?
+                        playerFormat?.c?.snp / playerFormat?.c?.week : 0,
+                worpTier: playerFormat?.w?.worpTier,
+                worpTierDisplay: this.getWoRPTierName(playerFormat?.w?.worpTier),
             }
         });
         this.dataSource.paginator = this.paginator;

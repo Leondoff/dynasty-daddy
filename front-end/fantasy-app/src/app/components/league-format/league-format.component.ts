@@ -34,12 +34,6 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     /** toggle advanced settings */
     showAdvancedSettings: boolean = false;
 
-    /** form control for metrics dropdown */
-    selectedMetrics = new UntypedFormControl();
-
-    /** form control for data visualizations dropdown */
-    selectedVisualizations = new UntypedFormControl();
-
     leaguePositions: string[] = [];
 
     formatPresetOptions = [
@@ -120,8 +114,6 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
 
     ngOnInit(): void {
         this.playerService.loadPlayerValuesForToday();
-        this.selectedMetrics.setValue(this.leagueFormatService.columnsToDisplay);
-        this.selectedVisualizations.setValue(this.leagueFormatService.selectedVisualizations);
         if (!this.leagueFormatService.selectedSeason) {
             this.leagueFormatService.selectedSeason =
                 Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
@@ -173,8 +165,6 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         if (this.leagueFormatService.isAdvancedFiltered) {
             this.leagueFormatService.filteredPlayers = this.queryService.processRulesetForPlayer(this.leagueFormatService.filteredPlayers, this.leagueFormatService.query) || [];
         }
-        this.leagueFormatService.columnsToDisplay = this.selectedMetrics.value;
-        this.leagueFormatService.selectedVisualizations = this.selectedVisualizations.value;
         this.leagueFormatStatus = Status.DONE;
     }
 
@@ -214,35 +204,14 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     }
 
     /**
-     * Load presets for format tool
-     * @param type preset to load
-     */
-    loadPreset(type: number): void {
-        switch (type) {
-            case 2:
-                this.selectedVisualizations.setValue(['oppg', 'ppo']);
-                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'opp', 'oppg', 'ppo', 'snpP']);
-                break;
-            case 1:
-                this.selectedVisualizations.setValue(['spikeMidP', 'spikeHighP']);
-                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'week', 'spikeHigh', 'spikeMid', 'spikeLow', 'spikeHighP', 'spikeMidP', 'spikeLowP']);
-                break;
-            default:
-                this.selectedVisualizations.setValue(['worp']);
-                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'worpTier', 'worp', 'worppg', 'winP']);
-        }
-        this.leagueFormatService.leagueFormatPlayerUpdated$.next();
-    }
-
-    /**
      * Download table data
      */
     exportTableData(): void {
         const playerData: any[][] = [];
-        playerData.push(this.selectedMetrics.value);
+        playerData.push(this.leagueFormatService.selectedMetrics.value);
         this.leagueFormatService.filteredPlayers.forEach(p => {
             const row = [];
-            this.selectedMetrics.value.forEach(met => {
+            this.leagueFormatService.selectedMetrics.value.forEach(met => {
                 row.push(this.leagueFormatService.tableCache[p.name_id]?.[met])
             });
             playerData.push(row);

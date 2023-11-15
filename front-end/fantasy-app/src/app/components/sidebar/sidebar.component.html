@@ -21,53 +21,61 @@
       </button>
     </span>
   </div>
-  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="searchVal == '' || (isInSearch('Power Rankings') || isInSearch('League Standings') || isInSearch('Playoff Calculator') || isInSearch('Trade Finder') || isInSearch('Draft Center') || isInSearch('Fantasy Portfolio') || isInSearch('Mock Draft'))">
-      <mat-expansion-panel-header>
-          League Tools
-      </mat-expansion-panel-header>
-      <mat-nav-list>
-        <a mat-list-item [routerLink]="['./league/rankings']" *ngIf="searchVal == '' || isInSearch('Power Rankings')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav">
-          <mat-icon>stacked_bar_chart</mat-icon>Power Rankings</a>
-        <a mat-list-item [routerLink]="['./league/standings']" *ngIf="searchVal == '' || isInSearch('League Standings')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav">
-          <mat-icon>leaderboard</mat-icon>Standings</a>
-        <a mat-list-item [routerLink]="['./league/probability']" *ngIf="searchVal == '' || isInSearch('Playoff Calculator')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav">
-          <mat-icon>calculate</mat-icon>Playoff Calculator</a>
-        <a mat-list-item [routerLink]="['./league/trade/finder']" *ngIf="searchVal == '' || isInSearch('Trade Finder')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav">
-          <mat-icon>person_search</mat-icon>Trade Finder</a>
-        <a mat-list-item [routerLink]="['./league/draft']" *ngIf="searchVal == '' || isInSearch('Draft Center') || isInSearch('Mock Draft')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_draft_center" gaCategory="page_nav">
-          <mat-icon>storage</mat-icon>Draft Center</a>
-        <a mat-list-item [routerLink]="['./league/portfolio']" *ngIf="searchVal == '' || isInSearch('Fantasy Portfolio')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_portfolio" gaCategory="page_nav">
-          <mat-icon>account_balance</mat-icon>Fantasy Portfolio</a>
-        <a mat-list-item [routerLink]="['./league/format']" *ngIf="(searchVal == '' || isInSearch('League Format Tool'))" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_league_format" gaCategory="page_nav">
-          <mat-icon>line_axis</mat-icon>League Format <mat-chip-list><mat-chip class="sidebar-new-alert">New</mat-chip></mat-chip-list></a>
-      </mat-nav-list>
-  </mat-expansion-panel>
-  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="searchVal == '' || (isInSearch('Value Comparisons') || isInSearch('Positional Statistics') || isInSearch('Trade Calculator') || isInSearch('Player Rankings'))">
-      <mat-expansion-panel-header>
-          Player Tools
-      </mat-expansion-panel-header>
-      <mat-nav-list>
-          <a mat-list-item [routerLink]="['./players/values']" *ngIf="searchVal == '' || isInSearch('Player Rankings')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav">
-            <mat-icon>trending_up</mat-icon>Player Rankings</a>
-          <a mat-list-item [routerLink]="['./players/trade']" *ngIf="searchVal == '' || isInSearch('Trade Calculator')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav">
-            <mat-icon>compare_arrows</mat-icon>Trade Calculator</a>
-          <a mat-list-item [routerLink]="['./players/trade/database']" *ngIf="searchVal == '' || isInSearch('Trade Database')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_database" gaCategory="page_nav">
-            <mat-icon>dataset</mat-icon>Trade Database <mat-chip-list><mat-chip class="sidebar-new-alert">New</mat-chip></mat-chip-list></a>
-          <a mat-list-item [routerLink]="['./players/statistics']" *ngIf="searchVal == '' || isInSearch('Positional Statistics')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_positional_statistics" gaCategory="page_nav">
-            <mat-icon>topic</mat-icon>Positional Statistics</a>
-          <a mat-list-item [routerLink]="['./players/comparison']" *ngIf="searchVal == '' || isInSearch('Player Comparison Tool')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">
-            <mat-icon>insights</mat-icon>Player Comparison</a>
-      </mat-nav-list>
-  </mat-expansion-panel>
-  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="userService.user && (searchVal == '' || isInSearch('Dynasty Daddy Club') || isInSearch('User Settings'))">
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="userService.user && (isInSearch(['Dynasty Daddy Club', 'User Settings']))">
     <mat-expansion-panel-header>
       <img src="assets/clubs.svg" alt="patreon-icon" class="club-logo"> Dynasty Daddy Club
     </mat-expansion-panel-header>
     <mat-nav-list>
-      <a mat-list-item [routerLink]="['./user/settings']" *ngIf="userService.user && (searchVal == '' || isInSearch('User Settings'))" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_user_settings" gaCategory="page_nav">
+      <a mat-list-item [routerLink]="['./user/settings']" *ngIf="userService.user && (isInSearch(['User Settings']))" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_user_settings" gaCategory="page_nav">
         <mat-icon>settings</mat-icon>User Settings</a>
     </mat-nav-list>
-</mat-expansion-panel>
+  </mat-expansion-panel>
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="isInSearch(['Power Rankings', 'League Standings', 'Playoff Calculator', 'Trade Finder', 'Draft Center', 'Fantasy Portfolio', 'Mock Draft', 'WoRP/WAR Tool', 'WoRP Tool', 'WAR Tool', 'Wins Over Replacement Tool', 'Spike Week Tool', 'Opportunity Tool'])">
+      <mat-expansion-panel-header>
+          League Tools
+      </mat-expansion-panel-header>
+      <mat-nav-list>
+        <a mat-list-item [routerLink]="['./league/rankings']" *ngIf="isInSearch(['Power Rankings'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_power_rankings" gaCategory="page_nav">
+          <mat-icon>stacked_bar_chart</mat-icon>Power Rankings</a>
+        <a mat-list-item [routerLink]="['./league/standings']" *ngIf="isInSearch(['League Standings'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_standings" gaCategory="page_nav">
+          <mat-icon>leaderboard</mat-icon>Standings</a>
+        <a mat-list-item [routerLink]="['./league/probability']" *ngIf="isInSearch(['Playoff Calculator'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_playoff_calculator" gaCategory="page_nav">
+          <mat-icon>calculate</mat-icon>Playoff Calculator</a>
+        <a mat-list-item [routerLink]="['./league/trade/finder']" *ngIf="isInSearch(['Trade Finder'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_finder" gaCategory="page_nav">
+          <mat-icon>person_search</mat-icon>Trade Finder</a>
+        <a mat-list-item [routerLink]="['./league/draft']" *ngIf="isInSearch(['Draft Center', 'Mock Draft'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_draft_center" gaCategory="page_nav">
+          <mat-icon>storage</mat-icon>Draft Center</a>
+        <a mat-list-item [routerLink]="['./league/portfolio']" *ngIf="isInSearch(['Fantasy Portfolio'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_portfolio" gaCategory="page_nav">
+          <mat-icon>account_balance</mat-icon>Fantasy Portfolio</a>
+        <a mat-list-item [routerLink]="['./league/format']" *ngIf="isInSearch(['League Format Tool', 'WoRP/WAR Tool', 'WoRP Tool', 'WAR Tool', 'Wins Over Replacement Tool', 'Spike Week Tool', 'Opportunity Tool'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_league_format" gaCategory="page_nav">
+          <mat-icon>line_axis</mat-icon>League Format <mat-chip-list><mat-chip class="sidebar-new-alert">New</mat-chip></mat-chip-list></a>
+        <mat-nav-list class="nested-list">
+          <a mat-list-item (click)="loadSelectedPresetForLFT(0)" *ngIf="isInSearch(['WoRP/WAR Tool', 'WoRP Tool', 'WAR Tool', 'Wins Over Replacement Tool'])" gaEvent="nav_league_format" gaCategory="page_nav">
+            <mat-icon>stacked_line_chart</mat-icon>WoRP/WAR Tool</a>
+          <a mat-list-item *ngIf="isInSearch(['Spike Week Tool'])" (click)="loadSelectedPresetForLFT(1)" gaEvent="nav_league_format" gaCategory="page_nav">
+            <mat-icon>insights</mat-icon>Spike Week Tool</a>
+          <a mat-list-item (click)="loadSelectedPresetForLFT(2)" *ngIf="isInSearch(['Opportunity Tool'])" gaEvent="nav_league_format" gaCategory="page_nav">
+            <mat-icon>show_chart</mat-icon>Opportunity Tool</a>
+        </mat-nav-list>
+      </mat-nav-list>
+  </mat-expansion-panel>
+  <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="isInSearch(['Value Comparisons', 'Positional Statistics', 'Trade Calculator', 'Player Rankings', 'Trade Database'])">
+      <mat-expansion-panel-header>
+          Player Tools
+      </mat-expansion-panel-header>
+      <mat-nav-list>
+          <a mat-list-item [routerLink]="['./players/values']" *ngIf="isInSearch(['Player Rankings'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_values" gaCategory="page_nav">
+            <mat-icon>trending_up</mat-icon>Player Rankings</a>
+          <a mat-list-item [routerLink]="['./players/trade']" *ngIf="isInSearch(['Trade Calculator'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav">
+            <mat-icon>compare_arrows</mat-icon>Trade Calculator</a>
+          <a mat-list-item [routerLink]="['./players/trade/database']" *ngIf="isInSearch(['Trade Database'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_database" gaCategory="page_nav">
+            <mat-icon>dataset</mat-icon>Trade Database <mat-chip-list><mat-chip class="sidebar-new-alert">New</mat-chip></mat-chip-list></a>
+          <a mat-list-item [routerLink]="['./players/statistics']" *ngIf="isInSearch(['Positional Statistics'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_positional_statistics" gaCategory="page_nav">
+            <mat-icon>topic</mat-icon>Positional Statistics</a>
+          <a mat-list-item [routerLink]="['./players/comparison']" *ngIf="isInSearch(['Player Comparison Tool'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">
+            <mat-icon>area_chart</mat-icon>Player Comparison</a>
+      </mat-nav-list>
+  </mat-expansion-panel>
   <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar>
   </mat-list-item>
@@ -105,7 +113,7 @@
         <span class="player-item-left">{{player.position}} • {{player.first_name.substring(0,1)}}. {{player.last_name}}</span><span class="player-item-right">{{this.isSuperflex ? player.sf_trade_value: player.trade_value}}</span></a>
   </mat-nav-list>
 </mat-expansion-panel>
-<a mat-list-item [routerLink]="['./gridiron']" *ngIf="searchVal == '' || isInSearch('NFL Gridiron')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_gridiron" gaCategory="page_nav">
+<a mat-list-item [routerLink]="['./gridiron']" *ngIf="isInSearch(['NFL Gridiron', 'Immaculate Gridiron'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_gridiron" gaCategory="page_nav">
   <mat-icon>grid_view</mat-icon>NFL Immaculate Gridiron</a>
   <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent"></mat-progress-bar>
@@ -113,16 +121,16 @@
   <mat-list-item *ngIf="leagueService.leagueStatus === 'LOADING'" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-progress-bar  mode="indeterminate" color="accent"></mat-progress-bar>
   </mat-list-item>
-  <mat-list-item *ngIf="leagueService.isLeagueLoaded() && (searchVal == '' || isInSearch('Open League'))" (click)="leagueService.openLeague()" [queryParams]="leagueSwitchService.buildQueryParams()">
+  <mat-list-item *ngIf="leagueService.isLeagueLoaded() && (isInSearch(['Open League']))" (click)="leagueService.openLeague()" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-icon >offline_share</mat-icon><span> Open League</span>
   </mat-list-item>
-  <mat-list-item *ngIf="leagueService.isLeagueLoaded() && (searchVal == '' || isInSearch('Refresh League'))" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)" [queryParams]="leagueSwitchService.buildQueryParams()">
+  <mat-list-item *ngIf="leagueService.isLeagueLoaded() && (isInSearch(['Refresh League']))" (click)="leagueSwitchService.loadLeague(leagueSwitchService.selectedLeague)" [queryParams]="leagueSwitchService.buildQueryParams()">
     <mat-icon>refresh</mat-icon><span> Refresh League</span>
   </mat-list-item>
-  <mat-list-item *ngIf="!userService.user && (searchVal == '' || isInSearch('Dynasty Daddy Club'))" (click)="openUrl('https://www.patreon.com/DynastyDaddy')" gaEvent="click_dynasty_daddy_club" gaCategory="nav_patreon">
+  <mat-list-item *ngIf="!userService.user && (isInSearch(['Dynasty Daddy Club']))" (click)="openUrl('https://www.patreon.com/DynastyDaddy')" gaEvent="click_dynasty_daddy_club" gaCategory="nav_patreon">
     <img src="assets/clubs.svg" alt="patreon-icon" class="club-logo"><span> Dynasty Daddy Club</span>
   </mat-list-item>
-  <mat-list-item *ngIf="searchVal == '' || isInSearch('Roster Review')" (click)="openUrl()" gaEvent="click_roster_review" gaCategory="nav_sponsor">
+  <mat-list-item *ngIf="isInSearch(['Roster Review'])" (click)="openUrl()" gaEvent="click_roster_review" gaCategory="nav_sponsor">
     <mat-icon>paid</mat-icon><span> Roster Review</span>
   </mat-list-item>
   <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="searchVal != '' ? true : false" *ngIf="filteredCreators.length > 0">
@@ -139,21 +147,21 @@
         Data Sources
     </mat-expansion-panel-header>
     <mat-nav-list>
-      <a mat-list-item (click)="openUrl(dataSources[0])" *ngIf="searchVal == '' || isInSearch('KeepTradeCut')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_keep_trade_cut" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[0])" *ngIf="isInSearch(['KeepTradeCut'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_keep_trade_cut" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>KeepTradeCut</a>
-      <a mat-list-item (click)="openUrl(dataSources[1])" *ngIf="searchVal == '' || isInSearch('FantasyCalc')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[1])" *ngIf="isInSearch(['FantasyCalc'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_fantasy_calc" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>FantasyCalc</a>
-      <a mat-list-item (click)="openUrl(dataSources[2])" *ngIf="searchVal == '' || isInSearch('DynastyProcess')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_dynasty_process" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[2])" *ngIf="isInSearch(['DynastyProcess'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_dynasty_process" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>DynastyProcess</a>
-      <a mat-list-item (click)="openUrl(dataSources[3])" *ngIf="searchVal == '' || isInSearch('DynastySuperflex')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_dynasty_superflex" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[3])" *ngIf="isInSearch(['DynastySuperflex'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_dynasty_superflex" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>DynastySuperflex</a>
-      <a mat-list-item (click)="openUrl(dataSources[4])" *ngIf="searchVal == '' || isInSearch('PlayerProfiler')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_profiler" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[4])" *ngIf="isInSearch(['PlayerProfiler'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_profiler" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>PlayerProfiler</a>
-      <a mat-list-item (click)="openUrl(dataSources[5])" *ngIf="searchVal == '' || isInSearch('OverTheCap')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_over_the_cap" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[5])" *ngIf="isInSearch(['OverTheCap'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_over_the_cap" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>OverTheCap</a>
-      <a mat-list-item (click)="openUrl(dataSources[6])" *ngIf="searchVal == '' || isInSearch('Ras.Football')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_ras_football" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[6])" *ngIf="isInSearch(['Ras.Football'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_ras_football" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>Ras.Football</a>
-      <a mat-list-item (click)="openUrl(dataSources[7])" *ngIf="searchVal == '' || isInSearch('NFLVerse')" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_verse" gaCategory="page_nav">
+      <a mat-list-item (click)="openUrl(dataSources[7])" *ngIf="isInSearch(['NFLVerse'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_nfl_verse" gaCategory="page_nav">
         <mat-icon>open_in_new</mat-icon>NFLVerse</a>
     </mat-nav-list>
   </mat-expansion-panel>

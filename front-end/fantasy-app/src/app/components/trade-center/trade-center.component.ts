@@ -122,7 +122,10 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     private route: ActivatedRoute
   ) {
     super();
-    this.pageService.setUpPageSEO('Fantasy Football Trade Calculator', ['fantasy trade analyzer', 'trade calculator', 'fantasy football'], this.pageDescription);
+    this.pageService.setUpPageSEO('Fantasy Football Trade Calculator', 
+    ['trade analyzer', 'fantasy trade analyzer', 'trade calculator', 'fantasy football',
+    'fantasy football trades', 'fantasy trade tool', 'trade comparison'],
+     this.pageDescription);
   }
 
   ngOnInit(): void {
