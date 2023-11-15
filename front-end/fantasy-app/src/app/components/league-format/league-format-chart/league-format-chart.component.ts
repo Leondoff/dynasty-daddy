@@ -150,38 +150,39 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
     }
 
     private getMetric(nameId: string): number {
+        const playerFormat = this.playerFormatDict[nameId];
         switch (this.metricName) {
             case 'worppg':
-                return Math.round(this.playerFormatDict[nameId]?.w?.worp / this.playerFormatDict[nameId]?.c?.week * 100) / 100;
+                return Math.round(playerFormat?.w?.worp / playerFormat?.c?.week * 10000) / 10000;
             case 'spikeHighP':
-                return this.playerFormatDict[nameId]?.c?.spikeHigh / this.playerFormatDict[nameId]?.c?.week;
+                return playerFormat?.c?.spikeHigh / playerFormat?.c?.week;
             case 'spikeMidP':
-                return this.playerFormatDict[nameId]?.c?.spikeMid / this.playerFormatDict[nameId]?.c?.week;
+                return playerFormat?.c?.spikeMid / playerFormat?.c?.week;
             case 'spikeLowP':
-                return this.playerFormatDict[nameId]?.c?.spikeLow / this.playerFormatDict[nameId]?.c?.week;
+                return playerFormat?.c?.spikeLow / playerFormat?.c?.week;
             case 'ppo':
-                return this.playerFormatDict[nameId]?.c?.opp != 0 ?
-                    this.playerFormatDict[nameId]?.c?.pts / this.playerFormatDict[nameId]?.c?.opp : 0;
+                return playerFormat?.c?.opp != 0 ?
+                    playerFormat?.c?.pts / playerFormat?.c?.opp : 0;
             case 'oppg':
-                return this.playerFormatDict[nameId]?.c?.week != 0 ?
-                    this.playerFormatDict[nameId]?.c?.opp / this.playerFormatDict[nameId]?.c?.week : 0;
+                return playerFormat?.c?.week != 0 ?
+                    playerFormat?.c?.opp / playerFormat?.c?.week : 0;
             case 'ppg':
-                return this.playerFormatDict[nameId]?.c?.week != 0 ?
-                    this.playerFormatDict[nameId]?.c?.pts / this.playerFormatDict[nameId]?.c?.week : 0;
+                return playerFormat?.c?.week != 0 ?
+                    playerFormat?.c?.pts / playerFormat?.c?.week : 0;
             case 'snpP':
-                return this.playerFormatDict[nameId]?.c?.snp /
-                    this.playerFormatDict[nameId]?.c?.tmSnp;
+                return playerFormat?.c?.snp /
+                    playerFormat?.c?.tmSnp;
             case 'pps':
-                return this.playerFormatDict[nameId]?.c?.snp != 0 ? this.playerFormatDict[nameId]?.c?.pts /
-                    this.playerFormatDict[nameId]?.c?.snp : 0;
+                return playerFormat?.c?.snp != 0 ? playerFormat?.c?.pts /
+                    playerFormat?.c?.snp : 0;
             case 'snppg':
-                return this.playerFormatDict[nameId]?.c?.week != 0 ?
-                    this.playerFormatDict[nameId]?.c?.snp / this.playerFormatDict[nameId]?.c?.week : 0;
+                return playerFormat?.c?.week != 0 ?
+                    playerFormat?.c?.snp / playerFormat?.c?.week : 0;
             case 'worp':
             case 'percent':
-                return this.playerFormatDict[nameId]?.w?.[this.metricName] || 0;
+                return playerFormat?.w?.[this.metricName] || 0;
             default:
-                return this.playerFormatDict[nameId]?.c?.[this.metricName] || 0;
+                return playerFormat?.c?.[this.metricName] || 0;
         }
     }
 

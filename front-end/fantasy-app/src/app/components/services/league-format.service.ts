@@ -28,12 +28,12 @@ export class LeagueFormatService {
     /** emits on portfolio value updates */
     leagueFormatPlayerUpdated$: Subject<void> = new Subject<void>();
 
+    /** form control for metrics dropdown */
+    selectedMetrics = new UntypedFormControl(['player', 'pos', 'team', 'worpTier', 'worp',
+        'week', 'spikeHigh', 'spikeMid', 'spikeLow', 'spikeHighP', 'spikeMidP', 'spikeLowP']);
 
-    columnsToDisplay = ['player', 'pos', 'team', 'worpTier', 'worp',
-        'week', 'spikeHigh', 'spikeMid',
-        'spikeLow', 'spikeHighP', 'spikeMidP', 'spikeLowP'];
-
-    selectedVisualizations: string[] = ['worp', 'spikeMidP']
+    /** form control for data visualizations dropdown */
+    selectedVisualizations = new UntypedFormControl(['worp', 'spikeMidP']);
 
     tableCache = {};
 
@@ -52,8 +52,30 @@ export class LeagueFormatService {
         this.filteredPlayers = this.playerService.playerValues.filter(p => p.position != 'PI'
             && this.leagueService.leagueFormatMetrics[this.selectedSeason]?.[p.name_id]?.c)
             .filter(p => (p.full_name.toLowerCase().includes(this.searchVal.toLowerCase()) ||
+                p.team.toLowerCase().includes(this.searchVal.toLowerCase()) ||
                 p.owner?.ownerName.toLowerCase().includes(this.searchVal.toLowerCase())) &&
                 this.selectedPositions.value.includes(p.position));
+    }
+
+    /**
+     * Load presets for format tool
+     * @param type preset to load
+     */
+    loadPreset(type: number): void {
+        switch (type) {
+            case 2:
+                this.selectedVisualizations.setValue(['oppg', 'ppo']);
+                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'opp', 'oppg', 'ppo', 'snpP']);
+                break;
+            case 1:
+                this.selectedVisualizations.setValue(['spikeMidP', 'spikeHighP']);
+                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'week', 'spikeHigh', 'spikeMid', 'spikeLow', 'spikeHighP', 'spikeMidP', 'spikeLowP']);
+                break;
+            default:
+                this.selectedVisualizations.setValue(['worp']);
+                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'worpTier', 'worp', 'worppg', 'tradeValue']);
+        }
+        this.leagueFormatPlayerUpdated$.next();
     }
 
 }

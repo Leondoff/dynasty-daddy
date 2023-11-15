@@ -13,7 +13,7 @@
           <mat-icon>insert_chart</mat-icon> Load Preset
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item *ngFor="let menu of formatPresetOptions" (click)="loadPreset(menu.type)">
+          <button mat-menu-item *ngFor="let menu of formatPresetOptions" (click)="leagueFormatService.loadPreset(menu.type)">
             <span>{{menu.display}}</span>
           </button>
         </mat-menu>
@@ -28,11 +28,11 @@
       <span class="button-right" *ngIf="!configService.isMobile">
         <mat-form-field appearance="standard" color="accent">
           <mat-label>Add Data Visualizations</mat-label>
-          <mat-select [formControl]="selectedVisualizations" multiple (selectionChange)="reloadFormatTool()">
+          <mat-select [formControl]="leagueFormatService.selectedVisualizations" multiple (selectionChange)="reloadFormatTool()">
             <mat-select-trigger>
-              {{selectedVisualizations.value ? selectedVisualizations.value[0] : ''}}
-              <span *ngIf="selectedVisualizations.value?.length > 1">
-                (+{{selectedVisualizations.value.length - 1}} {{selectedVisualizations.value?.length === 2 ? 'other' : 'others'}})
+              {{leagueFormatService.selectedVisualizations.value ? leagueFormatService.selectedVisualizations.value[0] : ''}}
+              <span *ngIf="leagueFormatService.selectedVisualizations.value?.length > 1">
+                (+{{leagueFormatService.selectedVisualizations.value.length - 1}} {{leagueFormatService.selectedVisualizations.value?.length === 2 ? 'other' : 'others'}})
               </span>
             </mat-select-trigger>
             <mat-option *ngFor="let obj of availableVisualizations" [value]="obj.key">{{obj.display}}</mat-option>
@@ -50,12 +50,12 @@
 
 
     <div *ngIf="leagueFormatStatus == 1">
-      <div class="item" *ngIf="leagueFormatService.selectedVisualizations.length == 1">
-        <div class="center-text mid-bold-text">{{getVisualizationDisplayName(leagueFormatService.selectedVisualizations[0])}}</div>
-        <app-league-format-chart [leagueFormat]="leaguePositions" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [metricName]="leagueFormatService.selectedVisualizations[0]"></app-league-format-chart>
+      <div class="item" *ngIf="leagueFormatService.selectedVisualizations.value.length == 1">
+        <div class="center-text mid-bold-text">{{getVisualizationDisplayName(leagueFormatService.selectedVisualizations.value[0])}}</div>
+        <app-league-format-chart [leagueFormat]="leaguePositions" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [metricName]="leagueFormatService.selectedVisualizations.value[0]"></app-league-format-chart>
       </div>
-      <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="leagueFormatService.selectedVisualizations.length > 1">
-        <div fxFlex="45%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" *ngFor="let metric of leagueFormatService.selectedVisualizations">
+      <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="leagueFormatService.selectedVisualizations.value.length > 1">
+        <div fxFlex="45%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" *ngFor="let metric of leagueFormatService.selectedVisualizations.value">
           <mat-card>
             <mat-card-title class="center-text">{{getVisualizationDisplayName(metric)}}</mat-card-title>
             <app-league-format-chart [leagueFormat]="leaguePositions" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [metricName]="metric"></app-league-format-chart>
@@ -69,7 +69,7 @@
         <mat-form-field class="mat-dropdown-wide-300"
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile}" color="accent"
           style="border-top: unset !important;">
-          <mat-label>Search Player or Manager</mat-label>
+          <mat-label>Search Player, Manager or Team</mat-label>
           <input matInput type="text" (keyup)="reloadFormatTool()" [(ngModel)]="leagueFormatService.searchVal">
           <button mat-button *ngIf="leagueFormatService.searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearchVal()">
             <mat-icon>close</mat-icon>
@@ -102,11 +102,11 @@
       <span>
         <mat-form-field appearance="standard" color="accent">
           <mat-label>Customize Table</mat-label>
-          <mat-select [formControl]="selectedMetrics" multiple (selectionChange)="reloadFormatTool()">
+          <mat-select [formControl]="leagueFormatService.selectedMetrics" multiple (selectionChange)="reloadFormatTool()">
             <mat-select-trigger>
-              {{selectedMetrics.value ? selectedMetrics.value[0] : ''}}
-              <span *ngIf="selectedMetrics.value?.length > 1">
-                (+{{selectedMetrics.value.length - 1}} {{selectedMetrics.value?.length === 2 ? 'other' : 'others'}})
+              {{leagueFormatService.selectedMetrics.value ? leagueFormatService.selectedMetrics.value[0] : ''}}
+              <span *ngIf="leagueFormatService.selectedMetrics.value?.length > 1">
+                (+{{leagueFormatService.selectedMetrics.value.length - 1}} {{leagueFormatService.selectedMetrics.value?.length === 2 ? 'other' : 'others'}})
               </span>
             </mat-select-trigger>
             <mat-option *ngFor="let obj of availableMetrics" [value]="obj.key">{{obj.display}}</mat-option>
@@ -120,7 +120,7 @@
     </div>
     <div *ngIf="leagueFormatStatus == 1">
       <div *ngIf="leagueFormatService.filteredPlayers.length > 0">
-        <app-league-format-table [players]="leagueFormatService.filteredPlayers" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [selectedCols]="leagueFormatService.columnsToDisplay"></app-league-format-table>
+        <app-league-format-table [players]="leagueFormatService.filteredPlayers" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [selectedCols]="leagueFormatService.selectedMetrics.value"></app-league-format-table>
       </div>
       <div class="center-text margin-top-50 large-bold-header-text warning__alert" *ngIf="leagueFormatService.filteredPlayers.length == 0">
         No players found with applied filters

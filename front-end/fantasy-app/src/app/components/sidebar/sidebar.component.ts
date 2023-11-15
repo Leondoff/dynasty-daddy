@@ -7,6 +7,8 @@ import { BaseComponent } from '../base-component.abstract';
 import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { LeagueTeam } from 'src/app/model/league/LeagueTeam';
 import { UserService } from 'src/app/services/user.service';
+import { LeagueFormatService } from '../services/league-format.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -57,6 +59,8 @@ export class SidebarComponent extends BaseComponent implements OnInit {
     public playerService: PlayerService,
     public userService: UserService,
     public configService: ConfigService,
+    private leagueFormatService: LeagueFormatService,
+    private router: Router,
     public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -140,33 +144,39 @@ export class SidebarComponent extends BaseComponent implements OnInit {
 
   /**
    * Returns true if term contains search value
-   * @param title string to filter on
+   * @param title string array to filter on
    */
-  isInSearch(title: string): boolean {
-    return title?.toLowerCase().includes(this.searchVal?.toLowerCase());
+  isInSearch(title: string[]): boolean {
+    return (
+      (this.searchVal === '' || title?.some((str) =>
+        str?.toLowerCase().includes(this.searchVal?.toLowerCase()))) ||
+      false
+    );
   }
 
   /**
    * Update the sidebar filters for players and teams
    */
   private filterSidebarResults(): void {
+    console.log('here')
     this.filteredPlayers = this.playerService.playerValues
       .filter(p => ['QB', 'RB', 'WR', 'TE'].includes(p.position))
-      .filter(p => this.isInSearch(p.full_name) ||
-        this.isInSearch(p.position) ||
-        this.isInSearch(p.owner?.ownerName) ||
-        this.isInSearch(p.owner?.teamName)).slice(0, 10);
+      .filter(p =>
+        this.isInSearch(
+          [p.full_name, p.position, p.owner?.ownerName, p.owner?.teamName]
+        )).slice(0, 10);
+    console.log(this.filteredPlayers)
     this.filteredTeams = this.searchVal == '' ?
       this.leagueService.leagueTeamDetails.slice() :
-      this.leagueService.leagueTeamDetails.filter(t => this.isInSearch(t.owner?.ownerName) || this.isInSearch(t.owner?.teamName));
-    this.filteredCreators = this.configService.preferredCreators.slice(0, this.configService.preferredCreators.length - 1).filter(c => this.isInSearch(c.alt))
+      this.leagueService.leagueTeamDetails.filter(t => this.isInSearch([t.owner?.ownerName, t.owner?.teamName]));
+    this.filteredCreators = this.configService.preferredCreators.slice(0, this.configService.preferredCreators.length - 1).filter(c => this.isInSearch([c.alt]))
   }
 
   /**
    * Returns true if the data source header should be present on search
    */
   isDataSourceInSearch(): boolean {
-    return this.dataSources.some(source => this.isInSearch(source));
+    return this.isInSearch(this.dataSources);
   }
 
   /**
@@ -182,5 +192,14 @@ export class SidebarComponent extends BaseComponent implements OnInit {
   updateLock(): void {
     this.isSidebarLocked = !this.isSidebarLocked;
     localStorage.setItem(LocalStorageDictionary.SIDEBAR_LOCK_ITEM, String(this.isSidebarLocked));
+  }
+
+  loadSelectedPresetForLFT(preset: number): void {
+    this.leagueFormatService.loadPreset(preset)
+    this.router.navigate(['league/format'],
+    {
+      queryParams: this.leagueSwitchService.buildQueryParams()
+    }
+  );
   }
 }

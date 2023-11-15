@@ -639,7 +639,7 @@ export class PowerRankingsService {
         })
         break;
       case PowerRankingTableView.Experimental:
-        powerRankingsTableCols = [...startCols, 'combinedTier', 'valueTier', 'tier', 'luck', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
+        powerRankingsTableCols = [...startCols, 'combinedTier', 'luck', 'overallRank', 'starterRank', 'qbRank', 'rbRank', 'wrRank', 'teRank'];
         this.rankingMarket = Number(this.playerService.selectedMarket);
         if (this.playerService.selectedMarket == FantasyMarket.FantasyCalcRedraft || this.playerService.selectedMarket == FantasyMarket.KeepTradeCutRedraft) {
           this.playerService.loadPlayerValuesForFantasyMarket$(FantasyMarket.KeepTradeCut).subscribe(() => {
