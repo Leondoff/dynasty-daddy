@@ -52,13 +52,13 @@
     <div *ngIf="leagueFormatStatus == 1">
       <div class="item" *ngIf="leagueFormatService.selectedVisualizations.value.length == 1">
         <div class="center-text mid-bold-text">{{getVisualizationDisplayName(leagueFormatService.selectedVisualizations.value[0])}}</div>
-        <app-league-format-chart [leagueFormat]="leaguePositions" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [metricName]="leagueFormatService.selectedVisualizations.value[0]"></app-league-format-chart>
+        <app-league-format-chart *ngIf="playerService.playerValues && leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [leagueFormat]="leaguePositions" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [metricName]="leagueFormatService.selectedVisualizations.value[0]"></app-league-format-chart>
       </div>
       <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="leagueFormatService.selectedVisualizations.value.length > 1">
         <div fxFlex="45%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" *ngFor="let metric of leagueFormatService.selectedVisualizations.value">
           <mat-card>
             <mat-card-title class="center-text">{{getVisualizationDisplayName(metric)}}</mat-card-title>
-            <app-league-format-chart [leagueFormat]="leaguePositions" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [metricName]="metric"></app-league-format-chart>
+            <app-league-format-chart *ngIf="playerService.playerValues && leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [leagueFormat]="leaguePositions" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [metricName]="metric"></app-league-format-chart>
           </mat-card>
         </div>
       </div>          

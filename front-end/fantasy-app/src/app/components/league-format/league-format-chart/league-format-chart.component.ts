@@ -188,9 +188,9 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
 
     private updateChart(): void {
         this.datasets = [];
-        const playerList = this.playerService.playerValues.filter(p => p.position != 'PI'
+        const playerList = this.playerService.playerValues?.filter(p => p.position != 'PI'
             && this.playerFormatDict[p.name_id]?.c)
-            .sort((a, b) => (this.getMetric(b.name_id) || 0) - (this.getMetric(a.name_id) || 0));
+            .sort((a, b) => (this.getMetric(b.name_id) || 0) - (this.getMetric(a.name_id) || 0)) || [];
         this.lineChartData = [];
         this.leagueFormat.forEach(pos => {
             const data = [];
