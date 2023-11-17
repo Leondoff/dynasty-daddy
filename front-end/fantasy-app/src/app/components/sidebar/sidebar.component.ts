@@ -158,14 +158,12 @@ export class SidebarComponent extends BaseComponent implements OnInit {
    * Update the sidebar filters for players and teams
    */
   private filterSidebarResults(): void {
-    console.log('here')
     this.filteredPlayers = this.playerService.playerValues
       .filter(p => ['QB', 'RB', 'WR', 'TE'].includes(p.position))
       .filter(p =>
         this.isInSearch(
           [p.full_name, p.position, p.owner?.ownerName, p.owner?.teamName]
         )).slice(0, 10);
-    console.log(this.filteredPlayers)
     this.filteredTeams = this.searchVal == '' ?
       this.leagueService.leagueTeamDetails.slice() :
       this.leagueService.leagueTeamDetails.filter(t => this.isInSearch([t.owner?.ownerName, t.owner?.teamName]));
