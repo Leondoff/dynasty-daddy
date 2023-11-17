@@ -40,13 +40,6 @@ export function initialize(startupService: StartupService): any {
 // tslint:disable-next-line:prefer-const
 let UniversalDeviceDetectorService;
 
-// Add the isIOS17orAbove function
-function isIOS17orAbove(): boolean {
-  // Check if the user agent string contains "iPhone OS 17" or a higher version
-  const userAgent = window.navigator.userAgent;
-  return /iPhone OS (1[7-9]|[2-9]\d)/.test(userAgent);
-}
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -69,7 +62,7 @@ function isIOS17orAbove(): boolean {
     NgxGoogleAnalyticsModule.forRoot(environment.gaMeasurementId),
     NgxGoogleAnalyticsRouterModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production && !isIOS17orAbove(),
+      enabled: environment.production,
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],
