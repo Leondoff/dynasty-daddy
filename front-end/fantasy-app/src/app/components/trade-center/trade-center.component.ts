@@ -332,13 +332,16 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   }
 
   /**
-   * add player to team 2 list
+   * add player to team 1 list
    * @param player selected player
    */
   addPlayerToTeam1(player: FantasyPlayer): void {
     if (player) {
       this.team1PlayerList.push(player);
       this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
+      if (player.owner.userId !== this.selectedTeam1 && player.position !== 'PI') {
+        this.selectedTeam1 = null;
+      }
       this.processTrade();
     }
   }
@@ -351,8 +354,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     if (player) {
       this.team2PlayerList.push(player);
       this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
-      if (this.team2PlayerList.length == 0) {
-        this.team2Rankings = null;
+      if (player.owner.userId !== this.selectedTeam2 && player.position !== 'PI') {
+        this.selectedTeam2 = null;
       }
       this.processTrade();
     }
@@ -378,6 +381,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   removePlayerFromTeam2(index: number): void {
     this.team2PlayerList.splice(index, 1);
     this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
+    if (this.team2PlayerList.length == 0) {
+      this.team2Rankings = null;
+    }
     this.processTrade();
   }
 

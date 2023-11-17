@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AdService } from 'src/app/services/utilities/ad.service';
 
 @Component({
   selector: 'app-about',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AboutComponent implements OnInit {
 
-  constructor() { }
+  constructor(private adService: AdService) { }
 
   ngOnInit(): void {
+    this.adService.loadFreestarScripts();
   }
 
 }
