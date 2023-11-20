@@ -31,7 +31,7 @@ export class PlayoffCalculatorGamesCardComponent implements OnInit {
   team2: LeagueTeam;
 
   /** color gradient for prob */
-  probGradient: string[];
+  probGradient: {};
 
   constructor(private leagueService: LeagueService,
               private colorService: ColorService,

@@ -84,6 +84,7 @@ export class LeagueSwitchService extends BaseComponent {
         })
       )
       .subscribe(res => {
+        this.powerRankingService.loadPRPreset(this.selectedLeague.type === 0 ? PowerRankingTableView.Starters : PowerRankingTableView.TradeValues);
         this.leagueService.leagueTeamDetails.map((team) => {
           this.playersService.generateRoster(team, this.selectedLeague.leaguePlatform);
         });
@@ -98,7 +99,6 @@ export class LeagueSwitchService extends BaseComponent {
               this.leagueService.selectedLeague.leaguePlatform
             ),
             this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
-              this.powerRankingService.loadPRPreset(this.selectedLeague.type === 0 ? PowerRankingTableView.Starters : PowerRankingTableView.TradeValues);
               this.leagueService.selectedLeague = this.selectedLeague;
               this.playerValueService.isSuperFlex = this.selectedLeague.isSuperflex;
               this.leagueService.leagueStatus = 'DONE';

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import Gradient from 'javascript-color-gradient';
 
 @Injectable({
@@ -6,7 +6,7 @@ import Gradient from 'javascript-color-gradient';
 })
 export class ColorService {
 
-  probGradient: string[] = [];
+  probGradient: {} = {};
 
   /**
    * returns array of hexs in a gradient between two colors
@@ -23,11 +23,20 @@ export class ColorService {
 
   /**
    * Get Probability gradient and cache it in color service
-   * @returns color gradient from 0 - 100
+   * @returns color gradient from -100 - 100
    */
-  getProbGradient(): string[] {
-    if (this.probGradient.length == 0) {
-      this.probGradient = this.getColorGradientArray(101, '#28283c', '#3f7bfb');
+  getProbGradient(): {} {
+    if (JSON.stringify(this.probGradient) === '{}') {
+      const postiveArr = this.getColorGradientArray(101, '#28283c', '#3f7bfb');
+      postiveArr.forEach((color, ind) => {
+        this.probGradient[ind] = color;
+      });
+      const negativeArr = this.getColorGradientArray(101, '#28283c', '#fe8180');
+      negativeArr.forEach((color, ind) => {
+        if (ind != 0) {
+          this.probGradient[ind * -1] = color;
+        }
+      });
     }
     return this.probGradient;
   }

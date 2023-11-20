@@ -338,6 +338,92 @@
     <div fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%" class="margin-top-15 trade_insights">
       <app-trade-center-player-values [selectedMarket]="playerService.selectedMarket" [isSuperflex]="isSuperFlex" [selectedPlayers]="combinedPlayerList || []"></app-trade-center-player-values>
     </div>
+    <div *ngIf="tradeTool.tradePackage && leagueService.selectedLeague && team1MockRankings && team2MockRankings && userService.user" class="trade_insights" fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%">
+      <mat-card>
+        <div class="center-text mid-bold-text" style="margin-bottom: 5px">League Simulator</div>
+        <table style="border-collapse: separate; white-space: normal;">
+          <tr style="height: 50px;">
+            <td style="width: 20%">Team</td>
+            <td style="width: 16%" class="text__light">Record</td>
+            <td style="width: 16%" class="text__light">Make Playoffs</td>
+            <td style="width: 16%" class="text__light" *ngIf="leagueService.selectedLeague.playoffTeams % 4 !== 0">1st-Round Bye</td>
+            <td style="width: 16%" class="text__light" *ngIf="leagueService.selectedLeague.playoffTeams % 4 === 0">Best Record</td>
+            <td style="width: 16%" class="text__light">Make Finals</td>
+            <td style="width: 16%" class="text__light">Win Finals</td>
+          </tr>
+          <tr style="height: 50px;">
+            <td style="width: 20%" >
+              {{team1MockRankings?.team?.owner?.ownerName}}
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.winChange*3]}}">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.wins || 0}}-{{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.losses || 0}} ({{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.winChange > 0 ? '+' : ''}}{{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.winChange || 0}})
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesMakePlayoffsChange*3]}}">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesMakingPlayoffs || 0}}% ({{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesMakePlayoffsChange > 0 ? '+' : ''}}{{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesMakePlayoffsChange || 0}}%)
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWithByeChange*3]}}" *ngIf="leagueService.selectedLeague.playoffTeams % 4 !== 0">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWithBye || 0}}% ({{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWithByeChange > 0 ? '+' : ''}}{{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWithByeChange || 0}}%)
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWithBestRecord*3]}}" *ngIf="leagueService.selectedLeague.playoffTeams % 4 === 0">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWithBestRecord || 0}}% ({{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWithBestRecordChange > 0 ? '+' : ''}}{{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWithBestRecord || 0}}%)
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesMakeChampionshipChange*3]}}">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesMakeChampionship || 0}}% ({{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesMakeChampionshipChange > 0 ? '+' : ''}}{{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesMakeChampionshipChange || 0}}%)
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWinChampionshipChange*3]}}">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWinChampionship || 0}}% ({{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWinChampionshipChange > 0 ? '+' : ''}}{{mockSimulation[team1MockRankings?.team?.roster?.rosterId]?.timesWinChampionshipChange || 0}}%)
+              </span>
+            </td>
+          </tr>
+          <tr style="height: 50px;">
+            <td style="width: 20%" >
+              {{team2MockRankings?.team?.owner?.ownerName}}
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.winChange*3]}}">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.wins || 0}}-{{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.losses || 0}} ({{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.winChange > 0 ? '+' : ''}}{{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.winChange || 0}})
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesMakePlayoffsChange*3]}}">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesMakingPlayoffs || 0}}% ({{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesMakePlayoffsChange > 0 ? '+' : ''}}{{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesMakePlayoffsChange || 0}}%)
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWithByeChange*3]}}" *ngIf="leagueService.selectedLeague.playoffTeams % 4 !== 0">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWithBye || 0}}% ({{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWithByeChange > 0 ? '+' : ''}}{{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWithByeChange || 0}}%)
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWithBestRecord*3]}}" *ngIf="leagueService.selectedLeague.playoffTeams % 4 === 0">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWithBestRecord || 0}}% ({{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWithBestRecordChange > 0 ? '+' : ''}}{{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWithBestRecord || 0}}%)
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesMakeChampionshipChange*3]}}">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesMakeChampionship || 0}}% ({{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesMakeChampionshipChange > 0 ? '+' : ''}}{{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesMakeChampionshipChange || 0}}%)
+              </span>
+            </td>
+            <td style="width: 16%; text-align: right;" style="background: {{probGradient[mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWinChampionshipChange*3]}}">
+              <span style="padding-right: 5px;">
+                {{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWinChampionship || 0}}% ({{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWinChampionshipChange > 0 ? '+' : ''}}{{mockSimulation[team2MockRankings?.team?.roster?.rosterId]?.timesWinChampionshipChange || 0}}%)
+              </span>
+            </td>
+          </tr>
+        </table>
+      </mat-card>
+    </div>
   </div>
 </div>
 
