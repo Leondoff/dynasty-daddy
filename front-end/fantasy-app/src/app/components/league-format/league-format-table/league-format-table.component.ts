@@ -38,7 +38,7 @@ export class LeagueFormatTableComponent implements OnInit, OnChanges {
     columnsToDisplay: string[];
 
     /** color gradient */
-    perGradient: string[] = [];
+    perGradient: {} = {};
 
     constructor(public configService: ConfigService,
         public leagueSwitchService: LeagueSwitchService,

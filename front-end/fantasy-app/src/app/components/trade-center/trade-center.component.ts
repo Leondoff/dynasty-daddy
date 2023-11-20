@@ -19,6 +19,11 @@ import { DisplayService } from '../../services/utilities/display.service';
 import { LeagueTeam } from '../../model/league/LeagueTeam';
 import { DraftCapital } from '../../model/assets/DraftCapital';
 import { PageService } from 'src/app/services/utilities/page.service';
+import { PlayoffCalculatorService } from '../services/playoff-calculator.service';
+import { MatchupService } from '../services/matchup.service';
+import { NflService } from 'src/app/services/utilities/nfl.service';
+import { ColorService } from 'src/app/services/utilities/color.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-trade-center',
@@ -77,6 +82,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   /** hide/show the recommended players to drop */
   public showDrops: boolean = false;
 
+  /** completed week */
+  public completedWeek: number;
+
   /** acceptance variant number */
   public acceptanceVariance: number;
 
@@ -104,6 +112,12 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
   /** mock power rankings for trade */
   public team2MockRankings: TeamPowerRanking;
 
+  /** mock simulation from trade */
+  public mockSimulation: {} = {};
+
+  /** probability gradient colors */
+  public probGradient = {};
+
   @ViewChild('singleSelect', { static: true }) singleSelect: MatSelect;
 
   @ViewChild('singleSelect2', { static: true }) singleSelect2: MatSelect;
@@ -119,13 +133,18 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     public displayService: DisplayService,
     private router: Router,
     private pageService: PageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private playoffCalculatorService: PlayoffCalculatorService,
+    private matchUpService: MatchupService,
+    private nflService: NflService,
+    private colorService: ColorService,
+    public userService: UserService,
   ) {
     super();
-    this.pageService.setUpPageSEO('Fantasy Football Trade Calculator', 
-    ['trade analyzer', 'fantasy trade analyzer', 'trade calculator', 'fantasy football',
-    'fantasy football trades', 'fantasy trade tool', 'trade comparison'],
-     this.pageDescription);
+    this.pageService.setUpPageSEO('Fantasy Football Trade Calculator',
+      ['trade analyzer', 'fantasy trade analyzer', 'trade calculator', 'fantasy football',
+        'fantasy football trades', 'fantasy trade tool', 'trade comparison'],
+      this.pageDescription);
   }
 
   ngOnInit(): void {
@@ -150,6 +169,12 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * initialization code for trade calculator
    */
   initializeTradeCalculator(): void {
+    this.probGradient = this.colorService.getProbGradient();
+    if (this.leagueService.selectedLeague) {
+      this.completedWeek = this.nflService.getCompletedWeekForSeason(this.leagueService?.selectedLeague?.season);
+      this.matchUpService.initMatchUpCharts(this.leagueService.selectedLeague, this.completedWeek);
+      this.playoffCalculatorService.calculateGamesWithProbability(this.completedWeek + 1);
+    }
     this.team1PlayerList = this.tradeTool.tradePackage?.team1Assets || [];
     this.team2PlayerList = this.tradeTool.tradePackage?.team2Assets || [];
     // weird issue with setting || true for is superflex
@@ -339,7 +364,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     if (player) {
       this.team1PlayerList.push(player);
       this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
-      if (player.owner.userId !== this.selectedTeam1 && player.position !== 'PI') {
+      if (player.position !== 'PI' && player.owner?.userId !== this.selectedTeam1) {
         this.selectedTeam1 = null;
       }
       this.processTrade();
@@ -354,7 +379,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     if (player) {
       this.team2PlayerList.push(player);
       this.combinedPlayerList = this.team1PlayerList.concat(this.team2PlayerList);
-      if (player.owner.userId !== this.selectedTeam2 && player.position !== 'PI') {
+      if (player.position !== 'PI' && player.owner?.userId !== this.selectedTeam2) {
         this.selectedTeam2 = null;
       }
       this.processTrade();
@@ -497,6 +522,9 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
    * @private
    */
   private switchLeagueTradePackage(): void {
+    this.completedWeek = this.nflService.getCompletedWeekForSeason(this.leagueService?.selectedLeague?.season);
+    this.matchUpService.initMatchUpCharts(this.leagueService.selectedLeague, this.completedWeek);
+    this.playoffCalculatorService.calculateGamesWithProbability(this.completedWeek + 1);
     this.team2Rankings = null;
     this.team1Rankings = null;
     this.isSuperFlex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : this.isSuperFlex;
@@ -550,9 +578,11 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       this.powerRankingsService.generatePowerRankings(
         newLeague,
         this.playerService.playerValues,
-        this.leagueService.selectedLeague.leaguePlatform,
-        true
-      ).subscribe(powerRankings =>
+        this.leagueService.selectedLeague.leaguePlatform
+      ).subscribe(powerRankings => {
+        const response = this.playoffCalculatorService.mockSimulationOfASeason(powerRankings, this.completedWeek);
+        this.mockSimulation = response.odds;
+        const records = response.projectedRecord;
         powerRankings.forEach(team => {
           if (team.team.owner.userId === trade.team1UserId) {
             this.team1MockRankings = team;
@@ -560,7 +590,30 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
           if (team.team.owner.userId === trade.team2UserId) {
             this.team2MockRankings = team;
           }
+          const rosterId = team.team.roster.rosterId;
+          this.mockSimulation[rosterId].timesMakePlayoffsChange =
+            (this.mockSimulation[rosterId].timesMakingPlayoffs || 0) -
+            (this.playoffCalculatorService.teamPlayoffOdds[rosterId].timesMakingPlayoffs || 0);
+          this.mockSimulation[rosterId].timesWithByeChange =
+            (this.mockSimulation[rosterId].timesWithBye || 0) -
+            (this.playoffCalculatorService.teamPlayoffOdds[rosterId].timesWithBye || 0);
+          this.mockSimulation[rosterId].timesWithBestRecordChange =
+            (this.mockSimulation[rosterId].timesWithBestRecord || 0) -
+            (this.playoffCalculatorService.teamPlayoffOdds[rosterId].timesWithBestRecord || 0);
+          this.mockSimulation[rosterId].timesMakeChampionshipChange =
+            (this.mockSimulation[rosterId].timesMakeChampionship || 0) -
+            (this.playoffCalculatorService.teamPlayoffOdds[rosterId].timesMakeChampionship || 0);
+          this.mockSimulation[rosterId].timesWinChampionshipChange =
+            (this.mockSimulation[rosterId].timesWinChampionship || 0) -
+            (this.playoffCalculatorService.teamPlayoffOdds[rosterId].timesWinChampionship || 0);
+          this.mockSimulation[rosterId].wins = records[rosterId].projWins + records[rosterId].medianWins;
+          this.mockSimulation[rosterId].losses = records[rosterId].projLoss + records[rosterId].medianLoss;
+          this.mockSimulation[rosterId].winChange = this.mockSimulation[rosterId].wins -
+            (this.playoffCalculatorService.teamsProjectedRecord[rosterId].projWins +
+              this.playoffCalculatorService.teamsProjectedRecord[rosterId].medianWins);
         })
+        // console.table(this.mockSimulation);
+      }
       );
     }
   }

@@ -27,4 +27,5 @@ export class MatchUpProbability {
 export class SimulatedTeamInfo {
   team: LeagueTeam;
   projWins: number;
+  timesWinOut: number;
 }
