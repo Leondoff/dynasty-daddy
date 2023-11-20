@@ -50,7 +50,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   divisionTableCols = [];
 
   /** color gradient */
-  probGradient: string[] = [];
+  probGradient: {} = {};
 
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.powerRankingsService.powerRankings);
