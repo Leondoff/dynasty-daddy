@@ -113,7 +113,7 @@
           <div *ngIf="leagueService.leagueUser && leagueService.leagueUser?.userData.username !== 'undefined'">Congratulations<span class="warning__alert"> {{leagueService.leagueUser?.userData.username}}</span>!</div> The
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.season}}</span> season of
           <span class="warning__alert">{{leagueSwitchService.selectedLeague.name}}</span> was loaded successfully from
-          <span class="warning__alert">{{displayService.getNameForPlatform(leagueService?.selectedLeague?.leaguePlatform)}}</span>!
+          <span class="warning__alert">{{displayService.getDisplayNameForPlatform(leagueService?.selectedLeague?.leaguePlatform)}}</span>!
         </div>
         <div *ngIf="leagueService.selectedLeague" class="margin-top-25">
           <div class="margin-bot-10">Check out our league tools below!</div>

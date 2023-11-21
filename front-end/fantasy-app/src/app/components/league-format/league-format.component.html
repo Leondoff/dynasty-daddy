@@ -35,7 +35,17 @@
                 (+{{leagueFormatService.selectedVisualizations.value.length - 1}} {{leagueFormatService.selectedVisualizations.value?.length === 2 ? 'other' : 'others'}})
               </span>
             </mat-select-trigger>
-            <mat-option *ngFor="let obj of availableVisualizations" [value]="obj.key">{{obj.display}}</mat-option>
+            <mat-option>
+              <ngx-mat-select-search [formControl]="visualizationFilter" placeholderLabel="Search Visualizations..." noEntriesFoundLabel=""></ngx-mat-select-search>
+              <mat-icon ngxMatSelectSearchClear>close</mat-icon>
+            </mat-option>
+            <mat-option *ngFor="let visualizations of filteredVisualizations"
+              [value]="visualizations.key" class="multiline-mat-option">
+            <div>
+              {{visualizations.display}}
+            </div>
+            <div class="small-text__light">{{visualizations.type}} Chart</div>
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </span>

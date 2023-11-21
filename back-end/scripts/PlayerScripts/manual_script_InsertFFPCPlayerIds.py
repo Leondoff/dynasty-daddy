@@ -58,7 +58,10 @@ def updateFFPCPlayerIds(leagueId = '10471'):
                     ffpc_id = %s,
                     updated_at = now() where name_id = %s'''
         cursor.execute(playerIdsStatement, (player['ffpcId'], player['nameId']))
+        iter = iter + 1
         print('(' + str(iter) + '/' + str(len(player_data)) + ') ' + player['nameId'] + ' processed ')
     conn.commit()
 
 updateFFPCPlayerIds()
+
+# League ids 31223

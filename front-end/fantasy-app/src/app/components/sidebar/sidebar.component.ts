@@ -193,7 +193,8 @@ export class SidebarComponent extends BaseComponent implements OnInit {
   }
 
   loadSelectedPresetForLFT(preset: number): void {
-    this.leagueFormatService.loadPreset(preset)
+    this.leagueFormatService.loadPreset(preset);
+    this.toggle();
     this.router.navigate(['league/format'],
     {
       queryParams: this.leagueSwitchService.buildQueryParams()

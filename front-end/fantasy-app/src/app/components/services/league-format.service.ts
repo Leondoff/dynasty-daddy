@@ -33,7 +33,7 @@ export class LeagueFormatService {
         'week', 'spikeHigh', 'spikeMid', 'spikeLow', 'spikeHighP', 'spikeMidP', 'spikeLowP']);
 
     /** form control for data visualizations dropdown */
-    selectedVisualizations = new UntypedFormControl(['worp', 'spikeMidP']);
+    selectedVisualizations = new UntypedFormControl(['worp', 'tradeValue/worp']);
 
     tableCache = {};
 
@@ -63,6 +63,10 @@ export class LeagueFormatService {
      */
     loadPreset(type: number): void {
         switch (type) {
+            case 3:
+                this.selectedVisualizations.setValue(['tradeValue/worp']);
+                this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'worpTier', 'worp', 'worppg', 'tradeValue']);
+                break;
             case 2:
                 this.selectedVisualizations.setValue(['oppg', 'ppo']);
                 this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'opp', 'oppg', 'ppo', 'snpP']);
