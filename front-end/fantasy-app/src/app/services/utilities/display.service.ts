@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
 import { TeamRankingTier, TeamRankingValueTier } from '../../components/model/powerRankings';
 import { LeagueScoringFormat } from 'src/app/model/league/LeagueDTO';
+import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
 
 /** League Platform logo URLS */
 export const PlatformLogos = {
@@ -18,6 +19,15 @@ export const PlatformNames = {
   FLEAFLICKER: 'Fleaflicker',
   ESPN: 'ESPN',
   FFPC: 'FFPC',
+}
+
+export const FantasyMarketNames = {
+  KEEPTRADECUT: 'KeepTradeCut',
+  FANTASYCALC: 'FantasyCalc',
+  DYNASTYPROCESS: 'DynastyProcess',
+  DYNASTYSUPERFLEX: 'DynastySuperflex',
+  KEEPTRADECUTREDRAFT: 'KeepTradeCut (Redraft)',
+  FANTASYCALCREDRAFT: 'FantasyCalc (Redraft)',
 }
 
 @Injectable({
@@ -67,6 +77,28 @@ export class DisplayService {
   }
 
   /**
+ * Returns a string for the fantasy market enum
+ * @param fantasyMarket fantasy market enum
+ * @returns 
+ */
+  getDisplayNameForFantasyMarket(fantasyMarket: FantasyMarket): string {
+    switch (fantasyMarket) {
+      case FantasyMarket.KeepTradeCut:
+        return FantasyMarketNames.KEEPTRADECUT;
+      case FantasyMarket.FantasyCalc:
+        return FantasyMarketNames.FANTASYCALC;
+      case FantasyMarket.DynastyProcess:
+        return FantasyMarketNames.DYNASTYPROCESS;
+      case FantasyMarket.DynastySuperflex:
+        return FantasyMarketNames.DYNASTYSUPERFLEX;
+      case FantasyMarket.FantasyCalcRedraft:
+        return FantasyMarketNames.FANTASYCALCREDRAFT;
+      default:
+        return FantasyMarketNames.KEEPTRADECUTREDRAFT;
+    }
+  }
+
+  /**
    * get image string for platform
    * @param platform
    */
@@ -82,25 +114,6 @@ export class DisplayService {
         return PlatformLogos.MFL_LOGO;
       default:
         return PlatformLogos.SLEEPER_LOGO;
-    }
-  }
-
-  /**
-   * returns string of platform to display
-   * @param platform 
-   */
-  getNameForPlatform(platform: LeaguePlatform): string {
-    switch (platform) {
-      case LeaguePlatform.ESPN:
-        return 'ESPN';
-      case LeaguePlatform.FFPC:
-        return 'FFPC';
-      case LeaguePlatform.FLEAFLICKER:
-        return 'FleaFlicker';
-      case LeaguePlatform.MFL:
-        return 'MFL';
-      default:
-        return 'Sleeper';
     }
   }
 

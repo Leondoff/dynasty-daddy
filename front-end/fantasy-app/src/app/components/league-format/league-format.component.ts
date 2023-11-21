@@ -8,7 +8,7 @@ import { LeagueService } from "src/app/services/league.service";
 import { LeagueFormatService } from "../services/league-format.service";
 import { ConfigKeyDictionary, ConfigService } from "src/app/services/init/config.service";
 import { Status } from "../model/status";
-import { UntypedFormControl } from "@angular/forms";
+import { FormControl } from "@angular/forms";
 import { NflService } from "src/app/services/utilities/nfl.service";
 import { DownloadService } from "src/app/services/utilities/download.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -34,18 +34,26 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     /** toggle advanced settings */
     showAdvancedSettings: boolean = false;
 
+    /** control for the MatSelect filter keyword */
+    visualizationFilter: FormControl = new FormControl();
+
+    /** filtered visualizations when searching */
+    filteredVisualizations: {}[] = [];
+
     leaguePositions: string[] = [];
 
     formatPresetOptions = [
         { type: 0, display: 'WoRP View' },
         { type: 1, display: 'Spike Week View' },
-        { type: 2, display: 'Opportunity View' }
+        { type: 2, display: 'Opportunity View' },
+        { type: 3, display: 'WoRP x Trade Value View'}
     ]
 
     earliestSeason: number = 2019;
 
     selectableSeasons: number[] = [];
 
+    /** available metrics to select */
     availableMetrics: any[] = [
         { key: 'player', display: 'Player Name' },
         { key: 'pos', display: 'Position' },
@@ -73,24 +81,32 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         { key: 'spikeLowP', display: 'Low Spike Week Percent' },
     ];
 
+    /** available visualizations to select */
     availableVisualizations: any[] = [
-        { key: 'worp', display: 'Wins Over Replacement (WoRP/WAR)', type: 'line' },
-        { key: 'worppg', display: 'WoRP Per Game', type: 'line' },
-        { key: 'percent', display: 'Player Win Percent', type: 'line' },
-        { key: 'pts', display: 'Fantasy Points', type: 'line' },
-        { key: 'ppg', display: 'Points Per Game', type: 'line' },
-        { key: 'opp', display: 'Fantasy Opportunities', type: 'line' },
-        { key: 'oppg', display: 'Fantasy Opportunities Per Game', type: 'line' },
-        { key: 'ppo', display: 'Points Per Opportunity', type: 'line' },
-        { key: 'snpP', display: 'Snap Percent', type: 'line' },
-        { key: 'snppg', display: 'Snaps Per Week', type: 'line' },
-        { key: 'pps', display: 'Points Per Snap', type: 'line' },
-        { key: 'spikeHigh', display: 'High Spike Week Count', type: 'line' },
-        { key: 'spikeMid', display: 'Mid Spike Week Count', type: 'line' },
-        { key: 'spikeLow', display: 'Low Spike Week Count', type: 'line' },
-        { key: 'spikeHighP', display: 'High Spike Week Percent', type: 'line' },
-        { key: 'spikeMidP', display: 'Mid Spike Week Percent', type: 'line' },
-        { key: 'spikeLowP', display: 'Low Spike Week Percent', type: 'line' }
+        { key: 'worp', display: 'Wins Over Replacement (WoRP/WAR)', type: 'Line' },
+        { key: 'worppg', display: 'WoRP Per Game', type: 'Line' },
+        { key: 'tradeValue/worp', display: 'Trade Value x WoRP/WAR', type: 'Scatter' },
+        { key: 'tradeValue/worppg', display: 'Trade Value x WoRP/WAR Per Game', type: 'Scatter' },
+        { key: 'percent', display: 'Player Win Percent', type: 'Line' },
+        { key: 'pts', display: 'Fantasy Points', type: 'Line' },
+        { key: 'tradeValue/pts', display: 'Trade Value x Fantasy Points', type: 'Scatter' },
+        { key: 'ppg', display: 'Points Per Game', type: 'Line' },
+        { key: 'tradeValue/ppg', display: 'Trade Value x Points Per Game', type: 'Scatter' },
+        { key: 'opp', display: 'Fantasy Opportunities', type: 'Line' },
+        { key: 'oppg', display: 'Fantasy Opportunities Per Game', type: 'Line' },
+        { key: 'ppo', display: 'Points Per Opportunity', type: 'Line' },
+        { key: 'snpP', display: 'Snap Percent', type: 'Line' },
+        { key: 'snppg', display: 'Snaps Per Week', type: 'Line' },
+        { key: 'pps', display: 'Points Per Snap', type: 'Line' },
+        { key: 'spikeHigh', display: 'High Spike Week Count', type: 'Line' },
+        { key: 'spikeMid', display: 'Mid Spike Week Count', type: 'Line' },
+        { key: 'spikeLow', display: 'Low Spike Week Count', type: 'Line' },
+        { key: 'spikeHighP', display: 'High Spike Week Percent', type: 'Line' },
+        { key: 'spikeMidP', display: 'Mid Spike Week Percent', type: 'Line' },
+        { key: 'spikeLowP', display: 'Low Spike Week Percent', type: 'Line' },
+        { key: 'spikeHighP/worp', display: 'High Spike Week Percent x WoRP/WAR', type: 'Scatter' },
+        { key: 'spikeMidP/worp', display: 'Mid Spike Week Percent x WoRP/WAR', type: 'Scatter' },
+        { key: 'spikeLowP/worp', display: 'Low Spike Week Percent x WoRP/WAR', type: 'Scatter' },
     ];
 
     constructor(private pageService: PageService,
@@ -114,6 +130,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
 
     ngOnInit(): void {
         this.playerService.loadPlayerValuesForToday();
+        this.filteredVisualizations = this.availableVisualizations;
         if (!this.leagueFormatService.selectedSeason) {
             this.leagueFormatService.selectedSeason =
                 Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
@@ -131,7 +148,15 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
             this.leagueSwitchService.leagueChanged$.subscribe(_ => {
                 this.leagueFormatService.selectedSeason = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022);
                 this.loadNewSeason();
-            })
+            }),
+            this.visualizationFilter.valueChanges
+                .subscribe(() => {
+                    const searchVal = this.visualizationFilter.value.toLowerCase();
+                    this.filteredVisualizations = this.availableVisualizations?.filter(l =>
+                        l.display.toLowerCase().includes(searchVal)
+                        || l.key.toLowerCase().includes(searchVal)
+                        || l.type.toLowerCase().includes(searchVal))
+                })
         );
     }
 

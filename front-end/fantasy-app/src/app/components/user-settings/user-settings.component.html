@@ -55,7 +55,7 @@
         
                         <ng-container matColumnDef="platform">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Platform</th>
-                            <td mat-cell *matCellDef="let league">{{displayService.getNameForPlatform(league.platform)}}</td>
+                            <td mat-cell *matCellDef="let league">{{displayService.getDisplayNameForPlatform(league.platform)}}</td>
                         </ng-container>
         
                         <ng-container matColumnDef="delete">

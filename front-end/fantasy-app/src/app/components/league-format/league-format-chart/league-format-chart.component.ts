@@ -1,16 +1,21 @@
-import { Component, OnInit, OnChanges, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ChartOptions, ChartDataSets } from 'chart.js';
 import { BaseChartDirective, Label } from 'ng2-charts';
 import { FantasyPlayer } from 'src/app/model/assets/FantasyPlayer';
 import { ComparisonColorPalette } from 'src/app/services/utilities/color.service';
 import { PlayerService } from 'src/app/services/player.service';
+import { LeagueService } from 'src/app/services/league.service';
+import { DisplayService } from 'src/app/services/utilities/display.service';
+import { LeagueFormatService } from '../../services/league-format.service';
+import { Status } from '../../model/status';
+import { tap, delay } from 'rxjs/operators';
 
 @Component({
     selector: 'app-league-format-chart',
     templateUrl: './league-format-chart.component.html',
     styleUrls: ['./league-format-chart.component.scss']
 })
-export class LeagueFormatChartComponent implements OnInit, OnChanges {
+export class LeagueFormatChartComponent implements OnInit {
 
     @Input()
     playerFormatDict = {};
@@ -41,6 +46,7 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
         'spikeHighP': 'High Spike %',
         'spikeMidP': 'Mid Spike %',
         'spikeLowP': 'Low Spike %',
+        'tradeValue': 'Fantasy Market'
     }
 
     percentMetrics = ['percent', 'spikeMidP', 'spikeLowP', 'spikeHighP', 'snpP'];
@@ -127,31 +133,128 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
             }
         }
     };
+
+    public scatterChartOptions: ChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        spanGaps: false,
+        tooltips: {
+            intersect: false,
+            mode: 'nearest',
+            position: 'nearest',
+            axis: 'xy',
+            callbacks: {
+                title: function (context, data) {
+                    let title = ''
+                    context.forEach(con => {
+                        if (title != '') {
+                            title += '/'
+                        }
+                        title += data.datasets[con.datasetIndex].data[con.index]?.['player']?.full_name || 'Player';
+                    })
+                    return title;
+                },
+                afterLabel: function (context, data) {
+                    const title = data.datasets[context.datasetIndex].data[context.index]?.['xDisplay'] || 'Metric';
+                    const value: number = Number(context?.label);
+                    let label = '';
+                    if (title.includes('%')) {
+                        label += Math.round(value * 1000) / 10 + '%';
+                    } else {
+                        label += Math.round(value * 100) / 100;
+                    }
+                    return `${title}: ${label}`;
+                },
+                label: (tooltipItem) => {
+                    const metrics = this.metricName.split('/');
+                    var label = `${this.metricDisplay[metrics[1]]}: `;
+                    if (this.percentMetrics.includes(metrics[1])) {
+                        label += Math.round(tooltipItem.yLabel as number * 1000) / 10 + '%';
+                    } else {
+                        label += Math.round(tooltipItem.yLabel as number * 100) / 100;
+                    }
+                    return label;
+                }
+            }
+        },
+        scales: {
+            yAxes: [{
+                gridLines: {
+                    display: false
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Metric1',
+                    fontColor: '#d3d3d3'
+                }
+            }],
+            xAxes: [{
+                gridLines: {
+                    display: false
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Metric2',
+                    fontColor: '#d3d3d3'
+                }
+            }],
+        },
+        plugins: {
+            decimation: {
+                enabled: true,
+                algorithm: 'lttb',
+                samples: 50,
+                threshold: 100
+            },
+            colorschemes: {
+                scheme: ComparisonColorPalette,
+                override: true
+            }
+        }
+    };
+
     public lineChartLegend = true;
-    public lineChartType = 'line';
+    public chartType = 'line';
     public lineChartPlugins = [];
     public lineChartLabels: Label[] = [];
-    public lineChartData: ChartDataSets[] = [];
+    public chartData: ChartDataSets[] = [];
+    public chartOptions: ChartOptions;
 
-    worpPlayers: FantasyPlayer[] = [];
-
-
-    constructor(private playerService: PlayerService) {
+    constructor(private playerService: PlayerService,
+        private displayService: DisplayService,
+        private leagueFormatService: LeagueFormatService,
+        private leagueService: LeagueService) {
 
     }
 
     ngOnInit(): void {
-        this.lineChartOptions.scales.yAxes[0].scaleLabel.labelString = this.metricDisplay[this.metricName];
-        this.updateChart();
+        this.metricDisplay['tradeValue'] =
+            this.displayService.getDisplayNameForFantasyMarket(this.playerService.selectedMarket);
+        this.rehyrdateDisplay();
+        this.leagueFormatService.leagueFormatPlayerUpdated$
+            .subscribe(_ => {
+                this.metricDisplay['tradeValue'] =
+                    this.displayService.getDisplayNameForFantasyMarket(this.playerService.selectedMarket);
+                this.rehyrdateDisplay();
+                this.chart?.update()
+            });
     }
 
-    ngOnChanges(): void {
-
+    private rehyrdateDisplay(): void {
+        if (this.metricName.includes('/')) {
+            this.chartType = 'scatter';
+            this.updateScatterChart();
+            this.chartOptions = this.scatterChartOptions;
+        } else {
+            this.chartType = 'line';
+            this.updateChart();
+            this.chartOptions = this.lineChartOptions;
+        }
     }
 
-    private getMetric(nameId: string): number {
+    private getMetric(nameId: string, metricName: string = this.metricName): number {
         const playerFormat = this.playerFormatDict[nameId];
-        switch (this.metricName) {
+        switch (metricName) {
             case 'worppg':
                 return Math.round(playerFormat?.w?.worp / playerFormat?.c?.week * 10000) / 10000;
             case 'spikeHighP':
@@ -180,18 +283,21 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
                     playerFormat?.c?.snp / playerFormat?.c?.week : 0;
             case 'worp':
             case 'percent':
-                return playerFormat?.w?.[this.metricName] || 0;
+                return playerFormat?.w?.[metricName] || 0;
+            case 'tradeValue':
+                const player = this.playerService.playerValues.find(p => p.name_id === nameId);
+                return this.leagueService.selectedLeague.isSuperflex ? player.sf_trade_value : player.trade_value;
             default:
-                return playerFormat?.c?.[this.metricName] || 0;
+                return playerFormat?.c?.[metricName] || 0;
         }
     }
 
     private updateChart(): void {
         this.datasets = [];
+        this.chartData = [];
         const playerList = this.playerService.playerValues?.filter(p => p.position != 'PI'
             && this.playerFormatDict[p.name_id]?.c)
             .sort((a, b) => (this.getMetric(b.name_id) || 0) - (this.getMetric(a.name_id) || 0)) || [];
-        this.lineChartData = [];
         this.leagueFormat.forEach(pos => {
             const data = [];
             const posPlayers = playerList.filter(p => p.position === pos)
@@ -203,14 +309,52 @@ export class LeagueFormatChartComponent implements OnInit, OnChanges {
                     ovRank: playerList.findIndex(p => p?.name_id === posPlayers[i]?.name_id) + 1
                 })
             }
-            this.lineChartData.push({ data, label: pos, fill: false });
+            this.chartData.push({ data, label: pos, fill: false });
         });
         this.lineChartLabels = [];
         for (let i = 0; i < 50; i++) {
             this.lineChartLabels.push(`${i + 1}`)
         }
+        this.lineChartOptions.scales.yAxes[0].scaleLabel.labelString = this.metricDisplay[this.metricName];
         if (this.chart && this.chart.chart) {
-            this.chart.chart.data.datasets = this.lineChartData;
+            this.chart.chart.data.datasets = this.chartData;
+            this.chart.chart.data.labels = this.lineChartLabels;
+        }
+    }
+
+    private updateScatterChart(): void {
+        const metrics = this.metricName.split('/');
+        this.chartData = [];
+        this.datasets = [];
+        this.leagueFormat.forEach(pos => {
+            const posPlayers = this.playerService.playerValues?.filter(p =>
+                p.position === pos).filter(p =>
+                    this.getMetric(p.name_id, metrics[0]) && this.getMetric(p.name_id, metrics[0])
+                );
+            // only include position group if the stat exists for them
+            if (posPlayers.length > 0) {
+                this.datasets.push(posPlayers);
+                const playerData = posPlayers
+                    .map(player => {
+                        return {
+                            x: this.getMetric(player.name_id, metrics[0]) || 0,
+                            y: this.getMetric(player.name_id, metrics[1]) || 0,
+                            xDisplay: this.metricDisplay[metrics[0]],
+                            yDisplay: this.metricDisplay[metrics[1]],
+                            player: player
+                        };
+                    }).sort((a, b) => b.x - a.x).slice(0, 50);
+                this.chartData.push({
+                    data: playerData,
+                    label: pos,
+                    pointRadius: 3
+                });
+            }
+        });
+        this.scatterChartOptions.scales.xAxes[0].scaleLabel.labelString = this.metricDisplay[metrics[0]];
+        this.scatterChartOptions.scales.yAxes[0].scaleLabel.labelString = this.metricDisplay[metrics[1]];
+        if (this.chart && this.chart.chart) {
+            this.chart.chart.data.datasets = this.chartData;
             this.chart.chart.data.labels = this.lineChartLabels;
         }
     }
