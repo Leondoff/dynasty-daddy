@@ -42,8 +42,18 @@
   </div>
 </div>
 
-<!-- best records -->
+<!-- team luck -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 5">
+  <div [@fadeGrowStagger]="teamLuck.length + 1" *ngIf="showContent" class="wrapped-context">
+    <div class="center-text wrapped-header-style">Some people stuck luck while others... not so much</div>
+    <div *ngFor="let i of teamLuck" class="extra-card-padding">
+      <app-wrapped-card [content]="i"></app-wrapped-card>
+    </div>
+  </div>
+</div>
+
+<!-- best records -->
+<div *ngIf="wrappedService.frameNumber === baseFrame + 6">
   <div [@fadeGrowStagger]="topTeams.length + 1" *ngIf="showContent" class="wrapped-context-high">
     <div class="center-text wrapped-header-style">Let's take a moment to give flowers to the top teams</div>
     <div *ngFor="let i of topTeams" class="extra-card-padding">
@@ -53,7 +63,7 @@
 </div>
 
 <!--  winner -->
-<div *ngIf="wrappedService.frameNumber === baseFrame + 6">
+<div *ngIf="wrappedService.frameNumber === baseFrame + 7">
   <div [@fadeGrowStagger]="rivalQuotes.length + 4" *ngIf="showContent" class="wrapped-context-high">
     <div  class="center-text wrapped-header-style">But only one can bring home the championship</div>
     <div class="center-text extra-card-padding"> <img #image [src]="winner.owner.avatar" alt="Fantasy Team Avatar"
