@@ -2,8 +2,8 @@
     <app-wrapped-welcome *ngIf="wrappedService.frameNumber === 0" (click)="wrappedService.frameNumber = 1"></app-wrapped-welcome>
     <app-wrapped-draft [baseFrame]="1" *ngIf="wrappedService.frameNumber > 0 && wrappedService.frameNumber < 6" class="wrapped-container"></app-wrapped-draft>
     <app-wrapped-transactions [baseFrame]="6" *ngIf="wrappedService.frameNumber > 5 && wrappedService.frameNumber < 12" class="wrapped-container"></app-wrapped-transactions>
-    <app-wrapped-standings [baseFrame]="12" *ngIf="wrappedService.frameNumber > 11 && wrappedService.frameNumber < 19" class="wrapped-container"></app-wrapped-standings>
-    <app-wrapped-finish [baseFrame]="19" *ngIf="wrappedService.frameNumber > 18" class="wrapped-container"></app-wrapped-finish>
+    <app-wrapped-standings [baseFrame]="12" *ngIf="wrappedService.frameNumber > 11 && wrappedService.frameNumber < 20" class="wrapped-container"></app-wrapped-standings>
+    <app-wrapped-finish [baseFrame]="20" *ngIf="wrappedService.frameNumber > 19" class="wrapped-container"></app-wrapped-finish>
 </div>
 
 <div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">

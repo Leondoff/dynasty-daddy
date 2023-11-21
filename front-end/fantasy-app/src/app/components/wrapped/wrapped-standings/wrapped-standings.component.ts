@@ -31,6 +31,9 @@ export class WrappedStandingsComponent implements OnInit {
   /** team superlatives */
   superlatives: WrappedCardContent[] = [];
 
+  /** team luck */
+  teamLuck: WrappedCardContent[] = [];
+
   /** top teams in the league */
   topTeams: WrappedCardContent[] = [];
 
@@ -105,6 +108,10 @@ export class WrappedStandingsComponent implements OnInit {
     const mostPointsMatchUp = this.matchUpService.leagueMostPointsFor[0];
     const mostPointsForTeam = this.leagueService.getTeamByRosterId(mostPointsMatchUp.rosterId);
     this.superlatives.push({ rank: '', details: 'Any given sunday - Single Game High: ' + mostPointsMatchUp.points, header: mostPointsForTeam.owner.teamName, image: mostPointsForTeam.owner.avatar });
+    // superlatives from the season
+    const luckyTeams = this.leagueService.leagueTeamDetails.slice().sort((a, b) => this.matchUpService.teamLuckScore[b.roster.rosterId] - this.matchUpService.teamLuckScore[a.roster.rosterId]);
+    this.teamLuck.push({ rank: 'Lucky', details: 'Did you pay off the commish?', header: luckyTeams[0].owner.teamName, image: luckyTeams[0].owner.avatar });
+    this.teamLuck.push({ rank: 'Unlucky', details: 'Must be a Panther\'s fan with that luck', header: luckyTeams[luckyTeams.length - 1].owner.teamName, image: luckyTeams[luckyTeams.length - 1].owner.avatar });
     // best record
     const recordTeam = teams.sort((a, b) => b.roster.teamMetrics.wins - a.roster.teamMetrics.wins || b.roster.teamMetrics.fpts - a.roster.teamMetrics.fpts);
     for (let i = 0; i < 4; i++) {
@@ -136,7 +143,7 @@ export class WrappedStandingsComponent implements OnInit {
    */
   nextFrame(): void {
     this.wrappedService.frameNumber++;
-    if (this.wrappedService.frameNumber === (this.baseFrame + 6) && !this.winner) {
+    if (this.wrappedService.frameNumber === (this.baseFrame + 7) && !this.winner) {
       this.wrappedService.frameNumber++;
     }
     this.showNext = false;
