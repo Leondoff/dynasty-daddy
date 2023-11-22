@@ -10,6 +10,7 @@ import { PageService } from "src/app/services/utilities/page.service";
 import { SimpleTextModalComponent} from "../sub-components/simple-text-modal/simple-text-modal.component";
 import { Observable } from "rxjs";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
+import { AdService } from "src/app/services/utilities/ad.service";
 
 @Component({
     selector: 'grid-game',
@@ -69,6 +70,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         private dialog: MatDialog,
         private pageService: PageService,
         private fantasyPlayerApiService: FantasyPlayerApiService,
+        private adService: AdService,
         public gridGameService: GridGameService) {
         super();
         this.pageService.setUpPageSEO('NFL Immaculate Gridiron',
@@ -80,6 +82,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
 
     ngOnInit(): void {
         this.gridGameService.status = Status.LOADING;
+        this.adService.loadFreestarScripts();
         this.addSubscriptions(
             this.configService.configValuesLoaded$.subscribe(_ => {
                 this.initGridGame();
