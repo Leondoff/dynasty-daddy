@@ -6,7 +6,7 @@
 <tool-help [toolName]="'League Format'"></tool-help>
 
 <div class="format-container">
-    <div *ngIf="leagueFormatService.filteredPlayers.length > 0 && leagueFormatStatus == 1" class="margin-top-25">
+    <div *ngIf="leagueFormatService.filteredPlayers.length > 0 && leagueFormatStatus == 1 && leagueService.selectedLeague" class="margin-top-25">
       <div>
       <span [ngClass]="{'button-left': !configService.isMobile}">
         <button mat-raised-button [matMenuTriggerFor]="menu" style="margin-right: 10px;">
@@ -59,7 +59,7 @@
     </div>
 
 
-    <div *ngIf="leagueFormatStatus == 1">
+    <div *ngIf="leagueFormatStatus == 1 && leagueService.selectedLeague">
       <div class="item" *ngIf="leagueFormatService.selectedVisualizations.value.length == 1">
         <div class="center-text mid-bold-text">{{getVisualizationDisplayName(leagueFormatService.selectedVisualizations.value[0])}}</div>
         <app-league-format-chart *ngIf="playerService.playerValues && leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [leagueFormat]="leaguePositions" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [metricName]="leagueFormatService.selectedVisualizations.value[0]"></app-league-format-chart>
@@ -74,7 +74,7 @@
       </div>          
     </div>
   
-    <div *ngIf="leagueFormatStatus == 1">
+    <div *ngIf="leagueFormatStatus == 1 && leagueService.selectedLeague">
       <span [ngClass]="{'button-left': !configService.isMobile}">
         <mat-form-field class="mat-dropdown-wide-300"
           [ngClass]="{'player-value-checkbox-margin': !configService.isMobile}" color="accent"
@@ -128,7 +128,7 @@
           <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket" (selectedMarketChange)="onMarketChange($event)" class="button-right"></fantasy-market-dropdown>
       </span>
     </div>
-    <div *ngIf="leagueFormatStatus == 1">
+    <div *ngIf="leagueFormatStatus == 1 && leagueService.selectedLeague">
       <div *ngIf="leagueFormatService.filteredPlayers.length > 0">
         <app-league-format-table [players]="leagueFormatService.filteredPlayers" [playerFormatDict]="leagueService.leagueFormatMetrics[leagueFormatService.selectedSeason]" [selectedCols]="leagueFormatService.selectedMetrics.value"></app-league-format-table>
       </div>
@@ -137,7 +137,7 @@
       </div>
     </div>
 
-    <div class="center-text margin-top-50" *ngIf="leagueFormatStatus == 1 && leagueFormatService.filteredPlayers?.length > 0">
+    <div class="center-text margin-top-50" *ngIf="leagueFormatStatus == 1 && leagueFormatService.filteredPlayers?.length > 0 && leagueService.selectedLeague">
       <button mat-stroked-button (click)="exportTableData()"><mat-icon>download</mat-icon> Download Table Data</button>
       <div class="center-text small-text__light margin-top-25">
         *Some stats may differ from your platform's scoring due to yard thresholds being different or other limitations. Feel free to reach out with your league id if you have questions.

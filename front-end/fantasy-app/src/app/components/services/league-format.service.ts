@@ -64,7 +64,7 @@ export class LeagueFormatService {
     loadPreset(type: number): void {
         switch (type) {
             case 3:
-                this.selectedVisualizations.setValue(['tradeValue/worp']);
+                this.selectedVisualizations.setValue(['worp', 'tradeValue/worp']);
                 this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'worpTier', 'worp', 'worppg', 'tradeValue']);
                 break;
             case 2:
