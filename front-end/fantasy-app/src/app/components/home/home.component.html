@@ -278,12 +278,12 @@
 <ng-template #patreonTemplate>
   <div style="overflow: hidden !important;">
     <br>
-      <div class="margin-bot-20 center-text">
+      <h3 class="margin-bot-20 center-text">
         <span class="mid-bold-text">Dynasty Daddy Club</span>
         <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 0">
           <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
         </span>
-      </div>
+      </h3>
     <div>
       <div *ngIf="userService.user">
         <tool-help [toolName]="'Dynasty Daddy Club'"></tool-help>
@@ -327,12 +327,12 @@
 <ng-template #sleeperTemplate>
   <div style="overflow: hidden !important;">
     <br>
-      <div class="margin-bot-20 center-text">
+      <h3 class="margin-bot-20 center-text">
         <span class="mid-bold-text">Sleeper</span>
         <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 0">
           <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
         </span>
-      </div>
+      </h3>
     <div>
       <mat-radio-group [(ngModel)]="sleeperLoginMethod" class="mat-dropdown-wide-200">
         <mat-radio-button value="sleeper_username" style="padding-right: 10px">Username</mat-radio-button>
@@ -407,12 +407,12 @@
 <ng-template #mflTemplate>
   <div style="overflow: hidden !important;">
     <br>
-    <div class="margin-bot-20 center-text">
+    <h3 class="margin-bot-20 center-text">
       <span class="mid-bold-text">MyFantasyLeague</span>
       <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 1">
         <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
       </span>
-    </div>
+    </h3>
     <div>
       <mat-radio-group [(ngModel)]="mflLoginMethod" class="mat-dropdown-wide-200">
         <mat-radio-button value="mfl_username" style="padding-right: 10px">Username</mat-radio-button>
@@ -493,12 +493,12 @@
 <ng-template #fleaflickerTemplate>
   <div style="overflow: hidden !important;">
     <br>
-      <div class="margin-bot-20 center-text">
+      <h3 class="margin-bot-20 center-text">
         <span class="mid-bold-text">Fleaflicker</span>
         <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 2">
           <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
         </span>
-      </div>
+      </h3>
     <div>
       <mat-radio-group [(ngModel)]="fleaflickerLoginMethod" class="mat-dropdown-wide-200">
         <mat-radio-button value="fleaflicker_email" style="padding-right: 10px">Email</mat-radio-button>
@@ -575,12 +575,12 @@
 <ng-template #espnTemplate>
   <div style="overflow: hidden !important;">
     <br>
-      <div class="margin-bot-20 center-text">
-        <span class="mid-bold-text">ESPN</span>
+      <h3 class="margin-bot-20 center-text">
+        <span class="mid-bold-text">ESPN Fantasy</span>
         <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 3">
           <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
         </span>
-      </div>
+      </h3>
     <div *ngIf="espnLoginMethod=== 'espn_league_id'">
       <mat-form-field class="mat-dropdown-wide-200" color="accent">
         <mat-label>ESPN League Id</mat-label>
@@ -618,12 +618,12 @@
 <ng-template #ffpcTemplate>
   <div style="overflow: hidden !important;">
     <br>
-    <div class="margin-bot-20 center-text">
+    <h3 class="margin-bot-20 center-text">
       <span class="mid-bold-text">FFPC</span>
       <span *ngIf="leagueService.selectedLeague && leagueService.selectedLeague.leaguePlatform === 4">
         <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
       </span>
-    </div>
+    </h3>
     <div>
       <mat-radio-group [(ngModel)]="ffpcLoginMethod" class="mat-dropdown-wide-200">
         <mat-radio-button value="ffpc_email" style="padding-right: 10px">Email</mat-radio-button>
