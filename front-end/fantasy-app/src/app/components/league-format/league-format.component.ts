@@ -9,11 +9,11 @@ import { LeagueFormatService } from "../services/league-format.service";
 import { ConfigKeyDictionary, ConfigService } from "src/app/services/init/config.service";
 import { Status } from "../model/status";
 import { FormControl } from "@angular/forms";
-import { NflService } from "src/app/services/utilities/nfl.service";
 import { DownloadService } from "src/app/services/utilities/download.service";
 import { MatDialog } from "@angular/material/dialog";
 import { FilterLeagueFormatModalComponent } from "../modals/filter-league-format-modal/filter-league-format-modal.component";
 import { QueryService } from "src/app/services/utilities/query.service";
+import { LeagueFormatModalComponent } from "../modals/league-format-modal/league-format-modal.component";
 
 @Component({
     selector: 'league-format-tool',
@@ -24,9 +24,6 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
 
     /** page description and SEO */
     pageDescription = 'Identify positional advantages for your league by looking at historical quality starts and WoRP/WAR for your league\'s settings.';
-
-    /** league format loading status */
-    leagueFormatStatus: Status = Status.LOADING;
 
     /** login error when no league selected */
     loginError: String = 'Unable to pull league format. Please select a league.';
@@ -40,18 +37,12 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     /** filtered visualizations when searching */
     filteredVisualizations: {}[] = [];
 
-    leaguePositions: string[] = [];
-
     formatPresetOptions = [
         { type: 0, display: 'WoRP View' },
         { type: 1, display: 'Spike Week View' },
         { type: 2, display: 'Opportunity View' },
-        { type: 3, display: 'WoRP x Trade Value View'}
+        { type: 3, display: 'WoRP x Trade Value View' }
     ]
-
-    earliestSeason: number = 2019;
-
-    selectableSeasons: number[] = [];
 
     /** available metrics to select */
     availableMetrics: any[] = [
@@ -116,7 +107,6 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         public leagueFormatService: LeagueFormatService,
         private route: ActivatedRoute,
         private queryService: QueryService,
-        private nflService: NflService,
         private dialog: MatDialog,
         private downloadService: DownloadService,
         private playerService: PlayerService) {
@@ -131,12 +121,13 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     ngOnInit(): void {
         this.playerService.loadPlayerValuesForToday();
         this.filteredVisualizations = this.availableVisualizations;
-        if (!this.leagueFormatService.selectedSeason) {
-            this.leagueFormatService.selectedSeason =
-                Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022)
+        if (this.leagueFormatService.selectedSeasons.value.length === 0) {
+            this.leagueFormatService.selectedSeasons.setValue(
+                [Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2023)]
+            )
         }
         if (this.leagueService.selectedLeague) {
-            this.loadNewSeason();
+            this.leagueFormatService.loadLeagueFormat();
         }
         this.addSubscriptions(
             this.route.queryParams.subscribe(params => {
@@ -146,8 +137,10 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
                 this.reloadFormatTool();
             }),
             this.leagueSwitchService.leagueChanged$.subscribe(_ => {
-                this.leagueFormatService.selectedSeason = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2022);
-                this.loadNewSeason();
+                this.leagueFormatService.selectedSeasons.setValue(
+                    [Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.LEAGUE_FORMAT_SEASON)?.configValue || 2023)]
+                );
+                this.leagueFormatService.loadLeagueFormat();
             }),
             this.visualizationFilter.valueChanges
                 .subscribe(() => {
@@ -161,28 +154,6 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     }
 
     /**
-     * load new season for format
-     */
-    loadNewSeason(): void {
-        this.leagueFormatStatus = Status.LOADING;
-        this.leagueFormatService.filteredPlayers = [];
-        this.leagueService.loadLeagueFormat$(this.leagueFormatService.selectedSeason).subscribe(_ => {
-            const positionFilterList = this.leagueService.selectedLeague.rosterPositions
-                .filter(p => !['BN', 'FLEX', 'SUPER_FLEX', 'IDP_FLEX'].includes(p));
-            if (this.leagueService.selectedLeague.rosterPositions.includes('FLEX'))
-                positionFilterList.push(...['RB', 'WR', 'TE'])
-            if (this.leagueService.selectedLeague.rosterPositions.includes('SUPER_FLEX'))
-                positionFilterList.push(...['QB', 'RB', 'WR', 'TE'])
-            if (this.leagueService.selectedLeague.rosterPositions.includes('IDP_FLEX'))
-                positionFilterList.push(...['DL', 'LB', 'DB']);
-            this.leaguePositions = Array.from(new Set(positionFilterList));
-            this.leagueFormatService.selectedPositions.setValue(this.leaguePositions);
-            this.selectableSeasons = this.getSelectableSeasons(this.nflService.getYearForStats());
-            this.leagueFormatService.leagueFormatPlayerUpdated$.next();
-        });
-    }
-
-    /**
      * reload format tool data
      */
     reloadFormatTool(): void {
@@ -190,7 +161,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         if (this.leagueFormatService.isAdvancedFiltered) {
             this.leagueFormatService.filteredPlayers = this.queryService.processRulesetForPlayer(this.leagueFormatService.filteredPlayers, this.leagueFormatService.query) || [];
         }
-        this.leagueFormatStatus = Status.DONE;
+        this.leagueFormatService.leagueFormatStatus = Status.DONE;
     }
 
     /** wrapper around reseting search functionality */
@@ -206,18 +177,6 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     onMarketChange($event: any): void {
         this.playerService.selectedMarket = $event;
         this.leagueFormatService.leagueFormatPlayerUpdated$.next();
-    }
-
-    /**
-     * Generate selectable seasons in league format tool
-     * @param number start year string
-     */
-    getSelectableSeasons(number: string) {
-        const result = [];
-        for (let i = Number(number); i >= this.earliestSeason; i--) {
-            result.push(i);
-        }
-        return result;
     }
 
     /**
@@ -253,6 +212,18 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
      */
     openPlayerQuery(): void {
         this.dialog.open(FilterLeagueFormatModalComponent
+            , {
+                minHeight: '350px',
+                minWidth: this.configService.isMobile ? '300px' : '500px',
+            }
+        );
+    }
+
+    /**
+     * open league format modal
+     */
+    openLeagueFormatModal(): void {
+        this.dialog.open(LeagueFormatModalComponent
             , {
                 minHeight: '350px',
                 minWidth: this.configService.isMobile ? '300px' : '500px',

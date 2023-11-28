@@ -192,7 +192,7 @@ export class LeagueDTO {
     this.type = (leagueInfo.settings?.keeperCount > 0 || leagueInfo.settings?.keeperCountFuture > 0) ? LeagueType.DYNASTY : LeagueType.REDRAFT;
     this.draftRounds = (leagueInfo.draftDetail?.picks?.length / leagueInfo.settings?.size) || 5;
     this.medianWins = false; // TODO figure out how that is determined
-    this.playoffStartWeek = leagueInfo?.settings?.scheduleSettings?.matchupPeriodCount || 14;
+    this.playoffStartWeek = leagueInfo?.settings?.scheduleSettings?.matchupPeriodCount || 15;
     this.playoffTeams = leagueInfo?.settings?.scheduleSettings?.playoffTeamCount || 6;
     this.playoffRoundType = leagueInfo?.settings?.scheduleSettings?.playoffMatchupPeriodLength || 1;
     this.metadata = {
