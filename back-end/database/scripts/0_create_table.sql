@@ -214,6 +214,7 @@ create table historical_gridirons (
 
 create index historical_gridirons_uindex on historical_gridirons (id);
 
+-- grid results table
 create table grid_results (
     player_id Serial primary KEY
     cellnum INTEGER,
@@ -233,6 +234,7 @@ CREATE TYPE platform_enum AS ENUM ('Sleeper', 'MFL', 'Fleaflicker', 'FFPC', 'ESP
 
 CREATE TYPE league_type AS ENUM ('Dynasty', 'Redraft');
 
+-- league info table
 CREATE TABLE league_info (
     league_id VARCHAR(20) PRIMARY KEY,
     season VARCHAR(5) NOT NULL,
@@ -249,6 +251,7 @@ CREATE TABLE league_info (
 
 CREATE INDEX idx_league_id ON league_info (league_id);
 
+-- trades table
 CREATE TABLE trades (
     transaction_id  VARCHAR(20) PRIMARY KEY,
     sideA TEXT[],
@@ -282,3 +285,12 @@ create index inx_trade_user_id on users (user_id);
 CREATE TRIGGER users_updated_at BEFORE
 UPDATE
     ON users FOR EACH ROW EXECUTE PROCEDURE trigger_get_current_timestamp();
+
+-- historical gridirons table
+create table historical_connections (
+	id Serial primary key, 
+	daily_connections text not null,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create index historical_connections_uindex on historical_connections (id);

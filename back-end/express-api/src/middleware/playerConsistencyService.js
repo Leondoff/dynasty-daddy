@@ -35,74 +35,76 @@ export const CalculateSnapPercentPerWeek = async (pos, stats) => {
 export const CalculateConsistency = async (pointsDict, playersInSystem, format, posList) => {
   const consistencyDict = {};
   const { teamCount } = format;
-  Object.entries(pointsDict).map(async ([_, weeklyPointsDict]) => {
-    const sortedPlayers = playersInSystem.filter(p => {
-      const sleeperId = isNaN(Number(p.sleeper_id)) ? p.sleeper_id : Number(p.sleeper_id);
-      return weeklyPointsDict[sleeperId] !== undefined;
-    }).sort((a, b) => {
-      const sleeperIdA = isNaN(Number(a.sleeper_id)) ? a.sleeper_id : Number(a.sleeper_id);
-      const sleeperIdB = isNaN(Number(b.sleeper_id)) ? b.sleeper_id : Number(b.sleeper_id);
-      const pointsA = weeklyPointsDict[sleeperIdA].pts || 0;
-      const pointsB = weeklyPointsDict[sleeperIdB].pts || 0;
-      return pointsB - pointsA;
-    });
-    posList.forEach(pos => {
-      const highThreshold = (teamCount * (format[pos] || 1)) / 2;
-      const midThreshold = teamCount * (format[pos] || 1);
-      const lowThreshold = teamCount * (format[pos] || 1) + teamCount;
-
-      const posPlayers = sortedPlayers.filter(p =>
-        p.position === pos);
-
-      posPlayers.forEach(async (p, ind) => {
+  Object.entries(pointsDict).map(async ([_, seasonPointsDict]) => {
+    Object.entries(seasonPointsDict).map(async ([_, weeklyPointsDict]) => {
+      const sortedPlayers = playersInSystem.filter(p => {
         const sleeperId = isNaN(Number(p.sleeper_id)) ? p.sleeper_id : Number(p.sleeper_id);
-        const playerInfo = weeklyPointsDict[sleeperId];
-        if (playerInfo.gamelog.gp === 1) {
-          const opp = await CalculateOpportunityPerWeek(pos, playerInfo.gamelog);
-          let tmSnp = 0;
-          let snp = 0;
-          switch (pos) {
-            case 'LB':
-            case 'DB':
-            case 'DL':
-              snp = playerInfo.gamelog.def_snp || 0;
-              tmSnp = playerInfo.gamelog.tm_def_snp || 0;
-              break;
-            case 'DF':
-              snp = playerInfo.gamelog.tm_snp || 0;
-              tmSnp = playerInfo.gamelog.tm_snp || 0;
-              break;
-            case 'K':
-              snp = playerInfo.gamelog.snp || 0;
-              tmSnp = playerInfo.gamelog.tm_st_snp || 0;
-              break;
-            default:
-              snp = playerInfo.gamelog.off_snp || 0;
-              tmSnp = playerInfo.gamelog.tm_off_snp || 0;
-              break;
+        return weeklyPointsDict[sleeperId] !== undefined;
+      }).sort((a, b) => {
+        const sleeperIdA = isNaN(Number(a.sleeper_id)) ? a.sleeper_id : Number(a.sleeper_id);
+        const sleeperIdB = isNaN(Number(b.sleeper_id)) ? b.sleeper_id : Number(b.sleeper_id);
+        const pointsA = weeklyPointsDict[sleeperIdA].pts || 0;
+        const pointsB = weeklyPointsDict[sleeperIdB].pts || 0;
+        return pointsB - pointsA;
+      });
+      posList.forEach(pos => {
+        const highThreshold = (teamCount * (format[pos] || 1)) / 2;
+        const midThreshold = teamCount * (format[pos] || 1);
+        const lowThreshold = teamCount * (format[pos] || 1) + teamCount;
+
+        const posPlayers = sortedPlayers.filter(p =>
+          p.position === pos);
+
+        posPlayers.forEach(async (p, ind) => {
+          const sleeperId = isNaN(Number(p.sleeper_id)) ? p.sleeper_id : Number(p.sleeper_id);
+          const playerInfo = weeklyPointsDict[sleeperId];
+          if (playerInfo.gamelog.gp === 1) {
+            const opp = await CalculateOpportunityPerWeek(pos, playerInfo.gamelog);
+            let tmSnp = 0;
+            let snp = 0;
+            switch (pos) {
+              case 'LB':
+              case 'DB':
+              case 'DL':
+                snp = playerInfo.gamelog.def_snp || 0;
+                tmSnp = playerInfo.gamelog.tm_def_snp || 0;
+                break;
+              case 'DF':
+                snp = playerInfo.gamelog.tm_snp || 0;
+                tmSnp = playerInfo.gamelog.tm_snp || 0;
+                break;
+              case 'K':
+                snp = playerInfo.gamelog.snp || 0;
+                tmSnp = playerInfo.gamelog.tm_st_snp || 0;
+                break;
+              default:
+                snp = playerInfo.gamelog.off_snp || 0;
+                tmSnp = playerInfo.gamelog.tm_off_snp || 0;
+                break;
+            }
+            if (p.name_id in consistencyDict) {
+              consistencyDict[p.name_id].week += 1;
+              consistencyDict[p.name_id].spikeHigh += ind < highThreshold ? 1 : 0;
+              consistencyDict[p.name_id].spikeMid += ind < midThreshold ? 1 : 0;
+              consistencyDict[p.name_id].spikeLow += ind < lowThreshold ? 1 : 0;
+              consistencyDict[p.name_id].opp += opp;
+              consistencyDict[p.name_id].snp += snp;
+              consistencyDict[p.name_id].tmSnp += tmSnp;
+              consistencyDict[p.name_id].pts += playerInfo.pts;
+            } else {
+              consistencyDict[p.name_id] = {
+                week: 1,
+                spikeHigh: ind < highThreshold ? 1 : 0,
+                spikeMid: ind < midThreshold ? 1 : 0,
+                spikeLow: ind < lowThreshold ? 1 : 0,
+                opp,
+                pts: playerInfo.pts,
+                tmSnp,
+                snp,
+              };
+            }
           }
-          if (p.name_id in consistencyDict) {
-            consistencyDict[p.name_id].week += 1;
-            consistencyDict[p.name_id].spikeHigh += ind < highThreshold ? 1 : 0;
-            consistencyDict[p.name_id].spikeMid += ind < midThreshold ? 1 : 0;
-            consistencyDict[p.name_id].spikeLow += ind < lowThreshold ? 1 : 0;
-            consistencyDict[p.name_id].opp += opp;
-            consistencyDict[p.name_id].snp += snp;
-            consistencyDict[p.name_id].tmSnp += tmSnp;
-            consistencyDict[p.name_id].pts += playerInfo.pts;
-          } else {
-            consistencyDict[p.name_id] = {
-              week: 1,
-              spikeHigh: ind < highThreshold ? 1 : 0,
-              spikeMid: ind < midThreshold ? 1 : 0,
-              spikeLow: ind < lowThreshold ? 1 : 0,
-              opp,
-              pts: playerInfo.pts,
-              tmSnp,
-              snp,
-            };
-          }
-        }
+        });
       });
     });
   });

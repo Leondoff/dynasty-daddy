@@ -13,16 +13,16 @@ import {
 export const GetLeagueFormatForLeague = async (req, res) => {
   try {
     const {
-      season, startWeek, endWeek, settings, format
+      seasons, startWeek, endWeek, settings, format
     } = req.body;
-    const experienceOffset = (new Date()).getFullYear() - season;
+    const experienceOffset = (new Date()).getFullYear() - Math.max(...seasons);
     const posFilterList = (await getPositionsToProcess(format))
       .filter(p =>
         !FLEX_TYPES.includes(p));
     const posListString = posFilterList.map(pos =>
       `'${pos}'`);
     const playersInSystem = (await GetPlayersInfoWithIds(`AND ((pi.experience >= ${experienceOffset} AND pi.position IN (${posListString.join(', ')})) OR pi.position = 'DF')`)).rows;
-    const pointsDict = await FetchPointsPerWeekInSeason(season, settings, startWeek, endWeek);
+    const pointsDict = await FetchPointsPerWeekInSeason(seasons, settings, startWeek, endWeek);
     const worp = await CalculateWORPForSeason(pointsDict, playersInSystem, format);
     const consistency = await CalculatePlayerConsistencyForSeason(
       pointsDict,

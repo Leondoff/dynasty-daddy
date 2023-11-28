@@ -36,6 +36,7 @@ import { LeagueLoginModalComponent } from "src/app/components/modals/league-logi
 import { PowerRankingsChartComponent } from "src/app/components/power-rankings/power-rankings-chart/power-rankings-chart.component";
 import { PowerRankingsTableComponent } from "src/app/components/power-rankings/power-rankings-table/power-rankings-table.component";
 import { PowerRankingsComponent } from "src/app/components/power-rankings/power-rankings.component";
+import { LeagueFormatModalComponent } from "src/app/components/modals/league-format-modal/league-format-modal.component";
 
 @NgModule({
   imports: [
@@ -56,6 +57,7 @@ import { PowerRankingsComponent } from "src/app/components/power-rankings/power-
     LeagueFormatComponent,
     LeagueFormatChartComponent,
     LeagueFormatTableComponent,
+    LeagueFormatModalComponent,
     FilterLeagueFormatModalComponent,
     DraftComponent,
     DraftTableComponent,

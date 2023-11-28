@@ -145,7 +145,7 @@ export class LeagueService {
    */
   loadNewUser$(username: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER, password: string = ''): Observable<any> {
     this.selectedYear = year;
-  
+
     const loadUserObservable = () => {
       switch (leaguePlatform) {
         case LeaguePlatform.SLEEPER:
@@ -181,7 +181,7 @@ export class LeagueService {
           return of(null);
       }
     };
-  
+
     return loadUserObservable().pipe(
       catchError(error => {
         console.error('Error:', error);
@@ -421,9 +421,9 @@ export class LeagueService {
 
   /**
    * Load fantasy football league format metrics for league
-   * @param season number of season to load
+   * @param seasons number array of seasons to load
    */
-  loadLeagueFormat$(season: number): Observable<{}> {
+  loadLeagueFormat$(seasons: number[], startWeek: number = 1, endWeek: number = 17): Observable<{}> {
     if (this.selectedLeague) {
       const format = {
         'teamCount': this.selectedLeague.totalRosters,
@@ -440,21 +440,23 @@ export class LeagueService {
         'DL': this.selectedLeague.rosterPositions.filter(p => p == 'DL').length,
         'IDP_FLEX': this.selectedLeague.rosterPositions.filter(p => p == 'IDP_FLEX').length,
       }
-      return this.fantasyPlayerApiService.fetchLeagueFormatForLeague(this.selectedLeague.leagueId, season, format, this.selectedLeague.scoringSettings).pipe(map(res => {
-        const arr = [];
-        Object.entries(res).forEach(p => {
-          p[1].id = p[0];
-          arr.push(p[1])
-        })
-        const tieriedWorp = this.statService.bucketSort(arr, 'w.worp', 6);
-        tieriedWorp.forEach((tierList, ind) => {
-          tierList.forEach(p => {
-            res[p['id']].w.worpTier = ind;
+      console.log(seasons);
+      return this.fantasyPlayerApiService.fetchLeagueFormatForLeague(seasons, format, this.selectedLeague.scoringSettings, startWeek, endWeek)
+        .pipe(map(res => {
+          const arr = [];
+          Object.entries(res).forEach(p => {
+            p[1].id = p[0];
+            arr.push(p[1])
+          })
+          const tieredWorp = this.statService.bucketSort(arr, 'w.worp', 6);
+          tieredWorp.forEach((tierList, ind) => {
+            tierList.forEach(p => {
+              res[p['id']].w.worpTier = ind;
+            });
           });
-        });
-        this.leagueFormatMetrics[season] = res;
-        return of(res);
-      }));
+          this.leagueFormatMetrics = res;
+          return of(res);
+        }));
     }
   }
 }

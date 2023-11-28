@@ -4,8 +4,11 @@ import requests
 
 espnPosMap = {
     0: 'QB',
+    1: 'QB',
     2: 'RB',
-    4: 'WR',
+    3: 'WR',
+    4: 'TE',
+    5: 'K',
     6: 'TE',
     8: 'DL',
     9: 'DL',
@@ -57,7 +60,7 @@ nflTeamMap = {
   'Seahawks D/ST': 'seattleseahawks',
   'Buccaneers D/ST': 'tampabaybuccaneers',
   'Titans D/ST': 'tennesseetitans',
-  'Washington D/ST': 'washingtonfootballteam'
+  'Washington D/ST': 'washingtoncommanders'
 }
 
 def updateESPNPlayerIds():

@@ -1,3 +1,4 @@
+import { NgxSliderModule } from "@angular-slider/ngx-slider";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
@@ -79,6 +80,7 @@ const MODULES = [
   MatRadioModule,
   QueryBuilderModule,
   ReactiveFormsModule,
+  NgxSliderModule,
   MatSliderModule,
   MatProgressSpinnerModule,
   MatProgressBarModule,

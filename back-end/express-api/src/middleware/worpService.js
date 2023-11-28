@@ -63,99 +63,108 @@ export const CalculateAvgTeamScore = async (players, pointsDict, format) => {
   const starterPosList = await getPositionsToProcess(format);
   const posList = (await starterPosList).filter(p =>
     !FLEX_TYPES.includes(p));
-  const promises = Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
-    const pointsPerPostionArray = [];
-    const processedNameIds = [];
-    const sortedPlayers = players.filter(p =>
-      weeklyPointsDict[p.sleeper_id])
-      .sort((a, b) =>
-        weeklyPointsDict[b.sleeper_id].pts - weeklyPointsDict[a.sleeper_id].pts);
+  const promises = [];
+  Object.entries(pointsDict).forEach(async ([ season, seasonPointsDict ]) =>
+    Object.entries(seasonPointsDict).forEach(async ([ week, weeklyPointsDict ]) => {
+      const pointsPerPostionArray = [];
+      const processedNameIds = [];
+      const sortedPlayers = players.filter(p =>
+        weeklyPointsDict[p.sleeper_id])
+        .sort((a, b) =>
+          weeklyPointsDict[b.sleeper_id].pts - weeklyPointsDict[a.sleeper_id].pts);
 
-    starterPosList.forEach(pos => {
-      const avgDepth = format[pos] * teamCount;
-      let posPlayerList = [];
-      switch (pos) {
-        case 'SUPER_FLEX': {
-          posPlayerList = sortedPlayers.filter(p =>
-            !processedNameIds.includes(p.name_id) && SUPER_FLEX_POS.includes(p.position))
-            .slice(0, avgDepth);
-          break;
+      starterPosList.forEach(pos => {
+        const avgDepth = format[pos] * teamCount;
+        let posPlayerList = [];
+        switch (pos) {
+          case 'SUPER_FLEX': {
+            posPlayerList = sortedPlayers.filter(p =>
+              !processedNameIds.includes(p.name_id) && SUPER_FLEX_POS.includes(p.position))
+              .slice(0, avgDepth);
+            break;
+          }
+          case 'FLEX': {
+            posPlayerList = sortedPlayers.filter(p =>
+              FLEX_POS.includes(p.position) && !processedNameIds.includes(p.name_id))
+              .slice(0, avgDepth);
+            break;
+          }
+          case 'IDP_FLEX': {
+            posPlayerList = sortedPlayers.filter(p =>
+              IDP_FLEX_POS.includes(p.position) && !processedNameIds.includes(p.name_id))
+              .slice(0, avgDepth);
+            break;
+          }
+          default:
+            posPlayerList = sortedPlayers.filter(p =>
+              p.position === pos && !processedNameIds.includes(p.name_id))
+              .slice(0, avgDepth);
         }
-        case 'FLEX': {
-          posPlayerList = sortedPlayers.filter(p =>
-            FLEX_POS.includes(p.position) && !processedNameIds.includes(p.name_id))
-            .slice(0, avgDepth);
-          break;
-        }
-        case 'IDP_FLEX': {
-          posPlayerList = sortedPlayers.filter(p =>
-            IDP_FLEX_POS.includes(p.position) && !processedNameIds.includes(p.name_id))
-            .slice(0, avgDepth);
-          break;
-        }
-        default:
-          posPlayerList = sortedPlayers.filter(p =>
-            p.position === pos && !processedNameIds.includes(p.name_id))
-            .slice(0, avgDepth);
-      }
 
-      const pointsForStartersList = [];
+        const pointsForStartersList = [];
 
-      posPlayerList.forEach(player => {
-        processedNameIds.push(player.name_id);
-        pointsForStartersList.push(weeklyPointsDict[player.sleeper_id].pts);
+        posPlayerList.forEach(player => {
+          processedNameIds.push(player.name_id);
+          pointsForStartersList.push(weeklyPointsDict[player.sleeper_id].pts);
+        });
+        pointsPerPostionArray[pos] = {
+          avg: pointsForStartersList.length > 0
+            ? Number(mean(pointsForStartersList).toFixed(2)) : 0,
+          std: pointsForStartersList.length > 0
+            ? Number(standardDeviation(pointsForStartersList).toFixed(2)) : 0,
+        };
       });
-      pointsPerPostionArray[pos] = {
-        avg: pointsForStartersList.length > 0
-          ? Number(mean(pointsForStartersList).toFixed(2)) : 0,
-        std: pointsForStartersList.length > 0
-          ? Number(standardDeviation(pointsForStartersList).toFixed(2)) : 0,
-      };
-    });
 
-    // Replacement level for each position
-    const replacementLevelDict = {};
-    posList.forEach(pos => {
-      // const avgDepth = format[pos] * teamCount;
-      const avgDepth = 1;
-      const replacementPlayers = sortedPlayers.filter(p =>
-        p.position === pos && !processedNameIds.includes(p.name_id))
-        .slice(0, avgDepth);
-      replacementLevelDict[pos] = replacementPlayers.length > 0
-        ? mean(replacementPlayers.map(p =>
-          weeklyPointsDict[p.sleeper_id].pts || 0)) : 0;
-    });
-
-    // team averages based on line up
-    const posScores = Object.values(pointsPerPostionArray).map(t =>
-      t.avg);
-    const startingLineUpStdDev = [];
-    starterPosList.forEach(pos => {
-      let count = 0;
-      while (count < format[pos]) {
-        startingLineUpStdDev.push(pointsPerPostionArray[pos].std);
-        count += 1;
-      }
-    });
-
-    return new Promise(async (resolve) => {
-      const teamStdDev = await CalculateTeamStdDev(startingLineUpStdDev);
-
-      // Resolve the Promise with the iteration result
-      resolve({
-        week: Number(week),
-        posGroups: pointsPerPostionArray,
-        total: Number(sum(posScores).toFixed(2)),
-        stdDev: teamStdDev,
-        repLev: replacementLevelDict
+      // Replacement level for each position
+      const replacementLevelDict = {};
+      posList.forEach(pos => {
+        // const avgDepth = format[pos] * teamCount;
+        const avgDepth = 1;
+        const replacementPlayers = sortedPlayers.filter(p =>
+          p.position === pos && !processedNameIds.includes(p.name_id))
+          .slice(0, avgDepth);
+        replacementLevelDict[pos] = replacementPlayers.length > 0
+          ? mean(replacementPlayers.map(p =>
+            weeklyPointsDict[p.sleeper_id].pts || 0)) : 0;
       });
-    });
-  });
+
+      // team averages based on line up
+      const posScores = Object.values(pointsPerPostionArray).map(t =>
+        t.avg);
+      const startingLineUpStdDev = [];
+      starterPosList.forEach(pos => {
+        let count = 0;
+        while (count < format[pos]) {
+          startingLineUpStdDev.push(pointsPerPostionArray[pos].std);
+          count += 1;
+        }
+      });
+
+      promises.push(new Promise(async (resolve) => {
+        const teamStdDev = await CalculateTeamStdDev(startingLineUpStdDev);
+        // Resolve the Promise with the iteration result
+        resolve({
+          season: Number(season),
+          week: Number(week),
+          posGroups: pointsPerPostionArray,
+          total: Number(sum(posScores).toFixed(2)),
+          stdDev: teamStdDev,
+          repLev: replacementLevelDict
+        });
+      }));
+    }));
+  // Recursively flatten the array of promises
+  // const flattenedPromises = promises.flat(Infinity).flat(Infinity);
+
+  // Wait for all promises to resolve
   const results = await Promise.all(promises);
 
   // Combine the results into weeklyAVGDict
   results.forEach((result) => {
-    weeklyAVGDict[result.week] = {
+    if (!weeklyAVGDict[result.season]) {
+      weeklyAVGDict[result.season] = {};
+    }
+    weeklyAVGDict[result.season][result.week] = {
       posGroups: result.posGroups,
       total: result.total,
       stdDev: result.stdDev,
@@ -177,18 +186,21 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
     !FLEX_TYPES.includes(p));
   // weekly WoRP calculation
   const replacementLevelWinPer = {};
-  Object.entries(teamPointDict).map(async ([ week, weeklyTeamPointDict ]) => {
-    replacementLevelWinPer[week] = {};
-    posList.forEach(pos => {
-      const posPointsPerWeek = weeklyTeamPointDict.posGroups[pos];
-      const valueAddedTotal = weeklyTeamPointDict.total
-        - posPointsPerWeek.avg + weeklyTeamPointDict.repLevel[pos];
-      const repPlayerZ = zScore(
-        valueAddedTotal,
-        weeklyTeamPointDict.total,
-        weeklyTeamPointDict.stdDev
-      );
-      replacementLevelWinPer[week][pos] = cumulativeStdNormalProbability(repPlayerZ);
+  Object.entries(teamPointDict).map(async ([ season, seasonTeamPointDict ]) => {
+    replacementLevelWinPer[season] = {};
+    Object.entries(seasonTeamPointDict).map(async ([ week, weeklyTeamPointDict ]) => {
+      replacementLevelWinPer[season][week] = {};
+      posList.forEach(pos => {
+        const posPointsPerWeek = weeklyTeamPointDict.posGroups[pos];
+        const valueAddedTotal = weeklyTeamPointDict.total
+          - posPointsPerWeek.avg + weeklyTeamPointDict.repLevel[pos];
+        const repPlayerZ = zScore(
+          valueAddedTotal,
+          weeklyTeamPointDict.total,
+          weeklyTeamPointDict.stdDev
+        );
+        replacementLevelWinPer[season][week][pos] = cumulativeStdNormalProbability(repPlayerZ);
+      });
     });
   });
   // calculate percent and WoRP for each player
@@ -197,22 +209,23 @@ export const CalculatePercentAndWoRPForPlayers = async (players, pointsDict, tea
     posList.includes(p.position)).forEach(p => {
     let weeklyWorp = 0;
     const winsPercentPerWeek = [];
-    Object.entries(pointsDict).map(async ([ week, weeklyPointsDict ]) => {
-      const posPointsPerWeek = teamPointDict[week].posGroups[p.position];
-      const playerPointsPerWeek = weeklyPointsDict[p.sleeper_id] && weeklyPointsDict[p.sleeper_id].gamelog.gp === 1
-        ? weeklyPointsDict[p.sleeper_id].pts : teamPointDict[week].repLevel[p.position];
-      const valueAddedTotal = teamPointDict[week].total
-          - posPointsPerWeek.avg + playerPointsPerWeek;
-      const playerZ = zScore(
-        valueAddedTotal,
-        teamPointDict[week].total,
-        teamPointDict[week].stdDev
-      );
-      winsPercentPerWeek.push(cumulativeStdNormalProbability(playerZ));
-      weeklyWorp += cumulativeStdNormalProbability(playerZ)
-          - replacementLevelWinPer[week][p.position];
-      // console.debug(week, ` Team {${teamPointDict[week].total}, ${teamPointDict[week].stdDev}}`, p.position, teamPointDict[week].posGroups[p.position], `Points: {${weeklyPointsDict[p.sleeper_id]}, ${valueAddedTotal}, ${cumulativeStdNormalProbability(playerZ)}}`, `Rep: {pts: ${teamPointDict[week].repLevel[p.position]}, win% ${replacementLevelWinPer[week][p.position]}}, WORP: {Weekly: ${cumulativeStdNormalProbability(playerZ) - replacementLevelWinPer[week][p.position]}, Total: ${weeklyWorp}}`);
-    });
+    Object.entries(pointsDict).forEach(async ([ season, seasonPointsDict ]) =>
+      Object.entries(seasonPointsDict).forEach(async ([ week, weeklyPointsDict ]) => {
+        const posPointsPerWeek = teamPointDict[season][week].posGroups[p.position];
+        const playerPointsPerWeek = weeklyPointsDict[p.sleeper_id] && weeklyPointsDict[p.sleeper_id].gamelog.gp === 1
+          ? weeklyPointsDict[p.sleeper_id].pts : teamPointDict[season][week].repLevel[p.position];
+        const valueAddedTotal = teamPointDict[season][week].total
+            - posPointsPerWeek.avg + playerPointsPerWeek;
+        const playerZ = zScore(
+          valueAddedTotal,
+          teamPointDict[season][week].total,
+          teamPointDict[season][week].stdDev
+        );
+        winsPercentPerWeek.push(cumulativeStdNormalProbability(playerZ));
+        weeklyWorp += cumulativeStdNormalProbability(playerZ)
+            - replacementLevelWinPer[season][week][p.position];
+        // console.debug(week, ` Team {${teamPointDict[week].total}, ${teamPointDict[week].stdDev}}`, p.position, teamPointDict[week].posGroups[p.position], `Points: {${weeklyPointsDict[p.sleeper_id]}, ${valueAddedTotal}, ${cumulativeStdNormalProbability(playerZ)}}`, `Rep: {pts: ${teamPointDict[week].repLevel[p.position]}, win% ${replacementLevelWinPer[week][p.position]}}, WORP: {Weekly: ${cumulativeStdNormalProbability(playerZ) - replacementLevelWinPer[week][p.position]}, Total: ${weeklyWorp}}`);
+      }));
     const playerPercent = winsPercentPerWeek.length > 0
       ? mean(winsPercentPerWeek) : 0;
     const weeks = Object.keys(pointsDict).length;

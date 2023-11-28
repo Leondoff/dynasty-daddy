@@ -42,9 +42,6 @@ export class FantasyPlayerApiService {
   /** gridiron results cache */
   private gridironResults = {};
 
-  /** league format cache */
-  private leagueFormatCache;
-
   /** non offense players loaded */
   private nonOffensePlayers;
 
@@ -236,26 +233,16 @@ export class FantasyPlayerApiService {
   /**
    * get league format for league
    */
-  fetchLeagueFormatForLeague(leagueId: string, season: number, format: any, settings: LeagueScoringDTO): Observable<any[]> {
-    return this.leagueFormatCache?.[leagueId]?.[season] ? of(this.leagueFormatCache[leagueId][season]).pipe(delay(1000)) : this.getFetchLeagueFormatForLeague(leagueId, season, format, settings);
+  fetchLeagueFormatForLeague(seasons: number[], format: any, settings: LeagueScoringDTO, startWeek: number, endWeek: number): Observable<any[]> {
+    return this.getFetchLeagueFormatForLeague(seasons, format, settings, startWeek, endWeek);
   }
 
   /**
    * return all players advance format metrics for league
    */
-  private getFetchLeagueFormatForLeague(leagueId: string, seasonVal: number, format: any, settings: LeagueScoringDTO): Observable<any[]> {
-    const startWeek = 1;
-    const endWeek = 17;
-    const season = seasonVal || 2022;
-    return this.http.post<any[]>(this.fantasyPlayerApiConfigService.getLeagueFormatEndpoint, { season, startWeek, endWeek, format, settings })
+  private getFetchLeagueFormatForLeague(seasons: number[] = [2023], format: any, settings: LeagueScoringDTO, startWeek: number = 1, endWeek: number = 17): Observable<any[]> {
+    return this.http.post<any[]>(this.fantasyPlayerApiConfigService.getLeagueFormatEndpoint, { seasons, startWeek, endWeek, format, settings })
       .pipe(map(res => {
-        if (!this.leagueFormatCache) {
-          this.leagueFormatCache = {};
-        }
-        if (!this.leagueFormatCache[leagueId]) {
-          this.leagueFormatCache[leagueId] = {};
-        }
-        this.leagueFormatCache[leagueId][season] = res;
         return res;
       }));
   }

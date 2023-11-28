@@ -42,6 +42,27 @@ DDPlayerPosMap = {
     'DL/LB': 'DL'
 }
 
+# Team acryomn exception map
+TeamACCException = {
+    'SFO': 'SF',
+    'TBB': 'TB',
+    'GBP': 'GB',
+    'NOS': 'NO',
+    'LAR': 'LA',
+    'SD': 'LAC',
+    'KCC': 'KC',
+    'NEP': 'NE',
+    'OAK': 'LV',
+    'HST': 'HOU',
+    'BLT': 'BAL',
+    'JAC': 'JAX',
+    'ARZ': 'ARI',
+    'CLV': 'CLE',
+    'STL': 'LA',
+    'SL': 'LA',
+    'LVR': 'LV'
+}
+
 # MFL Player API
 MFL_URL = "https://api.myfantasyleague.com/2023/export?TYPE=players&L=&APIKEY=&DETAILS=&SINCE=&PLAYERS=&JSON=1"
 

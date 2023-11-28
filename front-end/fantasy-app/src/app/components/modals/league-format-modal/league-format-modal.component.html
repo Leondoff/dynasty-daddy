@@ -1,0 +1,28 @@
+<div class="center-text margin-bot-20"
+    [ngClass]="{'large-bold-header-text': !configService.isMobile, 'mid-bold-text': configService.isMobile}">Filter
+    Dataset
+    <span class="button-right">
+        <button mat-icon-button color="accent" class="button-right"
+            (click)="close()"><mat-icon>close</mat-icon></button>
+    </span>
+</div>
+
+<div class="margin-top-10 margin-bot-20 center-text">
+    <mat-form-field appearance="standard" color="accent" style="margin-right: 10px;">
+        <mat-label>Selected Season</mat-label>
+        <mat-select [formControl]="leagueFormatService.selectedSeasons" multiple>
+            <mat-option *ngFor="let season of selectableSeasons" [value]="season">{{season}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+
+
+<div class="margin-top-10 margin-bot-20 center-text">
+    <ngx-slider [(value)]="leagueFormatService.selectedStartWeek" [(highValue)]="leagueFormatService.selectedEndWeek" [options]="options" [manualRefresh]="manualRefresh"></ngx-slider>
+</div>
+
+<div class="margin-top-25" [ngClass]="{'button-right': !configService.isMobile}">
+    <button mat-raised-button color="warn" (click)="applyFilter()">
+        Apply Filter
+    </button>
+</div>

@@ -1,28 +1,10 @@
 import csv
 import json
+from Constants import TeamACCException
 import psycopg2
 import requests
 import PlayerService
 import re
-
-TeamACCException = {
-    'SFO': 'SF',
-    'TBB': 'TB',
-    'GBP': 'GB',
-    'NOS': 'NO',
-    'LAR': 'LA',
-    'SD': 'LAC',
-    'KCC': 'KC',
-    'NEP': 'NE',
-    'OAK': 'LV',
-    'HST': 'HOU',
-    'BLT': 'BAL',
-    'JAC': 'JAX',
-    'ARZ': 'ARI',
-    'CLV': 'CLE',
-    'STL': 'LA',
-    'SL': 'LA'
-}
 
 posExpMap = {
     'SS': 'DB',

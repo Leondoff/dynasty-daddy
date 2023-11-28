@@ -24,3 +24,5 @@ INSERT INTO config (config_key, config_value, description, created_at, updated_a
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('daily_grid_custom_grid', '{}', 'NFL Gridiron grid custom puzzle override', DEFAULT, DEFAULT)
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('trade_count', '0', 'Automated - Number of trades in the trade database', DEFAULT, DEFAULT)
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('league_count', '', 'Automated - Number of leagues saved for trade database', DEFAULT, DEFAULT)
+INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('daily_connection', '{}', 'Daily Connection Puzzle', DEFAULT, DEFAULT)
+INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('daily_grid', '{}', 'Daily Grid Puzzle', DEFAULT, DEFAULT)
