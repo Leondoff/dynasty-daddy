@@ -14,9 +14,9 @@ import { PatreonAPIConfigService } from './api/patreon/patreon-api-config.servic
 export class EndpointsService {
 
   // TODO add cloud base url for api
-  private baseUrl = 'https://dynasty-daddy.com/api';
+  // private baseUrl = 'https://dynasty-daddy.com/api';
   // uncomment for dev environment
-  // private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = 'http://localhost:3000/api';
 
   constructor(private fantasyPlayerApiConfigService: FantasyPlayerApiConfigService,
     private sleeperApiConfigService: SleeperApiConfigService,
@@ -50,6 +50,8 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.searchTradeDatabaseEndpoint = this.baseUrl + '/v1/trade/search';
     this.fantasyPlayerApiConfigService.getRecentTradeVolumeEndpoint = this.baseUrl + '/v1/trade/volume';
     this.patreonApiConfigService.addLeaguesToUserEndpoint = this.baseUrl + '/v1/user/leagues';
+    this.patreonApiConfigService.addPRPresetsToUserEndpoint = this.baseUrl + '/v1/user/presets/pr';
+    this.patreonApiConfigService.addLFPresetsToUserEndpoint = this.baseUrl + '/v1/user/presets/lf';
 
     // Sleeper Endpoints
     this.sleeperApiConfigService.getSleeperUsernameEndpoint = 'https://api.sleeper.app/v1/user/';

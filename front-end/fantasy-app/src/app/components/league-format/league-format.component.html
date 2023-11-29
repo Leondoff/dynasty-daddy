@@ -9,16 +9,37 @@
     <div *ngIf="leagueFormatService.filteredPlayers.length > 0 && leagueFormatService.leagueFormatStatus == 1 && leagueService.selectedLeague" class="margin-top-25">
       <div>
       <span [ngClass]="{'button-left': !configService.isMobile}">
-        <button mat-raised-button [matMenuTriggerFor]="menu" style="margin-right: 10px;">
-          <mat-icon>insert_chart</mat-icon> Load Preset
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item *ngFor="let menu of formatPresetOptions" (click)="leagueFormatService.loadPreset(menu.type)">
-            <span>{{menu.display}}</span>
-          </button>
-        </mat-menu>
+        <mat-form-field appearance="standard" color="accent" style="font-size: 14px; width: 140px;">
+          <mat-label>Selected Preset</mat-label>
+          <mat-select [value]="leagueFormatService.selectedPreset">
+            <mat-option (click)="createPreset()" class="mat-table-highlight"
+              [disabled]="!userService.user" [matTooltip]="!userService.user ? 'Club Members Only' : ''">
+              Create Custom Preset
+            </mat-option>
+            <mat-option *ngFor="let preset of formatPresetOptions" (click)="leagueFormatService.loadPreset(preset.type)"
+              [value]="preset.type" [disabled]="preset.isClubOnly && !userService.user" [matTooltip]="preset.isClubOnly && !userService.user ? 'Club Members Only' : ''">
+              <div>
+                {{preset.display}}
+              </div>
+            </mat-option>
+            <mat-option *ngFor="let preset of userService?.user?.lfPresets || []" (click)="loadCustomPreset(preset)"
+              [value]="preset.id">
+              <div>
+                {{preset.name|truncate:25}}
+              </div>
+              </mat-option>
+          </mat-select>
+        </mat-form-field>
         <button mat-icon-button matTooltip="Filter Dataset" (click)="openLeagueFormatModal()">
           <mat-icon>tune</mat-icon>
+        </button>
+        <button mat-icon-button (click)="saveChangesToCustomPreset()" *ngIf="leagueFormatService.selectedPreset > 9"
+          [matTooltip]="'Save changes to Custom Preset'">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteCustomPreset()" *ngIf="leagueFormatService.selectedPreset > 9"
+          [matTooltip]="'Delete Custom Preset'">
+          <mat-icon>delete</mat-icon>
         </button>
       </span>
       <span class="container-spacer"></span>

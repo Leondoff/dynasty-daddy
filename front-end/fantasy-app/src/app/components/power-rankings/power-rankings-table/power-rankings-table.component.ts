@@ -56,7 +56,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   availableMetrics: any[] = [
     { key: 'teamOwner', display: 'Fantasy Team + Manager' },
     { key: 'owner', display: 'Fantasy Manager' },
-    { key: 'team', display: 'NFL Team' },
+    { key: 'team', display: 'Team Name' },
     { key: 'record', display: 'Record' },
     { key: 'pts', display: 'Points For' },
     { key: 'combinedTier', display: 'Combined Tier', isClubOnly: true },
@@ -64,7 +64,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
     { key: 'tier', display: 'Contender Tier' },
     { key: 'luck', display: 'Team Luck', isClubOnly: true },
     { key: 'overallRank', display: 'Overall Rank' },
-    { key: 'starterRank', display: 'NFL Team' },
+    { key: 'starterRank', display: 'Starter Rank' },
     { key: 'qbStarterRank', display: 'QB Contender Rank' },
     { key: 'qbRank', display: 'QB Dynasty Rank' },
     { key: 'rbStarterRank', display: 'RB Contender Rank' },

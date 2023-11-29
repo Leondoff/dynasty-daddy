@@ -53,6 +53,9 @@ export class LeagueFormatService {
     /** form control for data visualizations dropdown */
     selectedVisualizations = new UntypedFormControl(['worp', 'tradeValue/worp']);
 
+    /** selected preset id */
+    selectedPreset: number = 0;
+
     tableCache = {};
 
     /** advance query */
@@ -97,6 +100,7 @@ export class LeagueFormatService {
                 this.selectedVisualizations.setValue(['worp']);
                 this.selectedMetrics.setValue(['player', 'pos', 'team', 'owner', 'worpTier', 'worp', 'worppg', 'tradeValue']);
         }
+        this.selectedPreset = type;
         this.leagueFormatPlayerUpdated$.next();
     }
 

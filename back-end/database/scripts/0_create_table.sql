@@ -275,6 +275,8 @@ CREATE TABLE users (
     last_name VARCHAR(255),
     image_url TEXT,
     leagues JSONB[] DEFAULT '{}'::JSONB[],
+    pr_presets JSONB[] DEFAULT '{}'::JSONB[],
+    lf_presets JSONB[] DEFAULT '{}'::JSONB[],
     updated_at TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP DEFAULT NOW()
 );

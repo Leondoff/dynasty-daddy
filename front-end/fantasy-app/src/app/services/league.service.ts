@@ -440,7 +440,6 @@ export class LeagueService {
         'DL': this.selectedLeague.rosterPositions.filter(p => p == 'DL').length,
         'IDP_FLEX': this.selectedLeague.rosterPositions.filter(p => p == 'IDP_FLEX').length,
       }
-      console.log(seasons);
       return this.fantasyPlayerApiService.fetchLeagueFormatForLeague(seasons, format, this.selectedLeague.scoringSettings, startWeek, endWeek)
         .pipe(map(res => {
           const arr = [];

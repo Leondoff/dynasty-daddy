@@ -14,6 +14,9 @@ import { MatDialog } from "@angular/material/dialog";
 import { FilterLeagueFormatModalComponent } from "../modals/filter-league-format-modal/filter-league-format-modal.component";
 import { QueryService } from "src/app/services/utilities/query.service";
 import { LeagueFormatModalComponent } from "../modals/league-format-modal/league-format-modal.component";
+import { CreatePresetModalComponent } from "../modals/create-preset-modal/create-preset-modal.component";
+import { UserService } from "src/app/services/user.service";
+import { ConfirmationDialogModal } from "../modals/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
     selector: 'league-format-tool',
@@ -106,6 +109,7 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
         public configService: ConfigService,
         public leagueFormatService: LeagueFormatService,
         private route: ActivatedRoute,
+        public userService: UserService,
         private queryService: QueryService,
         private dialog: MatDialog,
         private downloadService: DownloadService,
@@ -237,5 +241,84 @@ export class LeagueFormatComponent extends BaseComponent implements OnInit {
     disableAdvancedFilter(): void {
         this.leagueFormatService.isAdvancedFiltered = false;
         this.leagueFormatService.leagueFormatPlayerUpdated$.next();
+    }
+
+    /**
+     * Loads custom preset in league format tool 
+     * @param preset custom preset to load
+     */
+    loadCustomPreset(preset: any): void {
+        this.leagueFormatService.selectedMetrics.setValue(preset.table);
+        this.leagueFormatService.selectedVisualizations.setValue(preset.charts);
+        this.leagueFormatService.selectedPreset = preset.id;
+    }
+
+    /**
+     * create a custom preset
+     */
+    createPreset(): void {
+        if (this.userService.user) {
+            const dialogRef = this.dialog.open(CreatePresetModalComponent
+                , {
+                    minHeight: '200px',
+                    minWidth: this.configService.isMobile ? '300px' : '500px',
+                    autoFocus: true,
+                    data: {
+                      presetNum: this.userService.user.lfPresets.length 
+                    }
+                }
+            );
+            dialogRef.afterClosed().subscribe(result => {
+                if (result != '') {
+                    const highestId = this.userService.user.lfPresets?.reduce((maxId, preset) => {
+                        return preset.id > maxId ? preset.id : maxId;
+                    }, 9);
+                    const preset = {
+                        id: highestId + 1,
+                        charts: this.leagueFormatService.selectedVisualizations.value || ['worp'],
+                        table: this.leagueFormatService.selectedMetrics.value,
+                        name: result
+                    }
+                    this.userService.user.lfPresets.push(preset)
+                    this.userService.setLFPresetsForUser(this.userService.user.lfPresets);
+                    this.loadCustomPreset(preset);
+                }
+            });
+        }
+    }
+
+    /**
+     * Saves changes to a custom preset
+     */
+    saveChangesToCustomPreset(): void {
+        const presetInd = this.userService.user.lfPresets.findIndex(p => p.id == this.leagueFormatService.selectedPreset);
+        this.userService.user.lfPresets[presetInd].charts = this.leagueFormatService.selectedVisualizations.value || ['worp'];
+        this.userService.user.lfPresets[presetInd].table = this.leagueFormatService.selectedMetrics.value;
+        this.userService.setLFPresetsForUser(this.userService.user.lfPresets);
+    }
+
+    /**
+     * Delete a custom preset
+     */
+    deleteCustomPreset(): void {
+        const presetInd = this.userService.user.lfPresets.findIndex(p => p.id == this.leagueFormatService.selectedPreset);
+        const dialogRef = this.dialog.open(ConfirmationDialogModal, {
+            disableClose: true,
+            autoFocus: true,
+            data: {
+                title: `Are you sure you want to delete the ${this.userService.user.lfPresets[presetInd].name} Preset?`
+            }
+        })
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.userService.user.lfPresets.splice(presetInd, 1);
+                this.userService.setLFPresetsForUser(this.userService.user.lfPresets);
+                if (presetInd > 0) {
+                    this.loadCustomPreset(this.userService.user.lfPresets[presetInd - 1]);
+                } else {
+                    this.leagueFormatService.loadPreset(3);
+                }
+            }
+        });
     }
 }

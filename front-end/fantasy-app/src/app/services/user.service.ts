@@ -119,6 +119,27 @@ export class UserService {
     }
 
     /**
+     * Sets the power rankings presets for user
+     * @param presets leagues to set
+     */
+    setPRPresetsForUser(presets: any[]): void {
+        this.patreonApiService.addPRPresetsToUser(presets, this.user.userId).subscribe(res => {
+            this.user.prPresets = presets;
+        });
+    }
+
+    /**
+     * Sets the league format presets for user
+     * @param presets leagues to set
+     */
+    setLFPresetsForUser(presets: any[]): void {
+        this.patreonApiService.addLFPresetsToUser(presets, this.user.userId).subscribe(res => {
+            this.user.lfPresets = presets;
+        });
+    }
+
+
+    /**
      * Helper function to update a league user
      * object with the patreon user data
      */

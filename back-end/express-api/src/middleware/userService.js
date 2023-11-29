@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 import axios from 'axios';
-import { GetUserById, PersistNewUser, UpdateUserLeagues } from '../repository';
-import { PATREON_CLIENT_ID, PATREON_CLIENT_SECRET, PATREON_REDIRECT_URL, PATREON_TIER_ID } from '../settings';
+import { GetUserById, PersistNewUser, UpdateUserLFPresets, UpdateUserLeagues, UpdateUserPRPresets } from '../repository';
+import { DB_HOST, PATREON_CLIENT_ID, PATREON_CLIENT_SECRET, PATREON_REDIRECT_URL, PATREON_TIER_ID } from '../settings';
 
 const AdminIds = ['53401676', '71505590'];
 
@@ -17,6 +17,11 @@ const escapeString = async (inputString) =>
  * @param {*} code Oauth2 Code for user
  */
 export const HandleUserRequest = async (code) => {
+  // local debugging log into Jeremy without auth
+  if (DB_HOST == 'localhost') {
+    return await GetUserById('53401676');
+  }
+
   // Step 1: Get the access token
   const tokenResponse = await axios.post(
     'https://www.patreon.com/api/oauth2/token',
@@ -85,3 +90,21 @@ export const AddLeaguesToUser = async (id, leagues) => {
   }
   await UpdateUserLeagues(id, leagues);
 };
+
+/**
+ * Sets PR presets to user
+ * @param {*} id user id
+ * @param {*} presets power rankings presets
+ */
+export const AddPRPresetsToUser = async (id, presets) => {
+  await UpdateUserPRPresets(id, presets); 
+}
+
+/**
+ * Sets League Format to user
+ * @param {*} id user id
+ * @param {*} presets league format presets
+ */
+export const AddLFPresetsToUser = async (id, presets) => {
+  await UpdateUserLFPresets(id, presets);
+}

@@ -10,7 +10,7 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -35,6 +35,7 @@ import { MatCarouselModule } from "@thouet/material-carousel";
 import { QueryBuilderModule } from "angular2-query-builder";
 import { ChartsModule } from "ng2-charts";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { CreatePresetModalComponent } from "src/app/components/modals/create-preset-modal/create-preset-modal.component";
 import { AffiliateBannerComponent } from "src/app/components/sub-components/affiliate-banner/affiliate-banner.component";
 import { DataSourcesButtonComponent } from "src/app/components/sub-components/data-sources-button/data-sources-button.component";
 import { FantasyMarketDropdownComponent } from "src/app/components/sub-components/fantasy-market-dropdown/fantasy-market-dropdown.component";
@@ -90,6 +91,7 @@ const MODULES = [
 const DECLARATIONS = [
   AffiliateBannerComponent,
   ToolHelpComponent,
+  CreatePresetModalComponent,
   TradeDatabaseCardComponent,
   DataSourcesButtonComponent,
   FantasyMarketDropdownComponent,
@@ -102,6 +104,9 @@ const DECLARATIONS = [
 ]
 
 @NgModule({
+  providers: [
+    { provide: MatDialogRef, useValue: {} },
+  ],
   imports: [
     ...MODULES
   ],
