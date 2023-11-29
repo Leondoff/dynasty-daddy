@@ -1,5 +1,5 @@
 import { HttpStatusCode } from 'axios';
-import { AddLeaguesToUser, HandleUserRequest } from '../middleware';
+import { AddLFPresetsToUser, AddLeaguesToUser, AddPRPresetsToUser, HandleUserRequest } from '../middleware';
 
 /**
  * Log in to patreon user
@@ -25,6 +25,32 @@ export const AddLeaguesToUserEndpoint = async (req, res) => {
   const { leagues, id } = req.body;
   try {
     await AddLeaguesToUser(id, leagues);
+    res.status(HttpStatusCode.Ok).json('success');
+  } catch (err) {
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
+  }
+};
+
+/**
+ * Update leagues for user
+ */
+export const AddPRPresetsToUserEndpoint = async (req, res) => {
+  const { presets, id } = req.body;
+  try {
+    await AddPRPresetsToUser(id, presets);
+    res.status(HttpStatusCode.Ok).json('success');
+  } catch (err) {
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
+  }
+};
+
+/**
+ * Update leagues for user
+ */
+export const AddLFPresetsToUserEndpoint = async (req, res) => {
+  const { presets, id } = req.body;
+  try {
+    await AddLFPresetsToUser(id, presets);
     res.status(HttpStatusCode.Ok).json('success');
   } catch (err) {
     res.status(HttpStatusCode.InternalServerError).json(err.stack);

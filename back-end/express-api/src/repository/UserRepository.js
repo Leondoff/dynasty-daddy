@@ -45,3 +45,31 @@ export const UpdateUserLeagues = async (id, leagues) => {
   `;
   return playersModel.selectQuery(query);
 };
+
+/**
+ * Update the power rankings presets for a specific user by user_id.
+ * @param {number} id - User ID.
+ * @param {object} presets - presets data to be set.
+ */
+export const UpdateUserPRPresets = async (id, presets) => {
+  const query = `
+    UPDATE users
+    SET pr_presets = ARRAY[${presets.map(l => `'${JSON.stringify(l)}'`)}]::jsonb[]
+    WHERE user_id = '${id}';
+  `;
+  return playersModel.selectQuery(query);
+};
+
+/**
+ * Update the league format presets for a specific user by user_id.
+ * @param {number} id - User ID.
+ * @param {object} presets - presets data to be set.
+ */
+export const UpdateUserLFPresets = async (id, presets) => {
+  const query = `
+    UPDATE users
+    SET lf_presets = ARRAY[${presets.map(l => `'${JSON.stringify(l)}'`)}]::jsonb[]
+    WHERE user_id = '${id}';
+  `;
+  return playersModel.selectQuery(query);
+};

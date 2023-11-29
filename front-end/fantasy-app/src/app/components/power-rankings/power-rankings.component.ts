@@ -11,6 +11,11 @@ import { DisplayService } from 'src/app/services/utilities/display.service';
 import { PageService } from 'src/app/services/utilities/page.service';
 import { UntypedFormControl } from '@angular/forms';
 import { UserService } from 'src/app/services/user.service';
+import { CreatePresetModalComponent } from '../modals/create-preset-modal/create-preset-modal.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ConfigService } from 'src/app/services/init/config.service';
+import { ConfirmationDialogModal } from '../modals/confirmation-dialog/confirmation-dialog.component';
+import { LeagueType } from 'src/app/model/league/LeagueDTO';
 
 @Component({
   selector: 'app-power-rankings',
@@ -42,13 +47,16 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
 
   constructor(public leagueService: LeagueService,
     public userService: UserService,
+    private configService: ConfigService,
     public powerRankingService: PowerRankingsService,
     private playersService: PlayerService,
     private downloadService: DownloadService,
     private displayService: DisplayService,
     private route: ActivatedRoute,
     private pageService: PageService,
-    public leagueSwitchService: LeagueSwitchService) {
+    public leagueSwitchService: LeagueSwitchService,
+    private dialog: MatDialog,
+    public dialogRef: MatDialogRef<CreatePresetModalComponent>) {
     super();
     this.pageService.setUpPageSEO('Fantasy League Power Rankings | Dynasty Daddy',
       ['fantasy league ranker', 'fantasy football rankings', 'league power ranker',
@@ -146,5 +154,84 @@ export class PowerRankingsComponent extends BaseComponent implements OnInit {
     const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Power_Rankings_${new Date().toISOString().slice(0, 10)}.csv`;
 
     this.downloadService.downloadCSVFile(formattedPowerRankings, filename)
+  }
+
+  /**
+   * create a custom preset
+   */
+  createPreset(): void {
+    if (this.userService.user) {
+      const dialogRef = this.dialog.open(CreatePresetModalComponent
+        , {
+          minHeight: '200px',
+          minWidth: this.configService.isMobile ? '300px' : '500px',
+          autoFocus: true,
+          data: {
+            presetNum: this.userService?.user?.prPresets?.length || 0
+          }
+        }
+      );
+      dialogRef.afterClosed().subscribe(result => {
+        if (result != '') {
+          const highestId = this.userService.user.prPresets?.reduce((maxId, preset) => {
+            return preset.id > maxId ? preset.id : maxId;
+          }, 9);
+          const preset = {
+            id: highestId + 1,
+            charts: this.powerRankingService.powerRankingsVisualizations || ['overall'],
+            table: this.powerRankingService.selectedMetrics.value,
+            name: result
+          }
+          this.userService.user.prPresets.push(preset)
+          this.userService.setPRPresetsForUser(this.userService.user.prPresets);
+          this.loadCustomPreset(preset);
+        }
+      });
+    }
+  }
+
+  /**
+   * Loads a custom preset
+   * @param preset preset to load
+   */
+  loadCustomPreset(preset: any): void {
+    this.powerRankingService.selectedMetrics.setValue(preset.table);
+    this.powerRankingService.powerRankingsVisualizations = preset.charts;
+    this.powerRankingService.powerRankingsTableView = preset.id;
+  }
+
+  /**
+   * Saves changes to a custom preset
+   */
+  saveChangesToCustomPreset(): void {
+    const presetInd = this.userService.user.prPresets.findIndex(p => p.id == this.powerRankingService.powerRankingsTableView);
+    this.userService.user.prPresets[presetInd].charts = this.powerRankingService.powerRankingsVisualizations || ['overall'];
+    this.userService.user.prPresets[presetInd].table = this.powerRankingService.selectedMetrics.value;
+    this.userService.setPRPresetsForUser(this.userService.user.prPresets);
+  }
+
+  /**
+   * Delete a custom preset
+   */
+  deleteCustomPreset(): void {
+    const presetInd = this.userService.user.prPresets.findIndex(p => p.id == this.powerRankingService.powerRankingsTableView);
+    const dialogRef = this.dialog.open(ConfirmationDialogModal, {
+      disableClose: true,
+      autoFocus: true,
+      data: {
+        title: `Are you sure you want to delete the ${this.userService.user.prPresets[presetInd].name} Preset?`
+      }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.user.prPresets.splice(presetInd, 1);
+        this.userService.setPRPresetsForUser(this.userService.user.prPresets);
+        if (presetInd > 0) {
+          this.loadCustomPreset(this.userService.user.prPresets[presetInd - 1]);
+        } else {
+          this.powerRankingService.loadPRPreset(this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 0 : 1);
+        }
+      }
+    });
   }
 }

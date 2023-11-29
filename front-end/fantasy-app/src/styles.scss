@@ -229,19 +229,19 @@ $altTheme: (
 // scroll bar override
 *::-webkit-scrollbar {
   width: 0.5em;
-	background-color: #1d1d28;
+  background-color: #1d1d28;
 }
 
 *::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 10px;
-	background-color: #1d1d28;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #1d1d28;
 }
 
 *::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #3f7bfb;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #3f7bfb;
 }
 
 // Specific component overrides, pieces that are not in line with the general theming
@@ -677,10 +677,6 @@ hr.dark {
   color: mat.get-color-from-palette($mat-accent, main);
 }
 
-.accent__background {
-  background: mat.get-color-from-palette($mat-accent, main);
-}
-
 .light_bg_color {
   color: $dark-bg-lighter-40;
 }
@@ -1020,11 +1016,11 @@ tr.table-detail-row {
 /* Declare border pulse animation */
 @keyframes borderPulse {
   0% {
-      box-shadow: inset 0px 0px 0px 5px rgba(255, 255, 255, .4), 0px 0px 0px 0px rgba(255, 255, 255, 1);
+    box-shadow: inset 0px 0px 0px 5px rgba(255, 255, 255, .4), 0px 0px 0px 0px rgba(255, 255, 255, 1);
   }
 
   100% {
-      box-shadow: inset 0px 0px 0px 3px rgba(117, 117, 255, .2), 0px 0px 0px 10px rgba(255, 255, 255, 0);
+    box-shadow: inset 0px 0px 0px 3px rgba(117, 117, 255, .2), 0px 0px 0px 10px rgba(255, 255, 255, 0);
   }
 }
 

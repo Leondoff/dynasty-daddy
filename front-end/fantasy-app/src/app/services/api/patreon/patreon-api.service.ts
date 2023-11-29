@@ -36,4 +36,19 @@ export class PatreonApiService {
         );
     }
 
+    addPRPresetsToUser(presets: any[], userId: string): Observable<any> {
+        return this.http.post<any>(this.patreonApiConfigService.addPRPresetsToUserEndpoint, { presets, "id": userId }).pipe(
+            map((res: any) => {
+                return res;
+            })
+        );
+    }
+
+    addLFPresetsToUser(presets: any[], userId: string): Observable<any> {
+        return this.http.post<any>(this.patreonApiConfigService.addLFPresetsToUserEndpoint, { presets, "id": userId }).pipe(
+            map((res: any) => {
+                return res;
+            })
+        );
+    }
 }

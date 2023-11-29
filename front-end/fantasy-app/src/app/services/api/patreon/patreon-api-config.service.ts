@@ -10,6 +10,10 @@ export class PatreonAPIConfigService {
 
   private _addLeaguesToUserEndpoint = '';
 
+  private _addPRPresetsToUserEndpoint = '';
+
+  private _addLFPresetsToUserEndpoint = '';
+
   get getUserFromPatreonEndpoint(): string {
     return this._getTokenForCodeEndpoint;
   }
@@ -24,5 +28,21 @@ export class PatreonAPIConfigService {
 
   set addLeaguesToUserEndpoint(value: string) {
     this._addLeaguesToUserEndpoint = value;
+  }
+
+  get addPRPresetsToUserEndpoint(): string {
+    return this._addPRPresetsToUserEndpoint;
+  }
+
+  set addPRPresetsToUserEndpoint(value: string) {
+    this._addPRPresetsToUserEndpoint = value;
+  }
+
+  get addLFPresetsToUserEndpoint(): string {
+    return this._addLFPresetsToUserEndpoint;
+  }
+
+  set addLFPresetsToUserEndpoint(value: string) {
+    this._addLFPresetsToUserEndpoint = value;
   }
 }

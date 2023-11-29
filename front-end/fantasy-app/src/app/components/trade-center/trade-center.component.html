@@ -189,7 +189,7 @@
     <div fxFlex="40%" fxFlex.xs="40%" fxFlex.sm="40%" *ngIf="!configService.isMobile">
       <div class="margin-top-25 center-text large-bold-header-text">{{team1Rankings?.team.owner.ownerName || 'Team 2' | truncate: 20}}: {{tradeTool.tradePackage?.getTradeValueBySide(2) | number}}</div>
     </div>
-    <div fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%" [ngClass]="{'uneven-trade-bg-color': tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount, 'fair-trade-bg-color': tradeTool.tradePackage?.valueToEvenTrade < tradeTool.tradePackage?.acceptanceBufferAmount || !tradeTool.tradePackage}" class="margin-top-25 margin-bot-50">
+    <div fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%" [ngClass]="{'uneven-trade-bg-color': tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount, 'mat-table-highlight': tradeTool.tradePackage?.valueToEvenTrade < tradeTool.tradePackage?.acceptanceBufferAmount || !tradeTool.tradePackage}" class="margin-top-25 margin-bot-50">
       <div *ngIf="tradeTool.tradePackage === null || (tradeTool.tradePackage?.team1Assets.length === 0 && tradeTool.tradePackage?.team2Assets.length === 0)" class="mid-bold-text center-text margin-top-15 margin-bot-15" style="color: lightgray">Add Player to Trade</div>
       <div *ngIf="tradeTool.tradePackage !== null && (tradeTool.tradePackage?.team1Assets.length !== 0 && tradeTool.tradePackage?.team2Assets?.length !== 0) && tradeTool.tradePackage?.valueToEvenTrade <= tradeTool.tradePackage?.acceptanceBufferAmount" class="center-text margin-top-15 margin-bot-15 accent">
         <div class="large-bold-header-text accent_color">Fair Trade</div>
