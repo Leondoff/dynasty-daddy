@@ -219,7 +219,7 @@ export class WrappedFinishComponent extends BaseComponent implements OnInit {
           buttons: ['copy', 'facebook', 'twitter', 'reddit', 'sms', 'email'],
           postTitle: `Fantasy Wrapped for ${this.leagueService.selectedLeague.name}`,
           postUrl: window.location.href,
-          description: 'Relive the best moments of the fantasy season with your league\'s fantasy wrapped.'
+          description: `Relive the best moments of the fantasy season with ${this.leagueService.selectedLeague.name}\'s fantasy wrapped!`
         }
       }
     );

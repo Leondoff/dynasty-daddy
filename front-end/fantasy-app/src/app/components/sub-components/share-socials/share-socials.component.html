@@ -1,15 +1,11 @@
 <span *ngFor="let btn of buttonList" style="padding: 5px;">
-  <button mat-raised-button style="background-color: {{btn['color']}};" (click)="shareOnSocial(btn)">
+  <button mat-raised-button style="background-color: {{btn['color']}};" (click)="shareOnSocial(btn)" class='sb-circle'>
       <div *ngIf="btn" class="sb-content">
 
           <div *ngIf="btn.icon">
               <img width="30px" height="30px" class="sb-icon" [src]='btn.icon' alt="F">
           </div>
-      
-          <div class="sb-text">
-            {{ btn.text }}
-          </div>
-      
+
         </div>
   </button>
 </span>

@@ -51,7 +51,7 @@
 
 <div class="wrapped-context-next" *ngIf="showNext">
   <div @fadeSlideInOut class="center-text">
-    <mat-icon class="wrapped-top-icon" (click)="wrappedService.toggleMute()" style="padding-right: 5px;">{{wrappedService.isMuted ? 'volume_off' : 'volume_up'}}</mat-icon>
+    <mat-icon class="wrapped-top-icon" (click)="wrappedService.toggleMute()" style="padding-right: 15px; margin-left: -30px;">{{wrappedService.isMuted ? 'volume_off' : 'volume_up'}}</mat-icon>
     <mat-icon class="wrapped-top-icon" (click)="nextFrame()">arrow_forward</mat-icon>
   </div>
 </div>
