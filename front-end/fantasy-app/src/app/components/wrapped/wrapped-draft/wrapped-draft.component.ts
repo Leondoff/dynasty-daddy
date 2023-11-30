@@ -106,6 +106,9 @@ export class WrappedDraftComponent implements OnInit {
     if (this.leagueService.completedDrafts.length === 0 || !this.leagueService.completedDrafts[0] || this.leagueService.completedDrafts[0].picks.length === 0) {
       this.wrappedService.frameNumber = 6;
     }
+    if (this.wrappedService.frameNumber === 6) {
+      this.wrappedService.playNewSong('wrapped_transactions');
+    }
     this.showNext = false;
     this.showContent = false;
     setInterval(() => {

@@ -31,7 +31,7 @@ import { WrappedCardSummaryUserComponent } from "src/app/components/wrapped/wrap
     WrappedStandingsComponent,
     WrappedWelcomeComponent,
     WrappedTransactionsComponent,
-    WrappedCardSummaryUserComponent,
+    WrappedCardSummaryUserComponent
   ]
 })
 export class WrappedModule {

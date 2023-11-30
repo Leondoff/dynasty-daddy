@@ -12,11 +12,13 @@ import { PlayerService } from 'src/app/services/player.service';
 import { MatchUpProbability } from '../../model/playoffCalculator';
 import { MatchupService } from '../../services/matchup.service';
 import { BaseComponent } from '../../base-component.abstract';
+import { MatDialog } from '@angular/material/dialog';
+import { ShareSocialsComponent } from '../../sub-components/share-socials/share-socials.component';
 
 @Component({
   selector: 'app-wrapped-finish',
   templateUrl: './wrapped-finish.component.html',
-  styleUrls: ['./wrapped-finish.component.css'],
+  styleUrls: ['./wrapped-finish.component.scss'],
   animations: [FadeSlideInOut, FadeGrowStagger]
 })
 export class WrappedFinishComponent extends BaseComponent implements OnInit {
@@ -50,6 +52,7 @@ export class WrappedFinishComponent extends BaseComponent implements OnInit {
     private matchUpService: MatchupService,
     private playoffCalculatorService: PlayoffCalculatorService,
     public leagueSwitchService: LeagueSwitchService,
+    public dialog: MatDialog,
     public wrappedService: WrappedService) {
     super()
   }
@@ -89,7 +92,7 @@ export class WrappedFinishComponent extends BaseComponent implements OnInit {
     setInterval(() => {
       this.showNext = true;
     }, 3000);
-    this.teams = this.leagueService.leagueTeamDetails.map(t => ({rosterId: t.roster.rosterId, teamName: t.owner.teamName}))
+    this.teams = this.leagueService.leagueTeamDetails.map(t => ({ rosterId: t.roster.rosterId, teamName: t.owner.teamName }))
   }
 
   generateUserSummary(rosterId: number = this.selectedRosterId): WrappedCardSummaryUserContent {
@@ -204,6 +207,22 @@ export class WrappedFinishComponent extends BaseComponent implements OnInit {
   setTeamRecap(rosterId: number): void {
     this.selectedRosterId = rosterId;
     this.summaryUserCard = this.generateUserSummary();
+  }
+
+  /**
+   * Open share socials modal
+   */
+  openShareModal(): void {
+    this.dialog.open(ShareSocialsComponent
+      , {
+        data: {
+          buttons: ['copy', 'facebook', 'twitter', 'reddit', 'sms', 'email'],
+          postTitle: `Fantasy Wrapped for ${this.leagueService.selectedLeague.name}`,
+          postUrl: window.location.href,
+          description: 'Relive the best moments of the fantasy season with your league\'s fantasy wrapped.'
+        }
+      }
+    );
   }
 
   private formatTrade(bestTrade: any): WrappedCardTradeContent {

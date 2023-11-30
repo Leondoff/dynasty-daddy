@@ -77,11 +77,14 @@
 </div>
 
 <div class="wrapped-context-next" *ngIf="showNext">
-  <div @fadeSlideInOut class="center-text" (click)="nextFrame()"><mat-icon class="wrapped-top-icon">arrow_forward</mat-icon></div>
+  <div @fadeSlideInOut class="center-text">
+    <mat-icon class="wrapped-top-icon" (click)="wrappedService.toggleMute()" style="padding-right: 5px;">{{wrappedService.isMuted ? 'volume_off' : 'volume_up'}}</mat-icon>
+    <mat-icon class="wrapped-top-icon" (click)="nextFrame()">arrow_forward</mat-icon>
+  </div>
 </div>
 
 <div class="wrapped-context-exit" *ngIf="showNext">
-  <div @fadeSlideInOut class="center-text" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="wrapped-top-icon">close</mat-icon></div>
+  <div @fadeSlideInOut class="center-text"><mat-icon class="wrapped-top-icon" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()">close</mat-icon></div>
 </div>
 
 <div class="wrapped-standings">

@@ -15,7 +15,14 @@ export class WrappedService {
   /** map of stats to generate and display */
   transactionsDict = {};
 
-  constructor(private leagueService: LeagueService, private transactionsService: TransactionsService, private nflService: NflService) { }
+  MUSIC_BASE_URL = 'assets/music/';
+
+  private music: HTMLAudioElement;
+  private isMuted: boolean = false;
+
+  constructor(private leagueService: LeagueService,
+    private transactionsService: TransactionsService,
+    private nflService: NflService) { }
 
   /**
    * Set up transaction dictionary with metrics to show
@@ -64,5 +71,29 @@ export class WrappedService {
       teamPlayoffOdds[b.roster.rosterId]?.timesMakeChampionship - teamPlayoffOdds[a.roster.rosterId]?.timesMakeChampionship ||
       teamPlayoffOdds[b.roster.rosterId]?.timesMakeConfRd - teamPlayoffOdds[a.roster.rosterId]?.timesMakeConfRd
     );
+  }
+
+  /**
+   * Play a song for wrapped
+   * @param songName song to play
+   */
+  playNewSong(songName: string): void {
+    if (this.music) {
+      this.music.pause();
+    }
+    this.music = new Audio(this.MUSIC_BASE_URL + songName + '.mp3');
+    this.music.loop = true;
+    this.music.load();
+    this.music.play();
+  }
+
+  /**
+   * toggle mute on song
+   */
+  toggleMute(): void {
+    if (this.music) {
+      this.isMuted = !this.isMuted;
+      this.music.muted = this.isMuted;
+    }
   }
 }

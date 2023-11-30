@@ -32,4 +32,8 @@
       <div @fadeSlideInOut class="center-text"><mat-icon  [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-top-icon">close</mat-icon></div>
     </div>
   </div>
+
+  <div class="wrapped-context-exit" *ngIf="showNext">
+    <div @fadeSlideInOut class="center-text"><mat-icon class="wrapped-top-icon" (click)="openShareModal()">ios_share</mat-icon></div>
+  </div>
 </div>

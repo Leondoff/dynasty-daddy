@@ -10,7 +10,7 @@ import { WrappedCardContent } from '../wrapped-card/wrapped-card.component';
 @Component({
   selector: 'app-wrapped-transactions',
   templateUrl: './wrapped-transactions.component.html',
-  styleUrls: ['./wrapped-transactions.component.css'],
+  styleUrls: ['./wrapped-transactions.component.scss'],
   animations: [FadeSlideInOut, FadeGrowStagger]
 })
 export class WrappedTransactionsComponent implements OnInit {
@@ -105,6 +105,9 @@ export class WrappedTransactionsComponent implements OnInit {
     }
     if (this.biggestFleeces.length === 0 && this.wrappedService.frameNumber === this.baseFrame + 5) {
       this.wrappedService.frameNumber += 1;
+    }
+    if (this.wrappedService.frameNumber === 12) {
+      this.wrappedService.playNewSong('wrapped_standings');
     }
     this.showNext = false;
     this.showContent = false;
