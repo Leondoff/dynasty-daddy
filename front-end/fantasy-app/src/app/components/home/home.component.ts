@@ -19,6 +19,7 @@ import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { LeagueDTO } from 'src/app/model/league/LeagueDTO';
+import { ShareSocialsComponent } from '../sub-components/share-socials/share-socials.component';
 
 @Component({
   selector: 'app-home',

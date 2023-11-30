@@ -54,16 +54,15 @@ export class ShareSocialsComponent implements OnInit {
 
     createShareLink(social: any): string {
         const baseURL = this.configService.isMobile ? social.share.mobile || social.share.desktop : social.share.desktop;
+        const encodedURL = encodeURIComponent(this.linkInDescription(social))
         return baseURL.replace(this.POST_TITLE, this.postTitle)
-            .replace(this.POST_URL,
-                ['facebook', 'linkedin', 'messenger'].includes(social.type) ? this.postUrl : this.linkInDescription()
-            );
+            .replace(this.POST_URL, encodedURL);
     }
 
     shareOnSocial(social: any): void {
         switch (social.type) {
             case 'copy':
-                this.clipboard.copy(this.linkInDescription());
+                this.clipboard.copy(this.linkInDescription(this.postUrl));
                 break;
             case 'print':
                 document.defaultView.print();
@@ -74,8 +73,8 @@ export class ShareSocialsComponent implements OnInit {
         }
     }
     // Create message body that includes the sharing link used for Email, SMS and WhatsApp buttons
-    linkInDescription(): string {
-        return this.description ? `${this.description}\r\n\n${this.postUrl}` : this.postUrl;
+    linkInDescription(social: any): string {
+        return !['facebook', 'linkedin', 'messenger'].includes(social.type) ? `${this.description}\r\n\n${this.postUrl}` : this.postUrl;
     };
 
 }

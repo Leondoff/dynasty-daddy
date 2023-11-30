@@ -22,6 +22,14 @@ button {
   position: relative;
 }
 
+.sb-circle {
+  border-radius: 25px;
+  min-width: unset !important;
+  padding-right: unset !important;
+  height: 3em;
+  width: 3em;
+}
+
 .sb-text {
   flex: 1;
   height: 100%;
