@@ -1,5 +1,5 @@
 <div *ngIf="leagueService.isLeagueLoaded() && leagueService.selectedLeague?.status !== 'pre_draft' && leagueService.selectedLeague?.status !== 'drafting'">
-    <app-wrapped-welcome *ngIf="wrappedService.frameNumber === 0" (click)="wrappedService.frameNumber = 1"></app-wrapped-welcome>
+    <app-wrapped-welcome *ngIf="wrappedService.frameNumber === 0"></app-wrapped-welcome>
     <app-wrapped-draft [baseFrame]="1" *ngIf="wrappedService.frameNumber > 0 && wrappedService.frameNumber < 6" class="wrapped-container"></app-wrapped-draft>
     <app-wrapped-transactions [baseFrame]="6" *ngIf="wrappedService.frameNumber > 5 && wrappedService.frameNumber < 12" class="wrapped-container"></app-wrapped-transactions>
     <app-wrapped-standings [baseFrame]="12" *ngIf="wrappedService.frameNumber > 11 && wrappedService.frameNumber < 20" class="wrapped-container"></app-wrapped-standings>

@@ -52,6 +52,9 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   /** color gradient */
   probGradient: {} = {};
 
+  /** table cache */
+  tableCache: {} = {};
+
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.powerRankingsService.powerRankings);
     if (this.playoffCalculatorService.divisions.length === 1 || this.configService.isMobile) {
@@ -61,6 +64,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
     }
     this.divisionTableCols = this.ratingsCols.concat(this.teamCols, this.probabilityCols);
     this.probGradient = this.colorService.getProbGradient();
+    this.setTableCache();
   }
 
   /** sorting function */
@@ -112,15 +116,45 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
     this.divisionTableCols = this.ratingsCols.concat(this.teamCols, this.probabilityCols);
     if (this.dataSource) {
       this.dataSource.data = this.powerRankingsService.powerRankings;
+      this.setTableCache();
     }
   }
 
   /**
-   * get color for probability
-   * @param prob percent
+   * reset table cache
    */
-  getProbColor(prob: number): string {
-    return this.probGradient[prob];
+  setTableCache(): void {
+    this.tableCache = {}
+    this.powerRankingsService.powerRankings.forEach(p => {
+      this.tableCache[p.team.roster.rosterId] = {}
+      this.tableCache[p.team.roster.rosterId]['record'] =
+        this.getActualRecord(p.team.roster.rosterId);
+      this.tableCache[p.team.roster.rosterId]['projRecord'] =
+        this.getProjRecord(p.team.roster.rosterId);
+      this.tableCache[p.team.roster.rosterId]['divisionName'] =
+        this.leagueService.selectedLeague.divisionNames[
+        this.playoffCalculatorService.getDivisionByRosterId(p.team.roster.rosterId)?.divisionId - 1
+        ]
+      this.tableCache[p.team.roster.rosterId]['timesMakingPlayoffs'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakingPlayoffs);
+      this.tableCache[p.team.roster.rosterId]['timesWinningDivision'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWinningDivision);
+      this.tableCache[p.team.roster.rosterId]['timesWithBye'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithBye);
+      this.tableCache[p.team.roster.rosterId]['timesTeamWonOut'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesTeamWonOut);
+      this.tableCache[p.team.roster.rosterId]['timesWithWorstRecord'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithWorstRecord);
+      this.tableCache[p.team.roster.rosterId]['timesWithBestRecord'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithBestRecord);
+      this.tableCache[p.team.roster.rosterId]['timesMakeConfRd'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakeConfRd);
+      this.tableCache[p.team.roster.rosterId]['timesMakeChampionship'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakeChampionship);
+      this.tableCache[p.team.roster.rosterId]['timesWinChampionship'] =
+        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWinChampionship);
+    });
+    console.log(this.tableCache);
   }
 
   /**

@@ -41,6 +41,7 @@ import { DataSourcesButtonComponent } from "src/app/components/sub-components/da
 import { FantasyMarketDropdownComponent } from "src/app/components/sub-components/fantasy-market-dropdown/fantasy-market-dropdown.component";
 import { LeagueDropdownComponent } from "src/app/components/sub-components/league-dropdown/league-dropdown.component";
 import { LoginErrorComponent } from "src/app/components/sub-components/login-error/login-error.component";
+import { ShareSocialsComponent } from "src/app/components/sub-components/share-socials/share-socials.component";
 import { SimpleTextModalComponent } from "src/app/components/sub-components/simple-text-modal/simple-text-modal.component";
 import { ToolHelpComponent } from "src/app/components/sub-components/tool-help/tool-help.component";
 import { TradeDatabaseCardComponent } from "src/app/components/trade-database/trade-database-card/trade-database-card.component";
@@ -100,12 +101,14 @@ const DECLARATIONS = [
   TruncatePipe,
   HighLightSearchPipe,
   LeagueDropdownComponent,
-  AccentNumberPipe
+  AccentNumberPipe,
+  ShareSocialsComponent,
 ]
 
 @NgModule({
   providers: [
     { provide: MatDialogRef, useValue: {} },
+    { provide: MAT_DIALOG_DATA, useValue: {} }
   ],
   imports: [
     ...MODULES
