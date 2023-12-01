@@ -57,7 +57,7 @@
 </div>
 
 <div class="wrapped-context-exit" *ngIf="showNext">
-  <div @fadeSlideInOut class="center-text"><mat-icon class="wrapped-top-icon" [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()">close</mat-icon></div>
+  <div @fadeSlideInOut class="center-text"><mat-icon class="wrapped-top-icon" (click)="wrappedService.closeWrapped()">close</mat-icon></div>
 </div>
 
 <div class="background">
