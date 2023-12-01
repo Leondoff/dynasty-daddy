@@ -4,6 +4,8 @@ import { LeagueService } from "src/app/services/league.service";
 import { NflService } from "src/app/services/utilities/nfl.service";
 import { TransactionUI } from "../model/transaction";
 import { TransactionsService } from "./transactions.service";
+import { LeagueSwitchService } from "./league-switch.service";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +23,8 @@ export class WrappedService {
   private isMuted: boolean = false;
 
   constructor(private leagueService: LeagueService,
+    private leagueSwitchService: LeagueSwitchService,
+    private router: Router,
     private transactionsService: TransactionsService,
     private nflService: NflService) { }
 
@@ -83,6 +87,7 @@ export class WrappedService {
     }
     this.music = new Audio(this.MUSIC_BASE_URL + songName + '.mp3');
     this.music.loop = true;
+    this.music.muted = this.isMuted;
     this.music.load();
     this.music.play();
   }
@@ -95,5 +100,19 @@ export class WrappedService {
       this.isMuted = !this.isMuted;
       this.music.muted = this.isMuted;
     }
+  }
+
+  /**
+   * force quit music
+   */
+  closeWrapped(): void {
+    if (this.music) {
+      this.music.pause();
+      this.music = null;
+    }
+    this.router.navigate(['home'],
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams()
+      })
   }
 }

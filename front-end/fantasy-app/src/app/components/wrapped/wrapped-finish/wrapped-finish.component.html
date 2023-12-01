@@ -29,7 +29,7 @@
     <app-wrapped-summary-user class='wrapped-context-high' @fadeSlideInOut [content]="summaryUserCard"></app-wrapped-summary-user>
     
     <div class="wrapped-context-next" *ngIf="showNext">
-      <div @fadeSlideInOut class="center-text"><mat-icon  [routerLink]="['./home']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-top-icon">close</mat-icon></div>
+      <div @fadeSlideInOut class="center-text"><mat-icon  [routerLink]="['./home']" (click)="wrappedService.closeWrapped()">close</mat-icon></div>
     </div>
   </div>
 

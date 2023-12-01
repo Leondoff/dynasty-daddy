@@ -147,7 +147,7 @@ export class WrappedStandingsComponent implements OnInit {
       this.wrappedService.frameNumber++;
     }
     if (this.wrappedService.frameNumber === 20) {
-      this.wrappedService.playNewSong('wrapped_');
+      this.wrappedService.playNewSong('wrapped_finish');
     }
     this.showNext = false;
     this.showContent = false;
