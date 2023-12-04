@@ -45,7 +45,7 @@
 <!-- team luck -->
 <div *ngIf="wrappedService.frameNumber === baseFrame + 5">
   <div [@fadeGrowStagger]="teamLuck.length + 1" *ngIf="showContent" class="wrapped-context">
-    <div class="center-text wrapped-header-style">Some people stuck luck while others... not so much</div>
+    <div class="center-text wrapped-header-style">Some people struck luck while others... not so much</div>
     <div *ngFor="let i of teamLuck" class="extra-card-padding">
       <app-wrapped-card [content]="i"></app-wrapped-card>
     </div>

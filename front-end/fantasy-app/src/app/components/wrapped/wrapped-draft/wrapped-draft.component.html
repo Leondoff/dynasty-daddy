@@ -20,7 +20,7 @@
 <div *ngIf="wrappedService.frameNumber === baseFrame + 2">
 
   <div [@fadeGrowStagger]="bestPicksInTheDraft.length + 1" *ngIf="showContent" class="wrapped-context-high">
-    <div class="center-text wrapped-header-style">Let's look at the top talent in this draft</div>
+    <div class="center-text wrapped-header-style">Let's look at the top stars in the draft.</div>
     <div *ngFor="let i of bestPicksInTheDraft">
       <app-wrapped-card [content]="i"></app-wrapped-card>
     </div>
@@ -42,7 +42,7 @@
 <div *ngIf="wrappedService.frameNumber === baseFrame + 4">
 
   <div [@fadeGrowStagger]="bestValuePicks.length + 1" *ngIf="showContent" class="wrapped-context-high">
-    <div class="center-text wrapped-header-style">A swing and a miss... the biggest draft night blunders</div>
+    <div class="center-text wrapped-header-style">Ouch! These picks keep you up at night.</div>
     <div *ngFor="let i of worstValuePicks">
       <app-wrapped-card [content]="i"></app-wrapped-card>
     </div>

@@ -1,8 +1,6 @@
 import { Clipboard } from "@angular/cdk/clipboard";
 import { Component, OnInit, Input, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Observable, Subscriber, of } from "rxjs";
-import { tap, delay, take } from "rxjs/operators";
 import { ConfigService } from "src/app/services/init/config.service";
 
 @Component({

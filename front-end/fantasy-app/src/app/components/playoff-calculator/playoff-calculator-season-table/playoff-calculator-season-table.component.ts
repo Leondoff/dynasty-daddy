@@ -7,13 +7,14 @@ import { PlayoffCalculatorService } from '../../services/playoff-calculator.serv
 import { ColorService } from '../../../services/utilities/color.service';
 import { ConfigService } from '../../../services/init/config.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
+import { BaseComponent } from '../../base-component.abstract';
 
 @Component({
   selector: 'app-playoff-calculator-season-table',
   templateUrl: './playoff-calculator-season-table.component.html',
   styleUrls: ['./playoff-calculator-season-table.component.css']
 })
-export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewInit, OnChanges {
+export class PlayoffCalculatorSeasonTableComponent extends BaseComponent implements OnInit, AfterViewInit, OnChanges {
 
   /** mat sort */
   @ViewChild(MatSort) sort: MatSort;
@@ -26,6 +27,9 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
   @Input()
   selectedMetrics: { display: string, value: string, isDisabled: boolean }[];
 
+  @Input()
+  teamPlayoffOdds: {};
+
   /** datasource for table */
   public dataSource: MatTableDataSource<any>;
 
@@ -35,6 +39,7 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
     public playoffCalculatorService: PlayoffCalculatorService,
     private colorService: ColorService,
     public configService: ConfigService) {
+      super();
   }
 
   /** team properties like name division value */
@@ -82,23 +87,23 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
           const recordStr = this.getActualRecord(item.team.roster.rosterId);
           return Number(recordStr.split('-')[0] || 0);
         case 'makePlayoffs':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakingPlayoffs;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakingPlayoffs;
         case 'winDivision':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWinningDivision;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesWinningDivision;
         case 'getBye':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithBye;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithBye;
         case 'makeConfChamp':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakeConfRd;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakeConfRd;
         case 'makeChampionship':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakeChampionship;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesMakeChampionship;
         case 'winOut':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesTeamWonOut;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesTeamWonOut;
         case 'worstRecord':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithWorstRecord;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithWorstRecord;
         case 'bestRecord':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithBestRecord;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesWithBestRecord;
         case 'winChampionship':
-          return this.playoffCalculatorService.teamPlayoffOdds[item.team.roster.rosterId]?.timesWinChampionship;
+          return this.teamPlayoffOdds[item.team.roster.rosterId]?.timesWinChampionship;
         default:
           return item[property];
       }
@@ -136,25 +141,24 @@ export class PlayoffCalculatorSeasonTableComponent implements OnInit, AfterViewI
         this.playoffCalculatorService.getDivisionByRosterId(p.team.roster.rosterId)?.divisionId - 1
         ]
       this.tableCache[p.team.roster.rosterId]['timesMakingPlayoffs'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakingPlayoffs);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakingPlayoffs);
       this.tableCache[p.team.roster.rosterId]['timesWinningDivision'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWinningDivision);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesWinningDivision);
       this.tableCache[p.team.roster.rosterId]['timesWithBye'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithBye);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithBye);
       this.tableCache[p.team.roster.rosterId]['timesTeamWonOut'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesTeamWonOut);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesTeamWonOut);
       this.tableCache[p.team.roster.rosterId]['timesWithWorstRecord'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithWorstRecord);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithWorstRecord);
       this.tableCache[p.team.roster.rosterId]['timesWithBestRecord'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithBestRecord);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesWithBestRecord);
       this.tableCache[p.team.roster.rosterId]['timesMakeConfRd'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakeConfRd);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakeConfRd);
       this.tableCache[p.team.roster.rosterId]['timesMakeChampionship'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakeChampionship);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesMakeChampionship);
       this.tableCache[p.team.roster.rosterId]['timesWinChampionship'] =
-        this.getDisplayValue(this.playoffCalculatorService.teamPlayoffOdds[p.team.roster.rosterId]?.timesWinChampionship);
+        this.getDisplayValue(this.teamPlayoffOdds[p.team.roster.rosterId]?.timesWinChampionship);
     });
-    console.log(this.tableCache);
   }
 
   /**
