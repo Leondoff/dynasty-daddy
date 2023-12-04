@@ -191,7 +191,7 @@ export class LeagueScoringDTO {
     const mflCache = {};
     // MFL object vs array iterable fix
     for (let posRules of Array.isArray(scoringSettings) ? scoringSettings : [scoringSettings]) {
-      mflCache[posRules.positions] = {}
+      mflCache[posRules?.positions] = {}
       const rules = Array.isArray(posRules?.['rule']) ? posRules?.['rule'] : [posRules?.['rule']];
       for (let rule of rules) {
         if (MFLRulesMap[rule?.['event']?.['$t']]) {

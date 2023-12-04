@@ -7,7 +7,7 @@ import { MatchUpUI } from '../model/matchup';
 import { LeagueService } from '../../services/league.service';
 import { NflService } from '../../services/utilities/nfl.service';
 import { cumulativeStdNormalProbability, mean, median, standardDeviation, zScore } from 'simple-statistics';
-import { Observable, of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { LeaguePlayoffMatchUpDTO } from '../../model/league/LeaguePlayoffMatchUpDTO';
 import { LeagueDTO } from "../../model/league/LeagueDTO";
 import { TeamPowerRanking } from '../model/powerRankings';

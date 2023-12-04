@@ -78,7 +78,7 @@ export class MflService {
           const schedule = leagueSchedule?.schedule?.weeklySchedule;
           leagueMatchUps = this.marshalLeagueMatchUps(schedule);
           // check for median
-          if (Array.isArray(schedule[0]?.matchup) &&
+          if (Array.isArray(schedule?.[0]?.matchup) &&
             schedule[0]?.matchup.some(matchUp =>
               matchUp.franchise.some(franchise => franchise.id === 'AVG'))) {
             leagueWrapper.selectedLeague.medianWins = true;
