@@ -186,7 +186,7 @@ export class SleeperService {
             }),
             concatMap(rosters => {
               const team = rosters.find(it => it.ownerId === leagueUser?.userData?.user_id);
-              league.metadata['roster'] = team?.players?.concat(...team.reserve, ...team.taxi) || [];
+              league.metadata['roster'] = team?.players?.concat(...(team.reserve || []), ...(team.taxi || [])) || [];
               league.metadata['status'] = Status.DONE;
               league.leaguePlatform = LeaguePlatform.SLEEPER;
               return of(league);

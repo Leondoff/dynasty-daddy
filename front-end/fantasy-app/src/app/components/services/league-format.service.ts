@@ -73,7 +73,7 @@ export class LeagueFormatService {
         this.filteredPlayers = this.playerService.playerValues.filter(p => p.position != 'PI'
             && this.leagueService.leagueFormatMetrics?.[p.name_id]?.c)
             .filter(p => (p.full_name.toLowerCase().includes(this.searchVal.toLowerCase()) ||
-                p.team.toLowerCase().includes(this.searchVal.toLowerCase()) ||
+                p.team?.toLowerCase().includes(this.searchVal.toLowerCase()) ||
                 p.owner?.ownerName.toLowerCase().includes(this.searchVal.toLowerCase())) &&
                 this.selectedPositions.value.includes(p.position));
     }

@@ -38,4 +38,4 @@ def updatePlayerGamelogs(season, week = None):
             print('Gamelog inserted for the following season: ' + str(season) + ' week ' + str(num))
     conn.commit()
 
-updatePlayerGamelogs(2023, 12)
+updatePlayerGamelogs(2023, 13)
