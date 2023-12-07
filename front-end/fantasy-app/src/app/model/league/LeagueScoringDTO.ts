@@ -1,3 +1,5 @@
+import { LeagueScoringFormat } from "./LeagueDTO";
+
 export class LeagueScoringDTO {
   /**
    * Offense Scoring
@@ -362,6 +364,20 @@ export class LeagueScoringDTO {
   private roundYD(number?: number): number {
     if (!number) return 0;
     return Math.round(100 * number) / 100
+  }
+
+  /**
+   * Get ppr format enum from format
+   */
+  getScoringFormat(): LeagueScoringFormat {
+    switch(this.rec) {
+      case 0:
+        return LeagueScoringFormat.STANDARD;
+      case 1:
+        return LeagueScoringFormat.PPR
+      default:
+        return LeagueScoringFormat.HALF_PPR;
+    }
   }
 }
 
