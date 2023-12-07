@@ -10,7 +10,7 @@ import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO
 import { TeamMetrics } from '../../../model/league/TeamMetrics';
 import { LeagueTeamTransactionDTO, TransactionStatus } from '../../../model/league/LeagueTeamTransactionDTO';
 import { LeagueRawTradePicksDTO } from '../../../model/league/LeagueRawTradePicksDTO';
-import { LeagueDTO, LeagueScoringFormat, LeagueType } from '../../../model/league/LeagueDTO';
+import { LeagueDTO } from '../../../model/league/LeagueDTO';
 import { FantasyPlatformDTO, LeaguePlatform } from '../../../model/league/FantasyPlatformDTO';
 import { DraftCapital } from '../../../model/assets/DraftCapital';
 import { LeagueUserDTO } from 'src/app/model/league/LeagueUserDTO';
@@ -141,6 +141,7 @@ export class FleaflickerService {
       leagueWrapper.selectedLeague.playoffRoundType = 1;
       leagueWrapper.selectedLeague.playoffStartWeek = isPlayoffs.findIndex(it => it === true) > -1 ? isPlayoffs.findIndex(it => it === true) : 17;
       leagueWrapper.selectedLeague.scoringSettings = scoringFormatDTO;
+      leagueWrapper.selectedLeague.scoringFormat = leagueWrapper.selectedLeague.scoringSettings.getScoringFormat();
       leagueWrapper.completedDrafts = draftResults;
       const teams = [];
       leagueWrapper.selectedLeague.metadata.rosters?.forEach((division, ind) => {
@@ -213,7 +214,6 @@ export class FleaflickerService {
             league.isSuperflex = leagueInfo.isSuperflex;
             league.rosterPositions = leagueInfo.rosterPositions;
             league.totalRosters = leagueInfo.totalRosters;
-            league.scoringFormat = leagueInfo.scoringFormat;
             league.type = leagueInfo.type;
             return of(league).pipe(delay(1000));
           })
@@ -254,13 +254,14 @@ export class FleaflickerService {
    */
   private generateRosterPositions(roster: any): string[] {
     const positionMap = [];
-    const validStartersList = ['QB', 'RB', 'WR', 'TE', 'RB/WR/TE', 'QB/RB/WR/TE', 'EDR/IL', 'LB', 'DB', 'DB/EDR/IL/LB', 'K', 'D/ST'];
+    const validStartersList = ['QB', 'RB', 'WR', 'TE', 'WR/TE', 'RB/WR/TE', 'QB/RB/WR/TE', 'EDR/IL', 'LB', 'DB', 'DB/EDR/IL/LB', 'K', 'D/ST'];
     (roster?.positions as any[]).filter(pos => pos?.group === 'START' && validStartersList.includes(pos?.label)).forEach(pos => {
       for (let i = 0; i < pos?.start; i++) {
         let posLabel = pos?.label;
         if (posLabel === 'S') posLabel = 'DB';
         if (posLabel === 'EDR/IL' || posLabel === 'IL' || posLabel === 'EDR') posLabel = 'DL';
         if (posLabel === 'D/ST') posLabel = 'DF';
+        if (posLabel === 'WR/TE') posLabel = 'FLEX';
         if (posLabel === 'RB/WR/TE') posLabel = 'FLEX';
         if (posLabel === 'QB/RB/WR/TE') posLabel = 'SUPER_FLEX';
         if (posLabel === 'DB/EDR/IL/LB') posLabel = 'IDP_FLEX';
