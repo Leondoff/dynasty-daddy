@@ -6,7 +6,7 @@ import { DisplayService } from "src/app/services/utilities/display.service";
 import { LeagueSwitchService } from "../../services/league-switch.service";
 import { UntypedFormControl } from "@angular/forms";
 import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs/internal/Subject";
+import { Subject } from "rxjs";
 
 @Component({
     selector: 'league-dropdown',

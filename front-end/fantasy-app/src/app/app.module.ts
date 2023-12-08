@@ -57,7 +57,7 @@ let UniversalDeviceDetectorService;
     NgxGoogleAnalyticsModule.forRoot(environment.gaMeasurementId),
     NgxGoogleAnalyticsRouterModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
+      enabled: !/iPad|iPhone|iPod/.test(navigator.userAgent) && environment.production,
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],

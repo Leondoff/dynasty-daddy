@@ -8,3 +8,4 @@ export * from './ffpcWrapperController';
 export * from './gridController';
 export * from './tradeController';
 export * from './userController';
+export * from './articlesController';

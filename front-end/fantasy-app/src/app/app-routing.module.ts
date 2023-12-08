@@ -40,6 +40,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'articles',
+        loadChildren: () =>
+        import('./modules/articles/articles.module').then(
+          (m) => m.ArticlesModule
+        ),
+      },
+      {
         path: 'home',
         redirectTo: ''
       },

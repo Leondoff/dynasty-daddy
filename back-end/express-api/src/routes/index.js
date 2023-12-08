@@ -49,6 +49,7 @@ import {
   AddLeaguesToUserEndpoint,
   AddPRPresetsToUserEndpoint,
   AddLFPresetsToUserEndpoint,
+  WriteArticleEnpoint
 } from '../controllers';
 
 const indexRouter = express.Router();
@@ -74,6 +75,7 @@ indexRouter.get('/trade/volume', GetRecentTradeVolumeEndpoint);
 indexRouter.post('/user/leagues', AddLeaguesToUserEndpoint);
 indexRouter.post('/user/presets/pr', AddPRPresetsToUserEndpoint);
 indexRouter.post('/user/presets/lf', AddLFPresetsToUserEndpoint);
+indexRouter.post('/user/:userId/article/post', WriteArticleEnpoint);
 
 // MFL Wrapper Endpoints
 indexRouter.post('/mfl/league', GetMFLLeagueEndpoint);

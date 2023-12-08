@@ -7,6 +7,7 @@ import { FleaflickerApiConfigService } from './api/fleaflicker/fleaflicker-api-c
 import { ESPNApiConfigService } from './api/espn/espn-api-config.service';
 import { FFPCApiConfigService } from './api/ffpc/ffpc-api-config.service';
 import { PatreonAPIConfigService } from './api/patreon/patreon-api-config.service';
+import { ArticlesApiConfigService } from './api/articles/articles-api-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,7 @@ export class EndpointsService {
     private fleaflickerApiConfigService: FleaflickerApiConfigService,
     private ffpcApiConfigService: FFPCApiConfigService,
     private espnApiConfigService: ESPNApiConfigService,
+    private articlesApiConfigService: ArticlesApiConfigService,
     private configApiConfigService: ConfigApiConfigService) {
   }
 
@@ -49,9 +51,14 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.postLeaguesToDatabaseEndpoint = this.baseUrl + '/v1/league/add';
     this.fantasyPlayerApiConfigService.searchTradeDatabaseEndpoint = this.baseUrl + '/v1/trade/search';
     this.fantasyPlayerApiConfigService.getRecentTradeVolumeEndpoint = this.baseUrl + '/v1/trade/volume';
+
+    // patreon apis
     this.patreonApiConfigService.addLeaguesToUserEndpoint = this.baseUrl + '/v1/user/leagues';
     this.patreonApiConfigService.addPRPresetsToUserEndpoint = this.baseUrl + '/v1/user/presets/pr';
     this.patreonApiConfigService.addLFPresetsToUserEndpoint = this.baseUrl + '/v1/user/presets/lf';
+
+    // articles apis
+    this.articlesApiConfigService.postArticleEndpoint = this.baseUrl + '/v1/user/:userId/article/post'
 
     // Sleeper Endpoints
     this.sleeperApiConfigService.getSleeperUsernameEndpoint = 'https://api.sleeper.app/v1/user/';

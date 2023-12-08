@@ -296,3 +296,28 @@ create table historical_connections (
 );
 
 create index historical_connections_uindex on historical_connections (id);
+
+-- Define the enum type for blog post categories
+CREATE TYPE article_category AS ENUM ('Start/Sit', 'Redraft Strategy', 'Dynasty Strategy', 'Player Discussion', 'Injuries', 'Rookies', 'IDP', 'Other');
+
+CREATE TYPE article_status AS ENUM ('Draft', 'Private', 'Public');
+
+-- Create the blog_posts table
+CREATE TABLE articles (
+    article_id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    title_img VARCHAR(255),
+    post TEXT,
+    keywords VARCHAR(255)[],
+    linked_players VARCHAR(255)[],
+    author_id VARCHAR(10) REFERENCES users(user_id),
+    category article_category,
+	status article_status
+);
+
+create index inx_article_id on articles (article_id);
+
+-- add trigger to player metadata table
+CREATE TRIGGER articles_updated_at BEFORE
+UPDATE
+    ON articles FOR EACH ROW EXECUTE PROCEDURE trigger_get_current_timestamp();
