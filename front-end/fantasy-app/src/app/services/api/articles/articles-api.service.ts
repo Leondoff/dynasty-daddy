@@ -47,9 +47,10 @@ export class ArticlesApiService {
   }
 
   uploadImage(image: any): Observable<any> {
-    console.log(image);
     return this.readFile(image).pipe(
-      switchMap(img => {
+      switchMap(image => {
+        const fmtImg = image as string
+        let img = fmtImg.substring(fmtImg.indexOf(',') + 1);
         let fd = new FormData();
         fd.append('image', img as any);
         console.log('post')
