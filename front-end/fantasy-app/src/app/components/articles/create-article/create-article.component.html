@@ -1,0 +1,62 @@
+<h1 class="center-text large-bold-header-text">Write an Article</h1>
+<div>
+    
+</div>
+<div class="margin-top-50">
+    <mat-form-field class="mat-dropdown-wide-300" color="accent">
+        <mat-label>Article Title</mat-label>
+        <input matInput type="text" [(ngModel)]="articleTitle">
+    </mat-form-field>
+</div>
+<div class="margin-top-15">
+    <mat-form-field appearance="outline" color="accent">
+        <mat-label>Select a Category</mat-label>
+        <mat-select [(ngModel)]="selectedCategory">
+        <mat-option *ngFor="let cat of ArticleCategories"
+                    [value]="cat">{{cat}}
+        </mat-option>
+        </mat-select>
+      </mat-form-field>
+</div>
+
+<div class="margin-top-15">
+    <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
+<input hidden (change)="addTitleImage($event)" #fileInput type="file" id="file">
+</div>
+
+
+<div class="margin-top-25">
+    <quill-editor (onEditorCreated)="getEditorInstance($event)" [modules]="QuillConfiguration" [(ngModel)]="articleEditorString" [styles]="{'min-height': '120px'}"></quill-editor>
+</div>
+
+<div class="margin-top-50 center-text">
+    <mat-form-field color="accent" style="width: 80%">
+        <mat-select [formControl]="playerCtrl" placeholder="Select Player" #singleSelect disableOptionCentering>
+            <mat-option>
+                <ngx-mat-select-search [formControl]="playerFilterCtrl" placeholderLabel="Link Players (Max 8)" noEntriesFoundLabel="No players found"></ngx-mat-select-search>
+            </mat-option>
+            <mat-option *ngFor="let player of filteredPlayers | async" [value]="null" (click)="addPlayerToLinkedPlayers(player)">
+            {{player.full_name}} <span class="small-text__light">{{player.position || ''}} • {{player.team || ''}}</span>
+            </mat-option>
+        </mat-select>
+        <mat-chip-list *ngIf="linkedPlayers.length > 0">
+            <mat-chip *ngFor="let player of linkedPlayers"
+            [removable]="true" (removed)="removeLinkedPlayer(player)">
+            <span class="small-text__light chip-pos">{{player.position || ''}}</span> {{ player.full_name }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+        </mat-chip-list>
+    </mat-form-field>
+</div>
+
+<div class="margin-top-25 center-text">
+    <mat-form-field class="mat-dropdown-wide-300" color="accent" style="width: 80%">
+        <mat-label>Keywords (separated by comma)</mat-label>
+        <input matInput type="text" [(ngModel)]="keywordString">
+    </mat-form-field>
+</div>
+
+<div class="margin-top-25 button-right">
+    <button mat-button (click)="postArticle('Draft')">Save as Draft</button>
+    <button mat-raised-button color="accent" (click)="postArticle('Public')">Publish</button>
+</div>

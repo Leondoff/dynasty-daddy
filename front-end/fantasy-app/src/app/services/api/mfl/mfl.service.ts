@@ -141,6 +141,7 @@ export class MflService {
         leagueWrapper.selectedLeague.leagueTransactions = leagueTransactions;
         leagueWrapper.playoffMatchUps = playoffMatchUps;
         leagueWrapper.selectedLeague.scoringSettings = scoringSettings;
+        leagueWrapper.selectedLeague.scoringFormat = leagueWrapper.selectedLeague.scoringSettings.getScoringFormat();
         leagueWrapper.leaguePlatform = LeaguePlatform.MFL;
         leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
         // get future pick year since it will filter out current year picks
@@ -261,7 +262,6 @@ export class MflService {
                     league.isSuperflex = leagueInfo.isSuperflex;
                     league.rosterPositions = leagueInfo.rosterPositions;
                     league.totalRosters = leagueInfo.totalRosters;
-                    league.scoringFormat = leagueInfo.scoringFormat;
                     league.type = leagueInfo.type;
                     league.leaguePlatform = LeaguePlatform.MFL;
                     league.season = leagueInfo.season;
