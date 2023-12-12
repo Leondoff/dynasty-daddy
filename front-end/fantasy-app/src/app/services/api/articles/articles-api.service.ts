@@ -53,7 +53,6 @@ export class ArticlesApiService {
         let img = fmtImg.substring(fmtImg.indexOf(',') + 1);
         let fd = new FormData();
         fd.append('image', img as any);
-        console.log('post')
         return this.http.post(this.apiEndpoint, fd, { headers: this.headers });
       })
     );
