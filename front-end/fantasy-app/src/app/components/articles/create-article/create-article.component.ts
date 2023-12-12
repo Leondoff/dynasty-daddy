@@ -8,6 +8,7 @@ import { PlayerService } from "src/app/services/player.service";
 import { ArticlesApiService } from "src/app/services/api/articles/articles-api.service";
 import { UserService } from "src/app/services/user.service";
 import { Status } from "../../model/status";
+import { HttpStatusCode } from "@angular/common/http";
 
 @Component({
     selector: 'app-create-article',
@@ -121,9 +122,11 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
     addTitleImage(event: any): void {
         const img = event.target.files[0] ?? null;
         if (img) {
-            this.articleApiService.uploadImage(img).subscribe(title => {
-                console.log(title);
-                this.titleImageUrl = title
+            this.articleApiService.uploadImage(img).subscribe(res => {
+                console.log(res);
+                if (res?.status === HttpStatusCode.Ok) {
+                    this.titleImageUrl = res?.data?.link
+                }
             });
         }
     }
@@ -165,8 +168,8 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
 
             this.articleApiService.uploadImage(file).subscribe((res: any) => {
                 console.log(res)
-                if (res?.status) {
-                    this.quillEditorRef.insertEmbed(range.index, 'image', res?.image_url);
+                if (res?.status === HttpStatusCode.Ok) {
+                    this.quillEditorRef.insertEmbed(range.index, 'image', res?.data?.link);
                 }
             });
         }

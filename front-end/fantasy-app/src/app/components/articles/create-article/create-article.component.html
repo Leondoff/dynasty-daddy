@@ -1,15 +1,15 @@
-<h1 class="center-text large-bold-header-text">Write an Article</h1>
+<h1 class="center-text large-bold-header-text" style="width: 80%">Write an Article</h1>
 <div>
     
 </div>
-<div class="margin-top-50">
-    <mat-form-field class="mat-dropdown-wide-300" color="accent">
+<div class="margin-top-50 center-text">
+    <mat-form-field color="accent" style="width: 80%">
         <mat-label>Article Title</mat-label>
         <input matInput type="text" [(ngModel)]="articleTitle">
     </mat-form-field>
 </div>
-<div class="margin-top-15">
-    <mat-form-field appearance="outline" color="accent">
+<div class="margin-top-15 center-text">
+    <mat-form-field appearance="standard" color="accent" class="button-padding">
         <mat-label>Select a Category</mat-label>
         <mat-select [(ngModel)]="selectedCategory">
         <mat-option *ngFor="let cat of ArticleCategories"
@@ -17,13 +17,10 @@
         </mat-option>
         </mat-select>
       </mat-form-field>
-</div>
 
-<div class="margin-top-15">
-    <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
-<input hidden (change)="addTitleImage($event)" #fileInput type="file" id="file">
+      <button type="button" mat-raised-button (click)="fileInput.click()" class="button-padding">Choose Title Image</button>
+      <input hidden (change)="addTitleImage($event)" #fileInput type="file" id="file">
 </div>
-
 
 <div class="margin-top-25">
     <quill-editor (onEditorCreated)="getEditorInstance($event)" [modules]="QuillConfiguration" [(ngModel)]="articleEditorString" [styles]="{'min-height': '120px'}"></quill-editor>
