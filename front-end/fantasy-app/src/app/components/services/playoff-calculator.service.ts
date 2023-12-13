@@ -917,7 +917,7 @@ export class PlayoffCalculatorService {
 
     for (let i = 0; i < numberOfSimulations; i++) {
       if (startWeek >= this.leagueService.selectedLeague.playoffStartWeek) {
-        simulatedPlayoffOdds = this.updatePlayoffOdds(startWeek, teamRatingsPValues, simulatedPlayoffOdds, 1000);
+        simulatedPlayoffOdds = this.updatePlayoffOdds(startWeek, teamRatingsPValues, simulatedPlayoffOdds, numberOfSimulations);
       } else {
         simulatedPlayoffOdds = this.simulateOneSeason(startWeek, teamRatingsPValues, simulatedPlayoffOdds);
       }
@@ -939,6 +939,7 @@ export class PlayoffCalculatorService {
         timesWithBestRecord: Math.round(simulatedPlayoffOdds[team.roster.rosterId].timesWithBestRecord / divisor),
       };
     }
+    // console.table(simulatedPlayoffOdds);
     return simulatedPlayoffOdds;
   }
 
