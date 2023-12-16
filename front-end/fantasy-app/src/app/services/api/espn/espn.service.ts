@@ -151,12 +151,14 @@ export class ESPNService {
   private marshallSchedule(games: any[]): {} {
     const schedule = {}
     games?.forEach(game => {
-      const homeMatchUp = new LeagueTeamMatchUpDTO();
-      homeMatchUp.createMatchUpObject(game.id, game.home.totalPoints, game.home.teamId);
-      const awayMatchUp = new LeagueTeamMatchUpDTO();
-      awayMatchUp.createMatchUpObject(game.id, game.away.totalPoints, game.away.teamId);
-      schedule[game.matchupPeriodId] = !schedule[game.matchupPeriodId] ? [homeMatchUp, awayMatchUp]
-        : schedule[game.matchupPeriodId].concat(...[homeMatchUp, awayMatchUp]);
+      if (game.home && game.away) {
+        const homeMatchUp = new LeagueTeamMatchUpDTO();
+        homeMatchUp.createMatchUpObject(game.id, game.home?.totalPoints, game.home.teamId);
+        const awayMatchUp = new LeagueTeamMatchUpDTO();
+        awayMatchUp.createMatchUpObject(game.id, game.away?.totalPoints, game.away.teamId);
+        schedule[game.matchupPeriodId] = !schedule[game.matchupPeriodId] ? [homeMatchUp, awayMatchUp]
+          : schedule[game.matchupPeriodId].concat(...[homeMatchUp, awayMatchUp]);
+      }
     });
     return schedule;
   }
