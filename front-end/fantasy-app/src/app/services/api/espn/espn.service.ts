@@ -60,7 +60,7 @@ export class ESPNService {
       teams.push(ddTeam);
     });
     leagueWrapper.leagueTeamDetails = teams;
-    leagueWrapper.selectedLeague.leagueMatchUps = this.marshallSchedule(leagueWrapper.selectedLeague.metadata.schedule)
+    leagueWrapper.selectedLeague.leagueMatchUps = this.marshallSchedule(leagueWrapper.selectedLeague.metadata.schedule, leagueWrapper.selectedLeague.playoffStartWeek);
     leagueWrapper.completedDrafts = leagueWrapper.selectedLeague.metadata.draft ?
       [this.marshallDraftResults(leagueWrapper.selectedLeague.metadata.draft, leagueWrapper.selectedLeague.leagueId, leagueWrapper.selectedLeague.draftRounds)] : [];
     leagueWrapper.selectedLeague.metadata = {};
@@ -148,10 +148,13 @@ export class ESPNService {
    * @param games list of schedule games
    * @returns 
    */
-  private marshallSchedule(games: any[]): {} {
+  private marshallSchedule(games: any[], playoffStartWeek: number): {} {
     const schedule = {}
     games?.forEach(game => {
-      if (game.home && game.away) {
+      if (game.home && game.away &&
+        (game.matchupPeriodId < playoffStartWeek ||
+          game.playoffTierType === 'WINNERS_BRACKET')
+      ) {
         const homeMatchUp = new LeagueTeamMatchUpDTO();
         homeMatchUp.createMatchUpObject(game.id, game.home?.totalPoints, game.home.teamId);
         const awayMatchUp = new LeagueTeamMatchUpDTO();
