@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LeagueService } from 'src/app/services/league.service';
-import { NflService } from 'src/app/services/utilities/nfl.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { WrappedService } from '../../services/wrapped.service';
 import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
@@ -67,7 +66,7 @@ export class WrappedTransactionsComponent implements OnInit {
     // Biggest Trades
     for (let i = 0; i < (this.wrappedService.transactionsDict['trades'].length > 3 ? 3 : this.wrappedService.transactionsDict['trades'].length); i++) {
       if (this.wrappedService.transactionsDict['trades'][i].rosterIds.length !== 2) continue;
-      const isTeam1 = this.wrappedService.transactionsDict['trades'][i].adds[0].rosterId == this.wrappedService.transactionsDict['trades'][i].rosterIds[0];
+      const isTeam1 = this.wrappedService.transactionsDict['trades'][i].adds[0]?.rosterId == this.wrappedService.transactionsDict['trades'][i].rosterIds[0];
       const tradeTeam1 = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['trades'][i].rosterIds[isTeam1 ? 0 : 1])
       const tradeTeam2 = this.leagueService.getTeamByRosterId(this.wrappedService.transactionsDict['trades'][i].rosterIds[isTeam1 ? 1 : 0])
       this.biggestTrades.push({ team1: tradeTeam1.owner.teamName, team2: tradeTeam2.owner.teamName, team1Adds: this.wrappedService.transactionsDict['trades'][i].adds.map(p => p.playerName), team2Adds: this.wrappedService.transactionsDict['trades'][i].drops.map(p => p.playerName) });
