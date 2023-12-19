@@ -198,8 +198,14 @@ export class LeagueScoringDTO {
       for (let rule of rules) {
         if (MFLRulesMap[rule?.['event']?.['$t']]) {
           for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
-            if (rule?.['points']?.['$t'].includes('/')) continue;
-            const metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
+            let metNum = 0.1;
+            if (met === 'passYd' && rule?.['points']?.['$t'].includes('/')) {
+              metNum = Number(rule?.['points']?.['$t'].split('/')[0] || 0)
+            } else if (rule?.['points']?.['$t'].includes('/')) {
+              continue
+             } else {
+              metNum = Number(rule?.['points']?.['$t'].replace('*', ''));
+             }
             switch (met) {
               case 'pts_allowed': {
                 if (rule?.['range']?.['$t'] === '0-999') {
@@ -216,6 +222,11 @@ export class LeagueScoringDTO {
                   this.fgMade = metNum || 3;
                 }
                 this.fgMadeMod = 0.1;
+                break;
+              }
+              case 'passYd':
+              case 'rushYd': {
+                this[met] = this[met] != 0 && this[met] < metNum ? this[met] : metNum;
                 break;
               }
               case 'passCmp':
@@ -370,7 +381,7 @@ export class LeagueScoringDTO {
    * Get ppr format enum from format
    */
   getScoringFormat(): LeagueScoringFormat {
-    switch(this.rec) {
+    switch (this.rec) {
       case 0:
         return LeagueScoringFormat.STANDARD;
       case 1:
