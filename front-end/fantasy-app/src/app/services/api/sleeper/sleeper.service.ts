@@ -92,7 +92,7 @@ export class SleeperService {
             for (const matchup of weekMatchUps) {
               matchUpData.push(new LeagueTeamMatchUpDTO().createMatchUpFromSleeper(matchup));
             }
-            leagueMatchUps[weekNum] = matchUpData;
+            leagueMatchUps[weekNum] = matchUpData.filter(m => m.matchupId != null);
             return of(weekMatchUps);
           })));
         observe.push(this.sleeperApiService.getSleeperTransactionByLeagueIdForWeek(league.selectedLeague.leagueId, weekNum)
