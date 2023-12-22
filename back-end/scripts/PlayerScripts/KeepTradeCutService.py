@@ -7,13 +7,27 @@ KTCPosExp = {
     'PK': 'K'
 }
 
+def loadRankingsFromKTC(rankings_url):
+    
+    all_rankings = []
+    
+    for page_number in range(0, 10):
+        # Set up scraper
+        soup = setUpSoup(f"{rankings_url}&page={page_number}")
+
+        # fetch each ranking div
+        rankings = soup.find_all("div", {"class": "onePlayer"})
+
+        # Append the rankings from the current page to the overall list
+        all_rankings.extend(rankings)
+    
+    return all_rankings
+
 
 def formatKeepTradeCutDict(rankings_url):
-    # Set up scraper
-    soup = setUpSoup(rankings_url)
 
-    # fetch each ranking div
-    rankings = soup.find_all("div", {"class": "onePlayer"})
+    rankings = loadRankingsFromKTC(rankings_url)
+    
     valueDict = {}
     for player in rankings:
         tempName = (player.find('div', 'player-name')).find('a')
@@ -35,5 +49,3 @@ def fetchStandardRedraftKTCPlayerDict():
 # fetch sf players from fantast calc
 def fetchSuperFlexRedraftKTCPlayerDict():
     return formatKeepTradeCutDict(KEEP_TRADE_CUT_SF_REDRAFT_URL)
-
-# fetchSuperFlexRedraftPlayerDict()
