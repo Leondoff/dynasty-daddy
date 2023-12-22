@@ -6,7 +6,7 @@ from FantasyProsADPScraper import scrapeADP
 from BeautifulSoupService import setUpSoup
 from PlayerService import cleanPlayerIdString
 from FantasyCalcService import fetchSuperFlexPlayerDict, fetchStandardPlayerDict, fetchSuperFlexRedraftPlayerDict, fetchStandardRedraftPlayerDict
-from KeepTradeCutService import fetchStandardRedraftKTCPlayerDict, fetchSuperFlexRedraftKTCPlayerDict
+from KeepTradeCutService import fetchStandardRedraftKTCPlayerDict, fetchSuperFlexRedraftKTCPlayerDict, loadRankingsFromKTC
 from DynastyProcessService import fetchDynastyProcessPlayerValues
 from DynastySuperflexService import fetchDynastySuperflexPlayerValues
 from PlayerGridService import SetNewPlayerGrid
@@ -17,8 +17,6 @@ players = Players()
 sleeperData = players.get_all_players()
 
 # creates a dict of sleeper ids mapped to name ids
-
-
 def getSleeperData():
     temp = {}
     for playerId, value in sleeperData.items():
@@ -97,22 +95,16 @@ class Player:
 # URL to scrape data uses requests import
 sf_URL = 'https://keeptradecut.com/dynasty-rankings?format=2'
 
-# Set up scraper
-sf_soup = setUpSoup(sf_URL)
-
 # fetch each ranking div
-sf_rankings = sf_soup.find_all("div", {"class": "onePlayer"})
+sf_rankings = loadRankingsFromKTC(sf_URL)
 
 # URL to scrape data uses requests import
 URL = 'https://keeptradecut.com/dynasty-rankings?format=1'
 
-# Set up scraper
-soup = setUpSoup(URL)
-
 # fetch each ranking div
-rankings = soup.find_all("div", {"class": "onePlayer"})
+rankings = loadRankingsFromKTC(URL)
 
-# players class array of scraped data
+# create list of all players
 players = []
 
 # create dict of sleeper ids and name ids
