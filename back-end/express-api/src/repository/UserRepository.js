@@ -40,7 +40,8 @@ export const PersistNewUser = async (id, firstName, lastName, imgUrl) => {
 export const UpdateUserLeagues = async (id, leagues) => {
   const query = `
     UPDATE users
-    SET leagues = ARRAY[${leagues.map(l => `'${JSON.stringify(l)}'`)}]::jsonb[]
+    SET leagues = ARRAY[${leagues.map(l =>
+    `'${JSON.stringify(l)}'`)}]::jsonb[]
     WHERE user_id = '${id}';
   `;
   return playersModel.selectQuery(query);
@@ -54,7 +55,38 @@ export const UpdateUserLeagues = async (id, leagues) => {
 export const UpdateUserPRPresets = async (id, presets) => {
   const query = `
     UPDATE users
-    SET pr_presets = ARRAY[${presets.map(l => `'${JSON.stringify(l)}'`)}]::jsonb[]
+    SET pr_presets = ARRAY[${presets.map(l =>
+    `'${JSON.stringify(l)}'`)}]::jsonb[]
+    WHERE user_id = '${id}';
+  `;
+  return playersModel.selectQuery(query);
+};
+
+/**
+ * Update user profile information
+ * @param {*} id user id
+ * @param {*} firstName
+ * @param {*} lastName
+ * @param {*} twitter
+ * @param {*} imageUrl
+ * @param {*} description
+ */
+export const PersistUserProfile = async (
+  id,
+  firstName,
+  lastName,
+  twitter,
+  imageUrl,
+  description
+) => {
+  const query = `
+    UPDATE users
+    SET
+      first_name = '${firstName}',
+      last_name = '${lastName}',
+      twitter_handle = '${twitter}',
+      image_url = '${imageUrl}',
+      description = '${description}'
     WHERE user_id = '${id}';
   `;
   return playersModel.selectQuery(query);
@@ -68,7 +100,8 @@ export const UpdateUserPRPresets = async (id, presets) => {
 export const UpdateUserLFPresets = async (id, presets) => {
   const query = `
     UPDATE users
-    SET lf_presets = ARRAY[${presets.map(l => `'${JSON.stringify(l)}'`)}]::jsonb[]
+    SET lf_presets = ARRAY[${presets.map(l =>
+    `'${JSON.stringify(l)}'`)}]::jsonb[]
     WHERE user_id = '${id}';
   `;
   return playersModel.selectQuery(query);

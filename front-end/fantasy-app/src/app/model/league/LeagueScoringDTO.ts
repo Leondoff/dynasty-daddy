@@ -200,7 +200,7 @@ export class LeagueScoringDTO {
           for (let met of MFLRulesMap[rule?.['event']?.['$t']]) {
             let metNum = 0.1;
             if (met === 'passYd' && rule?.['points']?.['$t'].includes('/')) {
-              metNum = Number(rule?.['points']?.['$t'].split('/')[0] || 0)
+              metNum = Number(rule?.['points']?.['$t'].split('/')[0] || 0.1)
             } else if (rule?.['points']?.['$t'].includes('/')) {
               continue
              } else {

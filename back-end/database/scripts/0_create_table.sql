@@ -278,7 +278,10 @@ CREATE TABLE users (
     pr_presets JSONB[] DEFAULT '{}'::JSONB[],
     lf_presets JSONB[] DEFAULT '{}'::JSONB[],
     updated_at TIMESTAMP DEFAULT NOW(),
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    description VARCHAR(500),
+    twitter_handle VARCHAR(50),
+    can_write BOOLEAN DEFAULT TRUE;
 );
 
 create index inx_trade_user_id on users (user_id);
@@ -298,9 +301,9 @@ create table historical_connections (
 create index historical_connections_uindex on historical_connections (id);
 
 -- Define the enum type for blog post categories
-CREATE TYPE article_category AS ENUM ('Start/Sit', 'Redraft Strategy', 'Dynasty Strategy', 'Player Discussion', 'Injuries', 'Rookies', 'IDP', 'Other');
+CREATE TYPE article_category AS ENUM ('Start/Sit', 'Redraft Strategy', 'Dynasty Strategy', 'Player Discussion', 'Injuries', 'Rookies', 'IDP', 'Dynasty Daddy', 'Other');
 
-CREATE TYPE article_status AS ENUM ('Draft', 'Private', 'Public');
+CREATE TYPE article_status AS ENUM ('Draft', 'Private', 'Public', 'Deleted');
 
 -- Create the blog_posts table
 CREATE TABLE articles (
@@ -312,12 +315,38 @@ CREATE TABLE articles (
     linked_players VARCHAR(255)[],
     author_id VARCHAR(10) REFERENCES users(user_id),
     category article_category,
-	status article_status
+	status article_status,
+    posted_at TIMESTAMP DEFAULT NULL,
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 create index inx_article_id on articles (article_id);
+CREATE INDEX idx_articles_keywords_gin ON articles USING GIN(keywords);
+CREATE INDEX idx_articles_linked_players_gin ON articles USING GIN(linked_players);
+CREATE INDEX idx_articles_author_id ON articles(author_id);
+CREATE INDEX idx_articles_category ON articles(category);
 
 -- add trigger to player metadata table
 CREATE TRIGGER articles_updated_at BEFORE
 UPDATE
     ON articles FOR EACH ROW EXECUTE PROCEDURE trigger_get_current_timestamp();
+      
+-- Create article likes linking table
+CREATE TABLE article_likes (
+    article_id INTEGER REFERENCES articles(article_id),
+    user_id VARCHAR(10) REFERENCES users(user_id),
+    is_active BOOLEAN,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    PRIMARY KEY (article_id, user_id)
+);
+
+CREATE INDEX idx_article_likes_article_id ON article_likes(article_id);
+CREATE INDEX idx_article_likes_user_id ON article_likes(user_id);
+CREATE INDEX idx_article_likes_is_active ON article_likes(is_active);
+
+-- add trigger to player metadata table
+CREATE TRIGGER article_likes_updated_at BEFORE
+UPDATE
+    ON article_likes FOR EACH ROW EXECUTE PROCEDURE trigger_get_current_timestamp();

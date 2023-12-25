@@ -405,6 +405,10 @@ app-root,
   float: left;
 }
 
+.rounded-button {
+  border-radius: 100px !important;
+}
+
 .starter-icon {
   font-size: 14px;
   cursor: help;
@@ -565,6 +569,11 @@ app-root,
 
 .large-bold-header-text {
   font-size: 24px;
+  font-weight: bold;
+}
+
+.ultra-bold-header-text {
+  font-size: clamp(32px, 3vw, 64px);
   font-weight: bold;
 }
 

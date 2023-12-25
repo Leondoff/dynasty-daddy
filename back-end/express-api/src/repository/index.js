@@ -1,3 +1,4 @@
+/* eslint-disable import/export */
 export * from './PlayerInfoRepository';
 export * from './ConfigRepository';
 export * from './GridResultRepository';

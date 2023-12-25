@@ -201,12 +201,20 @@ export class LeagueSwitchService extends BaseComponent {
    * Builds valid query params for making requests
    * TODO create separate request interceptor that handles logic
    */
-  buildQueryParams(): {} {
+  buildQueryParams(optionalParams: {} = null): {} {
     const queryParams: any = this.extraParams$.value;
     if (this.leagueService.selectedLeague) {
       queryParams.league = this.leagueService.selectedLeague.leagueId;
       queryParams.year = this.selectedLeague.season;
       queryParams.platform = this.leagueService.selectedLeague.leaguePlatform || LeaguePlatform.SLEEPER;
+    }
+    // add optional params if they exist
+    if (optionalParams != null) {
+      Object.entries(optionalParams).forEach(p => {
+        if (p.length > 1) {
+          queryParams[p[0]] = p[1]
+        }
+      })
     }
     if (this.leagueService.leagueUser?.userData?.username !== 'undefined') {
       queryParams.user = this.leagueService.leagueUser?.userData?.username;

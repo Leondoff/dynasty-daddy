@@ -11,8 +11,15 @@ table.mat-table {
     width: 100%;
 }
 
-
+.mat-column-actions,
 .mat-column-delete {
-  max-width: 100px;
-  text-align: right;
+    max-width: 100px;
+    text-align: right;
+}
+
+.table-container-wrapper {
+    width: 100%;
+    min-width: 800px;
+    overflow-x: scroll;
+    margin: 0 auto;
 }

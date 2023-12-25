@@ -14,6 +14,16 @@ export class PatreonAPIConfigService {
 
   private _addLFPresetsToUserEndpoint = '';
 
+  private _updateUserProfileEndpoint = '';
+
+  get updateUserProfileEndpoint(): string {
+    return this._updateUserProfileEndpoint;
+  }
+
+  set updateUserProfileEndpoint(value: string) {
+    this._updateUserProfileEndpoint = value;
+  }
+
   get getUserFromPatreonEndpoint(): string {
     return this._getTokenForCodeEndpoint;
   }

@@ -1,0 +1,43 @@
+@use '@angular/material' as mat;
+
+@import "../../../../styles.scss";
+
+.scrollChips ::ng-deep .mat-chip-list-wrapper {
+    flex-wrap: nowrap !important;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    white-space: nowrap;
+}
+
+.scrollChips ::ng-deep .mat-chip-list-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.article-card {
+    width: 100% !important;
+    padding: 1%;
+    cursor: pointer;
+}
+
+.full_screen_search {
+    width: 90%;
+}
+
+.partial_search {
+    width: 60%;
+    max-width: 800px;
+}
+
+.selected_category_chip {
+    background-color: mat.get-color-from-palette($mat-accent, darker) !important;
+    border-color: mat.get-color-from-palette($mat-accent, main) !important;
+}
+
+.category_chip {
+    background-color: $dark-bg-lighter-20;
+    border-color: $dark-bg-lighter-30;
+    cursor: pointer;
+}
