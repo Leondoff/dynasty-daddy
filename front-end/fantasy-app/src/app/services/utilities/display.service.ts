@@ -130,7 +130,8 @@ export class DisplayService {
    * Formats date string for display
    * @param date date string to format
    */
-  formatDateForDisplay = (date: string) => new Date(date).toString().slice(4, 15);
+  formatDateForDisplay = (date: string) =>
+    new Date(date).toString().slice(4, 15);
 
   /**
    * Randomize list
@@ -182,4 +183,14 @@ export class DisplayService {
 
     return Math.floor(timeDifference / (1000 * 3600 * 24));
   }
+
+  /**
+   * get minutes to read words
+   * @param words word count
+   */
+  getTimeToReadArticle(words: number): number {
+    const min = Math.round(words * 0.0042)
+    return min === 0 ? 1 : min;
+  }
+
 }

@@ -9,7 +9,13 @@ export class ArticlesApiConfigService {
 
   private _getArticlesForUserEndpoint = '';
 
-  private _getTrendingArticlesEndpoint = '';
+  private _searchArticlesEndpoint = '';
+
+  private _likeArticleEnpoint = '';
+
+  private _fullArticleEndpoint = '';
+
+  private _deleteArticleEndpoint = '';
 
   get postArticleEndpoint(): string {
     return this._postArticleEndpoint;
@@ -27,11 +33,35 @@ export class ArticlesApiConfigService {
     this._getArticlesForUserEndpoint = value;
   }
 
-  get getTrendingArticlesEndpoint(): string {
-    return this._getTrendingArticlesEndpoint;
+  get searchArticlesEndpoint(): string {
+    return this._searchArticlesEndpoint;
   }
 
-  set getTrendingArticlesEndpoint(value: string) {
-    this._getTrendingArticlesEndpoint = value;
+  set searchArticlesEndpoint(value: string) {
+    this._searchArticlesEndpoint = value;
+  }
+
+  get likeArticleEnpoint(): string {
+    return this._likeArticleEnpoint;
+  }
+
+  set likeArticleEnpoint(value: string) {
+    this._likeArticleEnpoint = value;
+  }
+
+  get fullArticleEndpoint(): string {
+    return this._fullArticleEndpoint;
+  }
+
+  set fullArticleEndpoint(value: string) {
+    this._fullArticleEndpoint = value;
+  }
+
+  get deleteArticleEndpoint(): string {
+    return this._deleteArticleEndpoint;
+  }
+
+  set deleteArticleEndpoint(value: string) {
+    this._deleteArticleEndpoint = value;
   }
 }

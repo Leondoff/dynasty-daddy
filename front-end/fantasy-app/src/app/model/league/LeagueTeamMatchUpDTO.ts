@@ -16,7 +16,7 @@ export class LeagueTeamMatchUpDTO {
 
   // setMatchUpId = (matchUpId: number) => this.matchupId = matchUpId;
 
-  createMatchUpObject(matchupId: number, points: number, rosterId: number): LeagueTeamMatchUpDTO {
+  createMatchUpObject(matchupId: number, points: number = 0, rosterId: number): LeagueTeamMatchUpDTO {
     this.matchupId = matchupId;
     this.points = points;
     this.rosterId = rosterId;  

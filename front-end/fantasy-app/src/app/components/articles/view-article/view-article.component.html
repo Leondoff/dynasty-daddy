@@ -1,0 +1,54 @@
+
+<div [ngClass]="{'desktop_padding_article': !configService.isMobile}" *ngIf="articleStatus === 1">
+    <div><button mat-button [routerLink]="['../timeline']" [queryParams]="leagueSwitchService.buildQueryParams()"><mat-icon class="button_icon" >arrow_back</mat-icon>Back to Timeline</button></div>
+    <ng-container *ngIf="article">
+        <div class="center-text">
+            <div class="ultra-bold-header-text title_padding">{{article.title}}</div>
+    
+            <div class="author_title">
+                {{article.firstName}} {{article.lastName}} · {{displayService.getTimeToReadArticle(article.wordCount)}} min read · {{displayService.formatDateForDisplay(article.postedAt)}}
+            </div>
+
+            <div class="author_title">
+                <button mat-raised-button class="rounded-button" (click)="likeArticle()"><mat-icon class="button_icon">thumb_up</mat-icon> Like</button>
+                <button mat-raised-button class="rounded-button" (click)="openShareModal()"><mat-icon class="button_icon">share</mat-icon> Share</button>
+            </div>
+        
+            <img src="{{article.titleImg}}" alt="{{article.title}}" class="title_image" onerror="this.onerror=null;
+                this.src='assets/default_article_title_img.jpg';">
+        </div>
+    
+        <div [innerHTML]="article.post"></div>
+
+        <div class="margin-top-25" *ngIf="linkedPlayers.length > 0">
+            <mat-chip-list>
+                <mat-chip *ngFor="let player of linkedPlayers" [routerLink]="['../../players/details', player.name_id]"
+                [queryParams]="leagueSwitchService.buildQueryParams()" style="cursor: pointer;">{{player.full_name}}</mat-chip>
+            </mat-chip-list>
+        </div>
+
+        <br>
+
+        <div class="author_title">
+            <button mat-icon-button class="rounded-button" (click)="likeArticle()"><mat-icon class="button_icon">thumb_up</mat-icon></button>
+            <button mat-icon-button class="rounded-button" (click)="openShareModal()"><mat-icon class="button_icon">share</mat-icon></button>
+        </div>
+
+        <br>
+
+        <div class="author_card margin-top-25">
+            <img src="{{article.authorImg}}" alt="Author Image" class="author-image">
+            <div class="margin-top-10 mid-bold-text">
+                Written By {{article.firstName}} {{article.lastName}}
+                <button mat-raised-button style="float: right" (click)="openTwitter()" *ngIf="article.twitterHandle">Follow on <img width="24px" height="24px" src='assets/socials/x-twitter.svg' alt="F"></button>
+            </div>
+            <div class="margin-top-10 small-text__light"> 
+                {{article.description}}
+            </div>
+        </div>
+    </ng-container>    
+</div>
+
+<div class="center-spinner margin-top-120" *ngIf="articleStatus === 0">
+    <mat-spinner></mat-spinner>
+</div>

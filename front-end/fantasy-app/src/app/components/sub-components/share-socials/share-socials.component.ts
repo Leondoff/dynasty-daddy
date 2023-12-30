@@ -40,8 +40,7 @@ export class ShareSocialsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.buttons = this.buttons || this.data.buttons || ['copy', 'facebook', 'twitter', 'reddit',
-            'whatsapp', 'messenger', 'sms', 'email', 'print'];
+        this.buttons = this.buttons || this.data.buttons || ['copy', 'facebook', 'twitter', 'reddit', 'email', 'print'];
         this.postTitle = this.postTitle || this.data.postTitle || 'Dynasty Daddy - Fantasy Football';
         this.postUrl = this.postUrl || this.data.postUrl || 'https://dynasty-daddy.com';
         this.description = this.description || this.data.description
@@ -60,7 +59,7 @@ export class ShareSocialsComponent implements OnInit {
     shareOnSocial(social: any): void {
         switch (social.type) {
             case 'copy':
-                this.clipboard.copy(this.linkInDescription(this.postUrl));
+                this.clipboard.copy(this.postUrl);
                 break;
             case 'print':
                 document.defaultView.print();

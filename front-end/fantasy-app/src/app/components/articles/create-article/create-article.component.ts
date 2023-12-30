@@ -9,6 +9,8 @@ import { ArticlesApiService } from "src/app/services/api/articles/articles-api.s
 import { UserService } from "src/app/services/user.service";
 import { Status } from "../../model/status";
 import { HttpStatusCode } from "@angular/common/http";
+import { ActivatedRoute, Params, Router } from "@angular/router";
+import { LeagueSwitchService } from "../../services/league-switch.service";
 
 @Component({
     selector: 'app-create-article',
@@ -38,8 +40,11 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
         'Injuries',
         'Rookies',
         'IDP',
+        'Dynasty Daddy',
         'Other'
     ]
+
+    ARTICLE_ID_PARAM: string = 'articleId'
 
     /** control for the selected player */
     public playerCtrl: UntypedFormControl = new UntypedFormControl();
@@ -65,9 +70,17 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
     /** keyword string */
     keywordString: string = '';
 
+    /** editor string */
     articleEditorString: string = '';
 
+    /** title image url */
     titleImageUrl: string = '';
+
+    /** article id number */
+    articleId: number;
+
+    /** check if article is public to disable draft */
+    isPublic: boolean = false;
 
     /** loading status for saving */
     loadingStatus: Status = Status.DONE;
@@ -76,13 +89,35 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
     quillEditorRef: any;
 
     constructor(private playerService: PlayerService,
-        private userService: UserService,
+        public userService: UserService,
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
+        private leagueSwitchService: LeagueSwitchService,
         private articleApiService: ArticlesApiService) {
         super();
     }
 
     ngOnInit(): void {
         this.playerService.loadPlayerValuesForToday();
+        this.addSubscriptions(
+            this.activatedRoute.queryParams.subscribe((params: Params) => {
+                if (this.userService.user && params.articleId) {
+                    const articleId = params.articleId;
+                    this.articleApiService.getFullArticle(articleId)
+                        .pipe(takeUntil(this._onDestroy))
+                    .subscribe(res =>{
+                        this.articleId = res.articleId;
+                        this.articleEditorString = res.post;
+                        this.articleTitle = res.title;
+                        this.titleImageUrl = res.titleImg;
+                        this.selectedCategory = res.category;
+                        this.linkedPlayers = res.linkedPlayers.map(p => this.playerService.getPlayerByNameId(p));
+                        this.keywordString = res.keywords.join(',');
+                        this.isPublic = res.status === 'Public';
+                    })
+                }
+            })
+        )
         this.playerFilterCtrl.valueChanges
             .pipe(takeUntil(this._onDestroy))
             .subscribe(() => {
@@ -90,11 +125,20 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
             });
     }
 
+    /**
+     * Remove player from linked players
+     * @param player player to remove
+     */
     removeLinkedPlayer(player: FantasyPlayer): void {
         this.linkedPlayers = this.linkedPlayers.filter(p => p.name_id !== player.name_id);
         this.filterPlayers(this.playerFilterCtrl, this.filteredPlayers);
     }
 
+    /**
+     * Filter players to link to article
+     * @param filterCtrl filter control form
+     * @param filterSubscription filter subscription for players
+     */
     protected filterPlayers(filterCtrl: UntypedFormControl, filterSubscription: ReplaySubject<FantasyPlayer[]>): any {
         if (!this.playerService.playerValues) {
             return;
@@ -119,11 +163,14 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
         this.filterPlayers(this.playerFilterCtrl, this.filteredPlayers);
     }
 
+    /**
+     * Add title image to article
+     * @param event click event
+     */
     addTitleImage(event: any): void {
         const img = event.target.files[0] ?? null;
         if (img) {
             this.articleApiService.uploadImage(img).subscribe(res => {
-                console.log(res);
                 if (res?.status === HttpStatusCode.Ok) {
                     this.titleImageUrl = res?.data?.link
                 }
@@ -131,11 +178,15 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
         }
     }
 
+    /**
+     * Post an article to the database
+     * @param status string of status to set
+     */
     postArticle(status: string): void {
         this.loadingStatus = Status.LOADING;
         this.articleApiService.postArticle(
-            null,
-            this.userService?.user?.userId || '53401676',
+            this.articleId,
+            this.userService?.user?.userId,
             this.articleTitle,
             this.titleImageUrl,
             this.articleEditorString,
@@ -145,10 +196,18 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
             status
         ).subscribe(res => {
             this.loadingStatus = Status.DONE;
-            console.log(res)
+            this.articleId = res;
+            this.router.navigate(['../../user/settings'],
+                {
+                    queryParams: this.leagueSwitchService.buildQueryParams()
+                })
         });
     }
 
+    /**
+     * Set editor instance
+     * @param editorInstance instance to set
+     */
     getEditorInstance(editorInstance: any) {
         this.quillEditorRef = editorInstance;
 
@@ -156,6 +215,9 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
         toolbar.addHandler('image', this.uploadImageHandler);
     }
 
+    /**
+     * upload image handler in editor
+     */
     uploadImageHandler = () => {
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
@@ -167,9 +229,16 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
             const range = this.quillEditorRef.getSelection();
 
             this.articleApiService.uploadImage(file).subscribe((res: any) => {
-                console.log(res)
                 if (res?.status === HttpStatusCode.Ok) {
                     this.quillEditorRef.insertEmbed(range.index, 'image', res?.data?.link);
+
+                    // Find the inserted image element
+                    const imageElement = this.quillEditorRef.container.querySelector(`img[src="${res?.data?.link}"]`);
+
+                    if (imageElement) {
+                        imageElement.style.display = 'block';
+                        imageElement.style.margin = 'auto';
+                    }
                 }
             });
         }
