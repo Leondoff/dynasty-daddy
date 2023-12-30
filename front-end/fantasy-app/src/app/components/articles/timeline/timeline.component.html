@@ -1,0 +1,36 @@
+<div class="center-text margin-top-10">
+    <mat-form-field color="accent" appearance="outline"
+    [ngClass]="{'full_screen_search': configService.isMobile, 'partial_search': !configService.isMobile}">
+    <mat-label>Search Articles...</mat-label>
+        <input matInput type="text" (keyup)="searchSubject$.next()" [(ngModel)]="searchVal">
+        <button mat-button *ngIf="searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearTextSearch()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+</div>
+
+<div style="overflow-y: clip;" class="margin-top-10">
+    <mat-chip-list class="scrollChips">
+        <!-- <mat-chip (click)="toggleSelectedCategory('For You')">For You</mat-chip> -->
+        <mat-chip (click)="toggleSelectedCategory('Trending')" class="category_chip" [ngClass]="{'selected_category_chip': selectedCategory === 'Trending'}">Trending</mat-chip>
+        <mat-chip (click)="toggleSelectedCategory('Latest')" class="category_chip" [ngClass]="{'selected_category_chip': selectedCategory === 'Latest'}">Latest</mat-chip>
+        <mat-chip *ngFor="let category of articleCategories" (click)="toggleSelectedCategory(category)"
+            class="category_chip" [ngClass]="{'selected_category_chip': selectedCategory === category}">{{category}}</mat-chip>
+    </mat-chip-list>
+</div>
+
+<div class="margin-top-50" fxLayout="row wrap" fxLayoutAlign="center" *ngIf="articles.length > 0" appScrollNearEnd (nearEnd)="onNearEndScroll()">
+    <article-card *ngFor="let card of articles" fxFlex="40%" fxFlex.xs="80%" fxFlex.sm="40%" [article]="card" class="article-card"></article-card>
+</div>
+
+<div class="margin-top-50 center-text" *ngIf="articles.length > 0 && articlesStatus === 1 && articles.length % 8 === 0">
+    <button mat-button (click)="loadMoreArticles()">More Articles</button>
+</div>
+
+<div class="center-spinner margin-top-120" *ngIf="articlesStatus === 0">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="articles.length === 0 && articlesStatus === 1" class="center-text margin-top-50 large-bold-header-text warning__alert">
+    No articles found with applied filters
+</div>

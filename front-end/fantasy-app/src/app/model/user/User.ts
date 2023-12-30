@@ -1,3 +1,5 @@
+import { ArticlePreview } from "src/app/components/model/articlePreview";
+
 export class PatreonUser {
     firstName: string;
     lastName: string;
@@ -5,8 +7,14 @@ export class PatreonUser {
     leagues: any[] = [];
     prPresets: any[] = [];
     lfPresets: any[] = [];
+    twitterHandle: string = '';
+    description: string = '';
     userId: string;
     createdAt: string;
+    canWrite: boolean;
+
+    /** user articles for managing articles */
+    articles: ArticlePreview[] = [];
 
     constructor(user: any) {
         this.firstName = user.first_name;
@@ -17,6 +25,8 @@ export class PatreonUser {
         this.createdAt = user.created_at;
         this.prPresets = user.pr_presets || [];
         this.lfPresets = user.lf_presets || [];
+        this.twitterHandle = user.twitter_handle || '';
+        this.description = user.description || '';
+        this.canWrite = user.can_write || false;
     }
 }
- 

@@ -56,9 +56,15 @@ export class EndpointsService {
     this.patreonApiConfigService.addLeaguesToUserEndpoint = this.baseUrl + '/v1/user/leagues';
     this.patreonApiConfigService.addPRPresetsToUserEndpoint = this.baseUrl + '/v1/user/presets/pr';
     this.patreonApiConfigService.addLFPresetsToUserEndpoint = this.baseUrl + '/v1/user/presets/lf';
+    this.patreonApiConfigService.updateUserProfileEndpoint = this.baseUrl + '/v1/user/profile';
 
     // articles apis
-    this.articlesApiConfigService.postArticleEndpoint = this.baseUrl + '/v1/user/:userId/article/post'
+    this.articlesApiConfigService.postArticleEndpoint = this.baseUrl + '/v1/user/:userId/article/post';
+    this.articlesApiConfigService.searchArticlesEndpoint = this.baseUrl + '/v1/article/search';
+    this.articlesApiConfigService.likeArticleEnpoint = this.baseUrl + '/v1/article/like';
+    this.articlesApiConfigService.fullArticleEndpoint = this.baseUrl + '/v1/article/details/';
+    this.articlesApiConfigService.getArticlesForUserEndpoint = this.baseUrl + '/v1/article/user/';
+    this.articlesApiConfigService.deleteArticleEndpoint = this.baseUrl + '/v1/article/delete';
 
     // Sleeper Endpoints
     this.sleeperApiConfigService.getSleeperUsernameEndpoint = 'https://api.sleeper.app/v1/user/';

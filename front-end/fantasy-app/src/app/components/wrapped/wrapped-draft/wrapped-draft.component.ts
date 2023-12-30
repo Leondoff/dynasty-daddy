@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LeagueService } from 'src/app/services/league.service';
 import { PlayerService } from 'src/app/services/player.service';
-import { NflService } from 'src/app/services/utilities/nfl.service';
 import { DraftService } from '../../services/draft.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { WrappedService } from '../../services/wrapped.service';

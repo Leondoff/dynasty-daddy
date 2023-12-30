@@ -49,7 +49,13 @@ import {
   AddLeaguesToUserEndpoint,
   AddPRPresetsToUserEndpoint,
   AddLFPresetsToUserEndpoint,
-  WriteArticleEnpoint
+  WriteArticleEnpoint,
+  GetArticlesEndpoints,
+  LikeArticleEndpoint,
+  GetFullArticleEndpoint,
+  GetArticlesForUserEndpoints,
+  DeleteArticleEndpoint,
+  UpdateUserProfileEndpoint
 } from '../controllers';
 
 const indexRouter = express.Router();
@@ -75,7 +81,15 @@ indexRouter.get('/trade/volume', GetRecentTradeVolumeEndpoint);
 indexRouter.post('/user/leagues', AddLeaguesToUserEndpoint);
 indexRouter.post('/user/presets/pr', AddPRPresetsToUserEndpoint);
 indexRouter.post('/user/presets/lf', AddLFPresetsToUserEndpoint);
+indexRouter.post('/user/profile', UpdateUserProfileEndpoint);
+
+// Article Endpoints
 indexRouter.post('/user/:userId/article/post', WriteArticleEnpoint);
+indexRouter.post('/article/search', GetArticlesEndpoints);
+indexRouter.post('/article/like', LikeArticleEndpoint);
+indexRouter.get('/article/details/:articleId', GetFullArticleEndpoint);
+indexRouter.get('/article/user/:userId', GetArticlesForUserEndpoints);
+indexRouter.post('/article/delete', DeleteArticleEndpoint);
 
 // MFL Wrapper Endpoints
 indexRouter.post('/mfl/league', GetMFLLeagueEndpoint);

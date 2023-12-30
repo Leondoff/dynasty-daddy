@@ -1,0 +1,25 @@
+<mat-card class="article-card-padding">
+    <div class="aspect-ratio-container">
+        <img src="{{article.titleImg}}" alt="{{article.title}}" class="aspect-ratio-content"
+            onerror="this.onerror=null; this.src='assets/default_article_title_img.jpg';"
+            [routerLink]="['../', article.articleId]" [queryParams]="leagueSwitchService.buildQueryParams()">
+        <div class="like-container" [ngStyle]="article.isLiked ? {'color': '#fafafa'} : {}">
+            <mat-icon class="like-icon" (click)="likeArticle()">thumb_up</mat-icon>
+            <span class="like-count">{{likeCounter}}</span>
+        </div>
+        <div class="article-feed-chip new-article-color" *ngIf="!article.isTrending && isNewArticle()">New</div>
+        <div class="article-feed-chip trending-article-color" *ngIf="article.isTrending">Trending</div>
+    </div>
+    <mat-card-content class="article-card-content-padding" [routerLink]="['../', article.articleId]" [queryParams]="leagueSwitchService.buildQueryParams()">
+        <h2>{{article.title}}</h2>
+        <div class="small-text__light">{{article.post}}...</div>
+        <div class="margin-top-10">
+            <mat-chip-list>
+                <mat-chip class="author-color tag-chip">By: {{article.firstName}} {{article.lastName}}</mat-chip>
+                <mat-chip class="category-color tag-chip">{{ article.category }}</mat-chip>
+                <mat-chip class="word-count-color tag-chip">{{ article.wordCount }} Words</mat-chip>
+                <mat-chip class="date-color tag-chip">{{ displayService.getDaysSinceDateString(article.postedAt)}} days ago</mat-chip>
+            </mat-chip-list>
+        </div>
+    </mat-card-content>
+</mat-card>

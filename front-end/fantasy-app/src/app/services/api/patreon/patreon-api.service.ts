@@ -51,4 +51,13 @@ export class PatreonApiService {
             })
         );
     }
+
+    updateUserProfileInformation(userId: string, firstName: string, lastName: string, description: string, imageUrl: string, twitterHandle: string): Observable<any> {
+        return this.http.post<any>(this.patreonApiConfigService.updateUserProfileEndpoint,
+            { "id": userId, firstName, lastName, description, imageUrl, twitterHandle }).pipe(
+                map((res: any) => {
+                    return res;
+                })
+            );
+    }
 }

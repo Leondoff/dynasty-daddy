@@ -138,6 +138,26 @@ export class UserService {
         });
     }
 
+    /**
+     * update user profile information
+     * @param firstName string for name
+     * @param lastName string for last name
+     * @param description user description
+     * @param imageUrl image url for image on imgur/patreon
+     * @param twitterHandle twitter handle
+     */
+    setUserProfileInfo(firstName: string, lastName: string, description: string, imageUrl: string = this.user.imageUrl, twitterHandle: string): void {
+        this.patreonApiService.updateUserProfileInformation(
+            this.user.userId, firstName, lastName, description, imageUrl, twitterHandle
+        ).subscribe(res => {
+            this.user.firstName = firstName;
+            this.user.lastName = lastName;
+            this.user.description = description;
+            this.user.imageUrl = imageUrl;
+            this.user.twitterHandle = twitterHandle;
+            this.userLeaguesChanged$.next();
+        });
+    }
 
     /**
      * Helper function to update a league user
