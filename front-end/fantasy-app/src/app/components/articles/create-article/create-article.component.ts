@@ -238,6 +238,8 @@ export class CreateArticleComponent extends BaseComponent implements OnInit {
                     if (imageElement) {
                         imageElement.style.display = 'block';
                         imageElement.style.margin = 'auto';
+                        imageElement.style.width = '90%';
+                        imageElement.style.maxWidth = '800px';
                     }
                 }
             });
