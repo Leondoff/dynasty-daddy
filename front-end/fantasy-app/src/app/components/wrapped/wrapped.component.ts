@@ -7,6 +7,7 @@ import { BaseComponent } from '../base-component.abstract';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { WrappedService } from '../services/wrapped.service';
 import { PageService } from 'src/app/services/utilities/page.service';
+import { AdService } from 'src/app/services/utilities/ad.service';
 
 @Component({
   selector: 'app-wrapped',
@@ -28,6 +29,7 @@ export class WrappedComponent extends BaseComponent implements OnInit {
     private playersService: PlayerService,
     private leagueSwitchService: LeagueSwitchService,
     private pageService: PageService,
+    private adService: AdService,
     private route: ActivatedRoute) {
     super();
     this.pageService.setUpPageSEO('Fantasy Wrapped',
@@ -38,6 +40,7 @@ export class WrappedComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.wrappedService.frameNumber = 0;
     this.playersService.loadPlayerValuesForToday();
+    this.adService.loadFreestarScripts();
     // TODO potentially improve how this functions
     this.addSubscriptions(this.leagueSwitchService.leagueChanged$.pipe(delay(1500)).subscribe(() => {
       this.enabled = true;
