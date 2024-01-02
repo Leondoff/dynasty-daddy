@@ -9,13 +9,16 @@ import {
 import {
   GetPlayersInfoWithIds
 } from '../repository';
+import {
+  LEAGUE_FORMAT_TOOL_DATE
+} from '../settings';
 
 export const GetLeagueFormatForLeague = async (req, res) => {
   try {
     const {
       seasons, startWeek, endWeek, settings, format
     } = req.body;
-    const experienceOffset = (new Date()).getFullYear() - Math.max(...seasons);
+    const experienceOffset = LEAGUE_FORMAT_TOOL_DATE - Math.max(...seasons);
     const posFilterList = (await getPositionsToProcess(format))
       .filter(p =>
         !FLEX_TYPES.includes(p));
