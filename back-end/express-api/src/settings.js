@@ -5,8 +5,6 @@ require('events').EventEmitter.defaultMaxListeners = 15;
 
 dotenv.config();
 
-export const PATREON_TIER_ID = '7092280';
-
 export const DB_USER = process.env.DO_DB_USER;
 export const DB_PWD = process.env.DO_DB_PASSWORD;
 export const DB_HOST = process.env.DO_DB_HOST;
@@ -25,3 +23,12 @@ export const PATREON_REDIRECT_URL = 'https://dynasty-daddy.com';
 // export const PATREON_CLIENT_SECRET = '';
 // export const PATREON_CLIENT_ID = '';
 // export const PATREON_REDIRECT_URL = 'http://localhost:4200/';
+
+// hardcoded league format tool since the year ends, fantasy season year,
+// and player experience don't line up. It's easiest to just toggle this
+// once the rookies have been added for the previous year and the old rookies
+// experience goes from 0 to 1.
+export const LEAGUE_FORMAT_TOOL_DATE = 2023;
+
+// dynasty daddy patreon teir to verify on
+export const PATREON_TIER_ID = '7092280';
