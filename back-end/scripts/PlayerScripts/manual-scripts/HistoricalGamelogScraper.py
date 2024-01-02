@@ -2,6 +2,8 @@ import json
 import psycopg2
 import requests
 
+# Run this script to insert weekly game logs into the database for the league format tool
+# You can choose the season, and a specific week to upsert
 def updatePlayerGamelogs(season, week = None):
     
     baseUrl = 'https://api.sleeper.app/v1/stats/nfl/regular/' + str(season) + '/'
@@ -38,4 +40,4 @@ def updatePlayerGamelogs(season, week = None):
             print('Gamelog inserted for the following season: ' + str(season) + ' week ' + str(num))
     conn.commit()
 
-updatePlayerGamelogs(2023, 16)
+updatePlayerGamelogs(2023, 17)
