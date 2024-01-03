@@ -192,13 +192,28 @@ export class SidebarComponent extends BaseComponent implements OnInit {
     localStorage.setItem(LocalStorageDictionary.SIDEBAR_LOCK_ITEM, String(this.isSidebarLocked));
   }
 
+  /**
+   * Loads a preset in the league format tool
+   * @param preset preset to load
+   */
   loadSelectedPresetForLFT(preset: number): void {
     this.leagueFormatService.loadPreset(preset);
     this.toggle();
     this.router.navigate(['league/format'],
-    {
-      queryParams: this.leagueSwitchService.buildQueryParams()
-    }
-  );
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams()
+      }
+    );
+  }
+
+  /**
+   * handles creating a new article
+   */
+  writeNewArticle(): void {
+    this.router.navigate(['articles/post'],
+      {
+        queryParams: this.leagueSwitchService.buildQueryParams({ 'articleId': null })
+      }
+    );
   }
 }
