@@ -193,15 +193,17 @@ export class UserSettingsComponent extends BaseComponent implements OnInit, Afte
             }
         })
         dialogRef.afterClosed().subscribe(result => {
-            this.addSubscriptions(this.articlesApiService.deleteArticle(
-                article.articleId,
-                this.userService.user.userId,
-            ).subscribe(_ => {
-                const indexToRemove = this.userService.user.articles
-                    .findIndex(article => article.articleId === article.articleId);
-                this.userService.user.articles.splice(indexToRemove, 1);
-                this.refreshArticles();
-            }));
+            if (result) {
+                this.addSubscriptions(this.articlesApiService.deleteArticle(
+                    article.articleId,
+                    this.userService.user.userId,
+                ).subscribe(_ => {
+                    const indexToRemove = this.userService.user.articles
+                        .findIndex(art => art.articleId === article.articleId);
+                    this.userService.user.articles.splice(indexToRemove, 1);
+                    this.refreshArticles();
+                }));
+            }
         });
     }
 
