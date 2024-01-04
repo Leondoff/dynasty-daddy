@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { LeagueDTO } from '../../../model/league/LeagueDTO';
 import { ESPNApiService } from './espn-api.service';
 import { LeagueWrapper } from 'src/app/model/league/LeagueWrapper';
@@ -14,6 +14,7 @@ import { CompletedDraft } from 'src/app/model/league/CompletedDraft';
 import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 import { PlatformLogos } from '../../utilities/display.service';
 import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
+import { LeagueTeamTransactionDTO } from 'src/app/model/league/LeagueTeamTransactionDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -43,29 +44,56 @@ export class ESPNService {
    * @returns 
    */
   loadLeague$(leagueWrapper: LeagueWrapper): Observable<LeagueWrapper> {
-    const teams = [];
-    leagueWrapper.selectedLeague.metadata.rosters?.forEach((team, ind) => {
-      const ownerDetails = leagueWrapper.selectedLeague.metadata.owners?.find(it => it.id === team.primaryOwner)
-      const ownerDTO = new LeagueOwnerDTO(team.primaryOwner, ownerDetails.firstName.slice(0, 1) + '. ' + ownerDetails.lastName, team.name, team.logo || PlatformLogos.ESPN_LOGO);
-      const roster = team.roster.entries.map(it => it.playerId.toString());
-      this.mapESPNIdMap(team.roster.entries);
-      const rosterDTO = new LeagueRosterDTO()
-        .fromESPN(
-          team.id,
-          team.primaryOwner,
-          roster,
-          new TeamMetrics().fromESPN(team)
+    const observe = [];
+    let leagueTransactions = {};
+    for (let weekNum = leagueWrapper.selectedLeague.startWeek; weekNum < 19; weekNum++) {
+      observe.push(
+        this.espnApiService.getTransactionsForWeek(leagueWrapper.selectedLeague.season, leagueWrapper.selectedLeague.leagueId, weekNum)
+          .pipe(
+            mergeMap((transactions) => {
+              leagueTransactions[weekNum] = transactions.map(t => new LeagueTeamTransactionDTO().fromESPN(t));
+              return of(transactions);
+            })
+          )
+      );
+    }
+  
+    return forkJoin(observe).pipe(
+      mergeMap(() => {
+        const teams = [];
+        leagueWrapper.selectedLeague.metadata.rosters?.forEach((team, ind) => {
+          const ownerDetails = leagueWrapper.selectedLeague.metadata.owners?.find(it => it.id === team.primaryOwner);
+          const ownerDTO = new LeagueOwnerDTO(
+            team.primaryOwner,
+            ownerDetails.firstName.slice(0, 1) + '. ' + ownerDetails.lastName,
+            team.name,
+            team.logo || PlatformLogos.ESPN_LOGO
+          );
+          const roster = team.roster.entries.map(it => it.playerId.toString());
+          this.mapESPNIdMap(team.roster.entries);
+          const rosterDTO = new LeagueRosterDTO().fromESPN(
+            team.id,
+            team.primaryOwner,
+            roster,
+            new TeamMetrics().fromESPN(team)
+          );
+          const ddTeam = new LeagueTeam(ownerDTO, rosterDTO);
+          teams.push(ddTeam);
+        });
+        leagueWrapper.leagueTeamDetails = teams;
+        leagueWrapper.selectedLeague.leagueTransactions = leagueTransactions;
+        leagueWrapper.selectedLeague.leagueMatchUps = this.marshallSchedule(
+          leagueWrapper.selectedLeague.metadata.schedule,
+          leagueWrapper.selectedLeague.playoffStartWeek
         );
-      const ddTeam = new LeagueTeam(ownerDTO, rosterDTO);
-      teams.push(ddTeam);
-    });
-    leagueWrapper.leagueTeamDetails = teams;
-    leagueWrapper.selectedLeague.leagueMatchUps = this.marshallSchedule(leagueWrapper.selectedLeague.metadata.schedule, leagueWrapper.selectedLeague.playoffStartWeek);
-    leagueWrapper.completedDrafts = leagueWrapper.selectedLeague.metadata.draft ?
-      [this.marshallDraftResults(leagueWrapper.selectedLeague.metadata.draft, leagueWrapper.selectedLeague.leagueId, leagueWrapper.selectedLeague.draftRounds)] : [];
-    leagueWrapper.selectedLeague.metadata = {};
-    return of(leagueWrapper);
-  }
+        leagueWrapper.completedDrafts = leagueWrapper.selectedLeague.metadata.draft
+          ? [this.marshallDraftResults(leagueWrapper.selectedLeague.metadata.draft, leagueWrapper.selectedLeague.leagueId, leagueWrapper.selectedLeague.draftRounds)]
+          : [];
+        leagueWrapper.selectedLeague.metadata = {};
+        return of(leagueWrapper);
+      })
+    );
+  }  
 
   /**
    * helper function that will format json league response into League Data

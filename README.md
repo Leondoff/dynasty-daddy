@@ -25,9 +25,11 @@ The goal is to provide users with a frictionless way to see player value, team v
 | Mock Draft Tool | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x2714; |
 | Draft Recap | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | Portfolio | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x274C; |
+| League Format Tool | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| Trade Database | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | Username Login | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x2714; |
 | League Id Login | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Transactions | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x274C; |
+| Transactions | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
 | Future Draft Capital | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x2714; |
 | Wrapped | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | Automated Id Mapping | &#x2714; | &#x2714; | &#x274C; | &#x274C; | &#x274C; |

@@ -1,4 +1,4 @@
-import {LeagueRawTradePicksDTO} from './LeagueRawTradePicksDTO';
+import { LeagueRawTradePicksDTO } from './LeagueRawTradePicksDTO';
 
 export class LeagueTeamTransactionDTO {
 
@@ -28,6 +28,26 @@ export class LeagueTeamTransactionDTO {
     return this;
   }
 
+  fromESPN(transaction: any): LeagueTeamTransactionDTO {
+    this.type = this.getTypeFromString(transaction?.type);
+    this.transactionId = transaction?.id;
+    this.status = this.getTransactionStatusFromString(transaction?.status);
+    this.createdAt = transaction?.processDate || transaction?.proposedDate;
+    this.drops = {};
+    this.adds = {};
+    if (this.type != 'trade') {
+      this.rosterIds = [transaction?.teamId];
+      transaction.items.forEach(p => {
+        p.type == 'ADD' ?
+          this.adds[p.playerId] = transaction?.teamId :
+          this.drops[p.playerId] = transaction?.teamId
+      })
+    } else {
+      console.log(transaction);
+    }
+    return this;
+  }
+
   getTransactionStatusFromString(status: string): TransactionStatus {
     switch (status) {
       case 'in_progress':
@@ -36,6 +56,17 @@ export class LeagueTeamTransactionDTO {
         return TransactionStatus.FAILED;
       default:
         return TransactionStatus.COMPLETED;
+    }
+  }
+
+  getTypeFromString(type: string): string {
+    switch(type) {
+      case 'TRADE':
+        return 'trade';
+      case 'FREEAGENT':
+        return 'free_agent';
+      default:
+        return 'waiver';
     }
   }
 }
