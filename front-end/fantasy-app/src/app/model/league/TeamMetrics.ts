@@ -38,8 +38,8 @@ export class TeamMetrics {
   }
 
   fromESPN(settings: any): TeamMetrics {
-    this.fpts = Number(settings.record?.overall?.pointsFor || 0);
-    this.fptsAgainst = Number(settings.record?.overall?.pointsAgainst || 0);
+    this.fpts = Math.round(Number(settings.record?.overall?.pointsFor || 0));
+    this.fptsAgainst = Math.round(Number(settings.record?.overall?.pointsAgainst || 0));
     this.wins = Number(settings.record?.overall?.wins || 0);
     this.losses = Number(settings.record?.overall?.losses || 0);
     this.rank = Number(settings.playoffSeed || 0);

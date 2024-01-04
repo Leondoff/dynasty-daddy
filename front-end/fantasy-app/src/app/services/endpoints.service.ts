@@ -109,7 +109,7 @@ export class EndpointsService {
     this.ffpcApiConfigService.getFFPCLeaguesForUser = this.baseUrl + '/v1/ffpc/user';
 
     // ESPN Endpoints
-    this.espnApiConfigService.getESPNLeagueEndpoint = 'https://fantasy.espn.com/apis/v3/games/ffl/seasons/SELECTED_YEAR/segments/0/leagues/LEAGUE_ID?view=mDraftDetail&view=mLiveScoring&view=mMatchupScore&view=mPendingTransactions&view=mPositionalRatings&view=mRoster&view=mSettings&view=mTeam&view=modular&view=mNav'
+    this.espnApiConfigService.getESPNLeagueEndpoint = 'https://fantasy.espn.com/apis/v3/games/ffl/seasons/SELECTED_YEAR/segments/0/leagues/LEAGUE_ID';
   
     // Patreon Endpoints
     this.patreonApiConfigService.getUserFromPatreonEndpoint = this.baseUrl + '/v1/patreon/token';    
