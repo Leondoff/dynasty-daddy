@@ -109,7 +109,9 @@ export class FleaflickerService {
     }
     for (let i = 0; i < 3; i++) {
       observableList.push(this.fleaflickerApiService.getFFTrades(season, leagueId, (i * 10).toString()).pipe(map(trades => {
-        leagueTransactions[4 + i] = this.marshalTrades(trades.trades);
+        leagueTransactions[4 + i] = this.marshalTrades(trades.trades.filter(t =>
+          new Date(Number(t?.approvedOn) || Number(t?.proposedOn)).getFullYear() >= Number(leagueWrapper.selectedLeague.season))
+        );
         return of(leagueTransactions[4 + i]);
       })));
     }
@@ -146,7 +148,7 @@ export class FleaflickerService {
       const teams = [];
       leagueWrapper.selectedLeague.metadata.rosters?.forEach((division, ind) => {
         division.teams?.forEach(team => {
-          const owner = team.owners?.[0] || {id: team.id, displayName: team.name + ' Owner'};
+          const owner = team.owners?.[0] || { id: team.id, displayName: team.name + ' Owner' };
           const ownerDTO = new LeagueOwnerDTO(owner.id, owner.displayName, team.name, team.logoUrl || PlatformLogos.FLEAFLICKER_LOGO);
           const roster = fleaflickerRosters.find(it => it.team.id === team.id).players;
           this.mapFleaFlickerIdMap(roster);
@@ -334,6 +336,7 @@ export class FleaflickerService {
   private marshalTrades(trades: any[]): LeagueTeamTransactionDTO[] {
     const leagueTrades = [];
     trades?.forEach(trade => {
+      console.log(trade);
       let trans = new LeagueTeamTransactionDTO();
       trans.transactionId = trade?.id || 'not provided';
       trans.type = 'trade';
