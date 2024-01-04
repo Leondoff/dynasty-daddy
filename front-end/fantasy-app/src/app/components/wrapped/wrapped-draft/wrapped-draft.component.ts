@@ -70,23 +70,29 @@ export class WrappedDraftComponent implements OnInit {
       for (let i = 0; i < 5; i++) {
         const pick = sortedPicks[i];
         const player = this.leagueService.platformPlayersMap[pick?.playerId];
-        const team = this.leagueService.getTeamByRosterId(sortedPicks[i].rosterId);
-        this.bestPicksInTheDraft.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount :  'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        if (player) {
+          const team = this.leagueService.getTeamByRosterId(sortedPicks[i].rosterId);
+          this.bestPicksInTheDraft.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount : 'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        }
       }
       // best value picks
       const valuePicks = this.draftService.sortPlayersByBestValuePick(draftObj).filter(p => !this.leagueService.platformPlayersMap[p.playerId]);
       for (let i = 0; i < 5; i++) {
         const pick = valuePicks[i].pick;
         const player = this.leagueService.platformPlayersMap[pick.playerId];
-        const team = this.leagueService.getTeamByRosterId(valuePicks[i].pick.rosterId);
-        this.bestValuePicks.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount :  'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        if (player) {
+          const team = this.leagueService.getTeamByRosterId(valuePicks[i].pick.rosterId);
+          this.bestValuePicks.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount : 'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        }
       }
       // worst value picks
       for (let i = 0; i < 5; i++) {
         const pick = valuePicks[valuePicks.length - i - 1].pick;
         const player = this.leagueService.platformPlayersMap[pick.playerId];
-        const team = this.leagueService.getTeamByRosterId(valuePicks[valuePicks.length - i - 1].pick.rosterId);
-        this.worstValuePicks.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount :  'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        if (player) {
+          const team = this.leagueService.getTeamByRosterId(valuePicks[valuePicks.length - i - 1].pick.rosterId);
+          this.worstValuePicks.push({ rank: '#' + (i + 1), details: (isAuction ? 'Winning bid of ' + pick.bidAmount : 'Selected with pick ' + pick.pickNumber) + ' by ' + team.owner.ownerName, header: player.full_name || player.first_name + ' ' + player.last_name, image: team.owner.avatar });
+        }
       }
     }
     setInterval(() => {
