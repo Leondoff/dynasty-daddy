@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { LeagueService } from '../../services/league.service';
 import { ConfigService, LocalStorageDictionary } from '../../services/init/config.service';
 import { LeagueSwitchService } from '../services/league-switch.service';
@@ -13,7 +13,8 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss']
+  styleUrls: ['./sidebar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent extends BaseComponent implements OnInit {
 
@@ -61,6 +62,7 @@ export class SidebarComponent extends BaseComponent implements OnInit {
     public configService: ConfigService,
     private leagueFormatService: LeagueFormatService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
     public leagueSwitchService: LeagueSwitchService) {
     super();
   }
@@ -69,13 +71,16 @@ export class SidebarComponent extends BaseComponent implements OnInit {
     this.isSidebarLocked = localStorage?.getItem(LocalStorageDictionary.SIDEBAR_LOCK_ITEM) == 'true' || false;
     this.addSubscriptions(this.playerService.playerValuesUpdated$.subscribe(() => {
       this.formatTrendingPlayers(this.isTrendingByNumber);
+      this.cdr.markForCheck();
     }),
       this.playerService.currentPlayerValuesLoaded$.subscribe(() => {
         this.formatTrendingPlayers(this.isTrendingByNumber);
         this.filterSidebarResults();
+        this.cdr.markForCheck();
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(() => {
         this.filterSidebarResults();
+        this.cdr.markForCheck();
       })
     );
   }
@@ -168,6 +173,7 @@ export class SidebarComponent extends BaseComponent implements OnInit {
       this.leagueService.leagueTeamDetails.slice() :
       this.leagueService.leagueTeamDetails.filter(t => this.isInSearch([t.owner?.ownerName, t.owner?.teamName]));
     this.filteredCreators = this.configService.preferredCreators.slice(0, this.configService.preferredCreators.length - 1).filter(c => this.isInSearch([c.alt]))
+    this.cdr.markForCheck();
   }
 
   /**

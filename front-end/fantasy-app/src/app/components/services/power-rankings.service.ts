@@ -148,7 +148,6 @@ export class PowerRankingsService {
         let sfTradeValueTotal = 0;
         let tradeValueTotal = 0;
         // TODO refactor this section both comparisons are redundant
-        console.log(team);
         for (const playerPlatformId of team?.roster?.players) {
           for (const player of players) {
             if (playerPlatformId === this.playerService.getPlayerPlatformId(player, leaguePlatform)) {
@@ -308,28 +307,36 @@ export class PowerRankingsService {
       {
         const adpSortedQBs = this.sortPlayersByADP(team.roster[PositionGroup.QB].players);
         const starters = this.getHealthyPlayersFromList(adpSortedQBs, teamRosterCount[PositionGroup.QB]);
-        team.roster[PositionGroup.QB].starterValue = starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0);
+        team.roster[PositionGroup.QB].starterValue = starters.length > 0 ?
+          starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0) :
+          teamRosterCount[PositionGroup.QB] * 100;
         team.starters.push(...starters);
       }
       if (teamRosterCount[PositionGroup.RB] > 0) // rb
       {
         const adpSortedRBs = this.sortPlayersByADP(team.roster[PositionGroup.RB].players);
         const starters = this.getHealthyPlayersFromList(adpSortedRBs, teamRosterCount[PositionGroup.RB]);
-        team.roster[PositionGroup.RB].starterValue = starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0);
+        team.roster[PositionGroup.RB].starterValue = starters.length > 0 ?
+          starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0) :
+          teamRosterCount[PositionGroup.RB] * 100;
         team.starters.push(...starters);
       }
       if (teamRosterCount[PositionGroup.WR] > 0) // wr
       {
         const adpSortedWRs = this.sortPlayersByADP(team.roster[PositionGroup.WR].players);
         const starters = this.getHealthyPlayersFromList(adpSortedWRs, teamRosterCount[PositionGroup.WR]);
-        team.roster[PositionGroup.WR].starterValue = starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0);
+        team.roster[PositionGroup.WR].starterValue = starters.length > 0 ?
+          starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0) :
+          teamRosterCount[PositionGroup.WR] * 100;
         team.starters.push(...starters);
       }
       if (teamRosterCount[PositionGroup.TE] > 0) // te
       {
         const adpSortedTEs = this.sortPlayersByADP(team.roster[PositionGroup.TE].players);
         const starters = this.getHealthyPlayersFromList(adpSortedTEs, teamRosterCount[PositionGroup.TE]);
-        team.roster[PositionGroup.TE].starterValue = starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0);
+        team.roster[PositionGroup.TE].starterValue = starters.length > 0 ?
+          starters.reduce((t, s) => t + (s?.[this.selectedRankings] || 100), 0) :
+          teamRosterCount[PositionGroup.TE] * 100;
         team.starters.push(...starters);
       }
       if (teamRosterCount[4] > 0) // flex
@@ -355,6 +362,11 @@ export class PowerRankingsService {
       for (const starter of team.starters) {
         team.adpValueStarter = Math.round(team.adpValueStarter + (starter?.[this.selectedRankings] || 100));
         worstTeamStarterValue = Math.max(worstTeamStarterValue, team.adpValueStarter);
+      }
+      // adjust starter rank for teams with not a full starting lineup
+      if (team.starters.length < this.leagueService.selectedLeague.starters) {
+        team.adpValueStarter +=
+          Math.round(team.adpValueStarter + (this.leagueService.selectedLeague.starters - team.starters.length) * 100);
       }
     });
     teams.map(team => {
@@ -514,7 +526,6 @@ export class PowerRankingsService {
 
     // selected player count
     let selectedCount = 0;
-
     // loop and get best flex option
     for (let i = 0; selectedCount < spots; i++) {
       const topRb = this.sortPlayersByADP(team.roster[1]?.players)[processedPlayers[1]];
@@ -524,6 +535,7 @@ export class PowerRankingsService {
       // if no player is found return
       if (!flexPlayer) {
         team.flexStarterValue += 100;
+        selectedCount++;
       } else {
         processedPlayers[this.positionGroups.indexOf(flexPlayer.position)]++;
         const activeFlex = this.getHealthyPlayersFromList([flexPlayer], 1, team.starters);
