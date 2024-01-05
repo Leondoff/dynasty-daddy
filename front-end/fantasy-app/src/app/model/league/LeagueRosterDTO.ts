@@ -5,7 +5,7 @@ export class LeagueRosterDTO {
 
   rosterId: number;
   ownerId: string;
-  players: string[];
+  players: string[] = [];
   taxi: string[] = [];
   reserve: string[] = [];
   teamMetrics: TeamMetrics;
@@ -16,7 +16,7 @@ export class LeagueRosterDTO {
   fromSleeper(roster_id: number, owner_id: string, players: string[], reserve: string[], taxi: string[], settings: TeamMetrics) {
     this.rosterId = roster_id;
     this.ownerId = owner_id;
-    this.players = players;
+    this.players = players || [];
     this.reserve = reserve || [];
     this.taxi = taxi || [];
     this.teamMetrics = settings;
@@ -26,7 +26,7 @@ export class LeagueRosterDTO {
   fromMFL(roster_id: number, owner_id: string, players: string[], reserve: string[], taxi: string[], teamMetrics?: TeamMetrics) {
     this.rosterId = roster_id;
     this.ownerId = owner_id;
-    this.players = players;
+    this.players = players || [];
     this.reserve = reserve || [];
     this.taxi = taxi || [];
     this.teamMetrics = teamMetrics || new TeamMetrics();
@@ -36,7 +36,7 @@ export class LeagueRosterDTO {
   fromESPN(rosterId: number, ownerId: string, playerIds: string[], teamMetrics?: TeamMetrics): LeagueRosterDTO {
     this.rosterId = rosterId;
     this.ownerId = ownerId;
-    this.players = playerIds;
+    this.players = playerIds || [];
     this.teamMetrics = teamMetrics || new TeamMetrics();
     return this;
   }
@@ -44,7 +44,7 @@ export class LeagueRosterDTO {
   fromFF(rosterId: number, ownerId: string, playerIds: string[], teamMetrics?: TeamMetrics): LeagueRosterDTO {
     this.rosterId = rosterId;
     this.ownerId = ownerId;
-    this.players = playerIds;
+    this.players = playerIds || [];
     this.teamMetrics = teamMetrics || new TeamMetrics();
     return this;
   }
@@ -52,7 +52,7 @@ export class LeagueRosterDTO {
   fromFFPC(rosterId: number, ownerId: string, playerIds: string[], teamMetrics?: TeamMetrics): LeagueRosterDTO {
     this.rosterId = rosterId;
     this.ownerId = ownerId;
-    this.players = playerIds;
+    this.players = playerIds || [];
     this.teamMetrics = teamMetrics || new TeamMetrics();
     return this;
   }

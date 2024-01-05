@@ -53,9 +53,9 @@ export const GetPrevPlayerValuesByDaysEndpoint = async (req, res) => {
   try {
     const { intervalDays } = req.params || 30;
     const data = await GetHistoricalPlayerValuesDatapointByDays(intervalDays);
-    res.status(200).json(data.rows);
+    res.status(HttpStatusCode.Ok).json(data.rows);
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };
 
@@ -71,9 +71,9 @@ export const GetHistoricalPlayerValueByIdEndpoint = async (req, res) => {
     const { isAllTime } = req.query || 'false';
     // updated where to include all time data if specified
     const data = await GetHistoricalPlayerValuesDatapoint(id, isAllTime);
-    res.status(200).json(data.rows);
+    res.status(HttpStatusCode.Ok).json(data.rows);
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };
 
@@ -89,13 +89,13 @@ export const GetPlayerDetailsEndpoint = async (req, res) => {
     const valueData = await GetHistoricalPlayerValuesDatapoint(id, 'false');
     const metadata = await GetPlayerMetadataByNameId(id);
     const tradeData = await GetTradeDetailsForPlayer(id);
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
       historicalData: valueData.rows,
       profile: metadata.rows,
       tradeData
     });
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };
 
@@ -111,9 +111,9 @@ export const GetPlayerPortfolioEndpoint = async (req, res) => {
     // eslint-disable-next-line prefer-template, implicit-arrow-linebreak
     const sqlList = '(' + portfolioList.map(str => `'${str.replace('\'', '')}'`).join(', ') + ')';
     const valueData = await GetFantasyPortfolioForInterval(intervalDays, sqlList);
-    res.status(200).json(valueData.rows);
+    res.status(HttpStatusCode.Ok).json(valueData.rows);
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };
 
@@ -129,8 +129,8 @@ export const GetNonOffensePlayersEndpoint = async (req, res) => {
     const whereClause = `mp.position IN (${positionList.map(p =>
       `'${p}'`).join(',')})`;
     const data = await GetSpecialPlayers(whereClause);
-    res.status(200).json(data.rows);
+    res.status(HttpStatusCode.Ok).json(data.rows);
   } catch (err) {
-    res.status(500).json(err.stack);
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
   }
 };

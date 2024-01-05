@@ -336,7 +336,6 @@ export class FleaflickerService {
   private marshalTrades(trades: any[]): LeagueTeamTransactionDTO[] {
     const leagueTrades = [];
     trades?.forEach(trade => {
-      console.log(trade);
       let trans = new LeagueTeamTransactionDTO();
       trans.transactionId = trade?.id || 'not provided';
       trans.type = 'trade';

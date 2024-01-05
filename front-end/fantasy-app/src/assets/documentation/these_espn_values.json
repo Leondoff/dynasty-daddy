@@ -1,0 +1,30 @@
+[
+    {
+        "title": "Overview",
+        "list": [
+            "ESPN introduced recapcha authentication to their API so now it's impossible to get access to private leagues using the username and password.",
+            "In order to support private leagues, you must manually copy some browser cookies from ESPN in order to login.",
+            "Once copied over, these values will be saved in your browser history so you only have to do it when using a new browser.",
+            "If you are a Dynasty Daddy Club member, we will save these cookies in our database so you will only have to do it once across all devices."
+        ]
+    },
+    {
+        "title": "Option 1: Manual Process",
+        "list": [
+            "You can find these two values after logging into your espn fantasy football account on espn's website. Right click anywhere on the website and click inspect option. From there click Application on the top bar. On the left under Storage section click Cookies then http://fantasy.espn.com. From there you should be able to find your swid and espn_s2 variables and values."
+        ]
+    },
+    {
+        "title": "Option 2: Browser Extension",
+        "link": "https://chromewebstore.google.com/detail/espn-private-league-key-a/bakealnpgdijapoiibbgdbogehhmaopn",
+        "list": [
+            "This method is easier, using the extension in the link above. Install it to your browser and copy the values from the plugin after logging in to ESPN."
+        ]
+    },
+    {
+        "title": "Have more questions?",
+        "list": [
+            "Reach out to Jeremy via the discord, twitter (@dynastydaddyff), or email (jertimperio@gmail.com)."
+        ]
+    }
+]

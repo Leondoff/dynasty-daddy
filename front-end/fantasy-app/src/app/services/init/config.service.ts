@@ -43,6 +43,8 @@ export const LocalStorageDictionary = {
   MFL_USERNAME_ITEM: 'mfl_username',
   FF_USERNAME_ITEM: 'ff_username',
   FFPC_USERNAME_ITEM: 'ffpc_username',
+  ESPN_S2: 'espn_s2',
+  ESPN_SWID: 'espn_swid',
   GRIDIRON_ITEM: 'gridiron',
   SIDEBAR_LOCK_ITEM: 'sidebar_lock',
   TRADE_DB_SCORING_FORMAT: 'scoring_format',

@@ -25,7 +25,7 @@ export class ToolHelpComponent implements OnInit {
      * Open how to play modal
      */
     openHowTo(): void {
-        this.configService.loadDocumentation(this.toolName.toLowerCase().replace(' ', '_'))
+        this.configService.loadDocumentation(this.toolName.toLowerCase().replace(/ /g, '_'))
             .subscribe(data => {
                 this.dialog.open(SimpleTextModalComponent
                     , {
@@ -47,5 +47,6 @@ enum ToolsHelp {
     LeagueFormat = 'League Format',
     TradeCalculator = 'Trade Calculator',
     TradeDatabase = 'Trade Database',
-    DynastyDaddyClub = 'Dynasty Daddy Club'
+    DynastyDaddyClub = 'Dynasty Daddy Club',
+    ESPNValues = 'these ESPN values'
 };

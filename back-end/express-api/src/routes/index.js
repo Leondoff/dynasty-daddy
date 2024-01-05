@@ -57,6 +57,7 @@ import {
   DeleteArticleEndpoint,
   UpdateUserProfileEndpoint
 } from '../controllers';
+import { GetESPNLeagueEndpoint, GetESPNTransactionsEndpoint } from '../controllers/espnWrapperController';
 
 const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
@@ -127,5 +128,9 @@ indexRouter.get('/ffpc/user', GetFFPCUserLeaguesEndpoint);
 
 // Patreon Wrapper Endpoints
 indexRouter.get('/patreon/token', GetTokenForPatreonCodeEndpoint);
+
+// ESPN Wrapper Endpoints
+indexRouter.post('/espn/league', GetESPNLeagueEndpoint);
+indexRouter.post('/espn/transactions', GetESPNTransactionsEndpoint);
 
 export default indexRouter;

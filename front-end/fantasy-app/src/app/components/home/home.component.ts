@@ -19,7 +19,6 @@ import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { LeagueDTO } from 'src/app/model/league/LeagueDTO';
-import { ShareSocialsComponent } from '../sub-components/share-socials/share-socials.component';
 
 @Component({
   selector: 'app-home',
@@ -73,10 +72,16 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
   mflLoginMethod: string = 'mfl_username';
 
   /** ESPN login method */
-  espnLoginMethod: string = 'espn_league_id';
+  espnLoginMethod: string = 'espn_public_league';
 
   /** ESPN league id string */
   espnLeagueId: string = '';
+
+  /** ESPN_s2 Cookie for private leagues */
+  espns2Cookie: string = '';
+
+  /** SWID Cookie for private espn leagues */
+  espnSwidCookie: string = '';
 
   /** FFPC login method */
   ffpcLoginMethod: string = 'ffpc_email';
@@ -182,6 +187,8 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     this.fleaflickerEmail = localStorage.getItem(LocalStorageDictionary.FF_USERNAME_ITEM) || '';
     this.mflUsernameInput = localStorage.getItem(LocalStorageDictionary.MFL_USERNAME_ITEM) || '';
     this.ffpcEmail = localStorage.getItem(LocalStorageDictionary.FFPC_USERNAME_ITEM) || '';
+    this.espns2Cookie = localStorage.getItem(LocalStorageDictionary.ESPN_S2) || '';
+    this.espnSwidCookie = localStorage.getItem(LocalStorageDictionary.ESPN_SWID) || '';
   }
 
   ngAfterViewInit(): void {
@@ -204,8 +211,9 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
 
 
   /**
-   * Loads users for platform
-   * @param platform platform to load user for
+   * Loads user information for the specified platform.
+   *
+   * @param platform - The platform for which user information should be loaded.
    */
   fetchUserInfo(platform: LeaguePlatform): void {
     let username: string;
@@ -247,15 +255,25 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
       );
   }
 
-
-
   /**
-   * loads fleaflicker data for user
+   * Logs in with ESPN League ID, loads league data, and triggers the league switch.
+   *
+   * @param year - The year of the ESPN League (optional, uses the selected year if not provided).
+   * @param leagueId - The ESPN League ID (optional, uses the stored ESPN League ID if not provided).
+   * @param espns2Cookie - The ESPN S2 cookie for authentication (optional).
+   * @param espnSwidCookie - The ESPN SWID cookie for authentication.
    */
-  loginWithESPNLeagueId(year?: string, leagueId?: string): void {
+  loginWithESPNLeagueId(year?: string, leagueId?: string, espns2Cookie?: string, espnSwidCookie?: string): void {
     this.clubAddedAlready = false;
     this.errorMsg = '';
-    this.espnService.loadLeagueFromId$(year || this.selectedYear, leagueId || this.espnLeagueId)
+    localStorage.setItem(LocalStorageDictionary.ESPN_S2, this.espns2Cookie);
+    localStorage.setItem(LocalStorageDictionary.ESPN_SWID, this.espnSwidCookie);
+    this.espnService.loadLeagueFromId$(
+      year || this.selectedYear,
+      leagueId || this.espnLeagueId,
+      espns2Cookie || this.espns2Cookie,
+      espnSwidCookie || this.espnSwidCookie
+    )
       .pipe(
         catchError((error) => {
           if (error.status === 401) {
