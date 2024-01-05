@@ -15,7 +15,7 @@ import { TradeService } from './trade.service';
 import { TradeFinderService } from './trade-finder.service';
 import { MflService } from '../../services/api/mfl/mfl.service';
 import { LeaguePlatform } from '../../model/league/FantasyPlatformDTO';
-import { LeagueDTO, LeagueType } from '../../model/league/LeagueDTO';
+import { LeagueDTO } from '../../model/league/LeagueDTO';
 import { PlayerValueService } from './player-value.service';
 import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker.service';
 import { ESPNService } from 'src/app/services/api/espn/espn.service';

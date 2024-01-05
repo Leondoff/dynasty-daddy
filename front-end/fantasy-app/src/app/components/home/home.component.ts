@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy  } from '@angular/core';
 import { BaseComponent } from '../base-component.abstract';
 import { SleeperApiService } from '../../services/api/sleeper/sleeper-api.service';
 import { LeagueService } from '../../services/league.service';
@@ -24,6 +24,7 @@ import { LeagueDTO } from 'src/app/model/league/LeagueDTO';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent extends BaseComponent implements OnInit, AfterViewInit {
 
@@ -109,6 +110,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     private ffpcService: FFPCService,
     private dialog: MatDialog,
     private pageService: PageService,
+    private cdr: ChangeDetectorRef,
     private fleaflickerService: FleaflickerService,
     public leagueSwitchService: LeagueSwitchService) {
     super();
@@ -189,6 +191,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
     this.ffpcEmail = localStorage.getItem(LocalStorageDictionary.FFPC_USERNAME_ITEM) || '';
     this.espns2Cookie = localStorage.getItem(LocalStorageDictionary.ESPN_S2) || '';
     this.espnSwidCookie = localStorage.getItem(LocalStorageDictionary.ESPN_SWID) || '';
+    this.cdr.markForCheck();
   }
 
   ngAfterViewInit(): void {
@@ -248,6 +251,7 @@ export class HomeComponent extends BaseComponent implements OnInit, AfterViewIni
         _ => {
           this.leagueService.selectedYear = this.selectedYear;
           this.leagueService.resetLeague();
+          this.cdr.markForCheck();
         },
         error => {
           console.error('Error:', error);
