@@ -24,16 +24,24 @@ export class ESPNService {
   /** player id map for players found in apis */
   playerIdMap = {}
 
+  /** cache these two values to load transactions */
+  espnS2: string = '';
+  swid: string = '';
+
   constructor(private espnApiService: ESPNApiService) {
   }
 
   /**
-   * returns Load league observable from flea flicker league id and year
-   * @param year string
-   * @param leagueId string
+   * returns Load league observable from ESPN league id and year
+   * @param year season to load
+   * @param leagueId id to load from espn
+   * @param espn_s2 espn auth cookie
+   * @param swid espn auth cookie
    */
-  loadLeagueFromId$(year: string, leagueId: string): Observable<LeagueDTO> {
-    return this.espnApiService.getESPNLeague(year, leagueId).pipe(map((leagueInfo) => {
+  loadLeagueFromId$(year: string, leagueId: string, espn_s2: string = null, swid: string = null): Observable<LeagueDTO> {
+    this.espnS2 = espn_s2;
+    this.swid = swid;
+    return this.espnApiService.getESPNLeague(year, leagueId, espn_s2, swid).pipe(map((leagueInfo) => {
       return this.fromESPNLeague(leagueInfo);
     }));
   }
@@ -48,16 +56,21 @@ export class ESPNService {
     let leagueTransactions = {};
     for (let weekNum = leagueWrapper.selectedLeague.startWeek; weekNum < 19; weekNum++) {
       observe.push(
-        this.espnApiService.getTransactionsForWeek(leagueWrapper.selectedLeague.season, leagueWrapper.selectedLeague.leagueId, weekNum)
-          .pipe(
-            mergeMap((transactions) => {
-              leagueTransactions[weekNum] = transactions.map(t => new LeagueTeamTransactionDTO().fromESPN(t));
-              return of(transactions);
-            })
-          )
+        this.espnApiService.getTransactionsForWeek(
+          leagueWrapper.selectedLeague.season,
+          leagueWrapper.selectedLeague.leagueId,
+          weekNum,
+          this.espnS2,
+          this.swid
+        ).pipe(
+          mergeMap((transactions) => {
+            leagueTransactions[weekNum] = transactions.map(t => new LeagueTeamTransactionDTO().fromESPN(t));
+            return of(transactions);
+          })
+        )
       );
     }
-  
+
     return forkJoin(observe).pipe(
       mergeMap(() => {
         const teams = [];
@@ -65,7 +78,7 @@ export class ESPNService {
           const ownerDetails = leagueWrapper.selectedLeague.metadata.owners?.find(it => it.id === team.primaryOwner);
           const ownerDTO = new LeagueOwnerDTO(
             team.primaryOwner,
-            ownerDetails.firstName.slice(0, 1) + '. ' + ownerDetails.lastName,
+            ownerDetails?.firstName?.slice(0, 1) + '. ' + ownerDetails?.lastName,
             team.name,
             team.logo || PlatformLogos.ESPN_LOGO
           );
@@ -93,7 +106,7 @@ export class ESPNService {
         return of(leagueWrapper);
       })
     );
-  }  
+  }
 
   /**
    * helper function that will format json league response into League Data

@@ -581,8 +581,14 @@
           <mat-icon (click)="openSettingsDialog()" matTooltip="Edit League Settings" matTooltipPosition="above" class="edit-button">edit_outline</mat-icon>
         </span>
       </h3>
-    <div *ngIf="espnLoginMethod=== 'espn_league_id'">
-      <mat-form-field class="mat-dropdown-wide-200" color="accent">
+      <div>
+        <mat-radio-group [(ngModel)]="espnLoginMethod" class="mat-dropdown-wide-200">
+          <mat-radio-button value="espn_public_league" style="padding-right: 10px">Public</mat-radio-button>
+          <mat-radio-button value="espn_private_league">Private</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    <div>
+      <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
         <mat-label>ESPN League Id</mat-label>
         <input matInput type="text" [(ngModel)]="espnLeagueId">
         <button mat-button *ngIf="espnLeagueId" matSuffix mat-icon-button aria-label="Clear" (click)="espnLeagueId=''">
@@ -595,6 +601,24 @@
           <mat-select [(ngModel)]="selectedYear">
             <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
           </mat-select>
+        </mat-form-field>
+      </div>
+      <div *ngIf="espnLoginMethod=== 'espn_private_league'">
+        <tool-help [toolName]="'these ESPN values'"></tool-help>
+        <mat-form-field class="mat-dropdown-wide-200 margin-top-25" color="accent">
+          <mat-label>ESPN_s2 Cookie</mat-label>
+          <input matInput type="text" [(ngModel)]="espns2Cookie">
+          <button mat-button *ngIf="espns2Cookie" matSuffix mat-icon-button aria-label="Clear" (click)="espns2Cookie=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+        <br>
+        <mat-form-field class="mat-dropdown-wide-200" color="accent">
+          <mat-label>SWID Cookie</mat-label>
+          <input matInput type="text" [(ngModel)]="espnSwidCookie">
+          <button mat-button *ngIf="espnSwidCookie" matSuffix mat-icon-button aria-label="Clear" (click)="espnSwidCookie=''">
+            <mat-icon>close</mat-icon>
+          </button>
         </mat-form-field>
       </div>
       <div *ngIf="errorMsg != ''" class="warning__alert margin-bot-10">

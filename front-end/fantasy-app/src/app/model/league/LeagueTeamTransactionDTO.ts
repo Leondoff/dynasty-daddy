@@ -43,7 +43,10 @@ export class LeagueTeamTransactionDTO {
           this.drops[p.playerId] = transaction?.teamId
       })
     } else {
-      console.log(transaction);
+      this.rosterIds = [...new Set(transaction.items.map(obj => obj.toTeamId))] as number[];
+      transaction.items.forEach(p => {
+        this.adds[p.playerId] = transaction?.toTeamId;        
+      })
     }
     return this;
   }
@@ -61,7 +64,7 @@ export class LeagueTeamTransactionDTO {
 
   getTypeFromString(type: string): string {
     switch(type) {
-      case 'TRADE':
+      case 'TRADE_ACCEPT':
         return 'trade';
       case 'FREEAGENT':
         return 'free_agent';

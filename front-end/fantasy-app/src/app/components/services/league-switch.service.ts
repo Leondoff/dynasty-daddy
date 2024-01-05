@@ -21,6 +21,7 @@ import { FleaflickerService } from 'src/app/services/api/fleaflicker/fleaflicker
 import { ESPNService } from 'src/app/services/api/espn/espn.service';
 import { FFPCService } from 'src/app/services/api/ffpc/ffpc.service';
 import { switchMap } from 'rxjs/operators';
+import { LocalStorageDictionary } from 'src/app/services/init/config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -165,7 +166,10 @@ export class LeagueSwitchService extends BaseComponent {
       case LeaguePlatform.FLEAFLICKER.valueOf():
         return this.fleaflickerService.loadLeagueFromId$(year, leagueId);
       case LeaguePlatform.ESPN.valueOf():
-        return this.espnService.loadLeagueFromId$(year, leagueId);
+        return this.espnService.loadLeagueFromId$(year, leagueId,
+          localStorage.getItem(LocalStorageDictionary.ESPN_S2),
+          localStorage.getItem(LocalStorageDictionary.ESPN_SWID)
+        );
       case LeaguePlatform.FFPC.valueOf():
         return this.ffpcService.loadLeagueFromId$(year, leagueId);
       default:

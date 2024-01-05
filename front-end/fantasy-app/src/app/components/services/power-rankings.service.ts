@@ -148,6 +148,7 @@ export class PowerRankingsService {
         let sfTradeValueTotal = 0;
         let tradeValueTotal = 0;
         // TODO refactor this section both comparisons are redundant
+        console.log(team);
         for (const playerPlatformId of team?.roster?.players) {
           for (const player of players) {
             if (playerPlatformId === this.playerService.getPlayerPlatformId(player, leaguePlatform)) {
