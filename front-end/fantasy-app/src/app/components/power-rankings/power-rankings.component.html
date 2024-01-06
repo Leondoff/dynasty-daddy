@@ -52,10 +52,10 @@
   </div>  
 </div>
 
-<div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">
+<div class="center-spinner margin-top-120" *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING'">
   <mat-spinner></mat-spinner>
 </div>
 
-<app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="leagueService.leagueStatus === 'NONE' || !leagueService.selectedLeague"></app-login-error>
+<app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="(leagueService.leagueStatus$ | async) === 'NONE' || !leagueService.selectedLeague"></app-login-error>
 
 <app-login-error [errorHeader]="creatingPRErrMsg" *ngIf="leagueService.isLeagueLoaded() && powerRankingService.powerRankings.length === 0"></app-login-error>

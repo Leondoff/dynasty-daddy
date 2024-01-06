@@ -32,7 +32,7 @@
         <div *ngIf="leagueService.isLeagueLoaded() && !selectedPlayer.owner">
           <span class="small-text__light light_bg_color">Free Agent</span>
         </div>
-        <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent" style="max-width: 200px"></mat-progress-bar>
+        <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING'" mode="indeterminate" color="accent" style="max-width: 200px"></mat-progress-bar>
       </div>
       <br>
       <div class="standings-row">

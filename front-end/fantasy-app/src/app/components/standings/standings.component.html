@@ -165,10 +165,10 @@
   </mat-tab-group>
 </div>
 
-<div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">
+<div class="center-spinner margin-top-120" *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING'">
   <mat-spinner></mat-spinner>
 </div>
 
-<app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="leagueService.leagueStatus === 'NONE' || !leagueService.selectedLeague"></app-login-error>
+<app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="(leagueService.leagueStatus$ | async) === 'NONE' || !leagueService.selectedLeague"></app-login-error>
 
-<app-login-error [errorHeader]="leagueNotStartedErrMsg" *ngIf="(leagueService.selectedLeague?.status === 'pre_draft' || leagueService.selectedLeague?.status === 'drafting') && !leagueService.isLeagueLoaded() && leagueService.leagueStatus !== 'LOADING'"></app-login-error>
+<app-login-error [errorHeader]="leagueNotStartedErrMsg" *ngIf="(leagueService.selectedLeague?.status === 'pre_draft' || leagueService.selectedLeague?.status === 'drafting') && !leagueService.isLeagueLoaded() && (leagueService.leagueStatus$ | async) !== 'LOADING'"></app-login-error>

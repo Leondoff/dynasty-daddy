@@ -105,7 +105,7 @@
           </div>
         </ng-container>
       </div>
-      <div *ngIf="leagueService.leagueStatus === 'LOADING'" class="center-spinner margin-top-25">
+      <div *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING'" class="center-spinner margin-top-25">
         <mat-spinner [diameter]="50"></mat-spinner>
       </div>
       <div *ngIf="leagueService.isLeagueLoaded()">
