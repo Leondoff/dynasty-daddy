@@ -42,7 +42,7 @@ export class ESPNService {
     this.espnS2 = espn_s2;
     this.swid = swid;
     return this.espnApiService.getESPNLeague(year, leagueId, espn_s2, swid).pipe(map((leagueInfo) => {
-      return this.fromESPNLeague(leagueInfo);
+      return this.fromESPNLeague(leagueInfo, espn_s2, swid);
     }));
   }
 
@@ -102,18 +102,24 @@ export class ESPNService {
         leagueWrapper.completedDrafts = leagueWrapper.selectedLeague.metadata.draft
           ? [this.marshallDraftResults(leagueWrapper.selectedLeague.metadata.draft, leagueWrapper.selectedLeague.leagueId, leagueWrapper.selectedLeague.draftRounds)]
           : [];
-        leagueWrapper.selectedLeague.metadata = {};
+        leagueWrapper.selectedLeague.metadata = {
+          espn_s2: leagueWrapper.selectedLeague.metadata['espn_s2'],
+          swid: leagueWrapper.selectedLeague.metadata['swid']
+        };
         return of(leagueWrapper);
       })
     );
   }
 
   /**
-   * helper function that will format json league response into League Data
-   * @param leagueInfo league info json blob
-   * @param year season
+   * Converts a JSON representation of an ESPN league into a LeagueDTO.
+   *
+   * @param leagueInfo - JSON blob containing information about the ESPN league.
+   * @param espnS2 - String for accessing private leagues (optional).
+   * @param swid - String for accessing private leagues (optional).
+   * @returns A LeagueDTO representing the converted league information.
    */
-  private fromESPNLeague(leagueInfo: any): LeagueDTO {
+  private fromESPNLeague(leagueInfo: any, espnS2?: string, swid?: string): LeagueDTO {
     const divisions: string[] = [...new Set<string>(leagueInfo?.settings?.scheduleSettings?.divisions?.map(division => division?.name))] || [];
     const roster = this.generateRosterPositions(leagueInfo.settings.rosterSettings.lineupSlotCounts)
     const ffLeague = new LeagueDTO().fromESPN(
@@ -126,7 +132,9 @@ export class ESPNService {
       leagueInfo.seasonId === new Date().getFullYear() ? 'in_progress' : 'completed',
       leagueInfo.seasonId.toString(),
       roster.length + (leagueInfo?.settings?.rosterSettings?.lineupSlotCounts["23"] || 2 * roster.length),
-      leagueInfo);
+      leagueInfo,
+      espnS2,
+      swid);
     ffLeague.setDivisions(divisions);
     ffLeague.scoringSettings = new LeagueScoringDTO().fromESPN(leagueInfo?.settings?.scoringSettings)
     return ffLeague;
@@ -134,7 +142,7 @@ export class ESPNService {
 
   /**
    * Map roster slots to offensive starters
-   * https://support.espn.com/hc/en-us/articles/115003939432-Roster-Slots-Offense-
+   * https://github.com/cwendt94/espn-api/blob/master/espn_api/football/constant.py
    * @param league 
    * @param settings 
    * @param rosterSetting 
@@ -156,33 +164,6 @@ export class ESPNService {
     rosterList = rosterList.concat(...new Array(rosterSettings["15"]).fill('IDP_FLEX'))
     return rosterList;
   }
-
-  // 0:  "QB",
-  // 1:  "TQB",
-  // 2:  "RB",
-  // 3:  "RB/WR",
-  // 4:  "WR",
-  // 5:  "WR/TE",
-  // 6:  "TE",
-  // 7:  "OP",
-  // 8:  "DT",
-  // 9:  "DE",
-  // 10: "LB",
-  // 11: "DL",
-  // 12: "CB",
-  // 13: "S",
-  // 14: "DB",
-  // 15: "DP",
-  // 16: "D/ST",
-  // 17: "K",
-  // 18: "P",
-  // 19: "HC",
-  // 20: "BE",
-  // 21: "IR",
-  // 22: "",
-  // 23: "RB/WR/TE",
-  // 24: "ER",
-  // 25: "Rookie",
 
   /**
    * Maps response schedule into dynasty daddy formatted schedule

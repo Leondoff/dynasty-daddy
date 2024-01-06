@@ -135,13 +135,15 @@ export class LeagueSwitchService extends BaseComponent {
   }
 
   /**
-   * load league with league id
-   * @param leagueId string
-   * @param year season year (needed for MFL)
-   * @param leaguePlatform fantasy platform league id is for. Default: Sleeper
+   * Loads league data using the specified league ID.
+   *
+   * @param leagueId - League ID string.
+   * @param year - Season year (needed for certain platforms, e.g., MFL).
+   * @param leaguePlatform - Fantasy platform for which the league ID is intended. Default: Sleeper.
+   * @param metadata - Additional JSON metadata for logging in (optional).
    */
-  loadLeagueWithLeagueId(leagueId: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER): void {
-    this.addSubscriptions(this.getLeagueObservable(leagueId, year, leaguePlatform).subscribe(leagueData => {
+  loadLeagueWithLeagueId(leagueId: string, year: string, leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER, metadata?: {}): void {
+    this.addSubscriptions(this.getLeagueObservable(leagueId, year, leaguePlatform, metadata).subscribe(leagueData => {
       this.selectedLeague = leagueData;
       this.loadLeague(this.selectedLeague);
     })
@@ -149,16 +151,20 @@ export class LeagueSwitchService extends BaseComponent {
   }
 
   /**
-   * returns the load league observable based on platform
-   * @param leagueId league id string
-   * @param year season
-   * @param leaguePlatform enum league platform, defaults: Sleeper
+   * Returns an observable that loads league data based on the specified platform.
+   *
+   * @param leagueId - League ID string.
+   * @param year - Season year.
+   * @param leaguePlatform - Enum representing the league platform. Defaults to Sleeper.
+   * @param metadata - Additional metadata for the league (optional).
+   * @returns Observable emitting the loaded league data.
    * @private
    */
   getLeagueObservable(
     leagueId: string,
     year: string,
-    leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER
+    leaguePlatform: LeaguePlatform = LeaguePlatform.SLEEPER,
+    metadata?: {}
   ): Observable<LeagueDTO> {
     switch (Number(leaguePlatform)) {
       case LeaguePlatform.MFL.valueOf():
@@ -167,8 +173,8 @@ export class LeagueSwitchService extends BaseComponent {
         return this.fleaflickerService.loadLeagueFromId$(year, leagueId);
       case LeaguePlatform.ESPN.valueOf():
         return this.espnService.loadLeagueFromId$(year, leagueId,
-          localStorage.getItem(LocalStorageDictionary.ESPN_S2),
-          localStorage.getItem(LocalStorageDictionary.ESPN_SWID)
+          metadata?.['espn_s2'] || localStorage.getItem(LocalStorageDictionary.ESPN_S2),
+          metadata?.['swid'] || localStorage.getItem(LocalStorageDictionary.ESPN_SWID)
         );
       case LeaguePlatform.FFPC.valueOf():
         return this.ffpcService.loadLeagueFromId$(year, leagueId);
