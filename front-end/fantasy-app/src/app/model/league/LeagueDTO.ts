@@ -177,7 +177,9 @@ export class LeagueDTO {
     status: string,
     season: string,
     rosterSize: number,
-    leagueInfo: any): LeagueDTO {
+    leagueInfo: any,
+    espnS2?: string,
+    swid?: string): LeagueDTO {
     this.isSuperflex = isSuperflex;
     this.name = name;
     this.leagueId = league_id;
@@ -199,9 +201,12 @@ export class LeagueDTO {
       rosters: leagueInfo.teams,
       schedule: leagueInfo.schedule,
       owners: leagueInfo.members,
-      draft: leagueInfo.draftDetail
+      draft: leagueInfo.draftDetail,
+      espn_s2: espnS2,
+      swid: swid
     };
     this.leaguePlatform = LeaguePlatform.ESPN;
+    console.log(this);
     return this;
   }
 
@@ -245,6 +250,9 @@ export class LeagueDTO {
     this.type = league.type;
     this.totalRosters = league.teams;
     this.starters = league.starters;
+    if (league.metadata) {
+      this.metadata = league.metadata;
+    }
     return this;
   }
 
@@ -259,7 +267,8 @@ export class LeagueDTO {
       platform: this.leaguePlatform,
       type: this.type,
       teams: this.totalRosters,
-      starters: this.starters
+      starters: this.starters,
+      metadata: this.metadata
     }
   }
 

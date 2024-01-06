@@ -58,7 +58,7 @@ export class LeagueDropdownComponent implements OnInit, OnChanges {
 
     loadLeagueFromHeader(leagueId: string): void {
         const league = this.leagueService.leagueUser.leagues.find(l => l.leagueId == leagueId);
-        this.leagueSwitchService.loadLeagueWithLeagueId(league.leagueId, league.season || this.leagueService.selectedYear, league.leaguePlatform);
+        this.leagueSwitchService.loadLeagueWithLeagueId(league.leagueId, league.season || this.leagueService.selectedYear, league.leaguePlatform, league.metadata);
     }
 
 }
