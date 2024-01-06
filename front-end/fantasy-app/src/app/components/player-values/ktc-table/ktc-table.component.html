@@ -95,7 +95,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>Owner</mat-header-cell>
       <mat-cell *matCellDef="let element" style="text-overflow-ellipsis: true">
         <div *ngIf="leagueService.isLeagueLoaded()">{{element.owner?.ownerName || '-'}}</div>
-        <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING'" mode="indeterminate" color="accent"
+        <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING'" mode="indeterminate" color="accent"
           style="max-width: 200px"></mat-progress-bar>
       </mat-cell>
     </ng-container>

@@ -65,7 +65,7 @@ export class LeagueSwitchService extends BaseComponent {
    * @param value league data
    */
   loadLeague(value: LeagueDTO): void {
-    this.leagueService.leagueStatus = 'LOADING';
+    this.leagueService.updateLeagueStatus('LOADING');
     this.selectedLeague = value;
     this.leagueService.resetLeague();
     this.powerRankingService.reset();
@@ -102,7 +102,7 @@ export class LeagueSwitchService extends BaseComponent {
             this.playoffCalculatorService.generateDivisions(this.selectedLeague, this.leagueService.leagueTeamDetails)]).subscribe(() => {
               this.leagueService.selectedLeague = this.selectedLeague;
               this.playerValueService.isSuperFlex = this.selectedLeague.isSuperflex;
-              this.leagueService.leagueStatus = 'DONE';
+              this.leagueService.updateLeagueStatus('DONE');
               this.tradeFinderService.selectedTeamUserId = this.leagueService.leagueUser?.userData?.user_id
                 || this.leagueService.leagueTeamDetails[0]?.owner?.userId;
               console.timeEnd('Fetch League Data');
@@ -203,7 +203,7 @@ export class LeagueSwitchService extends BaseComponent {
       );
     }
     if (!league && !this.selectedLeague) {
-      this.leagueService.leagueStatus = 'NONE';
+      this.leagueService.updateLeagueStatus('NONE');
     }
   }
 

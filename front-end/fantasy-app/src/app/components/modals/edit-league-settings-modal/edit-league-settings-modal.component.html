@@ -44,7 +44,7 @@
   </mat-form-field>
 </div>
 
-<div *ngIf="leagueService.leagueStatus !== 'LOADING'">
+<div *ngIf="(leagueService.leagueStatus$ | async) !== 'LOADING'">
 <div class="margin-top-25 mat-form-field-center">
   <button mat-raised-button color="accent" (click)="reloadLeague()">Reload League</button>
 </div>
@@ -52,6 +52,6 @@
   <mat-icon class="generic-icon">warning</mat-icon> This will override the league settings until refresh
 </div>
 </div>
-<div *ngIf="leagueService.leagueStatus === 'LOADING'" class="center-spinner margin-top-25">
+<div *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING'" class="center-spinner margin-top-25">
   <mat-spinner [diameter]="50"></mat-spinner>
 </div>

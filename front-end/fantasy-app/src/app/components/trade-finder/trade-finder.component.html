@@ -72,8 +72,8 @@
   </div>
 </div>
 
-<div class="center-spinner margin-top-120" *ngIf="leagueService.leagueStatus === 'LOADING'">
+<div class="center-spinner margin-top-120" *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING'">
   <mat-spinner></mat-spinner>
 </div>
 
-<app-login-error [errorHeader]="errorHeaderMsg" *ngIf="!leagueService.isLeagueLoaded() && leagueService.leagueStatus !== 'LOADING'"></app-login-error>
+<app-login-error [errorHeader]="errorHeaderMsg" *ngIf="!leagueService.isLeagueLoaded() && (leagueService.leagueStatus$ | async) !== 'LOADING'"></app-login-error>

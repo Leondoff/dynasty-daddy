@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SleeperApiService } from './api/sleeper/sleeper-api.service';
-import { Observable, merge, of } from 'rxjs';
-import { map, delay, catchError, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { LeagueWrapper } from '../model/league/LeagueWrapper';
 import { SleeperService } from './api/sleeper/sleeper.service';
 import { MflService } from './api/mfl/mfl.service';
@@ -38,8 +38,9 @@ export class LeagueService {
   /** selected year */
   selectedYear: string;
 
-  /** is league loaded */
-  leagueStatus: string = 'NONE';
+  /** league status subject */
+  private leagueStatusSubject = new BehaviorSubject<string>('NONE');
+  leagueStatus$ = this.leagueStatusSubject.asObservable();
 
   /** selected league team data */
   leagueTeamDetails: LeagueTeam[] = [];
@@ -75,7 +76,15 @@ export class LeagueService {
    * returns true if league is loaded
    */
   isLeagueLoaded = () =>
-    this.leagueStatus === 'DONE' && this.selectedLeague;
+    this.leagueStatusSubject.value === 'DONE' && this.selectedLeague;
+
+  /**
+   * Update league status event
+   * @param newStatus status to set
+   */
+  updateLeagueStatus(newStatus: string): void {
+    this.leagueStatusSubject.next(newStatus);
+  }
 
   /**
    * loads team data, roster, and draft picks by league
@@ -83,7 +92,7 @@ export class LeagueService {
    */
   loadNewLeague$(selectedLeague: LeagueDTO): Observable<any> {
     this.selectedLeague = selectedLeague;
-    this.leagueStatus = 'LOADING';
+    this.leagueStatusSubject.next('LOADING');
     switch (this.selectedLeague.leaguePlatform) {
       case LeaguePlatform.MFL:
         return this.mflService.loadLeague$(new LeagueWrapper(this.selectedLeague))?.pipe(map((league) => {

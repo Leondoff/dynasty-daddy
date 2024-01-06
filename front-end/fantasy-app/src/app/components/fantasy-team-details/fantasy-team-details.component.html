@@ -87,47 +87,47 @@
               <div class="insight__row">
                 <div class="text__light">Games Played</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['games_played']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
               <div class="insight__row">
                 <div class="text__light">Points For</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['points_for']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
               <div class="insight__row">
                 <div class="text__light">Highest Score</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['high']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
               <div class="insight__row">
                 <div class="text__light">Lowest Score</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['low']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
               <div class="insight__row">
                 <div class="text__light">Average Points Per Week</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['avg_points']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
               <div class="insight__row">
                 <div class="text__light">Variance</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['variance']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
               <div class="insight__row">
                 <div class="text__light">Standard Deviation</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['std']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
               <div class="insight__row">
                 <div class="text__light">Potential Points For</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['points_pot']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
               <div class="insight__row">
                 <div class="text__light">Points Against</div>
                 <div class="mid-bold-text" *ngIf="seasonInsights !== null">{{seasonInsights['points_against']}}</div>
-                <mat-progress-bar *ngIf="leagueService.leagueStatus === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
+                <mat-progress-bar *ngIf="(leagueService.leagueStatus$ | async) === 'LOADING' || seasonInsights == null" mode="indeterminate" color="accent" style="max-width: 100px"></mat-progress-bar>
               </div>
             </mat-card>
           </div>
