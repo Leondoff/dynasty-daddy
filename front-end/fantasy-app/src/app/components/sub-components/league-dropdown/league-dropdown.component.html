@@ -9,7 +9,7 @@
   <mat-option *ngFor="let league of filteredLeagues;"
     [value]="league.leagueId" class="multiline-mat-option">
   <div>
-    {{league.name|truncate:25}}
+    {{league.name|truncate:25:'mid'}}
   </div>
   <div class="small-text__light">{{displayService.leagueTypes[league.type]}} • {{league.totalRosters}}{{league.totalRosters ? ' Team • ' : ''}}{{league.season}} • {{displayService.getDisplayNameForPlatform(league.leaguePlatform)}}</div>
   </mat-option>

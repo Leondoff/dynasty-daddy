@@ -44,9 +44,13 @@ def FormatPickFromSleeper(pick):
 
 def ScrapeTrades(leagueType, isAllTime=False):
     state_of_nfl = requests.get('https://api.sleeper.app/v1/state/nfl').json()
-    season = state_of_nfl.get("season")
-    week = state_of_nfl.get("week") if state_of_nfl.get("season_type") != 'pre' else 1
-
+    if state_of_nfl.get("season_type") >= 'post':
+        season = str(int(state_of_nfl.get("season")) + 1)
+        week = 1
+    else:
+        season = state_of_nfl.get("season")
+        week = state_of_nfl.get("week") if state_of_nfl.get("season_type") != 'pre' else 1
+        
     conn = getDBConnection()
     cursor = conn.cursor()
     query = """
