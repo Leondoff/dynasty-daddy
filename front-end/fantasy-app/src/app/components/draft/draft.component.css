@@ -1,3 +1,7 @@
 .mock-draft-mobile {
     overflow-x: auto;
 }
+
+.mock-draft-container {
+    max-width: 2000px !important;;
+}

@@ -35,6 +35,7 @@ import { MatCarouselModule } from "@thouet/material-carousel";
 import { QueryBuilderModule } from "angular2-query-builder";
 import { ChartsModule } from "ng2-charts";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { DraftToolbarComponent } from "src/app/components/draft/draft-toolbar/draft-toolbar.component";
 import { CreatePresetModalComponent } from "src/app/components/modals/create-preset-modal/create-preset-modal.component";
 import { AffiliateBannerComponent } from "src/app/components/sub-components/affiliate-banner/affiliate-banner.component";
 import { DataSourcesButtonComponent } from "src/app/components/sub-components/data-sources-button/data-sources-button.component";
@@ -103,6 +104,7 @@ const DECLARATIONS = [
   LeagueDropdownComponent,
   AccentNumberPipe,
   ShareSocialsComponent,
+  DraftToolbarComponent,
 ]
 
 @NgModule({

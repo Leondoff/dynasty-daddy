@@ -9,7 +9,7 @@ import { LeagueOwnerDTO } from 'src/app/model/league/LeagueOwnerDTO';
 import { LeagueRosterDTO } from 'src/app/model/league/LeagueRosterDTO';
 import { TeamMetrics } from 'src/app/model/league/TeamMetrics';
 import { LeagueTeamMatchUpDTO } from 'src/app/model/league/LeagueTeamMatchUpDTO';
-import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
+import { LeaguePickDTO } from 'src/app/model/league/LeaguePickDTO';
 import { CompletedDraft } from 'src/app/model/league/CompletedDraft';
 import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 import { PlatformLogos } from '../../utilities/display.service';
@@ -75,10 +75,9 @@ export class ESPNService {
       mergeMap(() => {
         const teams = [];
         leagueWrapper.selectedLeague.metadata.rosters?.forEach((team, ind) => {
-          const ownerDetails = leagueWrapper.selectedLeague.metadata.owners?.find(it => it.id === team.primaryOwner);
           const ownerDTO = new LeagueOwnerDTO(
             team.primaryOwner,
-            ownerDetails?.firstName?.slice(0, 1) + '. ' + ownerDetails?.lastName,
+            team.name,
             team.name,
             team.logo || PlatformLogos.ESPN_LOGO
           );
@@ -99,9 +98,14 @@ export class ESPNService {
           leagueWrapper.selectedLeague.metadata.schedule,
           leagueWrapper.selectedLeague.playoffStartWeek
         );
-        leagueWrapper.completedDrafts = leagueWrapper.selectedLeague.metadata.draft
-          ? [this.marshallDraftResults(leagueWrapper.selectedLeague.metadata.draft, leagueWrapper.selectedLeague.leagueId, leagueWrapper.selectedLeague.draftRounds)]
-          : [];
+        if (leagueWrapper.selectedLeague.metadata.draft) {
+          const draft = this.marshallDraftResults(leagueWrapper.selectedLeague.metadata.draft,
+            leagueWrapper.selectedLeague.leagueId,
+            leagueWrapper.selectedLeague.draftRounds,
+            leagueWrapper.selectedLeague.totalRosters
+          )
+          draft?.draft?.status === 'completed' ? leagueWrapper.completedDrafts = [draft] : leagueWrapper.upcomingDrafts = [draft];
+        }
         leagueWrapper.selectedLeague.metadata = {
           espn_s2: leagueWrapper.selectedLeague.metadata['espn_s2'],
           swid: leagueWrapper.selectedLeague.metadata['swid']
@@ -193,15 +197,20 @@ export class ESPNService {
    * @param draft json response
    * @param leagueId league id
    * @param rounds number of rounds
-   * @returns 
+   * @param teamCount number of teams
    */
-  private marshallDraftResults(draft: any, leagueId: string, rounds: number): CompletedDraft {
+  private marshallDraftResults(draft: any, leagueId: string, rounds: number, teamCount: number): CompletedDraft {
     const draftId = Math.round(Math.random() * 100);
+    const slotOrder = {};
+    draft.picks.slice(0, teamCount).forEach((pick, ind) => {
+      slotOrder[ind + 1] = pick.teamId;
+    })
     const picks = draft?.picks?.map(pick => {
-      return (new LeagueCompletedPickDTO().fromESPN(pick));
+      const originalOwnerId = slotOrder[pick.roundId % 2 === 0 ? teamCount - pick.roundPickNumber + 1 : pick.roundPickNumber]
+      return (new LeaguePickDTO().fromESPN(pick, teamCount, originalOwnerId));
     });
     return new CompletedDraft(
-      new LeagueRawDraftOrderDTO().fromESPN(draft, rounds, draftId.toString(), leagueId, 'completed'),
+      new LeagueRawDraftOrderDTO().fromESPN(draft, rounds, draftId.toString(), leagueId, slotOrder),
       picks
     );
   }

@@ -1,5 +1,5 @@
 <div fxLayout="row wrap" fxLayoutAlign="center">
-  <div fxFlex="80%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" style="display: block">
+  <div fxFlex="80%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" style="display: block" *ngIf="!configService.isMobile">
     <div style="display: block; height: 400px" class="margin-top-25 margin-bot-10">
       <canvas baseChart [labels]="radarChartLabels" [datasets]="radarDataSet" [options]="radarChartOptions"
         [legend]="false" [chartType]="radarChartType">

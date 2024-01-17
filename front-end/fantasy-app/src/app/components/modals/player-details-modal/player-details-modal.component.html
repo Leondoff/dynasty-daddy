@@ -1,0 +1,74 @@
+<div class="center-text margin-top-10"
+  [ngClass]="{'large-bold-header-text': !configService.isMobile, 'mid-bold-text': configService.isMobile}">
+  {{selectedPlayer.full_name}}
+  <span class="button-right">
+    <button mat-icon-button class="button-right" (click)="closeModal()"><mat-icon>close</mat-icon></button>
+  </span>
+</div>
+<div class="player-modal">
+    <mat-tab-group mat-align-tabs="center" class="player-modal-container margin-bot-25">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="margin-right-5">multiline_chart</mat-icon>
+                {{configService.isMobile ? '' : 'Outlook'}}
+            </ng-template>
+            <div class="mid-bold-text margin-top-10 center-text">Past 18 Week Summary</div>
+            <div class="margin-top-10 center-text">Below is the past 18 weeks of points and projections based on
+                Sleeper's <span class="info__alert">{{leagueService.getScoringFormatDisplay()}}</span> scoring.
+            </div>
+            <app-player-details-weekly-stats-line-chart [selectedPlayerInsights]="selectedPlayerInsights"
+                [selectedPlayer]="selectedPlayer" [selectedMarket]="playerService.selectedMarket"
+                [playerProfile]="playerProfile"></app-player-details-weekly-stats-line-chart>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="margin-right-5">data_thresholding</mat-icon>
+                {{configService.isMobile ? '' : 'Insights'}}
+            </ng-template>
+            <div class="mid-bold-text margin-top-10 center-text">Player Insights</div>
+            <div class="margin-top-10 center-text">A collection of metrics and insights on {{selectedPlayer.full_name}}.
+            </div>
+            <div [ngClass]="{'right-align-text': !configService.isMobile, 'center-text': configService.isMobile}">
+                <mat-slide-toggle color="accent" style="padding-right: 15px"
+                    *ngIf="!configService.isMobile && !leagueService.selectedLeague"
+                    [(ngModel)]="isSuperflex">SuperFlex</mat-slide-toggle>
+                <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket"
+                    (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
+            </div>
+            <app-player-details-insights [selectedPlayer]="selectedPlayer" [selectedPlayerValues]="historicalTradeValue"
+                [selectedMarket]="playerService.selectedMarket"
+                [isSuperflex]="isSuperflex"></app-player-details-insights>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="margin-right-5">compare_arrows</mat-icon>
+                {{configService.isMobile ? '' : 'Trades'}}
+            </ng-template>
+            <div class="mid-bold-text margin-top-10 center-text">Player Trade Market</div>
+            <div class="margin-top-10 center-text">Trade value and recent trades including {{selectedPlayer.full_name}}.
+            </div>
+            <player-trade-market [tradeData]="tradeData"></player-trade-market>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="margin-right-5">library_books</mat-icon>
+                {{configService.isMobile ? '' : 'Gamelogs'}}
+            </ng-template>
+            <app-player-details-weekly-box-scores-table
+                [selectedPlayer]="selectedPlayer"></app-player-details-weekly-box-scores-table>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="margin-right-5">badge</mat-icon>
+                {{configService.isMobile ? '' : 'Profile'}}
+            </ng-template>
+            <div class="mid-bold-text margin-top-10 center-text">Athletic Profile</div>
+            <div class="margin-top-10 center-text">Advanced athelic metrics for {{selectedPlayer.full_name}}'s draft
+                profile. Last updated on: <span class="info__alert">{{profileUpdatedDate}}</span>.</div>
+            <app-player-details-profile [selectedPlayer]="selectedPlayer" [playerProfile]="playerProfile"
+                *ngIf="isPlayerProfileLoaded()"></app-player-details-profile>
+            <div *ngIf="!isPlayerProfileLoaded()" class="warning__alert margin-top-50 center-text mid-bold-text">Unable
+                to find any player profile data.</div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

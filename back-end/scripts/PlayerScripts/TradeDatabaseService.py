@@ -44,6 +44,7 @@ def FormatPickFromSleeper(pick):
 
 def ScrapeTrades(leagueType, isAllTime=False):
     state_of_nfl = requests.get('https://api.sleeper.app/v1/state/nfl').json()
+
     if state_of_nfl.get("season_type") >= 'post':
         season = str(int(state_of_nfl.get("season")) + 1)
         week = 1

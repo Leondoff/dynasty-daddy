@@ -3,7 +3,7 @@ import { from, Observable, of, throwError } from 'rxjs';
 import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
 import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
 import { LeagueTeam } from '../../../model/league/LeagueTeam';
-import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
+import { LeaguePickDTO } from '../../../model/league/LeaguePickDTO';
 import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
 import { map, concatMap, catchError, delay, switchMap, toArray } from 'rxjs/operators';
 import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
@@ -106,7 +106,8 @@ export class FFPCService {
       switchMap(() => {
         leagueWrapper.selectedLeague.leagueMatchUps = leagueMatchUps;
         leagueWrapper.leaguePlatform = LeaguePlatform.FFPC;
-        leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
+        completedDraft?.draft?.status === 'completed' ?
+          leagueWrapper.completedDrafts = [completedDraft] : leagueWrapper.upcomingDrafts = [completedDraft];
         const teams = [];
         leagueRosters?.forEach(team => {
           const ownerDTO = new LeagueOwnerDTO(team.teamID, team.teamName.toString(), team.teamName.toString(), PlatformLogos.FFPC_LOGO);
@@ -269,12 +270,18 @@ export class FFPCService {
    * @param picks json array of picks in draft
    * @param teamCount number of teams
    * @param leagueId league id string
-   * @returns 
+   * @param leagueName ffpc league name 
    */
   private marshalCompletedDraft(picks: any[], teamCount: number, leagueId: string): {} {
     const draftId = Math.round(Math.random() * 100);
+    const slotOrder = {};
+    picks.slice(0, teamCount).forEach((pick, ind) => {
+      slotOrder[ind + 1] = Number(pick?._attributes?.teamID);
+    });
+    const isSnake = picks.length > 100;
     const formattedPicks = picks?.map(pick => {
-      return (new LeagueCompletedPickDTO().fromFFPC(pick));
+      const originalOwnerId = slotOrder[isSnake && Number(pick?._attributes?.round) % 2 === 0 ? teamCount - Number(pick?._attributes?.roundPick) + 1 : Number(pick?._attributes?.roundPick)]
+      return (new LeaguePickDTO().fromFFPC(pick, teamCount, originalOwnerId));
     });
     return new CompletedDraft(
       new LeagueRawDraftOrderDTO()
@@ -283,7 +290,8 @@ export class FFPCService {
           (picks?.length || teamCount * 4) / teamCount,
           draftId.toString(),
           leagueId,
-          picks && picks?.length > 0 ? 'completed' : 'in_progress'
+          picks && picks?.length > 0 ? 'completed' : 'in_progress',
+          slotOrder
         ),
       formattedPicks
     );

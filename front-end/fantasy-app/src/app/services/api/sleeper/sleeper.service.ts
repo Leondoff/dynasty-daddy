@@ -14,6 +14,7 @@ import { FantasyPlatformDTO, LeaguePlatform } from '../../../model/league/Fantas
 import { CompletedDraft } from '../../../model/league/CompletedDraft';
 import { DraftCapital } from '../../../model/assets/DraftCapital';
 import { Status } from 'src/app/components/model/status';
+import { DraftOrderType } from 'src/app/components/services/draft.service';
 
 @Injectable({
   providedIn: 'root'
@@ -233,10 +234,10 @@ export class SleeperService implements OnDestroy {
               const slot = draft.draftOrder[team.owner?.userId];
               for (let i = 0; i < draft.rounds; i++) {
                 let slotPick = slot;
-                if (draft.type === 'snake' && i + 1 % 2 === 0) {
+                if (draft.type !== DraftOrderType.Linear && i + 1 % 2 === 0) {
                   slotPick = league.selectedLeague.totalRosters - slot;
                 }
-                draftPicks.push(new DraftCapital(i + 1, Number(slot), draft.season));
+                draftPicks.push(new DraftCapital(i + 1, Number(slot), draft.season, team.roster.rosterId));
               }
               const rosterId = draft.slotToRosterId[slot];
               tradedPicks.reverse();
@@ -247,30 +248,23 @@ export class SleeperService implements OnDestroy {
                 } else if (tradedPick.ownerId === rosterId) {
                   let pickSlot = Number(Object.keys(draft.slotToRosterId).find(key => draft.slotToRosterId[key] ===
                     tradedPick.rosterId));
-                  if (draft.type === 'snake' && tradedPick.round % 2 === 0) {
+                  if (draft.type !== DraftOrderType.Linear && tradedPick.round % 2 === 0) {
                     pickSlot = league.selectedLeague.totalRosters - pickSlot;
                   }
                   if (!SleeperService.doesPickAlreadyExist(tradedPick, draftPicks, pickSlot)) {
-                    draftPicks.push(new DraftCapital(tradedPick.round, pickSlot, tradedPick.season));
+                    draftPicks.push(new DraftCapital(tradedPick.round, pickSlot, tradedPick.season, tradedPick.rosterId));
                   }
                 }
               });
               team.upcomingDraftOrder = draftPicks;
             });
-            league.upcomingDrafts.push(draft);
+            league.upcomingDrafts.push(new CompletedDraft(draft, []));
             return of(league);
           }));
       } else if (draft.status === 'complete' && draft.draftOrder) {
-        forkJoin([
-          this.sleeperApiService.getSleeperCompletedDraftsByDraftId(draft.draftId),
-          this.sleeperApiService.getSleeperTradedPicksByDraftId(draft.draftId)]
-        ).subscribe(([picks, tradedPicks]) => {
-          tradedPicks.reverse().map((tradedPick: LeagueRawTradePicksDTO) => {
-            picks.filter(pick => {
-              if (pick.round === tradedPick.round && tradedPick.previousOwnerId === pick.rosterId) {
-                pick.rosterId = tradedPick.previousOwnerId;
-              }
-            });
+        this.sleeperApiService.getSleeperCompletedDraftsByDraftId(draft.draftId, league?.selectedLeague?.totalRosters || 12).subscribe(picks => {
+          picks.forEach(pick => {
+            pick.originalRosterId = draft.slotToRosterId[pick.draftSlot];
           });
           if (league.completedDrafts.filter(d => d.draft.draftId === draft.draftId).length === 0) {
             league.completedDrafts.push(new CompletedDraft(draft, picks));

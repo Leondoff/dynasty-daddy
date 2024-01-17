@@ -1,0 +1,47 @@
+[
+    {
+        "title": "Overview",
+        "list": [
+            "Prepare for your fantasy season with the Dynasty Daddy Mock Draft Tool. The Fantasy Mock Draft Tool lets users generate quick mock drafts based on current fantasy market trade values.",
+            "Sync your league to filter out currently picked players, see who traded for what pick, and more.",
+            "If your league has already drafted, don't worry! We also have a special completed draft view where you can recap the biggest hits and busts from the previous year. By selecting the dropdown in the toolbar, you can even generate a new mock draft for your league!"
+        ]
+    },
+    {
+        "title": "Mock Draft",
+        "list": [
+            "When creating a mock draft, one will be configured automatically for your league (if no draft has been completed yet).",
+            "Click on a player to open up a pop-up of the player details page to dive into more metrics about the players.",
+            "The toolbar on the right side of your screen controls all the available options for configuring your mock draft.",
+            "Edit Draft Configurations - Opens a pop-up where you can manually configure draft settings like rounds, type, player list, etc.",
+            "Sleeper Id - Enter a draft id to filter out already picked players. This is useful if you are not logged into a league.",
+            "Fantasy Market - As seen all over the site, toggle the fantasy market values for the mock draft.",
+            "Draft Settings - Toggle the colors on the mock draft players to be by Position, Player Value Trend, or Tiers. This is a super helpful visual to help make draft day decisions.",
+            "Filter Options - Toggles like QB, RB, WR, TE, and Age/Experience let you filter out the mock draft players to hone your draft board.",
+            "Clear Filter - Will reset all filters to their default values.",
+            "Download - Downloads the generated mock draft to a CSV for use elsewhere.",
+            "Edit Order - Enables a mode where you can change individual picks or whole columns on the mock draft board."
+        ]
+    },
+    {
+        "title": "Draft Recap",
+        "list": [
+            "The draft recap happens once a draft is completed.",
+            "The pie chart is a breakdown of all positions picked with an information modal on the best draft and individual high/low picks.",
+            "The draft table looks similar and is the actual draft that occurred. Using the toolbar, you can update settings to show the best overall value or best value picks for your completed draft. The rest of the options remain similar to the mock draft tool.",
+            "By clicking the Keepers tab, it will have a table view of the top 5 value-added players for each team. That way when doing a Keeper draft, you can find what players to keep easily."
+        ]
+    },
+    {
+        "title": "Known Limitations",
+        "list": [
+            "Not all fantasy platform APIs are created equal. Fleaflicker, MFL, and FFPC only return the picks, no other information about draft order. So if you see some teams saying they have multiple first-round picks originally, there is not a way to currently address that."
+        ]
+    },
+    {
+        "title": "Have more questions?",
+        "list": [
+            "Reach out to Jeremy via Discord, Twitter (@dynastydaddyff), or email (jertimperio@gmail.com)."
+        ]
+    }
+]

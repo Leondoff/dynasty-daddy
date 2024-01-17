@@ -22,6 +22,7 @@ import { PlayerQueryBuilderComponent } from "src/app/components/sub-components/p
 import { AddPlayerComparisonModalComponent } from "src/app/components/modals/add-player-comparison-modal/add-player-comparison-modal.component";
 import { TradeCenterPlayerValuesComponent } from "src/app/components/trade-center/trade-center-player-values/trade-center-player-values.component";
 import { TradeCenterComponent } from "src/app/components/trade-center/trade-center.component";
+import { PlayerDetailsModalComponent } from "src/app/components/modals/player-details-modal/player-details-modal.component";
 
 @NgModule({
   imports: [
@@ -51,6 +52,7 @@ import { TradeCenterComponent } from "src/app/components/trade-center/trade-cent
     PlayerDetailsWeeklyBoxScoresTableComponent,
     PlayerDetailsWeeklyStatsLineChartComponent,
     PlayerTradeMarketComponent,
+    PlayerDetailsModalComponent,
     TradeValueLineChartComponent,
     FilterPlayerValuesModalComponent,
     PlayerComparisonsComponent,

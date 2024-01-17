@@ -8,6 +8,7 @@ import { PlayerInsights } from '../../model/playerInsights';
 import { LeagueService } from '../../../services/league.service';
 import { variance } from 'simple-statistics';
 import { ComparisonColorPalette } from '../../../services/utilities/color.service';
+import { ConfigService } from 'src/app/services/init/config.service';
 
 @Component({
   selector: 'app-player-details-weekly-stats-line-chart',
@@ -95,14 +96,19 @@ export class PlayerDetailsWeeklyStatsLineChartComponent extends BaseComponent im
 
   public adpPlayerValues = {}
 
+  adpColumns: string[] = [];
+
   constructor(public playerService: PlayerService,
+    private configService: ConfigService,
     public leagueService: LeagueService,
     private cdr: ChangeDetectorRef) {
     super();
   }
 
   ngOnInit(): void {
-    // do nothing
+    this.adpColumns = this.configService.isMobile ?
+      ['value', 'name', 'rank'] :
+      ['value', 'name', 'adp', 'rank'];
   }
 
   ngOnChanges(): void {

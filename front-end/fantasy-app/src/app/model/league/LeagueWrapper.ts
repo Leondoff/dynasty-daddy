@@ -21,7 +21,7 @@ export class LeagueWrapper {
   leagueTeamDetails: LeagueTeam[];
 
   /** upcoming draft data */
-  upcomingDrafts: LeagueRawDraftOrderDTO[] = [];
+  upcomingDrafts: CompletedDraft[] = [];
 
   /** completed draft data */
   completedDrafts: CompletedDraft[] = [];

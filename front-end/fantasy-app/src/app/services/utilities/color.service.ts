@@ -56,6 +56,64 @@ export class ColorService {
   getPointBorderColor(highlightFreeAgent: boolean, highlightYourTeam: boolean, isTeam: boolean, isFreeAgent: boolean): string {
     return isTeam && highlightYourTeam ? '#a0e6f1' : (highlightFreeAgent && isFreeAgent ? '#faa1a1' : '#ffffff');
   }
+
+  /**
+   * return color code for trade position
+   * @param pos string acryonm for pos
+   */
+  getTradeColorForPos(pos: string): string {
+    switch (pos) {
+      case 'QB':
+        return ComparisonColorPalette[0]
+      case 'RB':
+        return ComparisonColorPalette[1]
+      case 'WR':
+        return ComparisonColorPalette[2]
+      case 'TE':
+        return ComparisonColorPalette[3]
+      case 'K':
+        return ComparisonColorPalette[5]
+      case 'DF':
+        return ComparisonColorPalette[6]
+      case 'DL':
+        return ComparisonColorPalette[7]
+      case 'LB':
+        return ComparisonColorPalette[8]
+      case 'DB':
+        return ComparisonColorPalette[9]
+      default:
+        return ComparisonColorPalette[4]
+    }
+  }
+
+    /**
+   * return color code for draft position
+   * @param pos string acryonm for pos
+   */
+    getDraftColorForPos(pos: string): string {
+      switch (pos) {
+        case 'QB':
+          return DraftPosColorPallette[0]
+        case 'RB':
+          return DraftPosColorPallette[1]
+        case 'WR':
+          return DraftPosColorPallette[2]
+        case 'TE':
+          return DraftPosColorPallette[3]
+        case 'K':
+          return DraftPosColorPallette[4]
+        case 'DF':
+          return DraftPosColorPallette[5]
+        case 'DL':
+          return DraftPosColorPallette[6]
+        case 'LB':
+          return DraftPosColorPallette[7]
+        case 'DB':
+          return DraftPosColorPallette[8]
+        default:
+          return DraftPosColorPallette[4]
+      }
+    }
 }
 
 export const ComparisonColorPalette = [
@@ -91,3 +149,32 @@ export const TierColorPalette = [
   '#900C3F',
   '#581845'
 ]
+
+// draft colors to match sleeper
+export const DraftPosColorPallette = [
+  '#ef74a1cc',
+  '#8ff2cacc',
+  '#56c9f8cc',
+  '#feae58cc',
+  '#b6b9ffcc',
+  '#bf755dcc',
+  '#fa9961cc',
+  '#fea0cacc',
+  // additional ones for tiers
+  '#ff5a5fcc',  // Coral Pink
+  '#ff8c42cc',  // Neon Carrot
+  '#793a80cc',  // Plum
+  '#00a896cc',  // Emerald
+  '#b4cc80cc',  // Lime
+  '#8772fccc',  // Medium Purple
+  '#ff7e3ccc',  // Tangerine
+  '#758bffcc',  // Sky Blue
+  '#ffdf5dcc',  // Pale Gold
+  '#c95e6ecc',  // Blush
+  '#ffdf5dcc',  // Pale Gold
+  '#ff8c42cc',  // Neon Carrot
+  '#f582aecc',  // Rose
+  '#94d2bdcc',  // Celadon Green
+  '#ff6363cc',  // Melon
+  '#5e5e5ecc',  // Dim Gray
+];

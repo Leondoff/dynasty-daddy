@@ -418,7 +418,7 @@ export class PlayerService {
   getCurrentPlayerValue(player: FantasyPlayer, isSuperFlex: boolean): number {
     const now = new Date();
     const lastWeekMs = now.getTime() - 1000 * 60 * 60 * 24 * 7;
-    if (player.position !== 'PI' && new Date(player.date).setHours(0, 0, 0, 0) < new Date(lastWeekMs).setHours(0, 0, 0, 0)) {
+    if (!player || player.position !== 'PI' && new Date(player.date).setHours(0, 0, 0, 0) < new Date(lastWeekMs).setHours(0, 0, 0, 0)) {
       return 0;
     } else {
       return isSuperFlex ? player.sf_trade_value : player.trade_value;
