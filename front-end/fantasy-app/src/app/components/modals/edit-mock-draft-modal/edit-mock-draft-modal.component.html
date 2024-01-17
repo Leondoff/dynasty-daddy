@@ -1,0 +1,50 @@
+<h1 mat-dialog-title>Mock Draft Settings</h1>
+
+<div class="margin-top-10">
+    <div class="center-text" *ngIf="!leagueService.selectedLeague || leagueService.selectedLeague.leaguePlatform === 0">
+        <mat-form-field color="accent" style="width: 70%" >
+            <mat-label>Sleeper Draft ID</mat-label>
+                <input matInput type="text" [(ngModel)]="draftService.sleeperDraftId">
+                <button mat-icon-button matSuffix (click)="draftService.loadCustomSleeperLeague()">
+                    <mat-icon>filter_list</mat-icon>
+                </button>
+        </mat-form-field>
+    </div>
+    <div class="center-text margin-top-10">
+        <mat-slide-toggle [(ngModel)]="isSuperFlex">SuperFlex
+        </mat-slide-toggle>
+    </div>
+    <div class="center-text margin-top-10">
+        <span>
+            <mat-form-field color="accent" style="width: 56px;">
+                <mat-label>Round</mat-label>
+                <input matInput type="number" [max]="30" [min]="1" [(ngModel)]="mockDraftRounds">
+            </mat-form-field>
+        </span>
+        <span style="padding-left: 10px">
+            <mat-form-field appearance="standard" color="accent" style="width: 102px;">
+                <mat-label>Draft Order</mat-label>
+                <mat-select [(ngModel)]="mockDraftOrder">
+                    <mat-option [value]="0">Linear</mat-option>
+                    <mat-option [value]="1">Snake</mat-option>
+                    <mat-option [value]="2">3rd Round Reversal</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </span>
+    </div>
+    <div class="center-text margin-top-10">
+        <mat-form-field appearance="standard" color="accent">
+            <mat-label>Mock Draft Players</mat-label>
+            <mat-select [(ngModel)]="mockDraftPlayerType">
+                <mat-option [value]="0">Rookies</mat-option>
+                <mat-option [value]="1">Vets Only</mat-option>
+                <mat-option [value]="2">All Players</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+
+<div mat-dialog-actions style="place-content: center">
+    <button mat-button (click)="close()">Close</button>
+    <button mat-button (click)="createMockDraft()" color="accent">Confirm</button>
+</div>

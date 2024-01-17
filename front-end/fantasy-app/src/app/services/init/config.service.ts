@@ -5,7 +5,7 @@ import { ConfigOption } from '../../model/config/ConfigOption';
 import { ConfigApiService } from '../api/config/config-api.service';
 import { BaseComponent } from '../../components/base-component.abstract';
 import { DisplayService } from '../utilities/display.service';
-import { Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { PwaService } from '../utilities/pwa.service';
 import { SimpleTextCategory } from 'src/app/model/config/SimpleTextCategory';
 import { HttpClient } from '@angular/common/http';
@@ -72,6 +72,8 @@ export class ConfigService extends BaseComponent {
   private _preferredCreators: PreferredCreatorSlide[] = [];
 
   configValuesLoaded$: Subject<void> = new Subject<void>();
+
+  toggleToolbar$: Subject<void> = new Subject<void>();
 
   /** config options list for application */
   configOptions: ConfigOption[] = [];

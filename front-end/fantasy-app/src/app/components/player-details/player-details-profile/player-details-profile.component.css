@@ -4,7 +4,7 @@
 
 .item {
   margin: 14px;
-  min-width: 300px;
+  min-width: 240px;
 }
 
 .mat-column-name {
@@ -26,35 +26,6 @@
   text-align: left;
   justify-content: flex-start;
   padding-left: 15px;
-}
-
-.metric__row {
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.metric__row div:last-child {
-  text-align: right;
-}
-
-.metric__row div {
-  flex: 1 1 auto;
-}
-
-.sub__metric__row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sub__metric__row div:last-child {
-  text-align: right;
-}
-
-.sub__metric__row div {
-  flex: 1 1 auto;
 }
 
 .open-window-button {

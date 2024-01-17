@@ -1,12 +1,12 @@
 import {LeagueRawDraftOrderDTO} from './LeagueRawDraftOrderDTO';
-import {LeagueCompletedPickDTO} from './LeagueCompletedPickDTO';
+import {LeaguePickDTO} from './LeaguePickDTO';
 
 export class CompletedDraft {
-  constructor(draft: LeagueRawDraftOrderDTO, picks: LeagueCompletedPickDTO[]) {
+  constructor(draft: LeagueRawDraftOrderDTO, picks: LeaguePickDTO[]) {
     this.draft = draft;
     this.picks = picks;
   }
 
   draft: LeagueRawDraftOrderDTO;
-  picks: LeagueCompletedPickDTO[];
+  picks: LeaguePickDTO[];
 }

@@ -1,0 +1,124 @@
+@import "../../../../styles.scss";
+
+.draft-table {
+  display: flex;
+  margin: 0 auto;
+  overflow: auto;
+  position: relative;
+}
+
+table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+.draft-player-cell {
+  width: 130px;
+  height: 52px;
+  border-radius: 8px;
+  vertical-align: top;
+  border: 2px solid #1d1d28;
+  padding: 0 2px;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.edit-draft-player {
+  background-color: lightskyblue !important;
+  &:hover {
+    animation: wiggle 0.5s ease-in-out infinite;
+  }
+}
+
+.player-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #022047;
+  position: relative;
+  height: 100%;
+  padding-left: 4px;
+  padding-top: 4px;
+}
+
+.owner-name-cell {
+  max-width: 130px;
+  height: 20px;
+}
+
+.player-value-label {
+  font-size: 9px;
+}
+
+.light-metric-color {
+  color: rgb(52, 64, 84)
+}
+
+.player-draft-image {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  background: center center / cover transparent;
+  border-top-left-radius: 3px;
+  border-radius: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+}
+
+.traded-pick-text {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #677897;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.9;
+  max-width: 110px;
+}
+
+.trade-arrow-icon {
+  height: unset;
+  width: unset;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.trade-content {
+  display: flex;
+  align-items: flex-end;
+}
+
+.filtered-pick {
+  opacity: 0.2 !important;
+}
+
+.draft-team-avatar {
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-1px);
+  }
+  40%, 80% {
+    transform: translateX(1px);
+  }
+}

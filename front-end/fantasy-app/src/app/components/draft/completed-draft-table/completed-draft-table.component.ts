@@ -12,7 +12,7 @@ import { PlayerComparisonService } from '../../services/player-comparison.servic
 import { Router } from '@angular/router';
 import { NflService } from '../../../services/utilities/nfl.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
-import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
+import { LeaguePickDTO } from '../../../model/league/LeaguePickDTO';
 import { CompletedDraft } from '../../../model/league/CompletedDraft';
 import { DraftService } from '../../services/draft.service';
 import { BarChartColorPalette } from '../../../services/utilities/color.service';
@@ -31,18 +31,13 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   @Input()
   selectedMarket: FantasyMarket;
 
-  /** columns */
-  displayedColumns = this.configService.isMobile ? ['pickNumber', 'owner', 'selectedPlayer'] : ['pickNumber', 'team', 'owner', 'selectedPlayer', 'actions'];
-
-  /** mat paginator */
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-
   /** chart set up */
   @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
   /** pie chart values */
   public pieChartOptions: ChartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     legend: {
       position: 'left',
     },
@@ -58,19 +53,6 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = true;
 
-  /** page length */
-  pageLength: number;
-
-  /** mat datasource */
-  dataSource: MatTableDataSource<LeagueCompletedPickDTO> = new MatTableDataSource<LeagueCompletedPickDTO>();
-
-  /** search value */
-  searchVal: string = '';
-
-  /** filter positions */
-  filterPosGroup: boolean[] = [true, true, true, true];
-
-  /** is superflex */
   isSuperFlex: boolean = true;
 
   /** average value of pick in round */
@@ -83,13 +65,13 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   draftCache = {};
 
   /** filtered draft list */
-  filteredDraftPicks: LeagueCompletedPickDTO[] = [];
+  filteredDraftPicks: LeaguePickDTO[] = [];
 
   /** display string for best overall pick */
-  bestOverallPickStr: string = '';
+  bestOverallPickStr: { player: string, pick: string } = null;
 
   /** display string for best value pick */
-  bestValuePickStr: string = '';
+  bestValuePickStr: { player: string, pick: string, lowPlayer: string, lowPick: string } = null;
 
   /** best team draft data */
   bestTeamDraft: { team: LeagueTeam, valueAdded: number } = null;
@@ -111,42 +93,17 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.displayedColumns = this.configService.isMobile ?
-      [this.selectedDraft.draft.type === 'auction' ? 'bid' : 'pickNumber', 'owner', 'selectedPlayer'] :
-      [this.selectedDraft.draft.type === 'auction' ? 'bid' : 'pickNumber', 'team', 'owner', 'selectedPlayer', 'actions'];
     this.pieChartLegend = !this.configService.isMobile;
-    this.pageLength = this.leagueService.selectedLeague.totalRosters;
-    this.isSuperFlex = this.leagueService.selectedLeague.isSuperflex;
     this.pickValues = this.playerService.getDraftPicksForYear(this.nflService.stateOfNFL.seasonType === 'pre'
       ? this.nflService.stateOfNFL.season : null);
     this.refreshMetrics();
-    this.paginator.pageIndex = 0;
-    this.dataSource.paginator = this.paginator;
-    this.cacheDraft();
+    this.draftService.updateDraft$.subscribe(_ => {
+      this.refreshMetrics();
+    })
   }
 
   ngOnChanges(): void {
-    this.isSuperFlex = this.leagueService.selectedLeague.isSuperflex;
-    this.dataSource = new MatTableDataSource(this.selectedDraft.picks);
     this.refreshMetrics();
-    this.paginator.pageIndex = 0;
-    this.dataSource.paginator = this.paginator;
-    this.cacheDraft();
-  }
-
-  cacheDraft(): void {
-    this.draftCache = {}
-    this.selectedDraft.picks.forEach(pick => {
-      this.draftCache[pick.pickNumber] = {
-        owner: this.getOwnerName(pick.rosterId),
-        team: this.getTeamName(pick.rosterId),
-        player: this.configService.isMobile ?
-          (pick?.position || this.leagueService.platformPlayersMap[pick.playerId]?.position || '??') + ' ' + (pick?.lastName || this.leagueService.platformPlayersMap[pick.playerId]?.full_name || 'Unknown') :
-          (pick?.position || this.leagueService.platformPlayersMap[pick.playerId]?.position || '??') + ' ' + (pick?.firstName ? (pick?.firstName + ' ' + pick?.lastName) : this.leagueService.platformPlayersMap[pick.playerId]?.full_name || 'Unknown'),
-        value: this.getPlayerByPlayerPlatformId(pick.playerId) ? (this.isSuperFlex ? this.getPlayerByPlayerPlatformId(pick.playerId).sf_trade_value : this.getPlayerByPlayerPlatformId(pick.playerId).trade_value) : 'None',
-        nameId: this.getPlayerByPlayerPlatformId(pick.playerId)?.name_id
-      }
-    });
   }
 
   /**
@@ -190,39 +147,9 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
   }
 
   /**
-   * update draft filter values
-   */
-  updateDraftFilters(): void {
-    this.filteredDraftPicks = this.selectedDraft.picks.slice();
-    const filterOptions = ['QB', 'RB', 'WR', 'TE'];
-    for (let i = 0; i < this.filterPosGroup.length; i++) {
-      if (!this.filterPosGroup[i]) {
-        this.filteredDraftPicks = this.filteredDraftPicks.filter(pick => {
-          const pos = pick.position || this.leagueService.platformPlayersMap[pick.playerId].position;
-          if (pos !== filterOptions[i] && filterOptions.includes(pos)) {
-            return pick;
-          }
-        });
-      }
-    }
-    if (this.searchVal && this.searchVal.length > 0) {
-      this.filteredDraftPicks = this.filteredDraftPicks.filter(player => {
-        const name = player.firstName ? player.firstName + ' ' + player.lastName
-          : this.leagueService.platformPlayersMap[player.playerId].full_name;
-        return (name.toLowerCase().indexOf(this.searchVal.toLowerCase()) >= 0
-          || (player.round.toString().toLowerCase().indexOf(this.searchVal.toLowerCase()) >= 0)
-          || (this.getOwnerName(player.rosterId).toLowerCase().indexOf(this.searchVal.toLowerCase()) >= 0));
-      });
-    }
-    this.dataSource = new MatTableDataSource(this.filteredDraftPicks);
-    this.paginator.pageIndex = 0;
-    this.dataSource.paginator = this.paginator;
-  }
-
-  /**
    * get best overall player selected by value
    */
-  getBestOverallPick(): string {
+  getBestOverallPick(): { player: string, pick: string } {
     let topPick = this.selectedDraft.picks[0];
     let fantasyPlayer = this.playerService.getPlayerByPlayerPlatformId(topPick.playerId, this.leagueService.selectedLeague.leaguePlatform);
     for (const pick of this.selectedDraft.picks.slice(1)) {
@@ -232,27 +159,42 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
         fantasyPlayer = tempPlayer;
       }
     }
-    return 'Pick ' + topPick.pickNumber + ': ' + (fantasyPlayer?.position || '?') + ' - ' + (fantasyPlayer?.last_name || topPick?.lastName || '??');
+    return { player: (fantasyPlayer?.first_name.slice(0, 1) || '?') + '. ' + (fantasyPlayer?.last_name || topPick?.lastName || '??') + ' (' + (fantasyPlayer?.position || '?') + ')', pick: 'Pick ' + topPick.pickNumber }
   }
 
   /**
    * get best player at value
    */
-  getBestValuePick(): string {
+  getBestValuePick(): { player: string, pick: string, lowPlayer: string, lowPick: string } {
     let topPick = this.selectedDraft.picks[0];
     let topValue = this.draftService.getPickValueRatio(topPick);
+    let lowPick = this.selectedDraft.picks[0];
+    let lowValue = this.draftService.getPickValueRatio(lowPick);
     for (const pick of this.selectedDraft.picks.slice(1)) {
       const tempValue = this.draftService.getPickValueRatio(pick);
       if (tempValue > topValue) {
         topPick = pick;
         topValue = tempValue;
       }
+      if (tempValue < lowValue) {
+        lowPick = pick;
+        lowValue = tempValue;
+      }
     }
     const fantasyPlayer = this.playerService.getPlayerByPlayerPlatformId(
       topPick.playerId,
       this.leagueService.selectedLeague.leaguePlatform
     );
-    return 'Pick ' + topPick.pickNumber + ': ' + (fantasyPlayer?.position || '?') + ' - ' + (fantasyPlayer?.last_name || topPick?.lastName || '??');
+    const lowPlayer = this.playerService.getPlayerByPlayerPlatformId(
+      lowPick.playerId,
+      this.leagueService.selectedLeague.leaguePlatform
+    );
+    return {
+      player: (fantasyPlayer?.first_name.slice(0, 1) || '?') + '. ' + (fantasyPlayer?.last_name || topPick?.lastName || '??') + ' (' + (fantasyPlayer?.position || '?') + ')',
+      pick: 'Pick ' + topPick.pickNumber,
+      lowPlayer: (lowPlayer?.first_name.slice(0, 1) || '?') + '. ' + (lowPlayer?.last_name || lowPick?.lastName || '??') + ' (' + (lowPlayer?.position || '?') + ')',
+      lowPick: 'Pick ' + lowPick.pickNumber
+    }
   }
 
   /**

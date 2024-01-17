@@ -48,5 +48,6 @@ enum ToolsHelp {
     TradeCalculator = 'Trade Calculator',
     TradeDatabase = 'Trade Database',
     DynastyDaddyClub = 'Dynasty Daddy Club',
-    ESPNValues = 'these ESPN values'
+    ESPNValues = 'these ESPN values',
+    MockDraft = 'Fantasy Mock Draft Tool'
 };

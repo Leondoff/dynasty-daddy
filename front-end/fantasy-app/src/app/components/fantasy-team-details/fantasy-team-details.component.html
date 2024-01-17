@@ -71,7 +71,11 @@
   </div>
 
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
-    <mat-tab label="Team Insights">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="margin-right-5">data_thresholding</mat-icon>
+        {{configService.isMobile ? '' : 'Insights'}}
+      </ng-template>
         <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
           <div fxFlex="60%" fxFlex.xs="100%" fxFlex.sm="80%" class="item" style="display: block">
             <mat-card>
@@ -133,7 +137,11 @@
           </div>
         </div>
     </mat-tab>
-    <mat-tab label="Roster Management">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="margin-right-5">groups</mat-icon>
+        {{configService.isMobile ? '' : 'Roster'}}
+      </ng-template>
       <div class="mid-bold-text margin-top-10 center-text">Roster Trends</div>
       <div class="margin-top-10 center-text">Biggest movers in the past month for {{selectedTeam?.owner?.teamName}}'s roster.</div>
       <div [ngClass]="{'right-align-text': !configService.isMobile, 'center-text': configService.isMobile}">
@@ -280,7 +288,11 @@
         </div>
       </div>
     </mat-tab>
-    <mat-tab label="Activity Feed" *ngIf="leagueService?.selectedLeague?.leaguePlatform !== 4">
+    <mat-tab *ngIf="leagueService?.selectedLeague?.leaguePlatform !== 4">
+      <ng-template mat-tab-label>
+        <mat-icon class="margin-right-5">receipt_long</mat-icon>
+        {{configService.isMobile ? '' : 'Activity'}}
+      </ng-template>
       <div class="mid-bold-text margin-top-10 center-text">Activity Feed</div>
       <div class="margin-top-10 center-text">Recent moves by {{selectedTeam?.owner?.teamName}}</div>
       <div [ngClass]="{'right-align-text': !configService.isMobile, 'center-text': configService.isMobile}">
