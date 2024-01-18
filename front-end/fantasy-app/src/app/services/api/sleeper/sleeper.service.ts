@@ -162,7 +162,7 @@ export class SleeperService implements OnDestroy {
                         leagues.forEach((league: LeagueWrapper) => {
                           league.leagueTeamDetails?.forEach(team => {
                             league.selectedLeague?.metadata?.upcomingDraftOrder?.[team?.roster?.rosterId].forEach(pick => {
-                              const ind = team.futureDraftCapital.findIndex(p => p.pick === 6 && p.round === pick.round && p.year === pick.year);
+                              const ind = team.futureDraftCapital.findIndex(p => p.pick === -1 && p.round === pick.round && p.year === pick.year);
                               if (ind >= 0) {
                                 team.futureDraftCapital[ind].pick = pick.pick;
                                 pick.originalRosterId = team.futureDraftCapital[ind].originalRosterId;
@@ -258,6 +258,7 @@ export class SleeperService implements OnDestroy {
                   }
                 }
               });
+              draftPicks.sort((a, b) => a.round - b.round || a.pick - b.pick);
               upcomingDraftOrder[team.roster.rosterId] = draftPicks || [];
               team.futureDraftCapital.push(...draftPicks);
             });
@@ -298,7 +299,6 @@ export class SleeperService implements OnDestroy {
     }));
   }
 
-
   /**
    * generate future draft capital for teams
    * @private
@@ -327,8 +327,10 @@ export class SleeperService implements OnDestroy {
             team.futureDraftCapital = draftPicks;
           }
         });
+        // filter out current season traded picks because the upcoming draft already has them
+        const futureTradedPicks = tradedPicks.filter(p => p.season !== league.selectedLeague.season)
         league.leagueTeamDetails.map((team: LeagueTeam) => {
-          tradedPicks.forEach((tradedPick: LeagueRawTradePicksDTO) => {
+          futureTradedPicks.forEach((tradedPick: LeagueRawTradePicksDTO) => {
             if (tradedPick.ownerId !== team.roster.rosterId
               && tradedPick.rosterId === team.roster.rosterId
             ) {
