@@ -134,7 +134,7 @@
     <div class="mid-bold-text margin-bot-10 center-text">Adjacent ADP Players</div>
     <mat-table [dataSource]="adjacentADP" class="mat-elevation-z8">
       <ng-container matColumnDef="rank">
-        <mat-header-cell *matHeaderCellDef>Average</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef>ADP</mat-header-cell>
         <mat-cell *matCellDef="let player;">{{player.avg_adp}}</mat-cell>
       </ng-container>
 
@@ -153,8 +153,8 @@
         <mat-cell *matCellDef="let player">{{adpPlayerValues[player.name_id].value}}</mat-cell>
       </ng-container>
 
-      <mat-header-row *matHeaderRowDef="['value', 'name', 'adp', 'rank']"></mat-header-row>
-      <mat-row class="box-score-element-row" *matRowDef="let row; columns: ['value', 'name', 'adp', 'rank'];" [ngClass]="{'mat-table-highlight': selectedPlayer.name_id === row.name_id}"></mat-row>
+      <mat-header-row *matHeaderRowDef="adpColumns"></mat-header-row>
+      <mat-row class="box-score-element-row" *matRowDef="let row; columns: adpColumns;" [ngClass]="{'mat-table-highlight': selectedPlayer.name_id === row.name_id}"></mat-row>
     </mat-table>
   </div>
 </div>

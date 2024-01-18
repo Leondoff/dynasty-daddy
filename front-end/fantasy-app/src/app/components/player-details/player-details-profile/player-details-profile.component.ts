@@ -4,6 +4,7 @@ import { PlayerService } from '../../../services/player.service';
 import { LeagueService } from '../../../services/league.service';
 import { ChartConfiguration, ChartDataSets, ChartType } from 'chart.js';
 import { ComparisonColorPalette } from '../../../services/utilities/color.service';
+import { ConfigService } from 'src/app/services/init/config.service';
 
 @Component({
   selector: 'app-player-details-profile',
@@ -52,6 +53,7 @@ export class PlayerDetailsProfileComponent implements OnInit {
 
   constructor(
     public playerService: PlayerService,
+    public configService: ConfigService,
     public leagueService: LeagueService,
     ) {
   }

@@ -1,0 +1,109 @@
+<div class="mid-bold-text center-text">
+    <mat-icon (click)="handleToggleToolbar()" class="toggle-button">{{!toggleTools ? 'build' :
+        'double_arrow'}}</mat-icon>
+    {{!toggleTools ? '' : 'Draft Tools'}}
+</div>
+
+<div class="margin-top-15" style="overflow: hidden" *ngIf="toggleTools && !draftService.isOrderMode">
+
+    <div class="center-text">
+        <div *ngIf="leagueService.completedDrafts.length > 0">
+            <mat-form-field appearance="outline" color="accent">
+                <mat-label>Select a Draft</mat-label>
+                <mat-select>
+                    <mat-optgroup label="Completed">
+                        <mat-option *ngFor="let draft of leagueService.completedDrafts" (click)="draftService.selectedDraft = draft"
+                        [value]="draftService.selectedDraft">Draft:
+                            {{draft.draft.season}} - {{draft.draft.rounds}} Rounds
+                        </mat-option>
+                    </mat-optgroup>
+                    <mat-optgroup label="Mock Draft" *ngIf="draftService.teamPicks.length > 0">
+                        <mat-option (click)="draftService.selectedDraft = 'upcoming'" value="upcoming">Mock Draft: {{draftService.teamPicks.length /
+                            leagueService.selectedLeague.totalRosters}} Rounds</mat-option>
+                    </mat-optgroup>
+                    <mat-option *ngIf="draftService.teamPicks.length === 0" (click)="openMockDraftModal()">Create
+                        Mock
+                        Draft</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button mat-icon-button (click)="openMockDraftModal()" class="margin-top-10" *ngIf="draftService.selectedDraft === 'upcoming'"><mat-icon>settings</mat-icon></button>
+        </div>
+        <div *ngIf="!leagueService.selectedLeague || leagueService.completedDrafts.length == 0">
+            <button mat-raised-button color="accent" (click)="openMockDraftModal()" class="margin-top-10">Edit Draft Configurations</button>
+            <mat-form-field color="accent" style="width: 70%" class="margin-top-25">
+                <mat-label>Sleeper Draft ID</mat-label>
+                    <input matInput type="text" [(ngModel)]="draftService.sleeperDraftId">
+                    <button mat-icon-button matSuffix (click)="draftService.loadCustomSleeperLeague()">
+                        <mat-icon>filter_list</mat-icon>
+                    </button>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="center-text margin-top-10">
+        <mat-form-field color="accent" style="width: 100%">
+        <mat-label>Search Players...</mat-label>
+            <input matInput type="text" (keyup)="searchSubject$.next()" [(ngModel)]="draftService.searchVal">
+            <button mat-button *ngIf="searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearTextSearch()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+
+    <div class="center-text margin-top-10">
+        <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket"
+            (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
+    </div>
+
+    <div class="center-text" >
+        <div class="margin-top-10 margin-bot-10 mid-bold-text">Draft Settings</div>
+        <mat-button-toggle-group [(ngModel)]="draftService.mockDraftConfig" (change)="filterChanged(draftService.mockDraftConfig !== 'tiers')" style="overflow: auto" *ngIf="draftService.selectedDraft === 'upcoming'">
+            <mat-button-toggle value="player">Position</mat-button-toggle>
+            <mat-button-toggle value="trending">Player Trends</mat-button-toggle>
+            <mat-button-toggle value="tiers">Player Tiers</mat-button-toggle>
+        </mat-button-toggle-group>
+        <mat-button-toggle-group [(ngModel)]="draftService.completedConfig" (change)="filterChanged()" style="overflow: auto" *ngIf="draftService.selectedDraft !== 'upcoming'">
+            <mat-button-toggle value="position">Position</mat-button-toggle>
+            <mat-button-toggle value="overall">Overall Value</mat-button-toggle>
+            <mat-button-toggle value="value">Best Value</mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+
+    <div class="center-text margin-top-10">
+        <div class="margin-top-10 margin-bot-10 mid-bold-text">Position Filter</div>
+        <mat-checkbox color="accent" [(ngModel)]="draftService.filteredPositions['QB']" (change)="filterChanged()" style="padding-right: 10px">QB</mat-checkbox>
+        <mat-checkbox color="accent" [(ngModel)]="draftService.filteredPositions['RB']" (change)="filterChanged()" style="padding-right: 10px">RB</mat-checkbox>
+        <mat-checkbox color="accent" [(ngModel)]="draftService.filteredPositions['WR']" (change)="filterChanged()" style="padding-right: 10px">WR</mat-checkbox>
+        <mat-checkbox color="accent" [(ngModel)]="draftService.filteredPositions['TE']" (change)="filterChanged()">TE</mat-checkbox>
+    </div>
+
+    <div class="margin-top-10 center-text">
+        <ngx-slider [(value)]="draftService.ageFilter[0]" [(highValue)]="draftService.ageFilter[1]" [options]="ageOptions" [manualRefresh]="manualRefresh" (userChange)="filterChanged()"></ngx-slider>
+    </div>
+    <div class="margin-top-10 center-text">
+        <ngx-slider [(value)]="draftService.expFilter[0]" [(highValue)]="draftService.expFilter[1]" [options]="expOptions" [manualRefresh]="manualRefresh" (userChange)="filterChanged()"></ngx-slider>
+    </div>
+
+    <div class="center-text margin-top-15">
+        <button mat-raised-button color="accent" (click)="draftService.clearFilters()"><mat-icon>clear</mat-icon>
+            Clear Filters</button>
+    </div>
+
+    <div class="center-text margin-top-15" *ngIf="draftService.selectedDraft === 'upcoming'">
+        <button mat-stroked-button (click)="exportMockDraft()" style="margin-right: 2px;"><mat-icon>download</mat-icon> Download</button>
+        <button mat-stroked-button (click)="toggleTradePickMode()" style="margin-left: 2px;"><mat-icon>edit_square</mat-icon> Edit Order</button>
+    </div>
+</div>
+
+<div *ngIf="toggleTools && draftService.isOrderMode" class="center-text">
+    <button mat-raised-button color="warn" (click)="toggleTradePickMode()" class="margin-top-10 pulse-button" style="margin: 40px">Finish Editing Order</button>
+
+    <mat-form-field color="accent">
+        <mat-label>Team To Override</mat-label>
+      <mat-select [(ngModel)]="draftService.overrideRosterId">
+        <mat-option *ngFor="let team of selectableTeams" [value]="team.roster.rosterId">
+          {{ team?.owner?.ownerName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+</div>

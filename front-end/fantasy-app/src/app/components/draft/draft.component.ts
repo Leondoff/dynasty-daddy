@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { LeagueService } from '../../services/league.service';
 import { PlayerService } from '../../services/player.service';
 import { BaseComponent } from '../base-component.abstract';
@@ -7,10 +7,8 @@ import { LeagueSwitchService } from '../services/league-switch.service';
 import { delay } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from 'src/app/services/init/config.service';
-import { DownloadService } from 'src/app/services/utilities/download.service';
-import { FantasyMarket } from 'src/app/model/assets/FantasyPlayer';
-import { PowerRankingsService } from '../services/power-rankings.service';
 import { PageService } from 'src/app/services/utilities/page.service';
+import { LeagueType } from 'src/app/model/league/LeagueDTO';
 
 @Component({
   selector: 'app-draft',
@@ -19,10 +17,7 @@ import { PageService } from 'src/app/services/utilities/page.service';
 })
 export class DraftComponent extends BaseComponent implements OnInit {
 
-  pageDescription = 'View past drafts with current day values, or create a mock draft for upcoming draft with the new rookie class.';
-
-  /** rerender table when refreshed */
-  resetTrigger: boolean = true;
+  pageDescription = 'Prepare for your fantasy season with the Dynasty Daddy Mock Draft Tool. Sync with your league and filter out results to gain an edge. Or look at completed drafts to see who came out on top.';
 
   /** show advanced settings  */
   showAdvancedSettings: boolean = false;
@@ -38,18 +33,18 @@ export class DraftComponent extends BaseComponent implements OnInit {
     public leagueSwitchService: LeagueSwitchService,
     public configService: ConfigService,
     private route: ActivatedRoute,
-    private powerRankingsService: PowerRankingsService,
     private pageService: PageService,
-    private downloadService: DownloadService,
+    private cdr: ChangeDetectorRef,
     public mockDraftService: DraftService) {
     super();
     this.pageService.setUpPageSEO('Draft Center',
-    ['mock draft tool', 'fantasy football mock draft', 'fantasy draft simulator', 'fantasy draft'],
-    this.pageDescription)
+      ['mock draft tool', 'fantasy football mock draft', 'fantasy draft simulator', 'fantasy football draft kit',
+      'fantasy football draft', 'fantasy mock draft simulator', 'fantasy draft', 'draft cheatsheet', 'fantasy cheatsheet'],
+      this.pageDescription)
   }
 
   ngOnInit(): void {
-    if (this.leagueService.selectedLeague && this.playerService.playerValues.length !== 0) {
+    if (this.playerService.playerValues.length !== 0) {
       this.initServices();
     } else {
       this.playerService.loadPlayerValuesForToday();
@@ -61,6 +56,9 @@ export class DraftComponent extends BaseComponent implements OnInit {
       ),
       this.route.queryParams.subscribe(params => {
         this.leagueSwitchService.loadFromQueryParams(params);
+      }),
+      this.playerService.currentPlayerValuesLoaded$.pipe(delay(1000)).subscribe(_ => {
+        this.initServices();
       })
     );
   }
@@ -70,49 +68,19 @@ export class DraftComponent extends BaseComponent implements OnInit {
    * @private
    */
   private initServices(): void {
-    this.mockDraftService.mockDraftRounds = this.leagueService.selectedLeague.draftRounds || 4;
-    this.mockDraftService.generateDraft();
-    if (this.leagueService.completedDrafts.length > 0) {
-      this.mockDraftService.selectedDraft = this.leagueService.completedDrafts[0];
-    } else {
-      this.mockDraftService.selectedDraft = this.mockDraftService.teamPicks.length > 0 ? 'upcoming' : null;
+    this.mockDraftService.clearFilters();
+    if (this.leagueService.selectedLeague) {
+      this.mockDraftService.mockDraftRounds = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 5 : 30;
+      this.mockDraftService.mockDraftOrder = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 0 : 1;
+      this.mockDraftService.mockDraftPlayerType = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 0 : 2;
     }
-  }
-
-  /**
-   * wraps mock draft service call to reset
-   */
-  resetMockDraft(): void {
-    this.resetTrigger = !this.resetTrigger;
-  }
-
-  /**
-   * Refresh mock draft player set
-   */
-  changeDraftPlayers(): void {
+    this.mockDraftService.isSuperflex = this.leagueService.selectedLeague ?
+      this.leagueService.selectedLeague?.isSuperflex : this.mockDraftService.isSuperflex;
+    this.mockDraftService.selectedDraft = this.leagueService.completedDrafts?.length > 0 ? this.leagueService.completedDrafts[0] : 'upcoming';
     this.mockDraftService.generateDraft();
-    this.resetMockDraft();
-  }
-
-  /**
-   * select market handle
-   * @param market new market
-   */
-  onMarketChange(market): void {
-    this.playerService.selectedMarket = market;
-    if (this.mockDraftService.selectedDraft === 'upcoming') {
-      this.changeDraftPlayers()
-    }
-  }
-
-  /**
-   * generate a mock draft
-   */
-  createMockDraft(): void {
-    this.mockDraftService.teamPicks = [];
-    this.mockDraftService.selectedDraft = 'upcoming';
-    this.mockDraftService.mapDraftObjects(this.leagueService.leagueTeamDetails);
-    this.resetMockDraft();
+    if (this.mockDraftService.selectedDraft === 'upcoming')
+      this.mockDraftService.createMockDraft();
+    this.cdr.detectChanges();
   }
 
   /**
@@ -120,52 +88,6 @@ export class DraftComponent extends BaseComponent implements OnInit {
    */
   isCurrentSeason(): boolean {
     return Number(this.leagueService.selectedLeague.season) >= new Date().getFullYear()
-  }
-
-  /**
-   * Exports mock draft data to CSV file
-   */
-  exportMockDraft(): void {
-    let playerValues = {};
-    this.addSubscriptions(this.playerService.fetchTradeValuesForAllMarket().subscribe(values => {
-      for (let market in FantasyMarket) {
-        playerValues[market] = values[market];
-      }
-      const draftData: any[][] = []
-      draftData.push([`Mock Draft for ${this.leagueService.selectedLeague.name} - ${this.mockDraftService.mockDraftRounds} Rounds - ${this.leagueService.selectedLeague.isSuperflex ? 'Superflex' : 'Standard (1 QB)'}`]);
-      draftData.push([]);
-      draftData.push([
-        ['Pick', 'Team', 'Owner', 'Notes', 'Team Needs', 'Player', 'Position', 'Age', 'Avg Pos ADP', 'KeepTradeCut', 'FantasyCalc', 'DynastyProcess'],
-      ]);
-      this.mockDraftService.teamPicks.forEach((pick, ind) => {
-        const player = this.mockDraftService.mockDraftSelectedPlayers[ind];
-        const row = [pick.pickdisplay, pick.pickTeam, pick.pickOwner,
-          pick.originalRosterId !== pick.rosterId ? `Traded from ${this.leagueService.getTeamByRosterId(pick.originalRosterId)?.owner.teamName}` : "",
-          `${this.powerRankingsService.getTeamNeedsFromRosterId(pick.rosterId).join("-")}`];
-        let playerRow = [];
-        if (player) {
-          playerRow = [player?.full_name, player?.position, player?.age,
-            player?.avg_adp > 0 ? player?.avg_adp : '',
-            this.leagueService.selectedLeague.isSuperflex ? 
-            playerValues[0][player?.name_id]?.sf_trade_value || 0 :
-             playerValues[0][player?.name_id]?.trade_value || 0,
-             this.leagueService.selectedLeague.isSuperflex ? 
-             playerValues[1][player?.name_id]?.sf_trade_value || 0 :
-              playerValues[1][player?.name_id]?.trade_value || 0,
-              this.leagueService.selectedLeague.isSuperflex ? 
-              playerValues[2][player?.name_id]?.sf_trade_value || 0 :
-               playerValues[2][player?.name_id]?.trade_value || 0
-          ];
-        }
-        draftData.push(row.concat(playerRow));
-      });
-  
-      const formattedDraftData = draftData.map(e => e.join(',')).join('\n');
-  
-      const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Mock_Draft_${this.mockDraftService.mockDraftRounds}_Rounds_${new Date().toISOString().slice(0, 10)}.csv`;
-  
-      this.downloadService.downloadCSVFile(formattedDraftData, filename);
-    }));
   }
 
 }

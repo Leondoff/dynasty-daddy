@@ -3,7 +3,7 @@ import axios from 'axios';
 import { GetUserById, PersistNewUser, PersistUserProfile, UpdateUserLFPresets, UpdateUserLeagues, UpdateUserPRPresets } from '../repository';
 import { DB_HOST, PATREON_CLIENT_ID, PATREON_CLIENT_SECRET, PATREON_REDIRECT_URL, PATREON_TIER_ID } from '../settings';
 
-const AdminIds = ['53401676', '71505590', '48239348'];
+const AdminIds = ['53401676', '71505590', '48239348', '69961699'];
 
 /**
  * Removes any non alpha-numeric, whitespace, or () in string

@@ -1,143 +1,85 @@
 <div class="table-container margin-top-10" [hidden]="pieChartData.length === 0">
-  <h2 class="center-text mid-bold-text">
-    Draft Breakdown by Position
-  </h2>
-  <div fxLayoutAlign="center" class="margin-top-25">
-    <div fxFlex="60%" style="max-width: 1000px">
-      <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
-        [options]="pieChartOptions" [legend]="pieChartLegend">
-      </canvas>
+  <ng-container *ngIf="!configService.isMobile">
+    <h2 class="center-text mid-bold-text">
+      Draft Breakdown by Position
+    </h2>
+    <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
+      <div fxFlex="40%" fxFlex.xs="100%" fxFlex.sm="80%" style="display: block; height: 300px">
+        <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
+          [options]="pieChartOptions" [legend]="pieChartLegend">
+        </canvas>
+      </div>
+      <div fxFlex="30%" fxFlex.xs="100%" fxFlex.sm="80%">
+        <mat-card style="margin: 15px">
+          <div class="mid-bold-text center-text margin-bot-10">Draft Overview</div>
+          <div class="metric__row">
+            <div class="text__light">Best Overall Pick</div>
+            <div class="mid-bold-text">{{bestOverallPickStr?.player || '-'}}</div>
+          </div>
+          <div class="sub__metric__row">
+            <div class="small-text__light"></div>
+            <div class="small-text__light">{{bestOverallPickStr?.pick || '-'}}</div>
+          </div>
+          <div class="metric__row">
+            <div class="text__light">Best Value Pick</div>
+            <div class="mid-bold-text">{{bestValuePickStr?.player || '-'}}</div>
+          </div>
+          <div class="sub__metric__row">
+            <div class="small-text__light"></div>
+            <div class="small-text__light">{{bestValuePickStr?.pick || '-'}}</div>
+          </div>
+          <div class="metric__row">
+            <div class="text__light">Worst Value Pick</div>
+            <div class="mid-bold-text">{{bestValuePickStr?.lowPlayer || '-'}}</div>
+          </div>
+          <div class="sub__metric__row">
+            <div class="small-text__light"></div>
+            <div class="small-text__light">{{bestValuePickStr?.lowPick || '-'}}</div>
+          </div>
+          <div class="metric__row">
+            <div class="text__light">Best Draft</div>
+            <div class="mid-bold-text">{{bestTeamDraft?.team?.owner?.ownerName || '-'}}</div>
+          </div>
+          <div class="sub__metric__row">
+            <div class="small-text__light">Value Added</div>
+            <div class="small-text__light">{{bestTeamDraft?.valueAdded | number : '1.0-1'}}</div>
+          </div>
+          <div class="metric__row">
+            <div class="text__light">Worst Draft</div>
+            <div class="mid-bold-text">{{worstTeamDraft?.team?.owner?.ownerName || '-'}}</div>
+          </div>
+          <div class="sub__metric__row">
+            <div class="small-text__light">Value Added</div>
+            <div class="small-text__light">{{worstTeamDraft?.valueAdded | number : '1.0-1'}}</div>
+          </div>
+        </mat-card>
+      </div>
     </div>
-  </div>
-  <h2 class="center-text mid-bold-text margin-top-50">
-    Draft Metrics
-  </h2>
-  <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-25">
-    <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="draft-metric-box">
-      <mat-card-subtitle>Best Overall Pick</mat-card-subtitle>
-      <div>{{bestOverallPickStr}}</div>
-    </mat-card>
-    <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="draft-metric-box">
-      <mat-card-subtitle>Best Value Pick</mat-card-subtitle>
-      <div>{{bestValuePickStr}}</div>
-    </mat-card>
-    <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="draft-metric-box">
-      <mat-card-subtitle>Best Draft</mat-card-subtitle>
-      <div>{{bestTeamDraft?.team?.owner?.ownerName}} <span
-          [ngClass]="{'urgent__alert': bestTeamDraft?.valueAdded < 0, 'success__alert': bestTeamDraft?.valueAdded > 0}">{{bestTeamDraft?.valueAdded | number : '1.0-1'}}</span>
-      </div>
-    </mat-card>
-    <mat-card fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="33%" class="draft-metric-box">
-      <mat-card-subtitle>Worst Draft</mat-card-subtitle>
-      <div>{{worstTeamDraft?.team?.owner?.ownerName}} <span
-          [ngClass]="{'urgent__alert': worstTeamDraft?.valueAdded < 0, 'success__alert': worstTeamDraft?.valueAdded > 0}">{{worstTeamDraft?.valueAdded | number : '1.0-1'}}</span>
-      </div>
-    </mat-card>
-  </div>
+  </ng-container>
+
   <div>
     <mat-tab-group mat-align-tabs="center" class="margin-top-25">
-      <mat-tab label="Completed Draft Breakdown">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="margin-right-5">grid_view</mat-icon>
+          {{configService.isMobile ? '' : 'Draftboard'}}
+        </ng-template>
         <div>
           <h2 class="center-text mid-bold-text margin-top-25">
-            Completed Draft: {{selectedDraft?.draft?.rounds}} Rounds
+            Completed Draft: {{selectedDraft?.draft?.rounds}} Rounds <button mat-icon-button *ngIf="configService.isMobile" (click)="configService.toggleToolbar$.next()"><mat-icon>settings</mat-icon></button>
           </h2>
-
         </div>
+
         <div>
-          <mat-form-field class="button-left player-value-checkbox-margin mat-dropdown-wide-300" color="accent">
-            <mat-label>Search Player, Round, or Owner</mat-label>
-            <input matInput type="text" (keyup)="updateDraftFilters()" [(ngModel)]="searchVal">
-          </mat-form-field>
-        </div>
-        <div class="margin-top-10">
-          <span class="container_spacer"></span>
-          <span class="button-right">
-            <mat-checkbox class="player-value-checkbox-margin" color="accent" [(ngModel)]="filterPosGroup[0]"
-              (change)="updateDraftFilters()">QB
-            </mat-checkbox>
-            <mat-checkbox class="player-value-checkbox-margin" color="accent" [(ngModel)]="filterPosGroup[1]"
-              (change)="updateDraftFilters()">RB
-            </mat-checkbox>
-            <mat-checkbox class="player-value-checkbox-margin" color="accent" [(ngModel)]="filterPosGroup[2]"
-              (change)="updateDraftFilters()">WR
-            </mat-checkbox>
-            <mat-checkbox class="player-value-checkbox-margin" color="accent" [(ngModel)]="filterPosGroup[3]"
-              (change)="updateDraftFilters()">TE
-            </mat-checkbox>
-          </span>
-        </div>
-
-        <div class="margin-top-90">
-          <mat-table [dataSource]="dataSource">
-
-            <!-- Name Column -->
-            <ng-container matColumnDef="pickNumber">
-              <mat-header-cell *matHeaderCellDef>Pick</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{element.pickNumber}}</mat-cell>
-            </ng-container>
-
-            <!-- Bid Column -->
-            <ng-container matColumnDef="bid">
-              <mat-header-cell *matHeaderCellDef>Bid Amount</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{element.bidAmount || 0}}</mat-cell>
-            </ng-container>
-
-            <!-- Pos Column -->
-            <ng-container matColumnDef="team">
-              <mat-header-cell *matHeaderCellDef>Team</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber]?.team}}</mat-cell>
-            </ng-container>
-
-            <!-- Age Column -->
-            <ng-container matColumnDef="owner">
-              <mat-header-cell *matHeaderCellDef>Owner</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber]?.owner}}</mat-cell>
-            </ng-container>
-
-            <!-- Value Column -->
-            <ng-container matColumnDef="selectedPlayer">
-              <mat-header-cell *matHeaderCellDef>Selected Pick (current value)</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{draftCache[element.pickNumber]?.player}}
-                - {{draftCache[element.pickNumber]?.value || 'None'}}
-              </mat-cell>
-            </ng-container>
-
-            <!-- actions column -->
-            <ng-container matColumnDef="actions">
-              <mat-header-cell *matHeaderCellDef></mat-header-cell>
-              <mat-cell *matCellDef="let element" (click)="$event.stopPropagation();">
-                <button mat-icon-button [matMenuTriggerFor]="menu">
-                  <mat-icon>more_horiz</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item *ngIf="draftCache[element.pickNumber]?.nameId"
-                    (click)="openPlayerComparison(getPlayerByPlayerPlatformId(element.playerId))">
-                    <span>Add to Player Comparison</span>
-                  </button>
-                  <button *ngIf="element.position !== 'PI' && draftCache[element.pickNumber]?.nameId" mat-menu-item
-                    [routerLink]="['../../players/details/', draftCache[element.pickNumber]?.nameId]"
-                    [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page"
-                    gaCategory="page_nav">
-                    <span>View Player Page</span>
-                  </button>
-                  <button mat-menu-item [routerLink]="['../team', draftCache[element.pickNumber]?.owner]"
-                    [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_team_page"
-                    gaCategory="page_nav">
-                    <span>View Team Page</span>
-                  </button>
-                </mat-menu>
-              </mat-cell>
-            </ng-container>
-
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="draft-element-row"
-              [ngClass]="{'mat-table-highlight': leagueService.leagueUser?.userData.username === draftCache[row.pickNumber]?.owner}"></mat-row>
-          </mat-table>
-          <mat-paginator [pageSizeOptions]="[pageLength, 2 * pageLength, 4 * pageLength]"
-            showFirstLastButtons></mat-paginator>
+          <app-draft-table [isMockDraft]="false" [teamPicks]="selectedDraft?.picks"
+            [draft]="selectedDraft?.draft"></app-draft-table>
         </div>
       </mat-tab>
-      <mat-tab label="Keeper Redraft Candidates" style="overflow: hidden">
+      <mat-tab style="overflow: hidden">
+        <ng-template mat-tab-label>
+          <mat-icon class="margin-right-5">grading</mat-icon>
+          {{configService.isMobile ? '' : 'Keepers'}}
+        </ng-template>
         <h2 class="mid-bold-text margin-top-10 center-text">Keeper Redraft Candidates</h2>
         <div class="margin-top-10 center-text">Below are the top 5 redraft candidates for each team. This is calculated
           by averaging player values for each draft round to get the pick value for that draft round. Once the average

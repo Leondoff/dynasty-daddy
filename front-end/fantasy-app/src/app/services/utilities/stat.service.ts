@@ -52,12 +52,12 @@ export class StatService {
             const fieldParts = field.split('.');
             let value = item;
             for (const part of fieldParts) {
-                value = value[part];
+                value = value?.[part];
             }
             return value;
         };
     } else {
-        getField = (item: T) => item[field];
+        getField = (item: T) => item?.[field];
     }
 
     const groups = [];

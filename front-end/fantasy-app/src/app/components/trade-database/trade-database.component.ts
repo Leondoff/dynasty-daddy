@@ -12,7 +12,7 @@ import { Status } from "../model/status";
 import { LeagueService } from "src/app/services/league.service";
 import { LeagueType } from "src/app/model/league/LeagueDTO";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
-import { ComparisonColorPalette } from "src/app/services/utilities/color.service";
+import { ColorService } from "src/app/services/utilities/color.service";
 import { ConfigKeyDictionary, ConfigService, LocalStorageDictionary } from "src/app/services/init/config.service";
 import { PageService } from "src/app/services/utilities/page.service";
 
@@ -86,6 +86,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         private route: ActivatedRoute,
         public configService: ConfigService,
         public leagueService: LeagueService,
+        private colorService: ColorService,
         private pageService: PageService,
         private fantasyPlayerApiService: FantasyPlayerApiService,
         private leagueSwitchService: LeagueSwitchService) {
@@ -129,26 +130,6 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
         );
     }
 
-    /**
-     * get color for circle based on position
-     * @param pos string for position
-     */
-    private getColorForPos(pos: string): string {
-        const colorList = ComparisonColorPalette;
-        switch (pos) {
-            case 'QB':
-                return colorList[0]
-            case 'RB':
-                return colorList[1]
-            case 'WR':
-                return colorList[2]
-            case 'TE':
-                return colorList[3]
-            default:
-                return colorList[4]
-        }
-    }
-
     private initializeTradeDB(): void {
         // load recent trade volume for bubble pack
         this.tradeVolumeStatus = Status.LOADING;
@@ -168,7 +149,7 @@ export class TradeDatabaseComponent extends BaseComponent implements OnInit, OnD
                     + '<br><span style="font-style: italic">Click to search trades</span>'
                 this.volumeData.push({
                     'label': name,
-                    'color': this.getColorForPos(p.position),
+                    'color': this.colorService.getTradeColorForPos(p.position),
                     'value': Number(p.count),
                     'id': p.id,
                     'tooltip': tooltipStr

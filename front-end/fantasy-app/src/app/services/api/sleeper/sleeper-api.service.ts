@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SleeperApiConfigService } from './sleeper-api-config.service';
-import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
+import { LeaguePickDTO } from '../../../model/league/LeaguePickDTO';
 import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
 import { LeaguePlayoffMatchUpDTO } from '../../../model/league/LeaguePlayoffMatchUpDTO';
 import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
@@ -111,7 +111,7 @@ export class SleeperApiService {
   getSleeperTradedPicksByDraftId(draftId: string): Observable<LeagueRawTradePicksDTO[]> {
     return this.http.get<LeagueRawTradePicksDTO[]>(this.sleeperApiConfigService.getSleeperDraftEndpoint + draftId + '/traded_picks').pipe(map((picks: any[]) => {
       const pickList: LeagueRawTradePicksDTO[] = [];
-      picks.map(pick => pickList.push(new LeagueRawTradePicksDTO(pick.owner_id, pick.previous_owner_id, pick.roster_id, pick.round, pick.season)));
+      picks.forEach(pick => pickList.push(new LeagueRawTradePicksDTO(pick.owner_id, pick.previous_owner_id, pick.roster_id, pick.round, pick.season)));
       return pickList;
     }));
   }
@@ -156,10 +156,10 @@ export class SleeperApiService {
    * get sleeper completed drafts by draft id
    * @param draftId draft id
    */
-  getSleeperCompletedDraftsByDraftId(draftId: string): Observable<LeagueCompletedPickDTO[]> {
-    return this.http.get<LeagueCompletedPickDTO[]>(this.sleeperApiConfigService.getSleeperDraftEndpoint + draftId + '/picks').pipe(map((picks: any[]) => {
-      const mappedPicks: LeagueCompletedPickDTO[] = [];
-      picks.map(pick => mappedPicks.push(new LeagueCompletedPickDTO().fromSleeper(pick)));
+  getSleeperCompletedDraftsByDraftId(draftId: string, teamCount: number): Observable<LeaguePickDTO[]> {
+    return this.http.get<LeaguePickDTO[]>(this.sleeperApiConfigService.getSleeperDraftEndpoint + draftId + '/picks').pipe(map((picks: any[]) => {
+      const mappedPicks: LeaguePickDTO[] = [];
+      picks.map(pick => mappedPicks.push(new LeaguePickDTO().fromSleeper(pick, teamCount)));
       return mappedPicks;
     }));
   }

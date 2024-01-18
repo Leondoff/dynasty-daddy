@@ -206,7 +206,6 @@ export class LeagueDTO {
       swid: swid
     };
     this.leaguePlatform = LeaguePlatform.ESPN;
-    console.log(this);
     return this;
   }
 

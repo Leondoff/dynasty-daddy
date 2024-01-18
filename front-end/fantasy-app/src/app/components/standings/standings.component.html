@@ -48,7 +48,11 @@
   </div>
 
   <mat-tab-group mat-align-tabs="center" class="margin-top-25">
-    <mat-tab label="League Insights">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="margin-right-5">data_thresholding</mat-icon>
+        {{configService.isMobile ? '' : 'Insights'}}
+      </ng-template>
       <div class="mid-bold-text margin-top-10 center-text">League Insights</div>
       <div class="margin-top-10 center-text">A collection of league metrics and moments.</div>
       <div fxLayout="row wrap" fxLayoutAlign="center" class="margin-top-50">
@@ -152,12 +156,20 @@
         </mat-card>
       </div>
     </mat-tab>
-    <mat-tab label="Schedule Comparison">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="margin-right-5">calendar_month</mat-icon>
+        {{configService.isMobile ? '' : 'Schedule Comparison'}}
+      </ng-template>
       <div class="mid-bold-text margin-top-10 center-text">Schedule Comparisons</div>
       <div class="margin-top-10 center-text table-container">Calculates what each teams record would be with the other team schedule. For games where the same team plays each-other, a win/loss is assigned if the team scored more than that weeks median</div>
       <app-schedule-comparison></app-schedule-comparison>
     </mat-tab>
-    <mat-tab label="All League Play Records">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="margin-right-5">select_all</mat-icon>
+        {{configService.isMobile ? '' : 'League Play Record'}}
+      </ng-template>
       <div class="mid-bold-text margin-top-10 center-text">All League Play Records</div>
       <div class="margin-top-10 center-text">A team's record versus each team during that week. The table is sorted by most overall wins.</div>
       <app-weekly-record-vs-all></app-weekly-record-vs-all>
@@ -171,4 +183,4 @@
 
 <app-login-error [errorHeader]="noLeagueErrMsg" *ngIf="(leagueService.leagueStatus$ | async) === 'NONE' || !leagueService.selectedLeague"></app-login-error>
 
-<app-login-error [errorHeader]="leagueNotStartedErrMsg" *ngIf="(leagueService.selectedLeague?.status === 'pre_draft' || leagueService.selectedLeague?.status === 'drafting') && !leagueService.isLeagueLoaded() && (leagueService.leagueStatus$ | async) !== 'LOADING'"></app-login-error>
+<app-login-error [errorHeader]="leagueNotStartedErrMsg" *ngIf="(leagueService.selectedLeague?.status === 'pre_draft' || leagueService.selectedLeague?.status === 'drafting') && (leagueService.leagueStatus$ | async) !== 'LOADING'"></app-login-error>

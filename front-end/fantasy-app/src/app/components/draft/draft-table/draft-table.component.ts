@@ -1,176 +1,362 @@
-import { AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { FantasyPlayer } from '../../../model/assets/FantasyPlayer';
-import { TeamMockDraftPick } from '../../model/mockDraft';
-import { DraftService } from '../../services/draft.service';
+import { DraftService, DraftOrderType } from '../../services/draft.service';
 import { LeagueService } from '../../../services/league.service';
-import { FormControl } from '@angular/forms';
-import { ReplaySubject, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { PowerRankingsService } from '../../services/power-rankings.service';
 import { PlayerService } from 'src/app/services/player.service';
 import { ConfigService } from 'src/app/services/init/config.service';
 import { LeagueTeam } from 'src/app/model/league/LeagueTeam';
+import { ColorService, DraftPosColorPallette } from 'src/app/services/utilities/color.service';
+import { MatDialog } from '@angular/material/dialog';
+import { PlayerDetailsModalComponent } from '../../modals/player-details-modal/player-details-modal.component';
+import { BaseComponent } from '../../base-component.abstract';
+import { LeaguePickDTO } from 'src/app/model/league/LeaguePickDTO';
+import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
+import { StatService } from 'src/app/services/utilities/stat.service';
+import { delay } from 'rxjs/operators';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-draft-table',
   templateUrl: './draft-table.component.html',
-  styleUrls: ['./draft-table.component.css']
+  styleUrls: ['./draft-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DraftTableComponent implements OnInit, OnChanges, AfterViewInit {
+export class DraftTableComponent extends BaseComponent implements OnInit, OnChanges {
 
-  /**
-   * change detection when new group is toggled
-   */
+  // Input for team picks
   @Input()
-  mockDraftConfig: string;
+  teamPicks: LeaguePickDTO[];
 
-  /**
-   * toggle for when data is changed externally
-   */
+  // Input for indicating if it's a mock draft
   @Input()
-  isReset: boolean;
+  isMockDraft: boolean = true;
 
-  /** display columns */
-  displayedColumns: string[] = [];
+  // Input for draft details
+  @Input()
+  draft: LeagueRawDraftOrderDTO = null;
 
-  /** page length set to size of league */
-  pageLength: number = 12;
+  // Array to store league team order
+  teamOrder: LeagueTeam[] = [];
 
-  /** control for the selected player */
-  public playerCtrl: FormControl = new FormControl();
+  // 2D array to store formatted rows of league picks
+  formattedRows: LeaguePickDTO[][] = [];
 
-  /** control for the MatSelect filter keyword */
-  public playerFilterCtrl: FormControl = new FormControl();
+  // Array to store the order of fantasy players
+  playerOrder: FantasyPlayer[] = [];
 
-  /** list of players filtered by search keyword */
-  public filteredDraftPlayers: ReplaySubject<FantasyPlayer[]> = new ReplaySubject<FantasyPlayer[]>(1);
+  // Reference to MatMenuTrigger for programmatic control
+  @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
-  /** Subject that emits when the component has been destroyed. */
-  protected _onDestroy = new Subject<void>();
-
-  /** mat paginator */
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  /** Team needs cache for table */
-  teamCache = {};
-
-  /** mat datasource */
-  dataSource: MatTableDataSource<TeamMockDraftPick> = new MatTableDataSource<TeamMockDraftPick>();
+  // Cache for cell colors based on the draft configuration
+  colorCache = {};
 
   constructor(public mockDraftService: DraftService,
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
     public configService: ConfigService,
     public playerService: PlayerService,
-    private powerRankingsService: PowerRankingsService,
+    private statService: StatService,
+    public colorService: ColorService,
     public leagueService: LeagueService) {
+    super();
   }
 
   ngOnInit(): void {
-    this.displayedColumns = this.configService.isMobile ?
-      ['pickNumber', 'team', 'projectedPlayer'] :
-      ['pickNumber', 'team', 'teamNeeds', 'projectedPlayer'];
-
-    // listen for search field value changes
-    this.playerFilterCtrl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
-      .subscribe(() => {
-        this.filterDraftPlayers(this.playerFilterCtrl, this.filteredDraftPlayers);
-      });
-  }
-
-  ngAfterViewInit(): void {
-    this.initializeMockDraft();
-  }
-
-  initializeMockDraft(): void {
-    this.pageLength = this.leagueService.selectedLeague.totalRosters;
-    this.leagueService.leagueTeamDetails.forEach(team => {
-      this.teamCache[team.roster.rosterId] = {
-        teamNeeds: this.powerRankingsService.getTeamNeedsFromRosterId(team.roster.rosterId).join(' · '),
-        avatar: team?.owner?.avatar,
-        name: team?.owner?.teamName
-      }
-    });
-    this.mockDraftService.teamPicks.sort((a, b) => a.pick - b.pick);
-    this.dataSource = new MatTableDataSource(this.mockDraftService.teamPicks);
-    this.dataSource.paginator = this.paginator;
-    this.filteredDraftPlayers.next(this.mockDraftService.selectablePlayers.slice(0, 10));
-    this.mockDraftService.resetDraftList();
+    if (this.playerService.playerValues.length > 0) {
+      this.initializeMockDraft();
+    }
+    this.addSubscriptions(this.mockDraftService.updateDraft$
+      .subscribe(refresh => {
+        this.setCellColorCache();
+        if (refresh) {
+          this.initializeMockDraft();
+        } else {
+          this.cdr.markForCheck();
+        }
+      }),
+      this.playerService.playerValuesUpdated$.pipe(delay(500)).subscribe(_ => {
+        this.mockDraftService.generateDraft();
+        this.mockDraftService.updateDraft$.next(true);
+      }))
   }
 
   ngOnChanges(): void {
     this.initializeMockDraft();
   }
 
-  /**
-   * disable player in custom mode dropdown if already selected
-   * @param player player data
-   */
-  isPlayerAlreadySelected(player: FantasyPlayer, pickNum: number): boolean {
-    return this.mockDraftService.mockDraftSelectedPlayers.slice(0, pickNum).some(picked => picked?.name_id === player?.name_id);
-  }
-
-  /**
- * filter players for selected dropdown
- * @protected
- */
-  protected filterDraftPlayers(filterCtrl: FormControl, filterSubscription: ReplaySubject<FantasyPlayer[]>): any {
-    // get the search keyword
-    let search = filterCtrl.value;
-    if (!search) {
-      filterSubscription.next(this.mockDraftService.selectablePlayers.filter(player => !this.mockDraftService.mockDraftSelectedPlayers.includes(player)).slice(0, 8));
-      return;
+  initializeMockDraft(): void {
+    this.formattedRows = [];
+    this.playerOrder = this.isMockDraft ?
+      this.mockDraftService.getDraftOrder() :
+      this.teamPicks.map(p =>
+        this.playerService.getPlayerByPlayerPlatformId(
+          p.playerId,
+          this.leagueService.selectedLeague.leaguePlatform
+        ) || null
+      )
+    const teamCount = this.leagueService.selectedLeague ? this.leagueService.leagueTeamDetails.length : 12;
+    // set draft order
+    if (!this.isMockDraft) {
+      this.teamOrder =
+        Object.values(this.draft.slotToRosterId).map(t =>
+          this.leagueService.getTeamByRosterId(t as number)
+        );
     } else {
-      search = search.toLowerCase();
+      this.teamOrder = this.leagueService.selectedLeague ? this.teamPicks.slice(0, teamCount)
+        .map(p =>
+          this.leagueService.leagueTeamDetails.find(t => t.roster.rosterId === p.originalRosterId)
+        ) : Array.from({ length: 12 }, (_, index) => new LeagueTeam(null, null).createMockTeam(index + 1));
     }
-    // filter the players
-    filterSubscription.next(
-      this.mockDraftService.selectablePlayers
-        .filter(player => ((player.full_name.toLowerCase().indexOf(search) > -1
-          || player.owner?.ownerName.toLowerCase().indexOf(search) > -1
-          || player.position.toLowerCase().indexOf(search) > -1))).slice(0, 10));
-  }
-
-  /**
-   * Draft Player in mock draft
-   * @param player player being drafted
-   * @param pick Pick player is drafted at
-   */
-  draftPlayer(player: FantasyPlayer, pick: number): void {
-    const pickInd = pick - 1;
-    const ind = this.mockDraftService.mockDraftSelectedPlayers.findIndex(p => p?.name_id === player?.name_id)
-    if (ind > pickInd) {
-      this.mockDraftService.mockDraftSelectedPlayers[ind] = undefined
+    this.setCellColorCache();
+    // map players to the draft
+    for (let i = 0; i < this.teamPicks.length; i += teamCount) {
+      let row = this.teamPicks.slice(i, i + teamCount);
+      let draftType = this.isMockDraft ?
+        this.mockDraftService.mockDraftOrder : this.draft.type;
+      switch (draftType) {
+        case DraftOrderType.Snake:
+          row = this.formattedRows.length % 2 == 0 ? row : row.reverse();
+          break;
+        case DraftOrderType.RoundReversal:
+          row = (this.formattedRows.length % 2 === 0 && this.formattedRows.length < 2) ||
+            (this.formattedRows.length % 2 === 1 && this.formattedRows.length > 2) ?
+            row : row.reverse();
+          break;
+        default:
+          break;
+      }
+      this.formattedRows.push(row);
     }
-    this.mockDraftService.mockDraftSelectedPlayers[pickInd] = player
-    this.filterDraftPlayers(this.playerFilterCtrl, this.filteredDraftPlayers);
+    this.cdr.markForCheck();
+  }
+
+  setCellColorCache(): void {
+    this.colorCache = {};
+    if (!this.isMockDraft) {
+      switch (this.mockDraftService.completedConfig) {
+        case 'value':
+          this.colorCache['min'] = this.mockDraftService
+            .getPickValueAdded(this.teamPicks[0], this.draft?.type === DraftOrderType.Auction);
+          this.colorCache['max'] = this.colorCache['min'];
+          this.teamPicks.forEach(p => {
+            const val = this.mockDraftService.getPickValueAdded(p, this.draft.type === DraftOrderType.Auction);
+            if (this.colorCache['min'] > val) {
+              this.colorCache['min'] = val;
+            }
+            if (this.colorCache['max'] < val) {
+              this.colorCache['max'] = val;
+            }
+          });
+          this.colorCache['values'] =
+            this.colorService.getColorGradientArray(
+              this.colorCache['max'] + 2,
+              '#ADADB0', '#008f51'
+            )
+          this.colorCache['badValues'] = this.colorService.getColorGradientArray(
+            Math.abs(this.colorCache['min']) + 2,
+            '#ADADB0', '#e31d1d'
+          )
+          break;
+        case 'overall':
+          this.colorCache['min'] = this.playerService.getCurrentPlayerValue(
+            this.playerOrder[0], this.mockDraftService.isSuperflex
+          );
+          this.colorCache['max'] = this.colorCache['min']
+          this.playerOrder.forEach(p => {
+            const val = this.playerService.getCurrentPlayerValue(
+              p, this.mockDraftService.isSuperflex
+            );
+            if (this.colorCache['min'] > val) {
+              this.colorCache['min'] = val;
+            }
+            if (this.colorCache['max'] < val) {
+              this.colorCache['max'] = val;
+            }
+          });
+          this.colorCache['values'] =
+            this.colorService.getColorGradientArray(
+              this.colorCache['max'] + 2,
+              '#ADADB0', '#008f51'
+            )
+          break;
+        default:
+      }
+    } else {
+      if (this.playerOrder.length > 0) {
+        if (this.mockDraftService.mockDraftConfig === 'tiers') {
+          const tiers = this.statService.bucketSort(this.playerOrder,
+            this.mockDraftService.isSuperflex ? 'sf_trade_value' : 'trade_value');
+          this.colorCache['tiers'] = {};
+          tiers.forEach((tier, ind) => {
+            tier.forEach(player => {
+              this.colorCache['tiers'][player.name_id] = ind
+            })
+          })
+        } else if (this.mockDraftService.mockDraftConfig === 'trending') {
+          this.colorCache['min'] = this.mockDraftService.isSuperflex ?
+            this.playerOrder[0]?.sf_change || 0 : this.playerOrder[0]?.standard_change || 0;
+          this.colorCache['max'] = this.colorCache['min']
+          this.playerOrder.forEach(p => {
+            const val = this.mockDraftService.isSuperflex ? p?.sf_change || 0 : p?.standard_change || 0;
+            if (this.colorCache['min'] > val) {
+              this.colorCache['min'] = val;
+            }
+            if (this.colorCache['max'] < val) {
+              this.colorCache['max'] = val;
+            }
+          });
+          this.colorCache['values'] =
+            this.colorService.getColorGradientArray(
+              this.colorCache['max'] + 2,
+              '#ADADB0', '#008f51'
+            )
+          this.colorCache['badValues'] = this.colorService.getColorGradientArray(
+            Math.abs(this.colorCache['min']) + 2,
+            '#ADADB0', '#e31d1d'
+          )
+        }
+      }
+    }
   }
 
   /**
- * Undraft Player in mock draft
- * @param player player being undrafted
- * @param pick Pick player is undrafted at
- */
-  undraftPlayer(pick: number): void {
-    this.mockDraftService.mockDraftSelectedPlayers[pick - 1] = null;
-  }
-
-  /**
-   * Update team pick
-   * @param team team to update pick to
-   * @param pick pick number
+   * Return value for pick in ()s
+   * @param pick draft pick to get value for
    */
-  selectTeamForPick(team: LeagueTeam, pick: number) {
-    this.mockDraftService.teamPicks[pick].rosterId = team.roster.rosterId;
-    this.mockDraftService.teamPicks[pick].originalRosterId = team.roster.rosterId;
-    this.mockDraftService.teamPicks[pick].pickTeam = team.owner.teamName;
-    this.mockDraftService.teamPicks[pick].pickOwner = team.owner.ownerName;
-    this.initializeMockDraft();
+  getDisplayValue(pick: LeaguePickDTO): number {
+    if (this.isMockDraft) {
+      return this.playerService.getCurrentPlayerValue(this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0
+    } else {
+      switch (this.mockDraftService.completedConfig) {
+        case 'overall':
+          return this.playerService.getCurrentPlayerValue(
+            this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0;
+        case 'value':
+          return this.mockDraftService.getPickValueAdded(pick, this.draft?.type === DraftOrderType.Auction);
+        default:
+          return this.playerService.getCurrentPlayerValue(this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0
+      }
+    }
   }
 
-  ngOnDestroy(): void {
-    this._onDestroy.next();
-    this._onDestroy.complete();
+  /**
+   * Get player position rank for player in draft order
+   * @param player fantasy player to get position rank for
+   */
+  getPlayerPositionRank(player: FantasyPlayer): string {
+    const ind = this.playerOrder?.filter(p => p?.position === player?.position)?.findIndex(p => p?.name_id == player?.name_id)
+    return player && ind >= 0 ? `${player?.position}${ind + 1}` : '--';
+  }
+
+  /**
+   * Returns true if the cell should be filtered out
+   * @param pick pick information to filter on
+   * @param player fantasy player to filter on
+   */
+  isFilteredOut(pick: LeaguePickDTO, player: FantasyPlayer): boolean {
+    if (this.mockDraftService.filterTeam && pick?.rosterId !== this.mockDraftService.filterTeam ||
+      (Object.values(this.mockDraftService.filteredPositions).some(value => value === true) &&
+        !this.mockDraftService.filteredPositions[player?.position]) ||
+      !player?.full_name.toLowerCase().includes(this.mockDraftService.searchVal) ||
+      ((this.mockDraftService.ageFilter[0] !== 21 || this.mockDraftService.ageFilter[1] !== 40) &&
+        (player?.age < this.mockDraftService.ageFilter[0] || player?.age > this.mockDraftService.ageFilter[1])) ||
+      ((this.mockDraftService.expFilter[0] !== 0 || this.mockDraftService.expFilter[1] !== 23) &&
+        (player?.experience < this.mockDraftService.expFilter[0] || player?.experience > this.mockDraftService.expFilter[1]))
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * return team name for roster id
+   * @param rosterId id of team to get name for
+   */
+  getOwnerNameByRosterId = (rosterId: number) =>
+    this.leagueService.selectedLeague ?
+      this.leagueService.getTeamByRosterId(rosterId)?.owner?.ownerName || `Team ${rosterId}` :
+      `Team ${rosterId}`;
+
+  /**
+   * Toggle team filter search 
+   * @param rosterId team id
+   */
+  toggleTeamFilter(rosterId: number, index: number): void {
+    if (this.mockDraftService.isOrderMode) {
+      const team = this.teamOrder.find(t =>
+        t.roster.rosterId === this.mockDraftService.overrideRosterId);
+      this.teamOrder[index] = team;
+      this.teamPicks.forEach((p, ind) => {
+        if (
+          (ind % this.teamOrder.length === index ||
+            ind % this.teamOrder.length === this.teamOrder.length - index - 1) &&
+          p.originalRosterId === rosterId && p.rosterId === rosterId) {
+          this.teamPicks[ind].rosterId = this.mockDraftService.overrideRosterId;
+          this.teamPicks[ind].originalRosterId = this.mockDraftService.overrideRosterId;
+        }
+      });
+    } else {
+      this.mockDraftService.filterTeam == rosterId ?
+        this.mockDraftService.filterTeam = null :
+        this.mockDraftService.filterTeam = rosterId;
+    }
+    this.mockDraftService.updateDraft$.next(false);
+  }
+
+  /**
+   * Returns a color for a pick based on draft config
+   * @param pick draft pick to determine color for
+   */
+  getPickColor(pick: LeaguePickDTO): string {
+    if (this.isMockDraft) {
+      if (this.mockDraftService.alreadyDraftedList.includes(this.playerOrder[pick.pickNumber - 1]?.name_id))
+        return '#67678e';
+      switch (this.mockDraftService.mockDraftConfig) {
+        case 'tiers':
+          return DraftPosColorPallette[this.colorCache['tiers']?.[this.playerOrder[pick.pickNumber - 1]?.name_id]];
+        case 'trending':
+          const val = this.mockDraftService.isSuperflex ? this.playerOrder[pick.pickNumber - 1]?.sf_change : this.playerOrder[pick.pickNumber - 1]?.standard_change;
+          return val >= 0 ? this.colorCache['values'][val] : this.colorCache['badValues'][Math.abs(val)];
+        default:
+          return this.colorService.getDraftColorForPos(this.playerOrder[pick.pickNumber - 1]?.position)
+      }
+    } else {
+      switch (this.mockDraftService.completedConfig) {
+        case 'overall':
+          return this.colorCache['values'][(this.playerService.getCurrentPlayerValue(
+            this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0) + 1];
+        case 'value':
+          const val = this.mockDraftService.getPickValueAdded(pick, this.draft?.type === DraftOrderType.Auction);
+          return val >= 0 ? this.colorCache['values'][val] : this.colorCache['badValues'][Math.abs(val)];
+        default:
+          return this.colorService.getDraftColorForPos(this.playerOrder[pick.pickNumber - 1]?.position)
+      }
+    }
+  }
+
+  /**
+   * handles pick on click in edit mode or open modal
+   * @param player player modal to open
+   * @param pickNum cell pick number to modify
+   */
+  handlePickOnClick(player: FantasyPlayer, pickNum: number): void {
+    if (this.mockDraftService.isOrderMode) {
+      this.mockDraftService.teamPicks[pickNum - 1].rosterId = this.mockDraftService.overrideRosterId;
+      this.mockDraftService.updateDraft$.next(false);
+    } else {
+      if (player && ['QB', 'RB', 'WR', 'TE'].includes(player.position)) {
+        this.dialog.open(PlayerDetailsModalComponent
+          , {
+            data: {
+              player
+            },
+            width: this.configService.isMobile ? '100%' : '80%',
+            maxWidth: this.configService.isMobile ? '100%' : '1400px',
+            maxHeight: this.configService.isMobile ? '80%' : '',
+            panelClass: "player-dialog"
+          }
+        );
+      }
+    }
   }
 }

@@ -57,6 +57,7 @@ export class FantasyPlayer {
   numberfire_ros: number = null;
   espn_ros: number = null;
   fantasyguys: number = null;
+  metadata: any;
 
   constructor() {}
 

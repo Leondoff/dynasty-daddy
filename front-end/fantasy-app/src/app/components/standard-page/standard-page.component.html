@@ -4,9 +4,13 @@
     <app-sidebar (toggleMenu)="drawer.toggle()"></app-sidebar>
   </mat-drawer>
 
+  <mat-drawer #drawerTool class="standard-sidenav" mode="side" position="end">
+    <app-draft-toolbar></app-draft-toolbar>
+  </mat-drawer>
+
   <mat-drawer-content style="overflow: hidden;">
     <div class="main">
-      <div [ngClass]="{'content-wrapper': !configService.isMobile, 'content-wrapper__mobile': configService.isMobile}">
+      <div class="content-wrapper" [ngClass]="{'mobile-padding': configService.isMobile, 'large-page': isLargeContainer}">
         <router-outlet></router-outlet>
       </div>
     </div>

@@ -40,6 +40,13 @@
   cursor: pointer;
 }
 
+.sidebar-beta {
+  background-color: mat.get-color-from-palette($mat-warn, main) !important;
+  margin-left: 10px !important;
+  min-height: 2em !important;
+  cursor: pointer;
+}
+
 .lock-icon {
   align-self: center;
   margin-right: 5px;

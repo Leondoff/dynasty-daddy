@@ -79,7 +79,6 @@ export class FantasyTeamDetailsWeeklyPointsChartComponent implements OnInit {
   ngOnInit(): void {
     // TODO fix this
     if (this.matchupService.leagueMatchUpUI.length === 0) {
-      console.warn('Warning: Match Data was not loaded correctly. Recalculating Data...');
       this.matchupService.initMatchUpCharts(this.leagueService.selectedLeague,
         this.nflService.getCompletedWeekForSeason(this.leagueService.selectedLeague.season));
     }

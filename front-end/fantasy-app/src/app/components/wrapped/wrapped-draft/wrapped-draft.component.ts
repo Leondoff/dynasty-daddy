@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LeagueService } from 'src/app/services/league.service';
 import { PlayerService } from 'src/app/services/player.service';
-import { DraftService } from '../../services/draft.service';
+import { DraftOrderType, DraftService } from '../../services/draft.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { WrappedService } from '../../services/wrapped.service';
 import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
@@ -57,7 +57,7 @@ export class WrappedDraftComponent implements OnInit {
       this.draftIntro.push('Since we couldn\'t find or load the draft, we\'ll skip over it.');
     }
     if (draftObj && draftObj.picks.length > 0) {
-      const isAuction = draftObj?.draft?.type === 'auction';
+      const isAuction = draftObj?.draft?.type === DraftOrderType.Auction;
       // best/worst overall draft
       const draftRankings = this.draftService.getTeamsWithBestValueDrafts(draftObj);
       const bestTeam = draftRankings[0];

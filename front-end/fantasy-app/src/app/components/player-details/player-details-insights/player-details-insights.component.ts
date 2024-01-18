@@ -107,7 +107,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   }
 
   ngOnInit(): void {
-    this.isSuperflex = this.leagueService.selectedLeague?.isSuperflex || this.isSuperflex;
+    this.isSuperflex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : this.isSuperflex;
     this.overallAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
       this.selectedPlayer?.name_id, '', this.isSuperflex, this.selectedMarket);
     this.positionAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
@@ -116,7 +116,7 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
   }
 
   ngOnChanges(): void {
-    this.isSuperflex = this.leagueService.selectedLeague?.isSuperflex || this.isSuperflex;
+    this.isSuperflex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : this.isSuperflex;
     this.generateChartData();
     this.overallAdjPlayers = this.playerService.getAdjacentPlayersByNameId(
       this.selectedPlayer?.name_id, '', this.isSuperflex, this.selectedMarket);
@@ -217,7 +217,6 @@ export class PlayerDetailsInsightsComponent implements OnInit, OnChanges, AfterV
       this.chart.chart.data.datasets = this.lineChartData;
       this.chart.chart.data.labels = this.lineChartLabels;
     } catch (e: any) {
-      console.warn('No data points found for player: ' + e);
     }
   }
 

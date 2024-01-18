@@ -17,7 +17,7 @@ import { LeagueUserDTO } from 'src/app/model/league/LeagueUserDTO';
 import { Status } from 'src/app/components/model/status';
 import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 import { CompletedDraft } from 'src/app/model/league/CompletedDraft';
-import { LeagueCompletedPickDTO } from 'src/app/model/league/LeagueCompletedPickDTO';
+import { LeaguePickDTO } from 'src/app/model/league/LeaguePickDTO';
 import { PlatformLogos } from '../../utilities/display.service';
 import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
 
@@ -144,7 +144,9 @@ export class FleaflickerService {
       leagueWrapper.selectedLeague.playoffStartWeek = isPlayoffs.findIndex(it => it === true) > -1 ? isPlayoffs.findIndex(it => it === true) : 17;
       leagueWrapper.selectedLeague.scoringSettings = scoringFormatDTO;
       leagueWrapper.selectedLeague.scoringFormat = leagueWrapper.selectedLeague.scoringSettings.getScoringFormat();
-      leagueWrapper.completedDrafts = draftResults;
+      draftResults.forEach(draft => {
+        draft?.draft?.status === 'completed' ? leagueWrapper.completedDrafts.push(draft) : leagueWrapper.upcomingDrafts.push(draft) ;
+      });
       const teams = [];
       leagueWrapper.selectedLeague.metadata.rosters?.forEach((division, ind) => {
         division.teams?.forEach(team => {
@@ -437,13 +439,24 @@ export class FleaflickerService {
    */
   private marshalDraftResults(draft: any, leagueId: string, teamCount: number): CompletedDraft {
     const draftId = Math.round(Math.random() * 100);
+    const slotOrder = {};
+    const pickOrder = draft.orderedSelections || [];
+    pickOrder.slice(0, teamCount).forEach((pick, ind) => {
+      slotOrder[ind + 1] = pick?.team?.id;
+    });
+    const isSnake = draft.orderedSelections &&
+    (draft.orderedSelections?.length > 100 ||
+      !draft.orderedSelections[0]?.player?.proPlayer?.isRookie)
     const picks = draft?.orderedSelections?.filter(pick => pick.player.proPlayer).map(pick => {
-      this.mapFleaFlickerIdMap([pick.player])
-      return new LeagueCompletedPickDTO().fromFF(pick);
+      this.mapFleaFlickerIdMap([pick.player]);
+      const pickNum = pick?.slot?.overall % teamCount;
+      const originalOwnerId = slotOrder[isSnake && pick.roundId % 2 === 0 ? teamCount - pickNum + 1 : pickNum]
+      return new LeaguePickDTO().fromFF(pick, teamCount, originalOwnerId);
     });
     return new CompletedDraft(
       new LeagueRawDraftOrderDTO().fromFF(draft, (picks?.length || teamCount * 4) / teamCount,
-        draftId.toString(), leagueId, picks?.[0]?.playerId != "" ? 'completed' : 'in_progress'),
+        draftId.toString(), leagueId, picks?.[picks?.length - 1]?.playerId != "" ? 'completed' : 'in_progress',
+        slotOrder),
       picks
     );
   }

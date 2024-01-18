@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {LeagueService} from '../../../services/league.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {TeamMockDraftPick} from '../../model/mockDraft';
 import {MatchupService} from '../../services/matchup.service';
 import {ScheduleComp} from '../../model/matchup';
 

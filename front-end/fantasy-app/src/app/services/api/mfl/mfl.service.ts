@@ -4,7 +4,7 @@ import { LeagueWrapper } from '../../../model/league/LeagueWrapper';
 import { MflApiService } from './mfl-api.service';
 import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
 import { LeagueTeam } from '../../../model/league/LeagueTeam';
-import { LeagueCompletedPickDTO } from '../../../model/league/LeagueCompletedPickDTO';
+import { LeaguePickDTO } from '../../../model/league/LeaguePickDTO';
 import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
 import { map, mergeMap, concatMap, catchError, delay, switchMap, toArray } from 'rxjs/operators';
 import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO';
@@ -143,7 +143,8 @@ export class MflService {
         leagueWrapper.selectedLeague.scoringSettings = scoringSettings;
         leagueWrapper.selectedLeague.scoringFormat = leagueWrapper.selectedLeague.scoringSettings.getScoringFormat();
         leagueWrapper.leaguePlatform = LeaguePlatform.MFL;
-        leagueWrapper.completedDrafts = completedDraft ? [completedDraft] : [];
+        completedDraft?.draft?.status === 'completed' ?
+          leagueWrapper.completedDrafts = [completedDraft] : leagueWrapper.upcomingDrafts = [completedDraft];
         // get future pick year since it will filter out current year picks
         const pickYear = year === new Date().getFullYear().toString() &&
           ((leagueWrapper.completedDrafts.length === 0 && new Date().getMonth() < 5) ||
@@ -414,14 +415,18 @@ export class MflService {
    */
   private marshalDraftResults(draft: any, leagueId: string, playerType: string, teamCount: number): CompletedDraft {
     const draftId = Math.round(Math.random() * 100);
-    const picks = draft?.draftPick?.filter(pick => pick.player !== '----').map(pick => {
-      return (new LeagueCompletedPickDTO().fromMFL(pick, teamCount));
+    const draftOrder = draft?.round1DraftOrder.split(',').filter(it => it !== '') || [];
+    const picks = draft?.draftPick?.filter(pick => pick.player !== '----').map((pick, ind) => {
+      const roundOrder = draft.draftType === 'SFIRSTRANDOM' && pick.round % 2 === 0 ?
+        draftOrder.slice().reverse() : draftOrder.slice();
+      const originalOwnerId = roundOrder[Number(pick.pick) - 1]
+      return (new LeaguePickDTO().fromMFL(pick, teamCount, originalOwnerId));
     });
     return new CompletedDraft(
       new LeagueRawDraftOrderDTO()
         .fromMFL(draft, playerType,
           (picks?.length || teamCount * 4) / teamCount, draftId.toString(),
-          leagueId, picks?.[0]?.playerId != "" ? 'completed' : 'in_progress'
+          leagueId, picks?.[picks?.length - 1]?.playerId != "" ? 'completed' : 'in_progress'
         ),
       picks
     );
