@@ -1,3 +1,5 @@
+import { DraftCapital } from "../assets/DraftCapital";
+
 export class LeaguePickDTO {
 
   round: number;
@@ -86,6 +88,16 @@ export class LeaguePickDTO {
     this.position = pick?.player?.proPlayer?.position;
     this.originalRosterId = originalOwnerId;
     this.pickdisplay = this.formatPickDisplay(teamCount);
+    return this;
+  }
+
+  fromDraftCapital(pick: DraftCapital, ownerId: number): LeaguePickDTO {
+    this.playerId = "";
+    this.pickNumber = pick.pick * pick.round;
+    this.rosterId = ownerId;
+    this.round = pick.round;
+    this.draftSlot = pick.pick;
+    this.originalRosterId = pick.originalRosterId;
     return this;
   }
 

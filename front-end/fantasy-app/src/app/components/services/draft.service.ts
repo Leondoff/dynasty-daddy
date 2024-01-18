@@ -9,6 +9,7 @@ import { PowerRankingsService } from './power-rankings.service';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
 import { Subject } from 'rxjs';
 import { SleeperApiService } from 'src/app/services/api/sleeper/sleeper-api.service';
+import { DisplayService } from 'src/app/services/utilities/display.service';
 
 @Injectable({
   providedIn: 'root'
@@ -79,6 +80,7 @@ export class DraftService {
     public leagueService: LeagueService,
     private playerService: PlayerService,
     private sleeperApiService: SleeperApiService,
+    private displayService: DisplayService,
     private powerRankingsService: PowerRankingsService
   ) {
   }
@@ -145,34 +147,18 @@ export class DraftService {
       for (let rd = 0; rd < this.mockDraftRounds; rd++) {
         teams.forEach((t, ind) => {
           this.teamPicks.push(new LeaguePickDTO().fromMockDraft((rd * 12) + ind + 1,
-            this.createPickString(rd + 1, ind + 1),
+            this.displayService.createPickString(rd + 1, ind + 1),
             t.owner.ownerName,
             t.owner.teamName,
             t.roster.rosterId,
             t.roster.rosterId));
         });
       }
-    } else if (teams[0]?.upcomingDraftOrder.length !== 0 || this.leagueService.upcomingDrafts.length > 0) {
-      if (teams[0]?.upcomingDraftOrder.length !== 0) {
-        teams.map(team => {
-          for (const pick of team.upcomingDraftOrder) {
-            if (pick.year === this.leagueService.selectedLeague.season) {
-              this.teamPicks.push(new LeaguePickDTO().fromMockDraft(((pick.round - 1) * teams.length) + pick.pick,
-                this.createPickString(pick.round, pick.pick),
-                team.owner?.ownerName,
-                team.owner?.teamName,
-                team.roster.rosterId,
-                pick.originalRosterId || team.roster.rosterId));
-            }
-          }
-        });
-      } else {
-        // const draft = this.leagueService.upcomingDrafts[0].draft;
+    } else if (this.leagueService.upcomingDrafts.length > 0) {
         this.teamPicks = this.leagueService.upcomingDrafts[0].picks;
         this.alreadyDraftedList = this.leagueService.upcomingDrafts[0].picks
           .filter(p => p.playerId)
           .map(p => this.playerService.getPlayerByPlayerPlatformId(p.playerId, this.leagueService.selectedLeague.leaguePlatform)?.name_id)
-      }
     } else {
       const projectedDraftOrder =
         this.powerRankingsService.powerRankings.slice().sort((a, b) => b.starterRank - a.starterRank).map(it => it.team.roster.rosterId)
@@ -182,7 +168,7 @@ export class DraftService {
             // fleaflicker sets league picks but other platforms do not
             const pickNum = this.leagueService.selectedLeague.leaguePlatform === LeaguePlatform.FLEAFLICKER ? pick.pick : projectedDraftOrder.indexOf(pick.originalRosterId) + 1
             this.teamPicks.push(new LeaguePickDTO().fromMockDraft(((pick.round - 1) * projectedDraftOrder.length) + pickNum,
-              this.createPickString(pick.round, pickNum),
+              this.displayService.createPickString(pick.round, pickNum),
               team.owner?.ownerName,
               team.owner?.teamName,
               team.roster.rosterId,
@@ -196,7 +182,7 @@ export class DraftService {
           projectedDraftOrder.forEach((teamOrder, index) => {
             const team = teams.find(t => t.roster.rosterId == teamOrder);
             this.teamPicks.push(new LeaguePickDTO().fromMockDraft(((rd - 1) * projectedDraftOrder.length) + (index + 1),
-              this.createPickString(rd, (index + 1)),
+              this.displayService.createPickString(rd, (index + 1)),
               team.owner?.ownerName,
               team.owner?.teamName,
               team.roster.rosterId,
@@ -216,7 +202,7 @@ export class DraftService {
           draftRound.forEach(pick => {
             const pickNum = projectedDraftOrder.indexOf(pick.originalRosterId) + 1
             this.teamPicks.push(new LeaguePickDTO().fromMockDraft(((roundCount + i) * projectedDraftOrder.length) + pickNum,
-              this.createPickString(roundCount + i + 1, pickNum),
+              this.displayService.createPickString(roundCount + i + 1, pickNum),
               pick.pickOwner,
               pick.pickTeam,
               pick.rosterId,
@@ -237,7 +223,7 @@ export class DraftService {
         this.teamPicks = tempDraft;
         this.teamPicks.forEach((pick, ind) => {
           pick.pickNumber = ind + 1
-          pick.pickdisplay = this.createPickString(Math.trunc(ind / teams.length) + 1, ind % teams.length + 1);
+          pick.pickdisplay = this.displayService.createPickString(Math.trunc(ind / teams.length) + 1, ind % teams.length + 1);
         });
         break;
       }
@@ -250,7 +236,7 @@ export class DraftService {
         this.teamPicks = tempDraft;
         this.teamPicks.forEach((pick, ind) => {
           pick.pickNumber = ind + 1
-          pick.pickdisplay = this.createPickString(Math.trunc(ind / teams.length) + 1, ind % teams.length + 1);
+          pick.pickdisplay = this.displayService.createPickString(Math.trunc(ind / teams.length) + 1, ind % teams.length + 1);
         });
         break;
       }
@@ -265,16 +251,6 @@ export class DraftService {
   getDraftOrder = () => this.teamPicks.map((_, ind) =>
     this.selectablePlayers[ind]
   );
-
-  /**
-   * create pick string display
-   * @param pick pick details
-   * @private
-   * returns string
-   */
-  private createPickString(round: number, pick: number): string {
-    return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString());
-  }
 
   /**
    * reset variables when league is changed
@@ -329,7 +305,7 @@ export class DraftService {
     const playerValue = this.isSuperflex ? (player?.sf_trade_value || 0) : (player?.trade_value || 0);
     // if auction count value for dollar spent
     if (isAuction) {
-      return pick.bidAmount !== 0 ? playerValue / pick.bidAmount : 0;
+      return pick.bidAmount > 0 ? playerValue - pick.bidAmount * 5 : playerValue || 0;
     }
     const pickValue = this.getPickValue(pick.round);
     return playerValue - pickValue;

@@ -39,6 +39,10 @@ export class LeagueRawDraftOrderDTO {
           this.type = DraftOrderType.Snake;
         }
         break;
+      case 'auction': {
+        this.type = DraftOrderType.Auction;
+        break; 
+      }
       default:
         this.type = DraftOrderType.Linear;
     }

@@ -179,20 +179,20 @@ export class PowerRankingsService {
         let sfPickTradeValue = 0;
         let pickTradeValue = 0;
         if (this.leagueService.selectedLeague.type === LeagueType.DYNASTY) {
+          const pickRanges = { EARLY: 'Early', MID: 'Mid', LATE: 'Late' }
           team.futureDraftCapital.map(pick => {
-            for (const pickValue of pickValues) {
-              const pickRanges = { EARLY: 'Early', MID: 'Mid', LATE: 'Late' }
-              if (pickValue.last_name.includes(pick.round.toString()) && pickValue.first_name === pick.year
-                && (pick.pick <= earlyPickThreshold && pickValue.last_name.includes(pickRanges.EARLY) ||
-                  pick.pick >= latePickThreshold && pickValue.last_name.includes(pickRanges.LATE) ||
-                  pick.pick > earlyPickThreshold && pick.pick < latePickThreshold && pickValue.last_name.includes(pickRanges.MID))) {
-                sfPickTradeValue += pickValue.sf_trade_value || 0;
-                pickTradeValue += pickValue.trade_value || 0;
-                sfTradeValueTotal += pickValue.sf_trade_value || 0;
-                tradeValueTotal += pickValue.trade_value || 0;
-                picks.push(pickValue);
-                break;
-              }
+            let pickType = pickRanges.MID;
+            if (pick.pick <= earlyPickThreshold) pickType = pickRanges.EARLY;
+            else if (pick.pick >= latePickThreshold) pickType = pickRanges.LATE;
+            const matchPick = pickValues.find(p => p.last_name.includes(pick.round.toString()) && p.first_name === pick.year
+              && p.last_name.includes(pickType));
+            if (matchPick) {
+              sfPickTradeValue += matchPick?.sf_trade_value || 0;
+              pickTradeValue += matchPick?.trade_value || 0;
+              sfTradeValueTotal += matchPick?.sf_trade_value || 0;
+              tradeValueTotal += matchPick?.trade_value || 0;
+              matchPick.metadata = pick;
+              picks.push(JSON.parse(JSON.stringify(matchPick)));
             }
           }
           );
