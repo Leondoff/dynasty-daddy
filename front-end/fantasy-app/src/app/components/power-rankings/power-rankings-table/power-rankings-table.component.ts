@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { TeamPowerRanking, TeamRankingTier, TeamRankingValueTier } from '../../model/powerRankings';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,6 +19,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { TierColorPalette } from 'src/app/services/utilities/color.service';
 import { MatchupService } from '../../services/matchup.service';
+import { DraftCapital } from 'src/app/model/assets/DraftCapital';
 
 // details animation
 export const detailExpand = trigger('detailExpand',
@@ -34,6 +35,7 @@ export const detailExpand = trigger('detailExpand',
   templateUrl: './power-rankings-table.component.html',
   styleUrls: ['./power-rankings-table.component.scss'],
   animations: [detailExpand],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PowerRankingsTableComponent extends BaseComponent implements OnInit, OnChanges {
 
@@ -190,6 +192,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
         wins: team.team.roster.teamMetrics?.wins || 0,
         losses: team.team.roster.teamMetrics?.losses || 0,
         pts: team.team.roster.teamMetrics?.fpts || 0,
+        ownerName: team.team.owner.ownerName,
         rosters: {},
       }
       // format luck column for power rankings
@@ -362,13 +365,19 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
       // if match add to list bool
       let addToTable = false;
       // loop thru team rosters and match names
-      team.roster.map(roster =>
-        roster.players.map(player => {
+      team.roster.forEach(roster =>
+        roster.players.forEach(player => {
           if (player.full_name.toLowerCase().includes(this.searchVal.toLowerCase())) {
             addToTable = true;
           }
         })
       );
+      // loop thru team picks and match
+      team.picks.players.forEach(player => {
+        if (this.getPickName(player).toLowerCase().includes(this.searchVal.toLowerCase())) {
+          addToTable = true;
+        }
+      });
       // do owner and team name match
       if (
         team.team.owner.ownerName.toLowerCase().includes(this.searchVal.toLowerCase())
@@ -496,6 +505,28 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
   /** update the season rankings for power rankings */
   updateRankings(): void {
     this.playerService.playerValuesUpdated$.next();
+  }
+
+  /**
+   * returns pick name for player
+   * @param pick asset obj to use
+   */
+  getPickName(pick: FantasyPlayer): string {
+    const p: DraftCapital = pick.metadata;
+    if (this.leagueService.selectedLeague.season === pick.first_name) {
+      return p.year + ' ' + this.displayService.createPickString(p.round, p.pick);
+    }
+    return this.configService.isMobile ? pick.full_name.replace(' Mid', '').replace(' Late', '').replace(' Early', '') : pick.full_name;
+  }
+
+  /**
+   * returns pick name for player
+   * @param pick asset obj to use
+   */
+  getPickOriginalOwner(pick: FantasyPlayer, ownerId: number): string {
+    const p: DraftCapital = pick.metadata;
+    return !this.configService.isMobile && p.originalRosterId !== ownerId ?
+      `(${this.powerRankingCache[p.originalRosterId].ownerName})` : '';
   }
 
   /**

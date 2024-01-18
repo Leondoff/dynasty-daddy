@@ -135,10 +135,11 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
     if (!this.isMockDraft) {
       switch (this.mockDraftService.completedConfig) {
         case 'value':
-          this.colorCache['min'] = this.mockDraftService.getPickValueAdded(this.teamPicks[0]);
+          this.colorCache['min'] = this.mockDraftService
+            .getPickValueAdded(this.teamPicks[0], this.draft?.type === DraftOrderType.Auction);
           this.colorCache['max'] = this.colorCache['min'];
           this.teamPicks.forEach(p => {
-            const val = this.mockDraftService.getPickValueAdded(p);
+            const val = this.mockDraftService.getPickValueAdded(p, this.draft.type === DraftOrderType.Auction);
             if (this.colorCache['min'] > val) {
               this.colorCache['min'] = val;
             }
@@ -231,7 +232,7 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
           return this.playerService.getCurrentPlayerValue(
             this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0;
         case 'value':
-          return this.mockDraftService.getPickValueAdded(pick);
+          return this.mockDraftService.getPickValueAdded(pick, this.draft?.type === DraftOrderType.Auction);
         default:
           return this.playerService.getCurrentPlayerValue(this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0
       }
@@ -287,7 +288,7 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
       this.teamOrder[index] = team;
       this.teamPicks.forEach((p, ind) => {
         if (
-          ( ind % this.teamOrder.length === index ||
+          (ind % this.teamOrder.length === index ||
             ind % this.teamOrder.length === this.teamOrder.length - index - 1) &&
           p.originalRosterId === rosterId && p.rosterId === rosterId) {
           this.teamPicks[ind].rosterId = this.mockDraftService.overrideRosterId;
@@ -325,7 +326,7 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
           return this.colorCache['values'][(this.playerService.getCurrentPlayerValue(
             this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0) + 1];
         case 'value':
-          const val = this.mockDraftService.getPickValueAdded(pick);
+          const val = this.mockDraftService.getPickValueAdded(pick, this.draft?.type === DraftOrderType.Auction);
           return val >= 0 ? this.colorCache['values'][val] : this.colorCache['badValues'][Math.abs(val)];
         default:
           return this.colorService.getDraftColorForPos(this.playerOrder[pick.pickNumber - 1]?.position)

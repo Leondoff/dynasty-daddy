@@ -268,7 +268,7 @@
                 <div *ngFor="let player of positionGroup.players">
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isStarter(element, player)" matTooltip="Starter" matTooltipPosition="above">grade</mat-icon></span>
                   <span class="starter-icon"><mat-icon [inline]="true" *ngIf="isInjured(player)" matTooltip="{{player.injury_status}}" matTooltipPosition="above">healing</mat-icon></span>
-                  <span innerHTML="{{ configService.isMobile ? player.last_name : player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}}</span>
+                  <span innerHTML="{{ configService.isMobile ? player.last_name : player.full_name | highlight : searchVal}}"></span>
                   <span *ngIf="powerRankingsService.rankingMarket !== 100" [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
                   <span *ngIf="powerRankingsService.rankingMarket === 100" [ngClass]="{'success__alert': player?.[powerRankingsService.selectedRankings] < leagueService.selectedLeague.totalRosters, 'urgent__alert': (player?.[powerRankingsService.selectedRankings] > (leagueService.selectedLeague.totalRosters * 3) || player?.[powerRankingsService.selectedRankings] == 0) }"> {{player?.[powerRankingsService.selectedRankings] || '-'}}</span>
                 </div>
@@ -283,8 +283,9 @@
                 </div>
                 <hr class="dark">
                 <div *ngFor="let player of element.picks.players; let i = index">
-                  <span innerHTML="{{ player.full_name | highlight : searchVal}}">{{configService.isMobile ? player.last_name : player.full_name}} </span>
+                  <span innerHTML="{{ getPickName(player) | highlight : searchVal}}"></span>
                   <span [ngClass]="{'success__alert': playerCache[player.name_id].isGreen, 'urgent__alert': playerCache[player.name_id].isRed}"> {{playerCache[player.name_id].value}}</span>
+                  <span class="small-text__light" style="padding-left: 4px;">{{getPickOriginalOwner(player, element.team.roster.rosterId) | truncate:12:'mid'}}</span>
                 </div>
               </div>
             </div>

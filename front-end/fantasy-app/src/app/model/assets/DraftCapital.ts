@@ -1,3 +1,5 @@
+import { LeaguePickDTO } from "../league/LeaguePickDTO";
+
 export class DraftCapital {
   constructor(round: number, pick: number, year: string, originalRosterId: number = null) {
     this.round = round;

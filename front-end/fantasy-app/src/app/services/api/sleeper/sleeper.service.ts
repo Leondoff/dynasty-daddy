@@ -15,6 +15,7 @@ import { CompletedDraft } from '../../../model/league/CompletedDraft';
 import { DraftCapital } from '../../../model/assets/DraftCapital';
 import { Status } from 'src/app/components/model/status';
 import { DraftOrderType } from 'src/app/components/services/draft.service';
+import { LeaguePickDTO } from 'src/app/model/league/LeaguePickDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -159,8 +160,8 @@ export class SleeperService implements OnDestroy {
                     return forkJoin(draftObservables).pipe(
                       tap((leagues: LeagueWrapper[]) => {
                         leagues.forEach((league: LeagueWrapper) => {
-                          league.leagueTeamDetails.forEach(team => {
-                            team.upcomingDraftOrder.forEach(pick => {
+                          league.leagueTeamDetails?.forEach(team => {
+                            league.selectedLeague?.metadata?.upcomingDraftOrder?.[team?.roster?.rosterId].forEach(pick => {
                               const ind = team.futureDraftCapital.findIndex(p => p.pick === 6 && p.round === pick.round && p.year === pick.year);
                               if (ind >= 0) {
                                 team.futureDraftCapital[ind].pick = pick.pick;
@@ -216,13 +217,14 @@ export class SleeperService implements OnDestroy {
 
   // TODO clean up mock draft code... create separate object or use draft capital from team details
   private loadDrafts$(draftId: string, league: LeagueWrapper): Observable<LeagueWrapper> {
+    let upcomingDraftOrder = {};
     return this.sleeperApiService.getSleeperDraftDetailsByDraftId(draftId).pipe(switchMap((draft: LeagueRawDraftOrderDTO) => {
       if (draft.status === 'pre_draft' && draft.draftOrder) {
         return this.sleeperApiService.getSleeperTradedPicksByDraftId(draft.draftId)
           .pipe(switchMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
             // map pick order for orphaned teams
             if (Object.keys(draft.draftOrder).length != league.leagueTeamDetails.length) {
-              league.leagueTeamDetails.forEach(team => {
+              league.leagueTeamDetails?.forEach(team => {
                 if (!draft.draftOrder[team.owner?.userId]) {
                   draft.draftOrder[team.owner?.userId] = Number(Object.keys(draft.slotToRosterId)
                     .find(key => draft.slotToRosterId[key] === Number(team.owner?.userId)));;
@@ -256,18 +258,38 @@ export class SleeperService implements OnDestroy {
                   }
                 }
               });
-              team.upcomingDraftOrder = draftPicks;
+              upcomingDraftOrder[team.roster.rosterId] = draftPicks || [];
+              team.futureDraftCapital.push(...draftPicks);
             });
-            league.upcomingDrafts.push(new CompletedDraft(draft, []));
+            const picks: LeaguePickDTO[] = [];
+            league.leagueTeamDetails?.forEach(t => {
+              picks.push(...upcomingDraftOrder[t.roster.rosterId].map(pick =>
+                new LeaguePickDTO().fromMockDraft(((pick.round - 1) * league.leagueTeamDetails.length) + pick.pick,
+                  pick.round.toString() + '.' + (pick.pick > 9 ? pick.pick.toString() : '0' + pick.pick.toString()),
+                  t.owner?.ownerName,
+                  t.owner?.teamName,
+                  t.roster.rosterId,
+                  pick.originalRosterId || t.roster.rosterId))
+              )
+            });
+            league.upcomingDrafts.push(new CompletedDraft(draft, picks));
+            league.selectedLeague.metadata['upcomingDraftOrder'] = upcomingDraftOrder;
             return of(league);
           }));
-      } else if (draft.status === 'complete' && draft.draftOrder) {
+      } else if (draft.draftOrder) {
         this.sleeperApiService.getSleeperCompletedDraftsByDraftId(draft.draftId, league?.selectedLeague?.totalRosters || 12).subscribe(picks => {
           picks.forEach(pick => {
             pick.originalRosterId = draft.slotToRosterId[pick.draftSlot];
           });
           if (league.completedDrafts.filter(d => d.draft.draftId === draft.draftId).length === 0) {
-            league.completedDrafts.push(new CompletedDraft(draft, picks));
+            const draftObj = new CompletedDraft(draft, picks);
+            if (draft.status === 'complete') {
+              draftObj.draft.status = 'completed';
+              league.completedDrafts.push(draftObj)
+            } else {
+              draftObj.draft.status = 'in_progress';
+              league.upcomingDrafts.push(draftObj);
+            }
           }
         }
         );
@@ -286,36 +308,37 @@ export class SleeperService implements OnDestroy {
       // delay in order to pick up process drafts
       .pipe(delay(2000))
       .pipe(switchMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
-        const draftPickOffset = league.completedDrafts.length > 0 ? 1 : 0;
         league.leagueTeamDetails.map((team: LeagueTeam) => {
           let draftPicks: DraftCapital[] = [];
           for (
-            let year = Number(league.selectedLeague.season) + draftPickOffset;
+            let year = Number(league.selectedLeague.season) + 1;
             year < Number(league.selectedLeague.season) + 4;
             year++
           ) {
             for (let i = 0; i < league.selectedLeague.draftRounds; i++) {
-              draftPicks.push(new DraftCapital(i + 1, league.selectedLeague.totalRosters / 2, year.toString(), team.roster.rosterId));
+              const pick = new DraftCapital(i + 1, league.selectedLeague.totalRosters / 2, year.toString(), team.roster.rosterId);
+              if (pick && pick !== undefined)
+                draftPicks.push(pick);
             }
           }
-          // TODO repeated code here
-          tradedPicks.map((tradedPick: LeagueRawTradePicksDTO) => {
-            if (Number(tradedPick.season) >= Number(league.selectedLeague.season) + draftPickOffset
-              && tradedPick.ownerId === team.roster.rosterId
-              && tradedPick.rosterId !== team.roster.rosterId
-            ) {
-              draftPicks.push(new DraftCapital(tradedPick.round,
-                league.selectedLeague.totalRosters / 2, tradedPick.season, tradedPick.rosterId));
-            }
-          });
-          tradedPicks.map((tradedPick: LeagueRawTradePicksDTO) => {
+          if (league.selectedLeague?.metadata?.upcomingDraftOrder) {
+            team.futureDraftCapital = [...(league.selectedLeague?.metadata?.upcomingDraftOrder?.[team?.roster?.rosterId] || []), ...draftPicks];
+          } else {
+            team.futureDraftCapital = draftPicks;
+          }
+        });
+        league.leagueTeamDetails.map((team: LeagueTeam) => {
+          tradedPicks.forEach((tradedPick: LeagueRawTradePicksDTO) => {
             if (tradedPick.ownerId !== team.roster.rosterId
               && tradedPick.rosterId === team.roster.rosterId
             ) {
-              draftPicks = SleeperService.removeDraftPick(draftPicks.slice(), tradedPick);
+              const pickInd = team.futureDraftCapital.findIndex(p => p && p.round === tradedPick.round && p.year === tradedPick.season);
+              const tPick = team.futureDraftCapital.splice(pickInd, 1);
+              const teamInd = league.leagueTeamDetails.findIndex(t => t.roster.rosterId === tradedPick.ownerId);
+              if (tPick[0] && tPick[0] !== undefined)
+                league.leagueTeamDetails[teamInd].futureDraftCapital.push(tPick[0]);
             }
           });
-          team.futureDraftCapital = draftPicks;
         });
         return of(league);
       }));

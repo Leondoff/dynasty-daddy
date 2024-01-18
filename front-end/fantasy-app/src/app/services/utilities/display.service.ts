@@ -193,4 +193,14 @@ export class DisplayService {
     return min === 0 ? 1 : min;
   }
 
+  /**
+   * create pick string display
+   * @param pick pick details
+   * @private
+   * returns string
+   */
+  createPickString(round: number, pick: number): string {
+    return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString());
+  }
+
 }

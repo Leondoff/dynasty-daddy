@@ -5,7 +5,6 @@ import {DraftCapital} from '../assets/DraftCapital';
 export class LeagueTeam {
   owner: LeagueOwnerDTO;
   roster: LeagueRosterDTO;
-  upcomingDraftOrder: DraftCapital[] = [];
   futureDraftCapital: DraftCapital[] = [];
 
   constructor(owner: LeagueOwnerDTO, roster: LeagueRosterDTO) {
