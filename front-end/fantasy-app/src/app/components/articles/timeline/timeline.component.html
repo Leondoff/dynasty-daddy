@@ -19,7 +19,7 @@
     </mat-chip-list>
 </div>
 
-<div class="margin-top-50" fxLayout="row wrap" fxLayoutAlign="center" *ngIf="articles.length > 0" appScrollNearEnd (nearEnd)="onNearEndScroll()">
+<div class="margin-top-50" fxLayout="row wrap" fxLayoutAlign="center" *ngIf="articles.length > 0">
     <article-card *ngFor="let card of articles" fxFlex="40%" fxFlex.xs="80%" fxFlex.sm="40%" [article]="card" class="article-card"></article-card>
 </div>
 
