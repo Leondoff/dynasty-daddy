@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { BaseComponent } from "../../base-component.abstract";
 import { ArticlesApiService } from "src/app/services/api/articles/articles-api.service";
 import { ArticlePreview } from "../../model/articlePreview";
@@ -38,6 +38,7 @@ export class TimelineComponent extends BaseComponent implements OnInit {
 
     constructor(public articlesApiService: ArticlesApiService,
         public userService: UserService,
+        private cdr: ChangeDetectorRef,
         public configService: ConfigService) {
         super()
     }
@@ -69,9 +70,10 @@ export class TimelineComponent extends BaseComponent implements OnInit {
      */
     updateArticleSearchResults(): void {
         this.articlesStatus = Status.LOADING;
-        this.articlesApiService.searchArticles(this.selectedCategory, this.searchVal, this.userService?.user?.userId, this.page).pipe(delay(200)).subscribe(art => {
+        this.articlesApiService.searchArticles(this.selectedCategory, this.searchVal, this.userService?.user?.userId, this.page).subscribe(art => {
             this.articles.push(...art);
             this.articlesStatus = Status.DONE;
+            this.cdr.detectChanges();
         });
     }
 
