@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ConfigService, LocalStorageDictionary } from 'src/app/services/init/config.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -6,8 +6,7 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-standard-page',
   templateUrl: './standard-page.component.html',
-  styleUrls: ['./standard-page.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./standard-page.component.css']
 })
 export class StandardPageComponent implements OnInit, AfterViewInit {
 
