@@ -22,7 +22,7 @@ export class PageService {
         private title: Title
     ) { }
 
-    setUpPageSEO(title: string, keywords: string[], description: string): void {
+    setUpPageSEO(title: string, keywords: string[], description: string, image: string = this.DYNASTY_DADDY_IMG): void {
         this.createLinkForCanonicalURL();
         if (title == 'Home') {
             this.title.setTitle('Dynasty Daddy - Fantasy Football Tools, and Rankings');
@@ -30,7 +30,7 @@ export class PageService {
             this.title.setTitle(title + this.DYNASTY_DADDY_BOILERPLATE);
         }
         const keywordList = [...this.defaultKeywords, ...keywords];
-        let img = this.DYNASTY_DADDY_IMG;
+        let img = image;
         let url = '';
         if (title.includes('Immaculate')) {
             url = 'gridiron';

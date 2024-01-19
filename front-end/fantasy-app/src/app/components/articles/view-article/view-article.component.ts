@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { BaseComponent } from "../../base-component.abstract";
 import { ActivatedRoute, ParamMap } from "@angular/router";
 import { ArticlesApiService } from "src/app/services/api/articles/articles-api.service";
@@ -12,6 +12,7 @@ import { PlayerService } from "src/app/services/player.service";
 import { FantasyPlayer } from "src/app/model/assets/FantasyPlayer";
 import { LeagueSwitchService } from "../../services/league-switch.service";
 import { Status } from "../../model/status";
+import { PageService } from "src/app/services/utilities/page.service";
 
 @Component({
     selector: 'app-view-article',
@@ -38,7 +39,7 @@ export class ViewArticleComponent extends BaseComponent implements OnInit {
         public displayService: DisplayService,
         public userService: UserService,
         public dialog: MatDialog,
-        private cdr: ChangeDetectorRef,
+        private pageService: PageService,
         public leagueSwitchService: LeagueSwitchService,
         public playerService: PlayerService,
         private articleApiService: ArticlesApiService
@@ -59,7 +60,10 @@ export class ViewArticleComponent extends BaseComponent implements OnInit {
                             .slice(0, 8);
                     }
                     this.articleStatus = Status.DONE;
-                    this.cdr.markForCheck();
+                    // set up article SEO
+                    this.pageService.setUpPageSEO(this.article.title,
+                    [...this.article.keywords, ...this.article.linkedPlayers],
+                    this.article.post.slice(0, 500), this.article.titleImg)
                 });
             }),
             this.playerService.currentPlayerValuesLoaded$.subscribe(_ => {
