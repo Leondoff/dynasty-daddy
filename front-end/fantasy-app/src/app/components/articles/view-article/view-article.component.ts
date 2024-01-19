@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { BaseComponent } from "../../base-component.abstract";
 import { ActivatedRoute, ParamMap } from "@angular/router";
 import { ArticlesApiService } from "src/app/services/api/articles/articles-api.service";
@@ -38,6 +38,7 @@ export class ViewArticleComponent extends BaseComponent implements OnInit {
         public displayService: DisplayService,
         public userService: UserService,
         public dialog: MatDialog,
+        private cdr: ChangeDetectorRef,
         public leagueSwitchService: LeagueSwitchService,
         public playerService: PlayerService,
         private articleApiService: ArticlesApiService
@@ -58,6 +59,7 @@ export class ViewArticleComponent extends BaseComponent implements OnInit {
                             .slice(0, 8);
                     }
                     this.articleStatus = Status.DONE;
+                    this.cdr.markForCheck();
                 });
             }),
             this.playerService.currentPlayerValuesLoaded$.subscribe(_ => {
