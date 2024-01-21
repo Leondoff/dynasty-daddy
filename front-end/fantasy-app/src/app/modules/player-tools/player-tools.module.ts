@@ -23,6 +23,7 @@ import { AddPlayerComparisonModalComponent } from "src/app/components/modals/add
 import { TradeCenterPlayerValuesComponent } from "src/app/components/trade-center/trade-center-player-values/trade-center-player-values.component";
 import { TradeCenterComponent } from "src/app/components/trade-center/trade-center.component";
 import { PlayerDetailsModalComponent } from "src/app/components/modals/player-details-modal/player-details-modal.component";
+import { TradeCenterPlayerDemandComponent } from "src/app/components/trade-center/trade-center-player-demand/trade-center-player-demand.component";
 
 @NgModule({
   imports: [
@@ -60,6 +61,7 @@ import { PlayerDetailsModalComponent } from "src/app/components/modals/player-de
     AddPlayerComparisonModalComponent,
     TradeCenterComponent,
     TradeCenterPlayerValuesComponent,
+    TradeCenterPlayerDemandComponent,
   ]
 })
 export class PlayerToolsModule {

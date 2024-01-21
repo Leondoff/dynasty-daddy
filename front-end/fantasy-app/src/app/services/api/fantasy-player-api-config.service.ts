@@ -40,6 +40,8 @@ export class FantasyPlayerApiConfigService {
 
   private _getRecentTradeVolumeEndpoint = '';
 
+  private _getPlayerTradeEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
@@ -80,6 +82,14 @@ export class FantasyPlayerApiConfigService {
     this._getHistoricalPlayerValues = value;
   }
 
+  get getPlayerTradeEndpoint(): string {
+    return this._getPlayerTradeEndpoint;
+  }
+
+  set getPlayerTradeEndpoint(value: string) {
+    this._getPlayerTradeEndpoint = value;
+  }
+  
   get getPlayerDetailsEndpoint(): string {
     return this._getPlayerDetailsEndpoint;
   }

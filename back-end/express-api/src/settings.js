@@ -30,5 +30,5 @@ export const PATREON_REDIRECT_URL = 'https://dynasty-daddy.com';
 // experience goes from 0 to 1.
 export const LEAGUE_FORMAT_TOOL_DATE = 2023;
 
-// dynasty daddy patreon teir to verify on
+// dynasty daddy patreon tier to verify on
 export const PATREON_TIER_ID = '7092280';

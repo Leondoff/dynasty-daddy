@@ -100,6 +100,21 @@ export const GetPlayerDetailsEndpoint = async (req, res) => {
 };
 
 /**
+ * query to get player trade data
+ * @param req
+ * @param res
+ */
+export const GetPlayerTradeDataEndpoint = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const tradeData = await GetTradeDetailsForPlayer(id);
+    res.status(HttpStatusCode.Ok).json(tradeData[0]);
+  } catch (err) {
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
+  }
+};
+
+/**
  * fetch the user fantasy portfolio over time based on days and player list
  * @param req
  * @param res

@@ -66,7 +66,7 @@
       <table class="trade-table">
         <tr *ngFor="let player of team1PlayerList; let i = index">
           <td class="trade-name-col">
-              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" (click)="openPlayerModal(player)">
               {{player.full_name}}
             </span>
             <span *ngIf="player.position == 'PI'">
@@ -97,7 +97,7 @@
           <tr *ngFor="let player of team2PlayerDropList; let i = index">
             <td></td>
             <td class="trade-info-col">
-              <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+              <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" (click)="openPlayerModal(player)">
                 {{player.full_name}}
               </span>
             </td>
@@ -138,7 +138,7 @@
       <table class="trade-table">
         <tr *ngFor="let player of team2PlayerList; let i = index">
           <td class="trade-name-col">
-              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+              <span *ngIf="player.position != 'PI'" class="link--text__no__underline" (click)="openPlayerModal(player)">
               {{player.full_name}}
             </span>
             <span *ngIf="player.position == 'PI'">
@@ -171,7 +171,7 @@
           <tr *ngFor="let player of team1PlayerDropList; let i = index">
             <td></td>
             <td class="trade-info-col">
-              <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">
+              <span *ngIf="player.position != 'PI'" class="warning__alert small-text__light link--text__no__underline__warnings" (click)="openPlayerModal(player)">
                 {{player.full_name}}
               </span>
             </td>
@@ -189,7 +189,7 @@
     <div fxFlex="40%" fxFlex.xs="40%" fxFlex.sm="40%" *ngIf="!configService.isMobile">
       <div class="margin-top-25 center-text large-bold-header-text">{{team1Rankings?.team.owner.ownerName || 'Team 2' | truncate: 20}}: {{tradeTool.tradePackage?.getTradeValueBySide(2) | number}}</div>
     </div>
-    <div fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%" [ngClass]="{'uneven-trade-bg-color': tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount, 'mat-table-highlight': tradeTool.tradePackage?.valueToEvenTrade < tradeTool.tradePackage?.acceptanceBufferAmount || !tradeTool.tradePackage}" class="margin-top-25 margin-bot-50">
+    <div fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%" [ngClass]="{'uneven-trade-bg-color': tradeTool.tradePackage?.valueToEvenTrade > tradeTool.tradePackage?.acceptanceBufferAmount, 'mat-table-highlight': tradeTool.tradePackage?.valueToEvenTrade < tradeTool.tradePackage?.acceptanceBufferAmount || !tradeTool.tradePackage || (tradeTool.tradePackage?.team1Assets.length === 0 && tradeTool.tradePackage?.team2Assets.length === 0)}" class="margin-top-25 margin-bot-50">
       <div *ngIf="tradeTool.tradePackage === null || (tradeTool.tradePackage?.team1Assets.length === 0 && tradeTool.tradePackage?.team2Assets.length === 0)" class="mid-bold-text center-text margin-top-15 margin-bot-15" style="color: lightgray">Add Player to Trade</div>
       <div *ngIf="tradeTool.tradePackage !== null && (tradeTool.tradePackage?.team1Assets.length !== 0 && tradeTool.tradePackage?.team2Assets?.length !== 0) && tradeTool.tradePackage?.valueToEvenTrade <= tradeTool.tradePackage?.acceptanceBufferAmount" class="center-text margin-top-15 margin-bot-15 accent">
         <div class="large-bold-header-text accent_color">Fair Trade</div>
@@ -217,7 +217,7 @@
         <table class="trade-table-item" *ngFor="let player of recommendedPlayers">
           <tr>
             <td *ngIf="player.position == 'PI'" style="width: 70%">{{player.full_name}}</td>
-            <td *ngIf="player.position != 'PI'" style="width: 70%" class="link--text__no__underline" [routerLink]="['../details', player.name_id]" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_player_page" gaCategory="page_nav">{{player.full_name}}</td>
+            <td *ngIf="player.position != 'PI'" style="width: 70%" class="link--text__no__underline" (click)="openPlayerModal(player)">{{player.full_name}}</td>
             <td style="width: 30%">{{isSuperFlex ? player.sf_trade_value : player.trade_value}}</td>
             <td style="width: 5px" (click)="favoredSide == 2 ? addPlayerToTeam1(player) : addPlayerToTeam2(player)">
               <mat-icon class="trade-rm-icon">add_circle</mat-icon>
@@ -335,8 +335,11 @@
         </div>
       </mat-card>
     </div>
-    <div fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%" class="margin-top-15 trade_insights">
+    <div fxFlex="40%" fxFlex.xs="80%" fxFlex.sm="80%" class="margin-top-15 trade_insights" *ngIf="combinedPlayerList.length > 0">
       <app-trade-center-player-values [selectedMarket]="playerService.selectedMarket" [isSuperflex]="isSuperFlex" [selectedPlayers]="combinedPlayerList || []"></app-trade-center-player-values>
+    </div>
+    <div fxFlex="40%" fxFlex.xs="80%" fxFlex.sm="80%" class="margin-top-15 trade_insights" *ngIf="combinedPlayerList.length > 0">
+      <app-trade-center-player-demand [selectedPlayers]="combinedPlayerList || []"></app-trade-center-player-demand>
     </div>
     <div *ngIf="tradeTool.tradePackage && leagueService.selectedLeague && team1MockRankings && team2MockRankings && userService.user" class="trade_insights" fxFlex="80%" fxFlex.xs="80%" fxFlex.sm="80%">
       <mat-card>

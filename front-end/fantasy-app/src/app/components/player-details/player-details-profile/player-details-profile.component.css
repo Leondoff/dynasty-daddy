@@ -28,14 +28,6 @@
   padding-left: 15px;
 }
 
-.open-window-button {
-  font-size: 18px;
-  cursor: pointer;
-  height: unset !important;
-  vertical-align: sub;
-  margin-left: 5px;
-}
-
 .ras-metric-box{
   margin: 16px;
 }

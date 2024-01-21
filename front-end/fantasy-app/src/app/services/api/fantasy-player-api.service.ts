@@ -140,6 +140,16 @@ export class FantasyPlayerApiService {
   }
 
   /**
+   * get player trade data by id
+   * @param nameId player name id
+   */
+  getPlayerTradeDataById(nameId: string): Observable<any[]> {
+    return this.http.get<any[]>(this.fantasyPlayerApiConfigService.getPlayerTradeEndpoint + nameId)
+      .pipe(tap((players: any[]) => players
+      ));
+  }
+
+  /**
    * get historical player value over time by id
    * @param nameId player name id
    */
