@@ -403,6 +403,14 @@ app-root,
   border-radius: 100px !important;
 }
 
+.open-window-button {
+  font-size: 18px !important;
+  cursor: pointer;
+  height: unset !important;
+  vertical-align: sub;
+  margin-left: 5px;
+}
+
 .starter-icon {
   font-size: 14px;
   cursor: help;

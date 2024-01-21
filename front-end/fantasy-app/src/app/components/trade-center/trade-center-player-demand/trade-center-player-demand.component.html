@@ -1,0 +1,11 @@
+<div>
+    <mat-card>
+      <div class="margin-bot-10 center-text"><span class="mid-bold-text">Trade Demand (Past 6 Weeks)</span> <span [routerLink]="['./database']" [queryParams]="leagueSwitchService.buildQueryParams()" ><mat-icon matTooltip="Open Trade Database" matTooltipPosition="above" class="open-window-button">open_in_new</mat-icon></span></div>
+      <div style="display: block; height: 300px">
+        <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+          [legend]="lineChartLegend" [chartType]="lineChartType" [colors]="chartColors" [plugins]="lineChartPlugins">
+        </canvas>
+      </div>
+    </mat-card>
+  </div>
+  

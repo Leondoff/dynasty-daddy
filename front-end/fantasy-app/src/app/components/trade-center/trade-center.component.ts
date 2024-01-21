@@ -24,6 +24,8 @@ import { MatchupService } from '../services/matchup.service';
 import { NflService } from 'src/app/services/utilities/nfl.service';
 import { ColorService } from 'src/app/services/utilities/color.service';
 import { UserService } from 'src/app/services/user.service';
+import { PlayerDetailsModalComponent } from '../modals/player-details-modal/player-details-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-trade-center',
@@ -138,6 +140,7 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     private matchUpService: MatchupService,
     private nflService: NflService,
     private colorService: ColorService,
+    private dialog: MatDialog,
     public userService: UserService,
   ) {
     super();
@@ -722,5 +725,21 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
     this.team1Rankings = null;
     this.team2Rankings = null;
     this.processTrade();
+  }
+
+  openPlayerModal(player: FantasyPlayer): void {
+    if (player && ['QB', 'RB', 'WR', 'TE'].includes(player.position)) {
+      this.dialog.open(PlayerDetailsModalComponent
+        , {
+          data: {
+            player
+          },
+          width: this.configService.isMobile ? '100%' : '80%',
+          maxWidth: this.configService.isMobile ? '100%' : '1400px',
+          maxHeight: this.configService.isMobile ? '80%' : '',
+          panelClass: "player-dialog"
+        }
+      );
+    }
   }
 }

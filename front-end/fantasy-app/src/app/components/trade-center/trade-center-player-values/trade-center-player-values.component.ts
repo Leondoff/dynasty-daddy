@@ -29,7 +29,7 @@ export class TradeCenterPlayerValuesComponent extends BaseComponent implements O
   playerValuesCache: {} = {}
 
   /** chart set up */
-  @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
+  @ViewChild(BaseChartDirective, { static: true }) tradeChart: BaseChartDirective;
 
   /** ng2-chart options */
   public lineChartOptions: (ChartOptions & { annotation?: any }) = {
@@ -108,7 +108,6 @@ export class TradeCenterPlayerValuesComponent extends BaseComponent implements O
       this.lineChartLabels.push(this.displayService.formatDateForDisplay(yesterday.toString()));
     }
     this.lineChartData = [];
-    this.loadChart();
   }
 
   ngOnChanges(): void {
@@ -139,7 +138,8 @@ export class TradeCenterPlayerValuesComponent extends BaseComponent implements O
         }
         // dont update selected player data cause it's the source of truth
         this.lineChartData.push({ data, label: player.full_name, fill: false });
-      })
+        this.lineChartData = this.lineChartData.filter(d => d.label);
+        })
       );
   }
 }

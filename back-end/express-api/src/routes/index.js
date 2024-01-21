@@ -55,7 +55,8 @@ import {
   GetFullArticleEndpoint,
   GetArticlesForUserEndpoints,
   DeleteArticleEndpoint,
-  UpdateUserProfileEndpoint
+  UpdateUserProfileEndpoint,
+  GetPlayerTradeDataEndpoint
 } from '../controllers';
 import { GetESPNLeagueEndpoint, GetESPNTransactionsEndpoint } from '../controllers/espnWrapperController';
 
@@ -68,6 +69,7 @@ indexRouter.get('/player/all/market/:market', GetPlayerValueForMarketEndpoint);
 indexRouter.get('/player/all/prev/:intervalDays', GetPrevPlayerValuesByDaysEndpoint);
 indexRouter.get('/player/:id', GetHistoricalPlayerValueByIdEndpoint);
 indexRouter.get('/player/details/:id', GetPlayerDetailsEndpoint);
+indexRouter.get('/player/details/trade/:id', GetPlayerTradeDataEndpoint);
 indexRouter.get('/player/all/special', GetNonOffensePlayersEndpoint);
 indexRouter.post('/portfolio', GetPlayerPortfolioEndpoint);
 indexRouter.get('/config/all', GetConfigValuesEndpoint);

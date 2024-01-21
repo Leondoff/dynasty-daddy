@@ -37,7 +37,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     public mockDraftService: DraftService) {
     super();
-    this.pageService.setUpPageSEO('Draft Center',
+    this.pageService.setUpPageSEO('Mock Drafts',
       ['mock draft tool', 'fantasy football mock draft', 'fantasy draft simulator', 'fantasy football draft kit',
       'fantasy football draft', 'fantasy mock draft simulator', 'fantasy draft', 'draft cheatsheet', 'fantasy cheatsheet'],
       this.pageDescription)
