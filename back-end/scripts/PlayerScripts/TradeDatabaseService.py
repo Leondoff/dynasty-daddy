@@ -252,4 +252,4 @@ def ScrapeTrades(leagueType, isAllTime=False):
     cursor.execute(updateLeagueCount)
 
 
-ScrapeTrades(['Dynasty', 'Redraft'], False)
+ScrapeTrades(['Dynasty', 'Redraft'], True)
