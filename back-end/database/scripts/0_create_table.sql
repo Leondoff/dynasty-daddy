@@ -87,7 +87,8 @@ create table config (
     config_value text not null,
     description text,
     created_at timestamp with time zone default now(),
-    updated_at timestamp with time zone default now()
+    updated_at timestamp with time zone default now(),
+    is_internal_only BOOLEAN DEFAULT false
 );
 
 -- add active default values

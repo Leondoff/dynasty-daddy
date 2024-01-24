@@ -7,6 +7,9 @@ import {
   FetchEventLeaderboard,
   PersistEventGame
 } from '../middleware';
+import {
+  GetSingleConfigValue
+} from '../repository';
 
 export const FetchSearchedPlayersEndpoint = async (req, res) => {
   try {
@@ -68,7 +71,8 @@ export const SaveEventGameEndpoint = async (req, res) => {
     const {
       eventId, name, gameJson, eventCode
     } = req.body;
-    if (eventCode !== '1234') throw Error('Wrong event password');
+    const actualCode = await GetSingleConfigValue('event_code');
+    if (eventCode !== actualCode) throw Error('Wrong event password');
     await PersistEventGame(eventId, name, gameJson);
     res.status(HttpStatusCode.Ok).json({ status: 'OK' });
   } catch (err) {

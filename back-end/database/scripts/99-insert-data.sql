@@ -27,3 +27,4 @@ INSERT INTO config (config_key, config_value, description, created_at, updated_a
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('daily_connection', '{}', 'Daily Connection Puzzle', DEFAULT, DEFAULT)
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('daily_grid', '{}', 'Daily Grid Puzzle', DEFAULT, DEFAULT)
 INSERT INTO config (config_key, config_value, description, created_at, updated_at) VALUES ('', '[]', 'Articles Chip Order', DEFAULT, DEFAULT)
+INSERT INTO config (config_key, config_value, description, created_at, updated_at, is_internal_only) VALUES ('event_code', '', 'String password for special event leaderboard posting', DEFAULT, DEFAULT, TRUE)
