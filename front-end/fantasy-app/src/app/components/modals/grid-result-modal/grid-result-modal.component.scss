@@ -64,21 +64,22 @@
   border-collapse: collapse;
 }
 
-.player-table th, .player-table td {
+.player-table th,
+.player-table td {
   padding: 2px;
   text-align: left;
   border-bottom: 2px;
 }
 
-.player-image-table  {
+.player-image-table {
   width: 20px;
 }
 
-.player-name-table  {
+.player-name-table {
   width: 150px;
 }
 
-.player-percent-table  {
+.player-percent-table {
   text-align: right;
 }
 
@@ -89,4 +90,20 @@
 .total-percent {
   font-weight: bold;
   font-size: clamp(12px, 1vw, 24px);
+}
+
+.leaderboard-entry {
+  background-color: $dark-bg-lighter-10;
+  text-align-last: left;
+  padding: 2px 10px 2px 10px;
+}
+
+.leaderboard-container {
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
+.event-name {
+  font-weight: bold;
+  padding: 5px 10px 5px 10px;
 }

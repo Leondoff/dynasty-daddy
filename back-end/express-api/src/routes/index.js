@@ -56,7 +56,9 @@ import {
   GetArticlesForUserEndpoints,
   DeleteArticleEndpoint,
   UpdateUserProfileEndpoint,
-  GetPlayerTradeDataEndpoint
+  GetPlayerTradeDataEndpoint,
+  GetEventLeaderboardEndpoint,
+  SaveEventGameEndpoint
 } from '../controllers';
 import { GetESPNLeagueEndpoint, GetESPNTransactionsEndpoint } from '../controllers/espnWrapperController';
 
@@ -78,6 +80,8 @@ indexRouter.get('/grid/players', FetchSearchedPlayersEndpoint);
 indexRouter.get('/grid/archive', FetchAllHistoricalGridsEndpoint);
 indexRouter.post('/grid/results/add', UpdateGridResultsEndpoint);
 indexRouter.get('/grid/results', FetchAllGridResultsEndpoint);
+indexRouter.get('/event/leaderboard', GetEventLeaderboardEndpoint);
+indexRouter.post('/event', SaveEventGameEndpoint);
 indexRouter.post('/league/add', AddLeaguesToDatabaseEndpoint);
 indexRouter.post('/trade/search', GetTradesFromSearchEndpoint);
 indexRouter.get('/trade/volume', GetRecentTradeVolumeEndpoint);

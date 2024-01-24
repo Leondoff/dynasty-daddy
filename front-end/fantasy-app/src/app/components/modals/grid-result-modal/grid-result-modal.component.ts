@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { GridGameService } from '../../services/grid.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { ConfigKeyDictionary, ConfigService } from 'src/app/services/init/config.service';
-import { FantasyPlayerApiService } from 'src/app/services/api/fantasy-player-api.service';
+import { ConfigService } from 'src/app/services/init/config.service';
 import { ColorService } from 'src/app/services/utilities/color.service';
+import { TriviaApiService } from 'src/app/services/api/trivia/trivia-api.service';
+import { SaveEventGameModal } from '../save-event-game-modal/save-event-game-modal.component';
 
 @Component({
     selector: 'grid-result-modal',
@@ -39,8 +40,11 @@ export class GridResultModalComponent implements OnInit {
     /** probability gradient for percents */
     probGradient: string[] = [];
 
+    /** leaderboard for events */
+    leaderboard: {name: string, score: number}[] = [];
+
     constructor(public gridGameService: GridGameService,
-        private fantasyPlayersAPIService: FantasyPlayerApiService,
+        private triviaApiService: TriviaApiService,
         private colorService: ColorService,
         public dialog: MatDialog,
         public configService: ConfigService,
@@ -49,7 +53,26 @@ export class GridResultModalComponent implements OnInit {
     ngOnInit(): void {
         this.puzzleNum = this.gridGameService.gridDict['id'];
         this.resultGrid = this.slice4x4To3x3(this.gridGameService.gridResults);
+        this.uniScore = this.gridGameService.calcScoresForGrid(this.gridGameService.flattenGridToPlayerList())
         this.probGradient = this.colorService.getColorGradientArray(101, '#28283c', '#3f7bfb');
+        if (this.gridGameService.gridDict['event']) {
+            this.loadLeaderboard();
+        }
+    }
+
+    /**
+     * load event leaderboard
+     */
+    loadLeaderboard(): void {
+        this.triviaApiService.getEventLeaderboard(this.gridGameService.gridDict['eventId']).subscribe(res => {
+            const newScores = [];
+            res.forEach(p => {
+                const picks = p.game_json['grid'] as any[];
+                const score = this.gridGameService.calcScoresForGrid(picks);
+                newScores.push({name: p.name, score: Math.round(score)})
+            })
+            this.leaderboard = newScores.sort((b,a) => b.score - a.score);
+        })
     }
 
     /**
@@ -75,7 +98,6 @@ export class GridResultModalComponent implements OnInit {
             for (let j = 1; j < 4; j++) {
                 if (matrix4x4[i][j]) {
                     this.score += 1;
-                    this.uniScore += Math.round(100 * matrix4x4[i][j].percent)
                 }
                 newRow.push(matrix4x4[i][j]);
             }
@@ -133,7 +155,7 @@ export class GridResultModalComponent implements OnInit {
         this.cellStatSelectedPlayerId = this.resultGrid[j]?.[i]?.id
         const cellNum = (i * 3) + j;
         this.cellStatList = [];
-        this.fantasyPlayersAPIService.fetchAllGridironResults(this.gridGameService.gridDict['id']).subscribe(res => {
+        this.triviaApiService.fetchAllGridironResults(this.gridGameService.gridDict['id']).subscribe(res => {
             res.forEach(obj => {
                 if (obj['cellnum'] == cellNum) {
                     obj.percent = this.gridGameService.getPercentForPlayerSelected(obj.player_id, obj['cellnum'])
@@ -152,4 +174,30 @@ export class GridResultModalComponent implements OnInit {
     getProbColor(prob: number): string {
         return this.probGradient[Math.round(prob * 100)];
     }
+
+    /**
+     * save event game to the system
+     */
+    saveEventGame(): void {
+        const dialogRef = this.dialog.open(SaveEventGameModal, {
+          minHeight: '200px',
+          minWidth: this.configService.isMobile ? '300px' : '500px',
+          autoFocus: true
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          if (result && result !== '') {
+            this.triviaApiService.saveEventGame(
+              this.gridGameService.gridDict['eventId'],
+              result.name,
+              result.eventCode,
+              this.gridGameService.flattenGridToPlayerList()
+            ).subscribe(
+              res => {
+                this.loadLeaderboard();
+              }
+            );
+          }
+        });
+      }
+      
 }

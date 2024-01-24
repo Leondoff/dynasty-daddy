@@ -350,3 +350,12 @@ CREATE INDEX idx_article_likes_is_active ON article_likes(is_active);
 CREATE TRIGGER article_likes_updated_at BEFORE
 UPDATE
     ON article_likes FOR EACH ROW EXECUTE PROCEDURE trigger_get_current_timestamp();
+
+-- create trivia events games
+CREATE TABLE trivia_events_games (
+    id SERIAL PRIMARY KEY,
+    event_id INT,
+    name VARCHAR(255),
+    game_json JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

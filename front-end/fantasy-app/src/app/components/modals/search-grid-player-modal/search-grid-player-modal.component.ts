@@ -1,10 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GridGameService } from '../../services/grid.service';
-import { Subject, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, take } from 'rxjs/operators';
-import { FantasyPlayerApiService } from 'src/app/services/api/fantasy-player-api.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ConfigService } from 'src/app/services/init/config.service';
+import { TriviaApiService } from 'src/app/services/api/trivia/trivia-api.service';
 
 @Component({
     selector: 'search-grid-player-modal',
@@ -23,14 +23,14 @@ export class SearchGridPlayerModal implements OnInit {
         public configService: ConfigService,
         private dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: { coords: any[] },
-        private fantasyPlayerAPIService: FantasyPlayerApiService) { }
+        private triviaApiService: TriviaApiService) { }
 
     ngOnInit(): void {
         this.searchSubject$.pipe(
           debounceTime(300),
           distinctUntilChanged(),
           switchMap((searchVal: string) => {
-            return this.fantasyPlayerAPIService.getGridGamePlayersFromSearch(searchVal);
+            return this.triviaApiService.getGridGamePlayersFromSearch(searchVal);
           })
         ).subscribe(res => {
             this.searchPlayers = res.filter(p => !this.gridGameService.alreadyUsedPlayers?.includes(p.id));

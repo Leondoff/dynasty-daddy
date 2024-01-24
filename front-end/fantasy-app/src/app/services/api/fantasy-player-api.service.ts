@@ -3,8 +3,7 @@ import { FantasyMarket, FantasyPlayer, FantasyPlayerDataPoint } from '../../mode
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FantasyPlayerApiConfigService } from './fantasy-player-api-config.service';
 import { Observable, of } from 'rxjs';
-import { tap, map, delay } from 'rxjs/operators';
-import { GridPlayer } from 'src/app/components/model/gridPlayer';
+import { tap, map } from 'rxjs/operators';
 import { LeagueScoringDTO } from 'src/app/model/league/LeagueScoringDTO';
 import { FantasyPlatformDTO } from 'src/app/model/league/FantasyPlatformDTO';
 
@@ -35,12 +34,6 @@ export class FantasyPlayerApiService {
    * cache player values that have been loaded
    */
   private playerValuesDict = {};
-
-  /** historical gridirons cache */
-  private historicalGridirons;
-
-  /** gridiron results cache */
-  private gridironResults = {};
 
   /** non offense players loaded */
   private nonOffensePlayers;
@@ -180,63 +173,6 @@ export class FantasyPlayerApiService {
           this.fantasyPortfolioCache[p.name_id] = p.player_data;
         });
         return this.fantasyPortfolioCache;
-      }));
-  }
-
-  /**
-  * return all players in grid game based on search
-  * @param search string to search on
-  */
-  getGridGamePlayersFromSearch(search: String): Observable<{ id: boolean, name: string, pos: string, start_year: string, end_year: string }[]> {
-    return this.http.get<{ id: boolean, name: string, pos: string, start_year: string, end_year: string }[]>(this.fantasyPlayerApiConfigService.searchGridPlayersEndpoint + `?search=${search}`)
-      .pipe(map(res => {
-        return res;
-      }));
-  }
-
-  /**
-   * get historical gridirons
-   */
-  fetchHistoricalGridirons(): Observable<any[]> {
-    return this.historicalGridirons ? of(this.historicalGridirons) : this.getHistoricalGridirons();
-  }
-
-  /**
-   * return all players in grid game
-   */
-  private getHistoricalGridirons(): Observable<GridPlayer[]> {
-    return this.http.get<GridPlayer[]>(this.fantasyPlayerApiConfigService.getHistoricalGridironsEndpoint)
-      .pipe(map(res => {
-        this.historicalGridirons = res;
-        return res;
-      }));
-  }
-
-  /**
-   * get gridiron results
-   */
-  fetchAllGridironResults(id: number): Observable<any[]> {
-    return this.gridironResults[id] ? of(this.gridironResults[id]) : this.getGridironResults(id);
-  }
-
-  /**
-   * return all players in grid game
-   */
-  private getGridironResults(id: number): Observable<any[]> {
-    return this.http.get<any[]>(this.fantasyPlayerApiConfigService.getAllGridResultsEndpoint + `?gridId=${id}`)
-      .pipe(map(res => {
-        this.gridironResults[id] = res;
-        return res;
-      }));
-  }
-
-  /**
-  * return all players in grid game
-  */
-  postCorrectGridironAnswer(playerList: { playerId: number, cellNum: number, name: string, img: string }[], id: number = -1): Observable<GridPlayer[]> {
-    return this.http.post<any>(this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint, { playerList, id })
-      .pipe(map(res => {
-        return res;
       }));
   }
 

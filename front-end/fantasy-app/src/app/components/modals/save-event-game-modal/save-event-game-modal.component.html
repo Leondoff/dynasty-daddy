@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Save Event Game</h1>
+
+<div class="margin-top-25 center-text">
+    <mat-form-field style="width: 60%">
+        <input matInput placeholder="Event code" type="password" color="accent" [(ngModel)]="eventCode">
+    </mat-form-field>
+</div>
+
+<div class="margin-top-15 center-text">
+    <mat-form-field style="width: 60%">
+        <input matInput placeholder="Name" color="accent" [(ngModel)]="name">
+    </mat-form-field>
+</div>
+
+<div mat-dialog-actions style="place-content: center">
+    <button mat-button (click)="close()">Close</button>
+    <button mat-button (click)="saveGame()" color="accent">Confirm</button>
+</div>
