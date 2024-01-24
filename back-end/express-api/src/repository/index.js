@@ -11,3 +11,4 @@ export * from './TradesRepository';
 export * from './UserRepository';
 export * from './leagueInfoRepository';
 export * from './ArticleRepository';
+export * from './TriviaEventsGamesRepository';

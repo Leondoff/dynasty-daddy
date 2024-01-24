@@ -6,3 +6,4 @@ export * from './constants';
 export * from './tradeService';
 export * from './articleService';
 export * from './userService';
+export * from './gridService';

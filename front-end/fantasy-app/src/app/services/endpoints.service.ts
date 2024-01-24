@@ -8,6 +8,7 @@ import { ESPNApiConfigService } from './api/espn/espn-api-config.service';
 import { FFPCApiConfigService } from './api/ffpc/ffpc-api-config.service';
 import { PatreonAPIConfigService } from './api/patreon/patreon-api-config.service';
 import { ArticlesApiConfigService } from './api/articles/articles-api-config.service';
+import { TriviaApiConfigService } from './api/trivia/trivia-api-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,7 @@ export class EndpointsService {
     private mflAPIConfigService: MflApiConfigService,
     private fleaflickerApiConfigService: FleaflickerApiConfigService,
     private ffpcApiConfigService: FFPCApiConfigService,
+    private triviaApiConfigService: TriviaApiConfigService,
     private espnApiConfigService: ESPNApiConfigService,
     private articlesApiConfigService: ArticlesApiConfigService,
     private configApiConfigService: ConfigApiConfigService) {
@@ -44,14 +46,18 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.getPlayerDetailsEndpoint = this.baseUrl + '/v1/player/details/';
     this.fantasyPlayerApiConfigService.getPlayerTradeEndpoint = this.baseUrl + '/v1/player/details/trade/';
     this.fantasyPlayerApiConfigService.getFantasyPortfolioEndpoint = this.baseUrl + '/v1/portfolio';
-    this.fantasyPlayerApiConfigService.searchGridPlayersEndpoint = this.baseUrl + '/v1/grid/players';
-    this.fantasyPlayerApiConfigService.getHistoricalGridironsEndpoint = this.baseUrl + '/v1/grid/archive';
-    this.fantasyPlayerApiConfigService.postCorrectAnswerEndpoint = this.baseUrl + '/v1/grid/results/add';
-    this.fantasyPlayerApiConfigService.getAllGridResultsEndpoint = this.baseUrl + '/v1/grid/results';
     this.fantasyPlayerApiConfigService.getLeagueFormatEndpoint = this.baseUrl + '/v1/league/format';
     this.fantasyPlayerApiConfigService.postLeaguesToDatabaseEndpoint = this.baseUrl + '/v1/league/add';
     this.fantasyPlayerApiConfigService.searchTradeDatabaseEndpoint = this.baseUrl + '/v1/trade/search';
     this.fantasyPlayerApiConfigService.getRecentTradeVolumeEndpoint = this.baseUrl + '/v1/trade/volume';
+
+    // trivia game endpoints
+    this.triviaApiConfigService.searchGridPlayersEndpoint = this.baseUrl + '/v1/grid/players';
+    this.triviaApiConfigService.getHistoricalGridironsEndpoint = this.baseUrl + '/v1/grid/archive';
+    this.triviaApiConfigService.postCorrectAnswerEndpoint = this.baseUrl + '/v1/grid/results/add';
+    this.triviaApiConfigService.getAllGridResultsEndpoint = this.baseUrl + '/v1/grid/results';
+    this.triviaApiConfigService.saveEventGameEndpoint = this.baseUrl + '/v1/event';
+    this.triviaApiConfigService.getLeaderboardEndpoint = this.baseUrl + '/v1/event/leaderboard';
 
     // patreon apis
     this.patreonApiConfigService.addLeaguesToUserEndpoint = this.baseUrl + '/v1/user/leagues';

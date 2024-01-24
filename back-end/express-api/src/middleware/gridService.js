@@ -4,6 +4,8 @@ import {
   GetAllHistoricalGridirons,
   GetCurrentResults,
   PersistGridResult,
+  GetEventGames,
+  InsertEventGame
 } from '../repository';
 
 export const SearchGridPlayers = async (search) =>
@@ -23,3 +25,9 @@ export const UpdateGridResultsWithAnswer = async (playerList, id) => {
   await PersistGridResult(validPlayerList, id);
   return id;
 };
+
+export const FetchEventLeaderboard = async (id) =>
+  GetEventGames(id);
+
+export const PersistEventGame = async (eventId, name, gameJson) =>
+  InsertEventGame(eventId, name, gameJson);

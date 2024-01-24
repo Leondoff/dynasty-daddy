@@ -3,8 +3,10 @@ import {
   SearchGridPlayers,
   FetchAllHistoricalGrids,
   UpdateGridResultsWithAnswer,
-  FetchAllGridResults
-} from '../middleware/gridService';
+  FetchAllGridResults,
+  FetchEventLeaderboard,
+  PersistEventGame
+} from '../middleware';
 
 export const FetchSearchedPlayersEndpoint = async (req, res) => {
   try {
@@ -47,6 +49,35 @@ export const UpdateGridResultsEndpoint = async (req, res) => {
       );
     } else {
       res.status(HttpStatusCode.Ok).json(err.stack);
+    }
+  }
+};
+
+export const GetEventLeaderboardEndpoint = async (req, res) => {
+  try {
+    const { eventId } = req.query;
+    const leaderboard = await FetchEventLeaderboard(eventId);
+    res.status(HttpStatusCode.Ok).json(leaderboard);
+  } catch (err) {
+    res.status(HttpStatusCode.InternalServerError).json(err.stack);
+  }
+};
+
+export const SaveEventGameEndpoint = async (req, res) => {
+  try {
+    const {
+      eventId, name, gameJson, eventCode
+    } = req.body;
+    if (eventCode !== '1234') throw Error('Wrong event password');
+    await PersistEventGame(eventId, name, gameJson);
+    res.status(HttpStatusCode.Ok).json({ status: 'OK' });
+  } catch (err) {
+    if (err.message === 'Wrong event password') {
+      res.status(HttpStatusCode.BadRequest).json(
+        { status: 'Error', message: 'Wrong event password' }
+      );
+    } else {
+      res.status(HttpStatusCode.InternalServerError).json(err.stack);
     }
   }
 };

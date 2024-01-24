@@ -9,8 +9,8 @@ import { GridResultModalComponent } from "../modals/grid-result-modal/grid-resul
 import { PageService } from "src/app/services/utilities/page.service";
 import { SimpleTextModalComponent} from "../sub-components/simple-text-modal/simple-text-modal.component";
 import { Observable } from "rxjs";
-import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { AdService } from "src/app/services/utilities/ad.service";
+import { TriviaApiService } from "src/app/services/api/trivia/trivia-api.service";
 
 @Component({
     selector: 'grid-game',
@@ -69,7 +69,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     constructor(public configService: ConfigService,
         private dialog: MatDialog,
         private pageService: PageService,
-        private fantasyPlayerApiService: FantasyPlayerApiService,
+        private triviaApiService: TriviaApiService,
         private adService: AdService,
         public gridGameService: GridGameService) {
         super();
@@ -357,7 +357,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      * Open up historical grids menu
      */
     openMenu(): void {
-        this.menuItems = this.fantasyPlayerApiService.fetchHistoricalGridirons()
+        this.menuItems = this.triviaApiService.fetchHistoricalGridirons()
     }
 
     /**
@@ -368,12 +368,5 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     selectHistoricalGrid(oldGrid: any, isHistorical: boolean): void {
         this.gridGameService.gridDict = JSON.parse(oldGrid.daily_grid);
         this.resetGrid(isHistorical);
-    }
-
-    /**
-     * opens puckduko in a new tab
-     */
-    openPuckdoku(): void {
-        window.open('https://www.puckdoku.com/', '_blank');
     }
 }

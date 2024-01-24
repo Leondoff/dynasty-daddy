@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Status } from "../model/status";
-import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { Observable, Subject, of } from "rxjs";
 import { ConfigKeyDictionary, ConfigService, LocalStorageDictionary } from "src/app/services/init/config.service";
 import { GridPlayer } from "../model/gridPlayer";
 import { delay } from "rxjs/operators";
+import { TriviaApiService } from "src/app/services/api/trivia/trivia-api.service";
 
 @Injectable({
   providedIn: 'root'
@@ -73,7 +73,7 @@ export class GridGameService {
   /** total games played from config table */
   gamesPlayed: number = 1;
 
-  constructor(private fantasyPlayersAPIService: FantasyPlayerApiService,
+  constructor(private triviaApiService: TriviaApiService,
     private configService: ConfigService) { }
 
   /** 
@@ -141,7 +141,7 @@ export class GridGameService {
    */
   calculateTotalSelections(): void {
     this.gamesPlayed = 1;
-    this.fantasyPlayersAPIService.fetchAllGridironResults(this.gridDict['id']).subscribe(res => {
+    this.triviaApiService.fetchAllGridironResults(this.gridDict['id']).subscribe(res => {
       res.forEach(obj => {
         const { cellnum } = obj;
         if (cellnum == -1) {
@@ -178,7 +178,7 @@ export class GridGameService {
     if (!this.globalSelectionMapping[cellNum]) {
       return 1;
     }
-    this.fantasyPlayersAPIService.fetchAllGridironResults(this.gridDict['id']).subscribe(res => {
+    this.triviaApiService.fetchAllGridironResults(this.gridDict['id']).subscribe(res => {
       res.forEach(p => {
         if (p.player_id === playerId && p.cellnum === cellNum) {
           percent = (p.guesses + playerInc) / (this.globalSelectionMapping[cellNum] + playerInc);
@@ -196,17 +196,9 @@ export class GridGameService {
    * batch persist results for grid
    */
   batchPersistGridResults(): void {
-    const playerList = [];
-    for (let i = 0; i < this.gridResults.length; i++) {
-      const innerArray = this.gridResults[i];
-      for (let j = 0; j < this.gridResults.length; j++) {
-        if (innerArray[j]) {
-          playerList.push({ playerId: innerArray[j].id, cellNum: (j - 1) * 3 + (i - 1), name: innerArray[j].name, img: innerArray[j].img })
-        }
-      }
-    }
+    const playerList = this.flattenGridToPlayerList();
     if (this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_WRITE_BACK)?.configValue === 'true') {
-      this.fantasyPlayersAPIService.postCorrectGridironAnswer(playerList, this.gridDict['id']).subscribe(_ => {
+      this.triviaApiService.postCorrectGridironAnswer(playerList, this.gridDict['id']).subscribe(_ => {
         // do nothing
       })
     }
@@ -244,5 +236,31 @@ export class GridGameService {
       return 'linear-gradient(to bottom right, #cd7f32, white, #cd7f32);'
     }
     return '#008f51';
+  }
+
+  /**
+   * flatten grid to player list
+   */
+  flattenGridToPlayerList(): {playerId, name, img, cellNum}[] {
+    const playerList = [];
+    for (let i = 0; i < this.gridResults.length; i++) {
+      const innerArray = this.gridResults[i];
+      for (let j = 0; j < this.gridResults.length; j++) {
+        if (innerArray[j]) {
+          playerList.push({ playerId: innerArray[j].id, cellNum: (j - 1) * 3 + (i - 1), name: innerArray[j].name, img: innerArray[j].img })
+        }
+      }
+    }
+    return playerList;
+  }
+
+  /**
+   * calculate rarity score for Grid
+   * @param picks list of players picked
+   */
+  calcScoresForGrid(picks: any[]): number {
+    let score = picks.reduce((v, per) => v + this.getPercentForPlayerSelected(per.playerId, per.cellNum), 0);
+    score += (9 - picks.length) * 100;
+    return Math.round(score);
   }
 }

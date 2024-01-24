@@ -60,9 +60,13 @@
         <div class="center-text large-bold-header-text">
             {{uniScore}}
         </div>
-        
-        <div class="margin-top-10 center-text">
-            <button mat-stroked-button (click)="toggleAnswers = !toggleAnswers">{{toggleAnswers ? 'Close' : 'Open'}} Stats</button>
+
+        <div *ngIf="gridGameService.gridDict['event'] && !toggleAnswers" class="center-text margin-top-10" [ngClass]="{'leaderboard-container': !configService.isMobile}">
+            <div class="event-name">{{gridGameService.gridDict['event']}} Leaderboard</div>
+            <div *ngFor="let game of leaderboard; let i = index" class="leaderboard-entry">
+                <span>{{i + 1}}. {{game.name}}</span><span class="container-spacer"></span>
+                <span class="button-right">{{game.score}}</span>
+            </div>
         </div>
     </div>
     <div *ngIf="toggleAnswers && selectedCellStat != -1" style="text-align: -webkit-center;">
@@ -83,6 +87,8 @@
     </div>
 </div>
 <div class="margin-top-10 center-text">
-    <button mat-button (click)="copyResults()">Copy Score</button>
-    <button mat-raised-button color="accent" (click)="makeTweet()">Tweet</button>
+    <button mat-icon-button (click)="saveEventGame()" style="margin-right: 8px;" *ngIf="this.gridGameService.gridDict['eventId'] && !configService.isMobile"><mat-icon>add</mat-icon></button>
+    <button mat-icon-button (click)="toggleAnswers = !toggleAnswers" [disabled]="toggleAnswers && selectedCellStat != -1" style="margin-right: 8px; margin-left: 8px;"><mat-icon>{{!toggleAnswers ? 'analytics' : 'undo'}}</mat-icon></button>
+    <button mat-icon-button (click)="copyResults()" style="margin-right: 8px; margin-left: 8px;"><mat-icon>content_copy</mat-icon></button>
+    <button mat-icon-button (click)="makeTweet()" style="background-color: black; margin-left: 8px;"><img width="24px" height="24px" class="sb-icon" [src]="'assets/socials/x-twitter.svg'" alt="F"></button>    
 </div>    
