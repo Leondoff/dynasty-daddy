@@ -306,7 +306,7 @@ export class SleeperService implements OnDestroy {
   private generateFutureDraftCapital$(league: LeagueWrapper): Observable<LeagueWrapper> {
     return this.sleeperApiService.getSleeperTradedPicksByLeagueId(league.selectedLeague.leagueId)
       // delay in order to pick up process drafts
-      .pipe(delay(2000))
+      .pipe(delay(3000))
       .pipe(switchMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
         league.leagueTeamDetails.map((team: LeagueTeam) => {
           let draftPicks: DraftCapital[] = [];
