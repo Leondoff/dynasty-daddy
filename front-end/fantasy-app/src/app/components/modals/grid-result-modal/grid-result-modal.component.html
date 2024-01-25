@@ -61,12 +61,14 @@
             {{uniScore}}
         </div>
 
-        <div *ngIf="gridGameService.gridDict['event'] && !toggleAnswers" class="center-text margin-top-10" [ngClass]="{'leaderboard-container': !configService.isMobile}">
+        <div *ngIf="gridGameService.gridDict['event'] && !toggleAnswers" class="center-text margin-top-25" [ngClass]="{'leaderboard-container': !configService.isMobile}">
             <div class="event-name">{{gridGameService.gridDict['event']}} Leaderboard</div>
-            <div *ngFor="let game of leaderboard; let i = index" class="leaderboard-entry">
+            <div *ngFor="let game of gridGameService.leaderboard; let i = index" class="leaderboard-entry"
+                [class.odd]="i % 2 == 1">
                 <span>{{i + 1}}. {{game.name}}</span><span class="container-spacer"></span>
                 <span class="button-right">{{game.score}}</span>
             </div>
+            <div *ngIf="gridGameService.leaderboard.length === 0">No entries yet.</div>
         </div>
     </div>
     <div *ngIf="toggleAnswers && selectedCellStat != -1" style="text-align: -webkit-center;">
