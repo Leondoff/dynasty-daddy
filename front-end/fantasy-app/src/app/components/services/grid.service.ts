@@ -73,6 +73,9 @@ export class GridGameService {
   /** total games played from config table */
   gamesPlayed: number = 1;
 
+  /** leaderboard for events */
+  leaderboard: { name: string, score: number }[] = [];
+
   constructor(private triviaApiService: TriviaApiService,
     private configService: ConfigService) { }
 
@@ -241,7 +244,7 @@ export class GridGameService {
   /**
    * flatten grid to player list
    */
-  flattenGridToPlayerList(): {playerId, name, img, cellNum}[] {
+  flattenGridToPlayerList(): { playerId, name, img, cellNum }[] {
     const playerList = [];
     for (let i = 0; i < this.gridResults.length; i++) {
       const innerArray = this.gridResults[i];
@@ -262,5 +265,20 @@ export class GridGameService {
     let score = picks.reduce((v, per) => v + this.getPercentForPlayerSelected(per.playerId, per.cellNum), 0);
     score += (9 - picks.length) * 100;
     return Math.round(score);
+  }
+
+  /**
+ * load event leaderboard
+ */
+  loadLeaderboard(): void {
+    this.triviaApiService.getEventLeaderboard(this.gridDict['eventId']).subscribe(res => {
+      const newScores = [];
+      res.forEach(p => {
+        const picks = p.game_json['grid'] as any[];
+        const score = this.calcScoresForGrid(picks);
+        newScores.push({ name: p.name, score: Math.round(score) })
+      })
+      this.leaderboard = newScores.sort((b, a) => b.score - a.score);
+    })
   }
 }

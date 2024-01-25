@@ -74,6 +74,17 @@
     <div class="margin-top-15 center-text">
         <button mat-button (click)="toggleUnlimitedMode()"><mat-icon>all_inclusive</mat-icon> {{gridGameService.unlimitedMode ? 'Disable': 'Enable'}} "Mr. Unlimited" Mode</button>
         <button mat-button (click)="resetGrid()"><mat-icon>restart_alt</mat-icon> Reset Grid</button>
+        <button mat-button (click)="giveUp()"><mat-icon>flag</mat-icon> Give Up</button>
+    </div>
+
+    <div *ngIf="gridGameService.gridDict['event']" class="center-text margin-top-25" [ngClass]="{'leaderboard-container': !configService.isMobile}">
+        <div class="event-name">{{gridGameService.gridDict['event']}} Leaderboard</div>
+        <div *ngFor="let game of gridGameService.leaderboard; let i = index" class="leaderboard-entry"
+            [class.odd]="i % 2 == 1">
+            <span>{{i + 1}}. {{game.name}}</span><span class="container-spacer"></span>
+            <span class="button-right">{{game.score}}</span>
+        </div>
+        <div *ngIf="gridGameService.leaderboard.length === 0">No entries yet.</div>
     </div>
 
     <div class="margin-top-15 center-text">

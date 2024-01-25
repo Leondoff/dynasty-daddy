@@ -7,7 +7,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { SearchGridPlayerModal } from "../modals/search-grid-player-modal/search-grid-player-modal.component";
 import { GridResultModalComponent } from "../modals/grid-result-modal/grid-result-modal.component";
 import { PageService } from "src/app/services/utilities/page.service";
-import { SimpleTextModalComponent} from "../sub-components/simple-text-modal/simple-text-modal.component";
+import { SimpleTextModalComponent } from "../sub-components/simple-text-modal/simple-text-modal.component";
 import { Observable } from "rxjs";
 import { AdService } from "src/app/services/utilities/ad.service";
 import { TriviaApiService } from "src/app/services/api/trivia/trivia-api.service";
@@ -129,6 +129,9 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         if (this.gridGameService.guessesLeft === 9) {
             this.openHowToPlay()
         }
+        if (this.gridGameService.gridDict['event']) {
+            this.gridGameService.loadLeaderboard();
+        }
     }
 
     /**
@@ -166,6 +169,14 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      */
     openTwitter(): void {
         window.open('https://twitter.com/nflgridirongame', '_blank');
+    }
+
+    /**
+     * handles giving up on a grid
+     */
+    giveUp(): void {
+        this.gridGameService.guessesLeft = 0;
+        this.gridGameService.validateGridSelection$.next();
     }
 
     /**

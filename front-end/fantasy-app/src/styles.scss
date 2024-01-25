@@ -1184,3 +1184,24 @@ button.pulse-button {
 .trade-res-card {
   padding: 1%;
 }
+
+// event leaderboard
+.leaderboard-entry {
+  background-color: $dark-bg-lighter-10;
+  text-align-last: left;
+  min-width: 200px;
+  padding: 2px 10px 2px 10px;
+}
+
+.leaderboard-entry.odd {
+  background-color: $dark-bg-lighter-5;
+}
+
+.event-name {
+  background-color: $dark-bg-lighter-20;
+  font-weight: bold;
+  min-width: 200px;
+  padding: 5px 10px 5px 10px;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}

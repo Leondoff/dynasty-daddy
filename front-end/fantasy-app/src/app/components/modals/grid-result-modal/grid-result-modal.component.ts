@@ -40,9 +40,6 @@ export class GridResultModalComponent implements OnInit {
     /** probability gradient for percents */
     probGradient: string[] = [];
 
-    /** leaderboard for events */
-    leaderboard: {name: string, score: number}[] = [];
-
     constructor(public gridGameService: GridGameService,
         private triviaApiService: TriviaApiService,
         private colorService: ColorService,
@@ -55,24 +52,6 @@ export class GridResultModalComponent implements OnInit {
         this.resultGrid = this.slice4x4To3x3(this.gridGameService.gridResults);
         this.uniScore = this.gridGameService.calcScoresForGrid(this.gridGameService.flattenGridToPlayerList())
         this.probGradient = this.colorService.getColorGradientArray(101, '#28283c', '#3f7bfb');
-        if (this.gridGameService.gridDict['event']) {
-            this.loadLeaderboard();
-        }
-    }
-
-    /**
-     * load event leaderboard
-     */
-    loadLeaderboard(): void {
-        this.triviaApiService.getEventLeaderboard(this.gridGameService.gridDict['eventId']).subscribe(res => {
-            const newScores = [];
-            res.forEach(p => {
-                const picks = p.game_json['grid'] as any[];
-                const score = this.gridGameService.calcScoresForGrid(picks);
-                newScores.push({name: p.name, score: Math.round(score)})
-            })
-            this.leaderboard = newScores.sort((b,a) => b.score - a.score);
-        })
     }
 
     /**
@@ -193,7 +172,7 @@ export class GridResultModalComponent implements OnInit {
               this.gridGameService.flattenGridToPlayerList()
             ).subscribe(
               res => {
-                this.loadLeaderboard();
+                this.gridGameService.loadLeaderboard();
               }
             );
           }
