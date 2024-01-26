@@ -4,7 +4,7 @@ from ESPNService import scrapeESPNROS
 from NumberFireService import scrapeNFROS
 from FantasyGuysService import scrapeFantasyGuysROS
 
-def updatePlayerRankings():
+def updatePlayerRankings(isLocal = False):
     
     playerADPs = scrapeADP('qb') + scrapeADP('rb') + \
         scrapeADP('wr') + scrapeADP('te')
@@ -17,8 +17,9 @@ def updatePlayerRankings():
     playerNFROS = {**scrapeNFROS('qb'), **scrapeNFROS('rb'),
                    **scrapeNFROS('wr'), **scrapeNFROS('te')}
 
-    cursor = GetDatabaseConn()
-
+    conn = GetDatabaseConn(isLocal)
+    cursor = conn.cursor()
+    
     for adp in playerADPs:
         fgRos = int(playerFGROS[adp.nameId]) if adp.nameId in playerFGROS else None
         nfRos = int(playerNFROS[adp.nameId]) if adp.nameId in playerNFROS else None

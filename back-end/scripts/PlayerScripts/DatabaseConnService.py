@@ -16,5 +16,4 @@ def GetDatabaseConn(isLocal=False):
     # Setting auto commit false
     conn.autocommit = True
 
-    # Creating a cursor object using the cursor() method
-    return conn.cursor()
+    return conn

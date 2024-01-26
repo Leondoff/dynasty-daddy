@@ -1,6 +1,6 @@
 import PlayerService
-import psycopg2
 import requests
+from DatabaseConnService import GetDatabaseConn
 
 espnPosMap = {
     0: 'QB',
@@ -63,22 +63,16 @@ nflTeamMap = {
   'Washington D/ST': 'washingtoncommanders'
 }
 
-def updateESPNPlayerIds():
+def updateESPNPlayerIds(isLocal = False):
     
     # fetch espn players
+    # TODO manually update the year in the url each season
     players = requests.get(
         "https://fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leaguedefaults/?view=kona_player_info")
     
-    # Connect to local test database
-    conn = psycopg2.connect(
-        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
-    )
-
-    # Setting auto commit false
-    conn.autocommit = True
-
-    # Creating a cursor object using the cursor() method
+    conn = GetDatabaseConn(isLocal)
     cursor = conn.cursor()
+    
     iter = 1
     for player in players.json()[0]['players']:
         if player['player']['defaultPositionId'] in espnPosMap.keys():
