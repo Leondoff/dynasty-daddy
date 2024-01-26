@@ -310,6 +310,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case 'defInts6':
             case 'max2IntsG':
                 return 'Int Caught';
+            case 'defTds1':
             case 'defTds2':
             case 'max2defTd':
                 return 'Def Tds';
