@@ -513,7 +513,7 @@ export class PowerRankingsTableComponent extends BaseComponent implements OnInit
    */
   getPickName(pick: FantasyPlayer): string {
     const p: DraftCapital = pick.metadata;
-    if (this.leagueService.selectedLeague.season === pick.first_name) {
+    if (p.pick !== -1 && this.leagueService.selectedLeague.season === pick.first_name) {
       return p.year + ' ' + this.displayService.createPickString(p.round, p.pick);
     }
     return this.configService.isMobile ? pick.full_name.replace(' Mid', '').replace(' Late', '').replace(' Early', '') : pick.full_name;

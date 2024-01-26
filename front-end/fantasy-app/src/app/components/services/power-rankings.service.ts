@@ -182,8 +182,8 @@ export class PowerRankingsService {
           const pickRanges = { EARLY: 'Early', MID: 'Mid', LATE: 'Late' }
           team.futureDraftCapital.map(pick => {
             let pickType = pickRanges.MID;
-            if (pick.pick <= earlyPickThreshold) pickType = pickRanges.EARLY;
-            else if (pick.pick >= latePickThreshold) pickType = pickRanges.LATE;
+            if (pick.pick !== -1 && pick.pick <= earlyPickThreshold) pickType = pickRanges.EARLY;
+            else if (pick.pick !== -1 && pick.pick >= latePickThreshold) pickType = pickRanges.LATE;
             const matchPick = pickValues.find(p => p.last_name.includes(pick.round.toString()) && p.first_name === pick.year
               && p.last_name.includes(pickType));
             if (matchPick) {

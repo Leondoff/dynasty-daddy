@@ -91,16 +91,6 @@ export class LeaguePickDTO {
     return this;
   }
 
-  fromDraftCapital(pick: DraftCapital, ownerId: number): LeaguePickDTO {
-    this.playerId = "";
-    this.pickNumber = pick.pick * pick.round;
-    this.rosterId = ownerId;
-    this.round = pick.round;
-    this.draftSlot = pick.pick;
-    this.originalRosterId = pick.originalRosterId;
-    return this;
-  }
-
   private formatPickDisplay = (teamCount: number) => {
     const pickNum = this.pickNumber % teamCount == 0 ? 12 : this.pickNumber % teamCount;
     return this.round.toString() + '.' + (pickNum > 9 ? pickNum.toString() : '0' + pickNum.toString())

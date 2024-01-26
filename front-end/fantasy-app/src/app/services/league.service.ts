@@ -266,9 +266,9 @@ export class LeagueService {
     const nameIds = [];
     draftCapital.map(pick => {
       let pickString = '';
-      if (pick.pick <= this.selectedLeague.totalRosters / 3) {
+      if (pick.pick !== -1 && pick.pick <= this.selectedLeague.totalRosters / 3) {
         pickString = 'early';
-      } else if (pick.pick >= 2 * this.selectedLeague.totalRosters / 3) {
+      } else if (pick.pick !== -1 && pick.pick >= 2 * this.selectedLeague.totalRosters / 3) {
         pickString = 'late';
       } else {
         pickString = 'mid';

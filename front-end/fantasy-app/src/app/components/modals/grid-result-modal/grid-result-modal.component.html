@@ -68,7 +68,7 @@
                 <span>{{i + 1}}. {{game.name}}</span><span class="container-spacer"></span>
                 <span class="button-right">{{game.score}}</span>
             </div>
-            <div *ngIf="gridGameService.leaderboard.length === 0">No entries yet.</div>
+            <div *ngIf="gridGameService.leaderboard.length === 0" class="leaderboard-entry" style="text-align-last: center;">No entries yet...</div>
         </div>
     </div>
     <div *ngIf="toggleAnswers && selectedCellStat != -1" style="text-align: -webkit-center;">
