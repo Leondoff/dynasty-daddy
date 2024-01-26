@@ -319,7 +319,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             case '1Sack1IntG':
                 return 'Sacks & Ints';
             case 'only1Team':
-                return 'Team Only';
+                return 'NFL Team Only';
             default:
                 return this.configService.isMobile ? 'Int Thrown' : 'Ints Thrown';
         }

@@ -18,8 +18,9 @@ def FormatTradesForProcessing(trades):
     return mapped_data
 
 def GetTrades():
-    cursor = GetDatabaseConn(True)
-
+    conn = GetDatabaseConn(True)
+    cursor = conn.cursor()
+    
     cursor.execute('select * from trades LIMIT 50000;')
     trades = cursor.fetchall()
 

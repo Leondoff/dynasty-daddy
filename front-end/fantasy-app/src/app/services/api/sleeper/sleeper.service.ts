@@ -306,29 +306,30 @@ export class SleeperService implements OnDestroy {
   private generateFutureDraftCapital$(league: LeagueWrapper): Observable<LeagueWrapper> {
     return this.sleeperApiService.getSleeperTradedPicksByLeagueId(league.selectedLeague.leagueId)
       // delay in order to pick up process drafts
-      .pipe(delay(3000))
+      .pipe(delay(2000))
       .pipe(switchMap((tradedPicks: LeagueRawTradePicksDTO[]) => {
+        const isUpcomingSet = league.selectedLeague?.metadata?.upcomingDraftOrder ? true : false;
+        const yearOffset = isUpcomingSet ? 1 : 0;
         league.leagueTeamDetails.map((team: LeagueTeam) => {
           let draftPicks: DraftCapital[] = [];
           for (
-            let year = Number(league.selectedLeague.season) + 1;
+            let year = Number(league.selectedLeague.season) + yearOffset;
             year < Number(league.selectedLeague.season) + 4;
             year++
           ) {
             for (let i = 0; i < league.selectedLeague.draftRounds; i++) {
-              const pick = new DraftCapital(i + 1, league.selectedLeague.totalRosters / 2, year.toString(), team.roster.rosterId);
+              const pick = new DraftCapital(i + 1, -1, year.toString(), team.roster.rosterId);
               if (pick && pick !== undefined)
                 draftPicks.push(pick);
             }
           }
-          if (league.selectedLeague?.metadata?.upcomingDraftOrder) {
-            team.futureDraftCapital = [...(league.selectedLeague?.metadata?.upcomingDraftOrder?.[team?.roster?.rosterId] || []), ...draftPicks];
-          } else {
-            team.futureDraftCapital = draftPicks;
-          }
+          team.futureDraftCapital = isUpcomingSet ?
+            [...(league.selectedLeague?.metadata?.upcomingDraftOrder?.[team?.roster?.rosterId] || []), ...draftPicks] :
+            draftPicks;
         });
         // filter out current season traded picks because the upcoming draft already has them
-        const futureTradedPicks = tradedPicks.filter(p => p.season !== league.selectedLeague.season)
+        const futureTradedPicks = isUpcomingSet ?
+          tradedPicks.filter(p => p.season !== league.selectedLeague.season) : tradedPicks;
         league.leagueTeamDetails.map((team: LeagueTeam) => {
           futureTradedPicks.forEach((tradedPick: LeagueRawTradePicksDTO) => {
             if (tradedPick.ownerId !== team.roster.rosterId

@@ -2,6 +2,7 @@ import PlayerService
 import psycopg2
 import requests
 import xml.etree.ElementTree as ET
+from DatabaseConnService import GetDatabaseConn
 
 def processXMLPlayers(players_xml):
     tree = ET.ElementTree(ET.fromstring(players_xml.content))
@@ -25,7 +26,7 @@ def processXMLPlayers(players_xml):
         })
     return player_data
 
-def updateFFPCPlayerIds(leagueId = '10471'):
+def updateFFPCPlayerIds(leagueId = '10471', isLocal = False):
     
     # fetch espn players
     players_xml = requests.get(
@@ -35,17 +36,9 @@ def updateFFPCPlayerIds(leagueId = '10471'):
         "https://myffpc.com/FFPCLeagueFreeAgents.ashx?leagueid=" + leagueId
     )
     
-    # Connect to local test database
-    conn = psycopg2.connect(
-        database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
-    )
-
-    # Setting auto commit false
-    conn.autocommit = True
-
-    # Creating a cursor object using the cursor() method
+    conn = GetDatabaseConn(isLocal)
     cursor = conn.cursor()
-    
+        
     # Parse the XML string into an ElementTree object
     rosteredPlayers = processXMLPlayers(players_xml)
     freeAgentPlayers = processXMLPlayers(waiver_xml)
@@ -62,6 +55,5 @@ def updateFFPCPlayerIds(leagueId = '10471'):
         print('(' + str(iter) + '/' + str(len(player_data)) + ') ' + player['nameId'] + ' processed ')
     conn.commit()
 
-updateFFPCPlayerIds()
-
-# League ids 31223
+for leagueId in ['31223', '10471']:
+    updateFFPCPlayerIds(leagueId)
