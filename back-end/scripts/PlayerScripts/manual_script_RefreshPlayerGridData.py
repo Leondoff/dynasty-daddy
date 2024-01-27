@@ -174,6 +174,8 @@ def UpdateStatsJson(cursor):
                 'max2IntsG': False,
                 'max2FFG': False,
                 'max2SacksG': False,
+                'maxIntsG': False,
+                'maxFFG': False,
                 'max2defTd': False,
                 '1Sack1IntG': False
             }
@@ -216,11 +218,13 @@ def UpdateStatsJson(cursor):
                         'defSacks10': float(row[4]) > 9 or statsDict[row[0]]['defSacks10'] is True,
                         'defInts6': int(row[5]) > 5 or statsDict[row[0]]['defInts6'] is True,
                         'defTds2': int(row[6]) > 1 or statsDict[row[0]]['defTds2'] is True,
-                        'maxDefTdG': int(row[6]) > 0 or statsDict[row[0]]['maxDefTdG'] is True,
+                        'maxDefTdG': int(row[12]) > 0 or statsDict[row[0]]['maxDefTdG'] is True,
                         'defSafe1': int(row[7]) > 0 or statsDict[row[0]]['defSafe1'] is True,
                         'max10TklG': int(row[8]) > 11 or statsDict[row[0]]['max10TklG'] is True,
                         'max2IntsG': int(row[11]) > 1 or statsDict[row[0]]['max2IntsG'] is True,
+                        'maxIntsG': int(row[11]) > 0 or statsDict[row[0]]['maxIntsG'] is True,
                         'max2FFG': int(row[9]) > 1 or statsDict[row[0]]['max2FFG'] is True,
+                        'maxFFG': int(row[9]) > 0 or statsDict[row[0]]['maxFFG'] is True,
                         'max2SacksG': float(row[10]) > 1 or statsDict[row[0]]['max2SacksG'] is True,
                         'max2defTd': int(row[12]) > 1 or statsDict[row[0]]['max2defTd'] is True,
                         '1Sack1IntG': row[13] == 'TRUE' or statsDict[row[0]]['1Sack1IntG'] is True,

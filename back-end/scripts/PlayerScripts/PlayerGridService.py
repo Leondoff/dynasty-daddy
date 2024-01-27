@@ -49,8 +49,8 @@ SupportedStats = ['rushYd1000',
                   'defTds2',
                   'defSafe1',
                   'max10TklG',
-                  'max2IntsG',
-                  'max2FFG',
+                  'maxIntsG',
+                  'maxFFG',
                   'max2SacksG',
                   'maxDefTdG',
                   '1Sack1IntG',
@@ -97,14 +97,26 @@ def SetNewPlayerGrid():
         yesterdaysGridStr = cursor.fetchall()
         yesterdaysGrid = json.loads(yesterdaysGridStr[0][0])
         todaysSupportedTeams = filterOutTeams(yesterdaysGrid)
-        iter = 0
+        current_date = date.today()
+        
+        # # if sunday, add extra challenge
+        # if current_date.weekday() == 6:
+        #     filterPos = random.choice(PositionFilters)
+        #     rows = [x for x in rows if filterPos in x[5]]
+        #     print(rows[0], filterPos)
+        
+        iter = 0        
         while True and iter < 100:
             selectedTeams = random.sample(todaysSupportedTeams, 6)
             formattedGrid = [{"type": "team", "value": value}
                             for value in selectedTeams]
             # Y axis wild card
             if (random.choice([True])):
-                selectedWildcard = random.choice(SupportedYTypes)
+                # on saturday put a college team
+                if current_date.weekday() == 5:
+                    selectedWildcard = 'college'
+                else:
+                    selectedWildcard = random.choice(SupportedYTypes)
                 if selectedWildcard is 'college':
                     selectedCollege = random.choice(SupportedColleges)
                     formattedGrid[5] = {
@@ -132,7 +144,6 @@ def SetNewPlayerGrid():
             if ValidateActualSolutionExists(rows, xAxis, yAxis):
                 break
 
-        current_date = date.today()
         target_date = date(2023, 7, 1)
 
         gridNumber = (current_date - target_date).days + 1

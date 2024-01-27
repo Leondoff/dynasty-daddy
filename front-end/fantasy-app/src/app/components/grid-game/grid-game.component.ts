@@ -303,12 +303,14 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 return 'Tackles';
             case 'defFF4':
             case 'max2FFG':
+            case 'maxFFG':
                 return 'Forced Fumbles';
             case 'defSacks10':
             case 'max2SacksG':
                 return 'Sacks (Def)';
             case 'defInts6':
             case 'max2IntsG':
+            case 'maxIntsG':
                 return 'Int Caught';
             case 'maxDefTdG':
             case 'defTds2':
