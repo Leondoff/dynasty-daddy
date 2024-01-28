@@ -262,7 +262,7 @@ export class GridGameService {
    * @param picks list of players picked
    */
   calcScoresForGrid(picks: any[]): number {
-    let score = picks.reduce((v, per) => v + this.getPercentForPlayerSelected(per.playerId, per.cellNum), 0);
+    let score = picks.reduce((v, per) => v + this.getPercentForPlayerSelected(per.playerId, per.cellNum) * 100, 0);
     score += (9 - picks.length) * 100;
     return Math.round(score);
   }
