@@ -13,12 +13,15 @@ export const GetEventGames = async (id) => {
 };
 
 export const InsertEventGame = async (eventId, name, gameJson) => {
-  const query = `
+  const insertQuery = `
     INSERT INTO trivia_events_games (event_id, name, game_json)
-    VALUES (${eventId}, '${name}', '${JSON.stringify(gameJson)}')
+    VALUES ($1, $2, $3)
     RETURNING *;
   `;
 
-  const data = await playersModel.pool.query(query);
-  return data.rows[0];
+  const queryValues = [eventId, name, JSON.stringify(gameJson)];
+
+  const { rows } = await playersModel.pool.query(insertQuery, queryValues);
+
+  return rows[0];
 };
