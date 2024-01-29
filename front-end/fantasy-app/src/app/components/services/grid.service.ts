@@ -271,6 +271,7 @@ export class GridGameService {
  * load event leaderboard
  */
   loadLeaderboard(): void {
+    this.leaderboard = [];
     this.triviaApiService.getEventLeaderboard(this.gridDict['eventId']).subscribe(res => {
       const newScores = [];
       res.forEach(p => {
