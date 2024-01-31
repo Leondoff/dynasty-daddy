@@ -123,6 +123,10 @@ export class GridGameService {
           isValid = player?.draft_club && player?.draft_club === category.value && isValid;
           break;
         }
+        case 'playedWith': {
+          isValid = player?.played_with && player?.played_with.includes(category.value) && isValid;
+          break;
+        }
         case 'award': {
           isValid = player?.awards_json?.[category.value] && player?.awards_json?.[category.value] !== '' && isValid;
           break;

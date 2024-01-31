@@ -12,4 +12,5 @@ export class GridPlayer {
     awards_json: {} = null;
     draft_pick: number;
     draft_club: string;
+    played_with: string[];
 }

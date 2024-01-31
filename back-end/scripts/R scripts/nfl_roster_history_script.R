@@ -22,7 +22,7 @@ nflreadr::.clear_cache()
 # load weekly roster stats for players
 aaa <- load_rosters_weekly(season = 2002:2023)
 
-selected_columns <- aaa[, c("season", "season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college", "rookie_year", "draft_club", "draft_number")]
+selected_columns <- aaa[, c("season", "season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college", "rookie_year", "draft_club", "draft_number", "week", "status")]
 
 # write rostered players to csv
 write.csv(selected_columns, "C:\\Users\\Jeremy\\Desktop\\roster.csv", row.names=FALSE)

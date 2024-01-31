@@ -36,6 +36,11 @@
                                             <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                                         </div>
                                     </div>
+                                    <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'playedWith'" style="text-align: -webkit-center">
+                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}" >Played With</div>
+                                        <img [src]="'../../../assets/img/players/' + (gridGameService.gridDict['xAxis'][j-1].value) + '.webp'" class="team-grid-img" [class.player]="true" alt="NFL Team Logo">
+                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{nameMapping[gridGameService.gridDict['xAxis'][j-1].value]}}</div>
+                                    </div>
                                     <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'stat'" class="center-text">
                                         <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
                                         <div class="light_bg_color subtext" [ngClass]="{'subtext-desc-mobile': configService.isMobile}">{{getStatCategory(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
@@ -54,6 +59,11 @@
                                         <div class="light_bg_color">{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
                                         <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{gridGameService.gridDict['yAxis'][i-1]?.value}}</div>
                                         <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                                    </div>
+                                    <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'playedWith'" style="text-align: -webkit-center">
+                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}" >Played With</div>
+                                        <img [src]="'../../../assets/img/players/' + (gridGameService.gridDict['yAxis'][i-1].value) + '.webp'" class="team-grid-img" [class.player]="true" alt="NFL Team Logo">
+                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{nameMapping[gridGameService.gridDict['yAxis'][i-1].value]}}</div>
                                     </div>
                                     <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'stat'" class="center-text">
                                         <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>

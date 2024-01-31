@@ -11,6 +11,7 @@ import { SimpleTextModalComponent } from "../sub-components/simple-text-modal/si
 import { Observable } from "rxjs";
 import { AdService } from "src/app/services/utilities/ad.service";
 import { TriviaApiService } from "src/app/services/api/trivia/trivia-api.service";
+import { GsisIdToName } from "src/app/services/utilities/display.service";
 
 @Component({
     selector: 'grid-game',
@@ -33,6 +34,8 @@ export class GridGameComponent extends BaseComponent implements OnInit {
 
     menuItems: Observable<any[]>;
 
+    nameMapping: {};
+
     /** help menu bullet points */
     helpBullets = [{
         list: [
@@ -43,6 +46,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             "If you select a player for a cell with a stat, that player must've accumulated that stat in a completed season/game from 1999 or later.",
             "If you select a player for a cell with a college, that player must have been drafted from that college. If a player transfers colleges, the college they transfer to is the college.",
             "If a cell is for a college and a season stat, the player you select must have been drafted from that college and accumulated that stat in the NFL (not in college).",
+            "If a cell is for a player that played with that player, the player you select must have been active one week with that player.",
             "A player cannot be used twice.",
             "You have 9 guesses to fill out the grid.",
             "Each guess, whether correct or incorrect, counts as a guess.",
@@ -113,6 +117,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      */
     private initGridGame(isHistorical: boolean = false): void {
         this.gridGameService.isHistoricalGrid = isHistorical;
+        this.nameMapping = GsisIdToName;
         if (!isHistorical) {
             this.gridGameService.gridDict = JSON.parse(this.configService.getConfigOptionByKey(ConfigKeyDictionary.GRIDIRON_GRID)?.configValue);
             const gridCache = JSON.parse(localStorage.getItem(LocalStorageDictionary.GRIDIRON_ITEM) || '{}');
