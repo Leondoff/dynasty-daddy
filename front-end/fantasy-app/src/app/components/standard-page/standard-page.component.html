@@ -4,7 +4,7 @@
     <app-sidebar (toggleMenu)="drawer.toggle()"></app-sidebar>
   </mat-drawer>
 
-  <mat-drawer #drawerTool class="standard-sidenav" mode="side" position="end">
+  <mat-drawer #drawerTool class="standard-sidenav" position="end" mode="{{configService.isMobile ? 'over' : 'side'}}">
     <app-draft-toolbar></app-draft-toolbar>
   </mat-drawer>
 
