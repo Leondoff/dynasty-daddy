@@ -9,5 +9,7 @@ export class GridPlayer {
     jersey_numbers: string[] = [];
     college: string = null;;
     stats_json: {} = null;
-    awards_json: {} = null;;
+    awards_json: {} = null;
+    draft_pick: number;
+    draft_club: string;
 }

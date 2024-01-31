@@ -15,7 +15,9 @@ export const GetPlayerForGrid = async (playerId) => {
     college,
     stats_json,
     awards_json,
-    headshot_url
+    headshot_url,
+    draft_pick,
+    draft_club
   from player_grid WHERE id = ${playerId};
 `);
   return data.rows[0];
@@ -34,7 +36,9 @@ export const GetSearchPlayersInGrid = async (search) => {
       college,
       stats_json,
       awards_json,
-      headshot_url
+      headshot_url,
+      draft_pick,
+      draft_club
     FROM player_grid
     WHERE search_name ILIKE $1
     LIMIT 15;
@@ -60,7 +64,9 @@ export const GetAllPlayersInGrid = async () => {
     college,
     stats_json,
     awards_json,
-    headshot_url
+    headshot_url,
+    draft_pick,
+    draft_club
   from player_grid;
 `);
   return data.rows;

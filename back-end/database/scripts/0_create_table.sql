@@ -183,6 +183,9 @@ CREATE TABLE player_grid (
     gsis_id VARCHAR(10),
     pfr_id varchar(10),
     search_name TEXT,
+    rookie_year VARCHAR(5),
+    draft_pick INT,
+    draft_club VARCHAR(4);
 );
 
 create index player_grid_uindex on player_grid (name);
