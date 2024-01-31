@@ -114,12 +114,18 @@
         </div>
     </div>
     <div fxFlex="15%" fxFlex.xs="100%" fxFlex.sm="40%" style="display: block" *ngIf="gridGameService.gridDict['event']" [ngStyle]="!configService.isMobile ? {'padding-top': '10%'} : {}" >
-        <div class="center-text margin-top-25" *ngIf="gridGameService.leaderboard.length > 0">
+        <div class="center-text margin-top-25">
             <div class="event-name">{{gridGameService.gridDict['event']}}</div>
-            <div *ngFor="let game of gridGameService.leaderboard; let i = index" class="leaderboard-entry"
-                [class.odd]="i % 2 == 1">
-                <span>{{i + 1}}. {{game.name}}</span><span class="container-spacer"></span>
-                <span class="button-right">{{game.score}}</span>
+            <ng-container *ngIf="gridGameService.leaderboard.length > 0">
+                <div *ngFor="let game of gridGameService.leaderboard; let i = index" class="leaderboard-entry"
+                    [class.odd]="i % 2 == 1">
+                    <span>{{i + 1}}. {{game.name}}</span><span class="container-spacer"></span>
+                    <span class="button-right">{{game.score}}</span>
+                </div>
+            </ng-container>
+            <div class="leaderboard-entry" *ngIf="gridGameService.leaderboard.length == 0">
+                <mat-progress-bar  mode="indeterminate" color="accent"  *ngIf="gridGameService.leaderboardStatus == 0"></mat-progress-bar>
+                <span *ngIf="gridGameService.leaderboardStatus == 1">No Entries...</span>
             </div>
         </div>
     </div>
