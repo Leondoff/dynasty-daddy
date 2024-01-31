@@ -76,6 +76,9 @@ export class GridGameService {
   /** leaderboard for events */
   leaderboard: { name: string, score: number }[] = [];
 
+  /** loading leaderboard status */
+  leaderboardStatus: Status = Status.NONE;
+
   constructor(private triviaApiService: TriviaApiService,
     private configService: ConfigService) { }
 
@@ -293,7 +296,9 @@ export class GridGameService {
  */
   loadLeaderboard(): void {
     this.leaderboard = [];
-    this.triviaApiService.getEventLeaderboard(this.gridDict['eventId']).subscribe(res => {
+    this.leaderboardStatus = Status.LOADING;
+    this.triviaApiService.getEventLeaderboard(this.gridDict['eventId']).pipe(delay(200))
+    .subscribe(res => {
       const newScores = [];
       res.forEach(p => {
         const picks = p.game_json['grid'] as any[];
@@ -301,6 +306,7 @@ export class GridGameService {
         newScores.push({ name: p.name, score: Math.round(score) })
       })
       this.leaderboard = newScores.sort((b, a) => b.score - a.score);
+      this.leaderboardStatus = Status.DONE;
     })
   }
 }
