@@ -31,6 +31,10 @@
   width: clamp(15px, 12vw, 100px);
 }
 
+.team-grid-img.player {
+  width: clamp(50px, 8vw, 200px);
+}
+
 .team-grid-img.sb {
   width: clamp(12px, 3.5vw, 40px);
   text-align: center -webkit-center;

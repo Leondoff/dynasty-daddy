@@ -35,8 +35,12 @@ def getDBConnection():
     # Creating a cursor object using the cursor() method
     return conn.cursor()
 
-# first run the r scripts to generate the files
+"""
+Checks for new players and adds them to the player grid.
+Reads data from CSV files and updates the database accordingly.
+"""
 def AddNewPlayersToGrid(cursor):
+    print('Checking for players to add...')
     playerStatement = '''select gsis_id
                         from player_grid where gsis_id is not null;'''
     cursor.execute(playerStatement)
@@ -121,7 +125,10 @@ def AddNewPlayersToGrid(cursor):
                                                  value['teams'], value['headshot_url'], value['pos'], value['sleeperId'], value['college'], json.dumps(value['awards'], indent=4), value['start_year'], value['end_year'], json.dumps(value['stats'], indent=4), key))
             iter = iter + 1
 
-
+"""
+Updates statistics JSON data for players in the player grid.
+Reads data from a CSV file and updates the database accordingly.
+"""
 def UpdateStatsJson(cursor):
 
     # Creating a cursor object using the cursor() method
@@ -239,7 +246,10 @@ def UpdateStatsJson(cursor):
                            (json.dumps(value, indent=4), key))
             iter = iter + 1
 
-
+"""
+Updates awards JSON data for players in the player grid.
+Reads data from CSV files and updates the database accordingly.
+"""
 def UpdateAwardsJson(cursor):
 
     # Creating a cursor object using the cursor() method
@@ -286,7 +296,10 @@ def UpdateAwardsJson(cursor):
                         (json.dumps(value, indent=4), key))
         iter = iter + 1
     
-
+"""
+Updates roster, teams, and years for players in the player grid.
+Reads data from CSV files and updates the database accordingly.
+"""
 def UpdateRosterTeamsAndYear(cursor):
     # Creating a cursor object using the cursor() method
     playerStatement = '''select teams, end_year, gsis_id, college, rookie_year, draft_pick, draft_club, sleeper_id
@@ -325,7 +338,7 @@ def UpdateRosterTeamsAndYear(cursor):
                 # draft club
                 if playerMap[row[6]][6] is None and row[13] != 'NA' and row[13] != row[12]:
                     playerMap[row[6]][6] = row[13] if row[13] not in TeamACCException else TeamACCException[row[13]]
-                iter = 1
+        iter = 1
         for key, value in playerMap.items():
             print('(' + str(iter) + '/' + str(len(playerMap)) + ') ' +
                   key + ' roster updated ')
@@ -342,10 +355,87 @@ def UpdateRosterTeamsAndYear(cursor):
             cursor.execute(playerGridStatement,
                            (value[0], value[1], value[3], value[4], value[5], value[6], value[7], key))
             iter = iter + 1
-                
-                
+       
+"""
+Updates the 'played_with' category for players in the player grid.
+Reads data from CSV files, maps player interactions, and updates the database accordingly.
+"""     
+def UpdatePlayedWithCategory(cursor):
+    
+    print('Mapping played with array...')
+
+    players = ['00-0026498',
+               '00-0019596',
+               '00-0010346',
+               '00-0022803',
+               '00-0023459',
+               '00-0020531',
+               '00-0022942', 
+               '00-0022924',
+               '00-0033873',
+               '00-0027939',
+               '00-0022921',
+               '00-0027793',
+               '00-0027944',
+               '00-0011754',
+               '00-0033280',
+               '00-0032764',
+               '00-0025394',
+               '00-0025399',
+               '00-0020536',
+               '00-0012478',
+               '00-0027656',
+               '00-0027949',
+               '00-0021140']
+    
+    with open('C:\\Users\\Jeremy\\Desktop\\roster.csv', 'r') as file:
+        csvreader = csv.reader(file)
+        playerMap = {}
+        for p in players:
+            playerMap[p] = {}
+        # build player career game dict
+        for row in csvreader:
+            if row[6].strip() in players and row[16] == 'ACT':
+                if row[6] not in playerMap:
+                    playerMap[row[6]] = {}
+                if row[3] not in playerMap[row[6]]:
+                    playerMap[row[6]][row[3]] = {}
+                if row[0] not in playerMap[row[6]][row[3]]:
+                    playerMap[row[6]][row[3]][row[0]] = []
+                playerMap[row[6]][row[3]][row[0]].append(row[15])
+    with open('C:\\Users\\Jeremy\\Desktop\\roster.csv', 'r') as file:
+        # match players to certain players
+        playedWithMap = {}
+        csvreader = csv.reader(file)
+        for row in csvreader:
+            if row[16] == 'ACT':
+                for match in players:
+                    if match != row[6]:
+                        # check player map
+                        match_key = playerMap.get(match)
+                        if match_key and row[3] in match_key:
+                            player_key = match_key[row[3]].get(row[0])
+                            if player_key and row[15] in player_key:
+                                if row[6] not in playedWithMap:
+                                    playedWithMap[row[6]] = []
+                                if match not in playedWithMap[row[6]]:
+                                    playedWithMap[row[6]].append(match)
+        iter = 1
+        for key, value in playedWithMap.items():
+            print('(' + str(iter) + '/' + str(len(playedWithMap)) + ') ' +
+                    key + ' played with mapping ')
+            array_string = "{" + ",".join(value) + "}"
+            playerGridStatement = '''UPDATE player_grid
+                        SET
+                        played_with = %s
+                        WHERE gsis_id = %s;'''
+            cursor.execute(playerGridStatement, (array_string, key))
+            iter = iter + 1
+
+                           
 cursor = getDBConnection()
 AddNewPlayersToGrid(cursor)
 UpdateStatsJson(cursor)
 UpdateAwardsJson(cursor)
 UpdateRosterTeamsAndYear(cursor)
+UpdatePlayedWithCategory(cursor)

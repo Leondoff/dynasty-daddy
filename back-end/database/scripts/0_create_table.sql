@@ -185,7 +185,8 @@ CREATE TABLE player_grid (
     search_name TEXT,
     rookie_year VARCHAR(5),
     draft_pick INT,
-    draft_club VARCHAR(4);
+    draft_club VARCHAR(4),
+    played_with VARCHAR[];
 );
 
 create index player_grid_uindex on player_grid (name);

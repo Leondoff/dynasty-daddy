@@ -30,6 +30,32 @@ export const FantasyMarketNames = {
   FANTASYCALCREDRAFT: 'FantasyCalc (Redraft)',
 }
 
+export const GsisIdToName = {
+  '00-0026498': 'Matthew Stafford',
+  '00-0019596': 'Tom Brady',
+  '00-0010346': 'Peyton Manning',
+  '00-0022803': 'Eli Manning',
+  '00-0023459': 'Aaron Rodgers',
+  '00-0020531': 'Drew Brees',
+  '00-0022942': 'Philip Rivers',
+  '00-0022924': 'Ben Roethlisberger',
+  '00-0033873': 'Patrick Mahomes',
+  '00-0027939': 'Cam Newton',
+  '00-0022921': 'Larry Fitzgerald',
+  '00-0027793': 'Antonio Brown',
+  '00-0027944': 'Julio Jones',
+  '00-0011754': 'Randy Moss',
+  '00-0033280': 'Christian McCaffrey',
+  '00-0032764': 'Derrick Henry',
+  '00-0025394': 'Adrian Peterson',
+  '00-0025399': 'Marshawn Lynch',
+  '00-0020536': 'LaDainian Tomlinson',
+  '00-0012478': 'Terrell Owens',
+  '00-0027656': 'Rob Gronkowski',
+  '00-0027949': 'J.J. Watt',
+  '00-0021140': 'Julius Peppers'
+}
+
 @Injectable({
   providedIn: 'root'
 })

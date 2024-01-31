@@ -130,6 +130,12 @@
           </button>
         </div>
       </div>
+      <div *ngIf="!leagueService.selectedLeague">
+        <div class="mid-bold-text margin-top-25 margin-bot-25">OR</div>
+        <button mat-raised-button
+                color="accent" (click)="loginWithDemo()">Try a Demo
+        </button>
+      </div>
     </div>
     <div [ngClass]="{'flex-item-home': !configService.isMobile, 'margin-top-50': configService.isMobile}">
       <div class="center-text">
@@ -395,13 +401,7 @@
         </button>
       </div>
     </div>
-    <div *ngIf="(sleeperLoginMethod === 'sleeper_league_id' && !leagueService.selectedLeague) || (sleeperLoginMethod === 'sleeper_username' && !leagueService.leagueUser && !leagueService.selectedLeague)">
-      <div class="mid-bold-text margin-top-25 margin-bot-25">OR</div>
-      <button mat-raised-button
-              color="accent" (click)="loginWithDemo()">Try a Demo
-      </button>
-    </div>
-    </div>
+  </div>
 </ng-template>
 
 <!-- MyFantasyLeague (MFL) Login Component -->
