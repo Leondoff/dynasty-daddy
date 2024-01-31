@@ -155,7 +155,6 @@ export class GridGameComponent extends BaseComponent implements OnInit {
     openPlayerSearch(x: number, y: number): void {
         this.dialog.open(SearchGridPlayerModal
             , {
-                minHeight: '350px',
                 minWidth: this.configService.isMobile ? '200px' : '500px',
                 data: {
                     coords: [x, y]
@@ -199,6 +198,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      * @param stat string of stat
      */
     getStatScopeString(stat: string): string {
+        if (['top10Pick', '1stRdPick', 'over100Pick']) return '';
         if (this.seasonStats.includes(stat)) {
             return !this.configService.isMobile ? 'in a season' : 'Season'
         }
@@ -221,6 +221,10 @@ export class GridGameComponent extends BaseComponent implements OnInit {
             return '3+/1+';
         } else if (stat == 'only1Team') {
             return '1';
+        } else if (stat == 'top10Pick') {
+            return 'Top 10';
+        } else if (stat == '1stRdPick') {
+            return '1st Rd';
         } else if (stat == '80Rush200PassG') {
             return '50+/200+';
         } else if (stat == '50Rush200PassG') {
@@ -322,6 +326,10 @@ export class GridGameComponent extends BaseComponent implements OnInit {
                 return 'Sacks & Ints';
             case 'only1Team':
                 return 'NFL Team Only';
+            case 'over100Pick':
+            case 'top10Pick':
+            case '1stRdPick':
+                return 'Draft Pick';
             default:
                 return this.configService.isMobile ? 'Int Thrown' : 'Ints Thrown';
         }

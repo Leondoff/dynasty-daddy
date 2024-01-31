@@ -1,9 +1,8 @@
 <div class="dialog-header">
-    <mat-form-field color="accent" [ngStyle]="configService.isMobile ? {'width': '120px;'} : {'width': '200px;'}" mat-dialog-title>
+    <mat-form-field color="accent" style="width:100%" mat-dialog-title appearance="outline">
         <mat-label>Search Player</mat-label>
         <input matInput [(ngModel)]="searchVal" (keyup)="searchSubject$.next(this.searchVal);">
       </mat-form-field>
-        <button mat-icon-button mat-dialog-close (click)="close()" style="align-self: baseline"><mat-icon>close</mat-icon></button>
 </div>
 
 <div mat-dialog-content>
@@ -13,6 +12,10 @@
   </div>
   <div *ngFor="let player of searchPlayers" class="select-player" (click)="selectPlayer(player)">
     {{player.name}} <span class="light_bg_color" style="padding-left: 5px;">{{player.pos}}</span>
-    <div class="light_bg_color">{{player.start_year}} - {{player.end_year == '2022' ? 'Present' : player.end_year}}</div>
+    <div class="light_bg_color">{{player.start_year}} - {{player.end_year == '2023' ? 'Present' : player.end_year}}</div>
   </div>  
+</div>
+
+<div mat-dialog-actions style="justify-content: right">
+  <button mat-button (click)="close()">Cancel</button>
 </div>

@@ -22,7 +22,7 @@ nflreadr::.clear_cache()
 # load weekly roster stats for players
 aaa <- load_rosters_weekly(season = 2002:2023)
 
-selected_columns <- aaa[, c("season", "season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college")]
+selected_columns <- aaa[, c("season", "season", "full_name", "team", "position", "depth_chart_position", "gsis_id", "headshot_url", "jersey_number", "sleeper_id", "yahoo_id", "college", "rookie_year", "draft_club", "draft_number")]
 
 # write rostered players to csv
 write.csv(selected_columns, "C:\\Users\\Jeremy\\Desktop\\roster.csv", row.names=FALSE)
@@ -85,20 +85,19 @@ summed_data <- grouped_data %>%
 write.csv(summed_data, "C:\\Users\\Jeremy\\Desktop\\stats.csv", row.names=FALSE)
 
 # Create super bowl data
-# superbowlData <- data.frame(
-#   Year = c("2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000"),
-#   Winner = c("KC", "LA", "TB", "KC", "NE", "PHI", "NE", "DEN", "NE", "SEA", "BAL", "NYG", "GB", "NO", "PIT", "NYG", "IND", "PIT", "NE", "NE", "TB", "NE", "BAL", "LA")
-# )
+superbowlData <- data.frame(
+  Year = c("2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000"), # nolint: line_length_linter.
+  Winner = c("KC", "LA", "TB", "KC", "NE", "PHI", "NE", "DEN", "NE", "SEA", "BAL", "NYG", "GB", "NO", "PIT", "NYG", "IND", "PIT", "NE", "NE", "TB", "NE", "BAL", "LA")
+)
 
-# dict <- setNames(superbowlData$Winner, superbowlData$Year)
+dict <- setNames(superbowlData$Winner, superbowlData$Year)
 
-# roster_data <- list()
-# for (key in names(dict)) {
-#   value <- dict[[key]]
-#   data <- load_rosters(as.numeric(key) - 1)
-#   matching_rosters <- data[data$team == value, ]
-#   roster_data <- rbind(roster_data, matching_rosters, fill=TRUE)
-# }
+roster_data <- list()
+for (key in names(dict)) {
+  value <- dict[[key]]
+  data <- load_rosters(as.numeric(key) - 1)
+  matching_rosters <- data[data$team == value, ]
+  roster_data <- rbind(roster_data, matching_rosters, fill=TRUE)
+}
 
-
-# write.csv(roster_data, "C:\\Users\\Jeremy\\Desktop\\superbowl.csv", row.names=FALSE)
+write.csv(roster_data, "C:\\Users\\Jeremy\\Desktop\\superbowl.csv", row.names=FALSE)

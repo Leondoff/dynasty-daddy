@@ -18,8 +18,8 @@
       </button>
     </span>
   </div>
-  <mat-list-item [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-button" gaEvent="nav_wrapped" gaCategory="page_nav" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true' && leagueService.selectedLeague">
-    <mat-icon class="header-icon">redeem</mat-icon><span> Wrapped</span>
+  <mat-list-item [routerLink]="['./wrapped']" [queryParams]="leagueSwitchService.buildQueryParams()" class="wrapped-button curved-sidebar-item" gaEvent="nav_wrapped" gaCategory="page_nav" *ngIf="configService.getConfigOptionByKey('enable_wrapped')?.configValue === 'true' && leagueService.selectedLeague">
+    <mat-icon class="header-icon">redeem</mat-icon><span> Fantasy Wrapped</span>
   </mat-list-item>
   <mat-expansion-panel [class.mat-elevation-z0]="true" [expanded]="true" *ngIf="userService.user && (isInSearch(['Dynasty Daddy Club', 'User Settings']))">
     <mat-expansion-panel-header>
@@ -71,7 +71,7 @@
           <a mat-list-item [routerLink]="['./players/trade']" *ngIf="isInSearch(['Trade Calculator'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_calculator" gaCategory="page_nav">
             <mat-icon>compare_arrows</mat-icon>Trade Calculator</a>
           <a mat-list-item [routerLink]="['./players/trade/database']" *ngIf="isInSearch(['Trade Database'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_trade_database" gaCategory="page_nav">
-            <mat-icon>dataset</mat-icon>Trade Database</a>
+            <img src="assets/site-icons/bubble.svg" alt="database-icon" class="club-logo">Trade Database</a>
           <a mat-list-item [routerLink]="['./players/statistics']" *ngIf="isInSearch(['Positional Statistics'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_positional_statistics" gaCategory="page_nav">
             <mat-icon>topic</mat-icon>Positional Statistics</a>
           <a mat-list-item [routerLink]="['./players/comparison']" *ngIf="isInSearch(['Player Comparison Tool'])" (click)="toggle()" [queryParams]="leagueSwitchService.buildQueryParams()" gaEvent="nav_value_comparisons" gaCategory="page_nav">

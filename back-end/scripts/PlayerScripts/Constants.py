@@ -60,7 +60,8 @@ TeamACCException = {
     'CLV': 'CLE',
     'STL': 'LA',
     'SL': 'LA',
-    'LVR': 'LV'
+    'LVR': 'LV',
+    'PHX': 'ARI'
 }
 
 # MFL Player API

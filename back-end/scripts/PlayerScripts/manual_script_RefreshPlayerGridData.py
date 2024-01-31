@@ -29,11 +29,6 @@ def getDBConnection():
         database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
     )
 
-    # conn = psycopg2.connect(
-    #     database=os.environ['DO_DATABASE'], user=os.environ['DO_DB_USER'], password=os.environ[
-    #         'DO_DB_PASSWORD'], host=os.environ['DO_DB_HOST'], port=os.environ['DO_DB_PORT']
-    # )
-    
     # Setting auto commit false
     conn.autocommit = True
 
@@ -89,7 +84,7 @@ def AddNewPlayersToGrid(cursor):
                     'rushTds10': False,
                     'recTds10': False,
                     'passingTds40': False,
-                    'ints10': False
+                    'ints10': False,
                 }
 
     with open('C:\\Users\\Jeremy\\Documents\\Development\\dynasty-daddy\\back-end\\scripts\\resources\\nflAwards.csv', 'r') as awards:
@@ -244,10 +239,58 @@ def UpdateStatsJson(cursor):
                            (json.dumps(value, indent=4), key))
             iter = iter + 1
 
+
+def UpdateAwardsJson(cursor):
+
+    # Creating a cursor object using the cursor() method
+    playerStatement = '''select gsis_id
+                        from player_grid where gsis_id is not null;'''
+    cursor.execute(playerStatement)
+    result_set = cursor.fetchall()
+            
+    awardsDict = {}
+    for p in result_set:
+        pId = p[0].strip()
+        awardsDict[pId] = {
+            'sb': "",
+            'roty': "",
+            's_mvp': "",
+            'mvp': ""
+        }
+    with open('C:\\Users\\Jeremy\\Desktop\\superbowl.csv', 'r') as sbFile:
+        sbReader = csv.reader(sbFile)
+        for row in sbReader:
+            if row[13] in awardsDict:
+                awardsDict[row[13]] = {
+                    'sb': "1"
+                }
+        
+    with open('C:\\Users\\Jeremy\\Documents\\Development\\dynasty-daddy\\back-end\\scripts\\resources\\nflAwards.csv', 'r') as awards:
+        awardsReader = csv.reader(awards)
+        for row in awardsReader:
+            if row[0] in awardsDict:
+                awardsDict[row[0]].update({
+                    'roty': row[2],
+                    'mvp': row[3],
+                    's_mvp': row[4]
+                })
+    iter = 1
+    for key, value in awardsDict.items():
+        print('(' + str(iter) + '/' + str(len(awardsDict)) + ') ' +
+                key + ' awards updated ')
+        playerGridStatement = '''UPDATE player_grid
+                    SET
+                    awards_json = %s
+                    WHERE gsis_id = %s;'''
+        cursor.execute(playerGridStatement,
+                        (json.dumps(value, indent=4), key))
+        iter = iter + 1
+    
+
 def UpdateRosterTeamsAndYear(cursor):
     # Creating a cursor object using the cursor() method
-    playerStatement = '''select teams, end_year, gsis_id, college
-                        from player_grid where gsis_id is not null;'''
+    playerStatement = '''select teams, end_year, gsis_id, college, rookie_year, draft_pick, draft_club, sleeper_id
+                        from player_grid where gsis_id is not null'''
     cursor.execute(playerStatement)
     result_set = cursor.fetchall()
     
@@ -264,10 +307,24 @@ def UpdateRosterTeamsAndYear(cursor):
                 )
                 playerMap[row[6]][0] = list(
                     set(teamList))
+                # end year
                 if playerMap[row[6]][1] < row[1]:
                     playerMap[row[6]][1] = row[1]
+                # sleeper id
+                if playerMap[row[6]][7] is None and row[9] != 'NA':
+                    playerMap[row[6]][7] = None if row[9] == 'NA' else row[9]
+                # college
                 if playerMap[row[6]][3] is None and row[11] != 'NA':
                     playerMap[row[6]][3] = row[11]
+                # rookie season
+                if playerMap[row[6]][4] is None and row[12] != 'NA':
+                    playerMap[row[6]][4] = row[12]
+                # draft pick
+                if playerMap[row[6]][5] is None and row[14] != 'NA' and row[13] != 'NA':
+                    playerMap[row[6]][5] = row[14]
+                # draft club
+                if playerMap[row[6]][6] is None and row[13] != 'NA' and row[13] != row[12]:
+                    playerMap[row[6]][6] = row[13] if row[13] not in TeamACCException else TeamACCException[row[13]]
                 iter = 1
         for key, value in playerMap.items():
             print('(' + str(iter) + '/' + str(len(playerMap)) + ') ' +
@@ -276,14 +333,19 @@ def UpdateRosterTeamsAndYear(cursor):
                         SET
                         teams = %s,
                         end_year = %s,
-                        college = %s
+                        college = %s,
+                        rookie_year = %s,
+                        draft_pick = %s,
+                        draft_club = %s,
+                        sleeper_id = %s
                         WHERE gsis_id = %s;'''
             cursor.execute(playerGridStatement,
-                           (value[0], value[1], value[3], key))
+                           (value[0], value[1], value[3], value[4], value[5], value[6], value[7], key))
             iter = iter + 1
                 
                 
 cursor = getDBConnection()
 AddNewPlayersToGrid(cursor)
 UpdateStatsJson(cursor)
+UpdateAwardsJson(cursor)
 UpdateRosterTeamsAndYear(cursor)

@@ -5,10 +5,10 @@ import json
 import os
 import psycopg2
 
-SupportedYTypes = ['team', 'team', 'team',
-                   'team', 'stat', 'stat', 'stat']
+SupportedYTypes = ['team', 'team', 'team', 'team', 'team', 'team', 'stat',
+                   'stat', 'stat', 'stat', 'stat', 'draftedBy']
 
-SupportedXTypes = ['award', 'stat', 'stat', 'stat']
+SupportedXTypes = ['award', 'stat', 'stat', 'stat', 'stat']
 
 SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET',
                   'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']
@@ -19,7 +19,7 @@ SupportedColleges = ['Michigan', 'Texas Christian', 'Georgia', 'Ohio State', 'Fl
 SupportedJerseyNumbers = ['12', '18', '89', '85', '26', '22', '27', '95',
                           '97', '98', '91', '90', '23', '25', '2', '35', '30', '38', '59', '69']
 
-SupportedAwards = ['roty', 'mvp', 's_mvp']
+SupportedAwards = ['roty', 'mvp', 's_mvp', 'sb']
 
 SupportedStats = ['rushYd1000',
                   'recYd1000',
@@ -54,7 +54,17 @@ SupportedStats = ['rushYd1000',
                   'max2SacksG',
                   'maxDefTdG',
                   '1Sack1IntG',
-                  'only1Team']
+                  'only1Team',
+                  '1stRdPick',
+                  'top10Pick',
+                  'over100Pick',
+# duplicates to increase the odds
+                  '1stRdPick',
+                  'top10Pick',
+                  'over100Pick',
+                  '1stRdPick',
+                  'top10Pick',
+                  'over100Pick']
 
 #   'maxYdRush200',
 
@@ -128,6 +138,9 @@ def SetNewPlayerGrid():
                 if selectedWildcard is 'stat':
                     selectedStat = random.choice(SupportedStats)
                     formattedGrid[5] = {"type": "stat", "value": selectedStat}
+                if selectedWildcard is 'draftedBy':
+                    selectedTeam = random.choice(SupportedTeams)
+                    formattedGrid[5] = {"type": "draftedBy", "value": selectedTeam}
             if (random.choice([True])):
                 selectedWildcard = random.choice(SupportedXTypes)
                 if selectedWildcard is 'stat':
@@ -182,12 +195,14 @@ def ValidateActualSolutionExists(rows, xAxis, yAxis):
         return False
     return True
 
-
+# returns array of values to check if player is valid
 def getValueToValidate(row, type):
     if type is 'jersey_number':
         return row[2]
     elif type is 'college':
         return [row[6]]
+    elif type is 'draftedBy':
+        return [row[17]]
     elif type is 'award':
         awards = []
         awards_json = row[8]
@@ -203,6 +218,13 @@ def getValueToValidate(row, type):
                 stats.append(key)
         if len(set(row[3])) == 1:
             stats.append('only1Team')
+        if row[16] is not None:
+            if row[16] <= 32:
+                stats.append('1stRdPick')
+            if row[16] <= 10:
+                stats.append('top10Pick')
+            if row[16] >= 100:
+                stats.append('over100Pick')
         return stats
     else:
         return row[3]

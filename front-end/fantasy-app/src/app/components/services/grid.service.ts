@@ -119,15 +119,32 @@ export class GridGameService {
           isValid = player?.college === category.value && isValid;
           break;
         }
+        case 'draftedBy': {
+          isValid = player?.draft_club && player?.draft_club === category.value && isValid;
+          break;
+        }
         case 'award': {
-          isValid = JSON.stringify(player?.awards_json) !== JSON.stringify({}) && player?.awards_json?.[category.value] !== '' && isValid;
+          isValid = player?.awards_json?.[category.value] && player?.awards_json?.[category.value] !== '' && isValid;
           break;
         }
         case 'stat': {
-          if (category.value === 'only1Team')
-            isValid = new Set(player?.teams).size === 1 && isValid;
-          else
-            isValid = player?.stats_json?.[category.value] && isValid;
+          switch (category.value) {
+            case 'only1Team':
+              isValid = new Set(player?.teams).size === 1 && isValid;
+              break;
+            case 'top10Pick':
+              isValid = player?.draft_pick && player?.draft_pick <= 10 && isValid;
+              break;
+            case '1stRdPick':
+              isValid = player?.draft_pick && player?.draft_pick <= 32 && isValid;
+              break;
+            case 'over100Pick':
+              isValid = player?.draft_pick && player?.draft_pick >= 100 && isValid;
+              break;
+            default:
+              isValid = player?.stats_json?.[category.value] && isValid;
+              break;
+          }
           break;
         }
         default: {
