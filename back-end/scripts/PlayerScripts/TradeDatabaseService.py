@@ -42,9 +42,10 @@ def FormatPickFromSleeper(pick):
     # 2025late3rdpi
     return pick.get('season') + 'mid' + rd + 'pi'
 
-def ScrapeTrades(leagueType, isAllTime=False):
+def ScrapeTrades(leagueType, isAllTime=False, isHistorical=False, histricalStopWeek=18):
     state_of_nfl = requests.get('https://api.sleeper.app/v1/state/nfl').json()
 
+    # what week and season to process
     if state_of_nfl.get("season_type") >= 'post':
         season = str(int(state_of_nfl.get("season")) + 1)
         week = 1
@@ -128,76 +129,84 @@ def ScrapeTrades(leagueType, isAllTime=False):
                 except Exception as inner_e:
                     print(f"Error on row {idx + 1}: {data} \n Error - {inner_e}")
 
-    leagueQuery = """
-        SELECT *
-        FROM league_info
-        WHERE EXTRACT(YEAR FROM created_at) = %s
-            AND league_type = ANY(%s::league_type_v2[]);
-    """
-    # special query to only run for past 7 days
-    # leagueQuery = """
-    #     SELECT *
-    #     FROM league_info
-    #     WHERE EXTRACT(YEAR FROM created_at) = %s
-    #         AND league_type = ANY(%s::league_type_v2[])
-    #         AND DATE_PART('day', CURRENT_DATE - created_at) <= 7;
-    # """
+    if isHistorical:
+        # special query to only run for past 7 days
+        leagueQuery = """
+            SELECT *
+            FROM league_info
+            WHERE EXTRACT(YEAR FROM created_at) = %s
+                AND league_type = ANY(%s::league_type_v2[])
+                AND DATE_PART('day', CURRENT_DATE - created_at) <= 8;
+        """
+    else:
+        leagueQuery = """
+            SELECT *
+            FROM league_info
+            WHERE EXTRACT(YEAR FROM created_at) = %s
+                AND league_type = ANY(%s::league_type_v2[]);
+        """
 
     cursor.execute(leagueQuery, (season, leagueType))
     leagues = cursor.fetchall()
 
     iter = 0
     interval = round(len(leagues) / 100)
-    print("Start Processing Trades")
+    # if historical create week array
+    if isHistorical:
+        weeks =  [i for i in range(week, histricalStopWeek + 1)]
+    else:
+        weeks = [week]
     tradesToProcess = []
-    for league in leagues:
-        try:
-            # MODIFY THIS FOR MANUAL INSERTS
-            response = requests.get(SLEEPER_BASE_URL + league[0] + '/transactions/' + str(week))
+    for w in weeks:
+        print("Start Processing Trades - Week", w)
+        for league in leagues:
+            try:
+                # MODIFY THIS FOR MANUAL INSERTS
+                response = requests.get(SLEEPER_BASE_URL + league[0] + '/transactions/' + str(w))
 
-            transaction_data = response.json()
-            for transaction in transaction_data:
-                if transaction.get("type") == "trade" and transaction.get("status") == "complete" and transaction.get("adds") is not None:
-                    # if not alltime only update trades for the past 30 hours
-                    if isAllTime is False:
-                        transactionDate = transaction.get("status_updated")
-                        transaction_date_seconds = transactionDate / 1000
-                        transaction_datetime = datetime.datetime.utcfromtimestamp(transaction_date_seconds)
-                        current_time = datetime.datetime.utcnow()
-                        time_threshold = current_time - datetime.timedelta(hours=30)
-                        if transaction_datetime < time_threshold:
-                            continue
-                    sideA = []
-                    sideB = []
-                    transactionDict = transaction.get("adds") if transaction.get("adds") is not None else {}
-                    rosterIds = transaction.get("roster_ids") if transaction.get("roster_ids") is not None else []
-                    for key, value in transactionDict.items():
-                        if value == rosterIds[0]:
-                            sideA.append(key)
-                        elif value == rosterIds[1]:
-                            sideB.append(key)
-                    draft_picks = transaction.get("draft_picks") if transaction.get("draft_picks") is not None else []
-                    for pick in draft_picks:
-                        if pick.get("owner_id") == rosterIds[0]:
-                            sideA.append(FormatPickFromSleeper(pick))
-                        elif pick.get("owner_id") == rosterIds[1]:
-                            sideB.append(FormatPickFromSleeper(pick))
-                    if len(sideA) > 0 and len(sideB) > 0 and (league[3] == 'Dynasty' or (league[3] == 'Redraft' and len(draft_picks) == 0)):
-                        trade = [
-                            transaction.get("transaction_id"),
-                            sideA,
-                            sideB,
-                            transaction.get("status_updated"),
-                            'Sleeper',
-                            league[0]
-                        ]
-                        tradesToProcess.append(trade)
-            iter += 1
-            time.sleep(0.001)
-            if interval != 0 and iter % interval == 0:
-                print(f"{round((iter/len(leagues))*100)}% Processed")
-        except Exception as e:
-            print(f"error for trades from league - {league[0]}: {e}")
+                transaction_data = response.json()
+                for transaction in transaction_data:
+                    if transaction.get("type") == "trade" and transaction.get("status") == "complete" and transaction.get("adds") is not None:
+                        # if not alltime only update trades for the past 30 hours
+                        if isAllTime is False:
+                            transactionDate = transaction.get("status_updated")
+                            transaction_date_seconds = transactionDate / 1000
+                            transaction_datetime = datetime.datetime.utcfromtimestamp(transaction_date_seconds)
+                            current_time = datetime.datetime.utcnow()
+                            time_threshold = current_time - datetime.timedelta(hours=30)
+                            if transaction_datetime < time_threshold:
+                                continue
+                        sideA = []
+                        sideB = []
+                        transactionDict = transaction.get("adds") if transaction.get("adds") is not None else {}
+                        rosterIds = transaction.get("roster_ids") if transaction.get("roster_ids") is not None else []
+                        for key, value in transactionDict.items():
+                            if value == rosterIds[0]:
+                                sideA.append(key)
+                            elif value == rosterIds[1]:
+                                sideB.append(key)
+                        draft_picks = transaction.get("draft_picks") if transaction.get("draft_picks") is not None else []
+                        for pick in draft_picks:
+                            if pick.get("owner_id") == rosterIds[0]:
+                                sideA.append(FormatPickFromSleeper(pick))
+                            elif pick.get("owner_id") == rosterIds[1]:
+                                sideB.append(FormatPickFromSleeper(pick))
+                        if len(sideA) > 0 and len(sideB) > 0 and (league[3] == 'Dynasty' or (league[3] == 'Redraft' and len(draft_picks) == 0)):
+                            trade = [
+                                transaction.get("transaction_id"),
+                                sideA,
+                                sideB,
+                                transaction.get("status_updated"),
+                                'Sleeper',
+                                league[0]
+                            ]
+                            tradesToProcess.append(trade)
+                iter += 1
+                time.sleep(0.001)
+                if interval != 0 and iter % interval == 0:
+                    print(f"{round((iter/len(leagues))*100)}% Processed")
+            except Exception as e:
+                print(f"error for trades from league - {league[0]}: {e}")
     # Insert trades into the trade databse
     insert_trades = """
         INSERT INTO trades (transaction_id, sideA, sideB, transaction_date, platform, league_id)
