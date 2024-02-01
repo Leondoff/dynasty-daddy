@@ -13,7 +13,7 @@ RUN echo "00 8 * * * /usr/local/bin/python /app/DailyCronJob.py >> /var/log/cron
 RUN echo "00 7 * * * /usr/local/bin/python /app/PlayerRankingsJob.py >> /var/log/rankings_cron.log 2>&1" >> /etc/cron.d/rankings_crontab
 RUN echo "00 * * * * /usr/local/bin/python /app/TrendingArticlesJob.py >> /var/log/TrendingArticlesJob.log 2>&1" >> /etc/cron.d/trending_crontab
 RUN echo "00 4 * * * /usr/local/bin/python /app/InsertESPNPlayerIdsJob.py >> /var/log/InsertESPNPlayerIdsJob.log 2>&1" >> /etc/cron.d/espn_ids_crontab
-RUN echo "30 3 * * * /usr/local/bin/python /app/InsertFleaflickerPlayerIds.py >> /var/log/InsertFleaflickerPlayerIds.log 2>&1" >> /etc/cron.d/ff_ids_crontab
+RUN echo "30 3 * * * /usr/local/bin/python /app/InsertFleaflickerPlayerIdsJob.py >> /var/log/InsertFleaflickerPlayerIdsJob.log 2>&1" >> /etc/cron.d/ff_ids_crontab
 RUN echo "00 3 * * * /usr/local/bin/python /app/InsertFFPCPlayerIdsJob.py >> /var/log/InsertFFPCPlayerIdsJob.log 2>&1" >> /etc/cron.d/ffpc_ids_crontab
 RUN echo "0 0 * * SAT /usr/local/bin/python /app/HistoricalTradeDatabaseJob.py >> /var/log/HistoricalTradeDatabaseJob.log 2>&1" >> /etc/cron.d/historical_trade_job_crontab
 
@@ -32,7 +32,7 @@ RUN touch /var/log/trade_cron.log
 RUN touch /var/log/rankings_cron.log
 RUN touch /var/log/TrendingArticlesJob.log
 RUN touch /var/log/InsertESPNPlayerIdsJob.log
-RUN touch /var/log/InsertFleaflickerPlayerIds.log
+RUN touch /var/log/InsertFleaflickerPlayerIdsJob.log
 RUN touch /var/log/InsertFFPCPlayerIdsJob.log
 RUN touch /var/log/HistoricalTradeDatabaseJob.log
 

@@ -32,7 +32,7 @@ The goal is to provide users with a frictionless way to see player value, team v
 | Transactions | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x274C; |
 | Future Draft Capital | &#x2714; | &#x2714; | &#x2714; | &#x274C; | &#x2714; |
 | Wrapped | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| Automated Id Mapping | &#x2714; | &#x2714; | &#x274C; | &#x2714; | &#x2714; |
+| Automated Id Mapping | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 
 
 ## Architecture

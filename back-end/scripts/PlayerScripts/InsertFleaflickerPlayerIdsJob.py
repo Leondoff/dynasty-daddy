@@ -37,7 +37,7 @@ def PersistPlayerIds(conn, playerDict):
 # Get the current year
 current_year = datetime.now().year
 
-fleaflickerLeagueIds = [192396, 324160]
+fleaflickerLeagueIds = [192396, 324160, 315649, 324160]
 
 conn = GetDatabaseConn()
  
