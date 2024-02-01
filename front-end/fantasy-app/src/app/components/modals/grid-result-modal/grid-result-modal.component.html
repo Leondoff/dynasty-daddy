@@ -11,11 +11,18 @@
 
 <div mat-dialog-content style="max-height: 76vh !important;">
     <div *ngIf="selectedCellStat == -1">
-        <div class="center-text light_bg_color margin-top-10">
+        <!-- <div class="center-text light_bg_color margin-top-10">
             Games Completed
         </div>
         <div class="center-text large-bold-header-text">
             {{gridGameService.gamesPlayed + 1}}
+        </div> -->
+
+        <div class="center-text light_bg_color margin-top-10">
+            Rarity Rating
+        </div>
+        <div class="center-text large-bold-header-text">
+            {{uniScore}}
         </div>
         
         <table class="result-table margin-top-10">
@@ -50,15 +57,8 @@
                 </tbody>
             </table>
         </div>
-        <div class="center-text light_bg_color small-text__light"  *ngIf="toggleAnswers">
+        <div class="center-text light_bg_color small-text__light" *ngIf="toggleAnswers">
             Percent of players that got each cell right
-        </div>
-
-        <div class="center-text light_bg_color margin-top-10">
-            Rarity Rating
-        </div>
-        <div class="center-text large-bold-header-text">
-            {{uniScore}}
         </div>
 
         <div *ngIf="gridGameService.gridDict['event'] && !toggleAnswers" class="center-text margin-top-25" [ngClass]="{'leaderboard-container': !configService.isMobile}">
