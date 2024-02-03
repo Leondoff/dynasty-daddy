@@ -250,7 +250,7 @@ export class CompletedDraftTableComponent implements OnInit, OnChanges {
             if (fantasyPlayer) {
               pickWithValues.push({
                 player: fantasyPlayer.full_name,
-                pick: `${pick.round}.${pick.pickNumber % this.leagueService.selectedLeague.totalRosters}`,
+                pick: `${pick.round}.${pick.pickNumber % (this.leagueService.selectedLeague?.totalRosters || this.draftService.mockTeamCount)}`,
                 value: (this.isSuperFlex ? fantasyPlayer.sf_trade_value : fantasyPlayer.trade_value) - (this.draftService.roundPickValue[pick.round - 1] || 0)
               });
             }

@@ -4,8 +4,7 @@ import { DraftService } from "../../services/draft.service";
 import { LeagueService } from "src/app/services/league.service";
 import { PlayerService } from "src/app/services/player.service";
 import { DownloadService } from "src/app/services/utilities/download.service";
-import { FantasyMarket } from "src/app/model/assets/FantasyPlayer";
-import { PowerRankingsService } from "../../services/power-rankings.service";
+import { FantasyMarket, FantasyPlayer } from "src/app/model/assets/FantasyPlayer";
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { LabelType, Options } from "@angular-slider/ngx-slider";
@@ -28,7 +27,30 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
   /** toggle search subject for debounce */
   searchSubject$: Subject<void> = new Subject<void>();
 
+  /** selectable teams */
   selectableTeams: LeagueTeam[] = [];
+
+  /** on clock team roster ids to name dict */
+  onClockTeams: {} = {};
+
+  /** draftboard players available */
+  draftboardPlayers: FantasyPlayer[] = [];
+
+  /** mock draft asset filters */
+  mockDraftFilters: {} = {
+    'QB': true,
+    'RB': true,
+    'WR': true,
+    'TE': true,
+    'DP': true,
+    'Other': true,
+  };
+
+  /** draftboard page loaded */
+  draftboardPage: number = 1;
+
+  /** draftboard search val */
+  draftboardSearchVal: string = '';
 
   manualRefresh: EventEmitter<void> = new EventEmitter<void>();
   ageOptions: Options = {
@@ -68,7 +90,6 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
     private downloadService: DownloadService,
     private dialog: MatDialog,
     public configService: ConfigService,
-    private powerRankingsService: PowerRankingsService,
     private leagueSwitchService: LeagueSwitchService,
   ) {
     super();
@@ -80,38 +101,48 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
       this.searchSubject$.pipe(
         debounceTime(500)
       ).subscribe(_ => {
-        this.draftService.updateDraft$.next(false);
+        this.draftService.updateDraft$.next();
       }),
       this.leagueSwitchService.leagueChanged$.subscribe(_ => {
         this.setUpSelectableTeams();
-      })
+      }), this.draftService.liveDraftStatus$
+        .subscribe(status => {
+          if (status != 'end') {
+            this.draftboardPlayers = this.draftService.mockPlayers;
+            this.filterDraftboard();
+          }
+        })
     );
   }
 
   setUpSelectableTeams(): void {
     this.selectableTeams = this.leagueService.selectedLeague ?
       this.leagueService.leagueTeamDetails :
-      Array.from({ length: 12 }, (_, index) => new LeagueTeam(null, null).createMockTeam(index + 1));
+      Array.from({ length: this.draftService.mockTeamCount }, (_, index) => new LeagueTeam(null, null).createMockTeam(index + 1));
     this.draftService.overrideRosterId = this.selectableTeams[0].roster.rosterId || 1;
+    this.selectableTeams.forEach(t => {
+      this.onClockTeams[t.roster.rosterId] = t.owner.ownerName;
+    });
   }
 
-  filterChanged(refresh: boolean = false): void {
-    this.draftService.updateDraft$.next(refresh);
-  }
+  filterChanged = (refresh: boolean = false) =>
+    this.draftService.updateDraft$.next(refresh ? 'refresh' : '');
 
-  clearTextSearch(): void {
+  clearTextSearch = () =>
     this.draftService.searchVal = '';
-  }
 
   handleToggleToolbar = () =>
     this.configService.isMobile ? this.configService.toggleToolbar$.next() : this.toggleTools = !this.toggleTools;
 
-  openMockDraftModal(): void {
+  openMockDraftModal(isLive: boolean = false): void {
     this.dialog.open(EditMockDraftModalComponent
       , {
         minHeight: '200px',
         minWidth: this.configService.isMobile ? '300px' : '500px',
         autoFocus: true,
+        data: {
+          isLive
+        }
       }
     );
   }
@@ -130,7 +161,7 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
   onMarketChange(market: FantasyMarket): void {
     this.playerService.selectedMarket = market;
     if (this.draftService.selectedDraft === 'upcoming') {
-      this.draftService.generateDraft();
+      this.changeDraftPlayers();
     }
   }
 
@@ -139,18 +170,45 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
    */
   toggleTradePickMode(): void {
     this.draftService.isOrderMode = !this.draftService.isOrderMode
+    if (this.draftService.isOrderMode && this.draftService.mockPlayers.length > 0)
+      this.draftService.pauseEvent();
+    else if (!this.draftService.isOrderMode && this.draftService.mockPlayers.length > 0)
+      this.draftService.resumeEvent();
     this.draftService.updateDraft$.next();
   }
+
+  /**
+   * clear text search draftboard
+   */
+  clearTextSearchDraftboard(): void {
+    this.draftboardSearchVal = '';
+    this.filterDraftboard();
+  }
+
+  /**
+   * filter draftboard results
+   */
+  filterDraftboard = () =>
+    this.draftboardPlayers = this.draftService.mockPlayers.filter(p =>
+      this.mockDraftFilters[p?.position] ||
+      !['QB', 'RB', 'WR', 'TE'].includes(p?.position) && this.mockDraftFilters[5]
+    ).filter(p => p.full_name.toLowerCase().indexOf(this.draftboardSearchVal.toLowerCase()) >= 0);
+
+  /**
+   * toggle pause draft
+   */
+  togglePause = () => this.draftService.isPaused ? this.draftService.resumeEvent() : this.draftService.pauseEvent();
 
   /**
    * Exports mock draft data to CSV file
    */
   exportMockDraft(): void {
     const draftData: any[][] = []
-    draftData.push([`Mock Draft for ${this.leagueService.selectedLeague.name} - ${this.draftService.mockDraftRounds} Rounds - ${this.leagueService.selectedLeague.isSuperflex ? 'Superflex' : 'Standard (1 QB)'}`]);
+    const name = this.leagueService?.selectedLeague?.name || 'Dynasty Daddy';
+    draftData.push([`Mock Draft ${this.leagueService?.selectedLeague ? 'for ' + this.leagueService?.selectedLeague?.name : ''} - ${this.draftService.mockDraftRounds} Rounds - ${this.draftService.isSuperflex ? 'Superflex' : 'Standard (1 QB)'}`]);
     draftData.push([]);
     draftData.push([
-      ['Pick', 'Team', 'Owner', 'Notes', 'Team Needs', 'Player', 'Position', 'Age', 'Trade Value'],
+      ['Pick', 'Team', 'Owner', 'Notes', 'Player', 'Position', 'Age', 'Trade Value'],
     ]);
     const playerList = this.draftService.selectedDraft == 'upcoming' ?
       this.draftService.getDraftOrder() :
@@ -162,8 +220,7 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
     this.draftService.teamPicks.forEach((pick, ind) => {
       const player = playerList[ind];
       const row = [pick.pickdisplay, pick.pickTeam, pick.pickOwner,
-      pick.originalRosterId !== pick.rosterId ? `Traded from ${this.leagueService.getTeamByRosterId(pick.originalRosterId)?.owner.teamName}` : "",
-      `${this.powerRankingsService.getTeamNeedsFromRosterId(pick.rosterId).join("-")}`];
+      pick.originalRosterId !== pick.rosterId ? `Traded from ${this.leagueService.getTeamByRosterId(pick.originalRosterId)?.owner?.teamName || 'Team ' + pick.rosterId}` : ""];
       let playerRow = [];
       if (player) {
         playerRow = [player?.full_name, player?.position, player?.age,
@@ -175,9 +232,8 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
 
     const formattedDraftData = draftData.map(e => e.join(',')).join('\n');
 
-    const filename = `${this.leagueService.selectedLeague.name.replace(/ /g, '_')}_Mock_Draft_${this.draftService.mockDraftRounds}_Rounds_${new Date().toISOString().slice(0, 10)}.csv`;
+    const filename = `${name.replace(/ /g, '_')}_Mock_Draft_${this.draftService.mockDraftRounds}_Rounds_${new Date().toISOString().slice(0, 10)}.csv`;
 
     this.downloadService.downloadCSVFile(formattedDraftData, filename);
   }
-
 }

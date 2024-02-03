@@ -1,4 +1,69 @@
+@use '@angular/material' as mat;
+
+@import "../../../../styles.scss";
+
 .toggle-button {
     float: left;
     cursor: pointer;
+}
+
+.mock-draft-item-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $dark-bg-lighter-10;
+    padding: 5px;
+    width: 300px;
+    border-radius: 5px;
+}
+
+.mock-draft-item-container.odd {
+    background-color: $dark-bg-lighter-20;
+}
+
+.mock-draft-item-container:hover {
+    background-color: $dark-bg-lighter-30;
+    cursor: pointer;
+}
+
+.mock-draft-info {
+    text-align: right;
+    align-self: flex-end;
+}
+
+.left-content {
+    display: flex;
+    align-items: center; /* Align items vertically */
+}
+
+.left-content {
+    display: flex;
+    align-items: center; /* Align items vertically */
+}
+
+.mat-icon {
+    margin-right: 10px; /* Adjust margin as needed */
+}
+
+.mock-draft-name {
+    display: flex;
+    flex-direction: column;
+    /* Add other styling as needed */
+}
+
+.on-the-clock {
+    font-size: 18px;
+    text-align: center;
+    background-color: $dark-bg-lighter-20;
+    padding: 5px;
+    margin-top: 15px;
+    border-radius: 50px;
+}
+
+.on-the-clock.active {
+    background-color: mat.get-color-from-palette($mat-accent, main);;
+}
+
+.rm-mat-icon-padding {
+    margin-right: unset !important;
 }

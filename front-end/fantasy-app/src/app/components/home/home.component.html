@@ -437,6 +437,14 @@
           </button>
         </mat-form-field>
       </div>
+      <div>
+        <mat-form-field appearance="standard" color="accent">
+          <mat-label>Select a year</mat-label>
+          <mat-select [(ngModel)]="selectedYear">
+            <mat-option *ngFor="let year of supportedYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
       <div class="sign-in-button">
         <button mat-raised-button [disabled]="!mflUsernameInput || !mflPasswordInput"
                 color="accent" (click)="fetchUserInfo(1)" gaEvent="login_mfl_username" gaCategory="platform_login">Sign In
