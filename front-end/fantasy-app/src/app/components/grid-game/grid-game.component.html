@@ -7,7 +7,7 @@
     <a href="{{gridGameService.gridDict['creatorLink']}}" target="_blank" style="padding-right: 10px; text-decoration: unset;"><span class="link--text__dot__underline small-text__light"> {{gridGameService.gridDict?.['creator']}}</span></a>        
 </div>
 
-<affiliate-banner></affiliate-banner>
+<!-- <affiliate-banner></affiliate-banner> -->
 
 <div class="game-header">
     <span (click)="openTwitter()" class="header-icon" *ngIf="!configService.isMobile"><img width="30px" height="30px" class="sb-icon" [src]="'assets/socials/x-twitter.svg'" alt="F"></span>    
@@ -15,7 +15,7 @@
 </div>
 
 <div *ngIf="gridGameService.status === 1" fxLayout="row wrap" fxLayoutAlign="center">
-    <div fxFlex="82%" fxFlex.xs="100%" fxFlex.sm="100%" style="display: block">
+    <div fxFlex="75%" fxFlex.xs="100%" fxFlex.sm="100%" style="display: block">
         <div style="overflow-x: auto;">
             <table class="grid-table">
                 <tbody>
@@ -27,25 +27,25 @@
                                     <img [src]="getTeamImg(gridGameService.gridDict['xAxis'][j-1])" class="team-grid-img" *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'team'" alt="NFL Team Logo">
                                     <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'award'">
                                         <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.value !== 'sb'">
-                                            <div class="light_bg_color" *ngIf="!configService.isMobile">Won Award</div>
+                                            <div *ngIf="!configService.isMobile">Won Award</div>
                                             <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}" style="text-align: center;">{{getAwardDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                            <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                                            <div [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                                         </div>
                                         <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.value === 'sb'" style="text-align: -webkit-center">
                                             <img src="../../../assets/img/sb.png" class="team-grid-img" [class.sb]="true" alt="NFL Team Logo">
-                                            <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                                            <div [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                                         </div>
                                     </div>
                                     <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'playedWith'" style="text-align: -webkit-center">
-                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}" >Played With</div>
+                                        <div class="subtext" [ngClass]="{'subtext-mobile': configService.isMobile}" >Played With</div>
                                         <img [src]="'../../../assets/img/players/' + (gridGameService.gridDict['xAxis'][j-1].value) + '.webp'" class="team-grid-img" [class.player]="true" alt="NFL Team Logo">
-                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{nameMapping[gridGameService.gridDict['xAxis'][j-1].value]}}</div>
+                                        <div class="subtext" [ngClass]="{'subtext-mobile': configService.isMobile}" [class.accent]="!configService.isMobile">{{nameMapping[gridGameService.gridDict['xAxis'][j-1].value]}}</div>
                                     </div>
                                     <div *ngIf="gridGameService.gridDict['xAxis'][j-1]?.type == 'stat'" class="center-text">
                                         <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                        <div class="light_bg_color subtext" [ngClass]="{'subtext-desc-mobile': configService.isMobile}">{{getStatCategory(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                        <div class="light_bg_color subtext" [ngClass]="{'subtext-mobile': configService.isMobile}">{{getStatScopeString(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
-                                        <div class="light_bg_color subtext" [ngClass]="{'subtext-mobile': configService.isMobile}" *ngIf="gridGameService.gridDict['xAxis'][j-1]?.value != 'only1Team'">Since 1999</div>
+                                        <div class="subtext" [ngClass]="{'subtext-desc-mobile': configService.isMobile}" [class.accent]="!configService.isMobile">{{getStatCategory(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                        <div class="subtext" [ngClass]="{'subtext-mobile': configService.isMobile}" [class.accent]="!configService.isMobile">{{getStatScopeString(gridGameService.gridDict['xAxis'][j-1]?.value)}}</div>
+                                        <div class="subtext" [ngClass]="{'subtext-mobile': configService.isMobile}" *ngIf="gridGameService.gridDict['xAxis'][j-1]?.value != 'only1Team'">Since 1999</div>
                                     </div>
                                 </div>
                                 <div *ngIf="j === 0 && i !== 0">
@@ -56,20 +56,20 @@
                                         <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                                     </div>
                                     <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'jersey_number'">
-                                        <div class="light_bg_color">{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
+                                        <div>{{configService.isMobile ? 'Jersey' : 'Jersey Number'}}</div>
                                         <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{gridGameService.gridDict['yAxis'][i-1]?.value}}</div>
-                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
+                                        <div [ngClass]="{'subtext-mobile': configService.isMobile}">Since 1999</div>
                                     </div>
                                     <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'playedWith'" style="text-align: -webkit-center">
-                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}" >Played With</div>
+                                        <div [ngClass]="{'subtext-mobile': configService.isMobile}" >Played With</div>
                                         <img [src]="'../../../assets/img/players/' + (gridGameService.gridDict['yAxis'][i-1].value) + '.webp'" class="team-grid-img" [class.player]="true" alt="NFL Team Logo">
-                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{nameMapping[gridGameService.gridDict['yAxis'][i-1].value]}}</div>
+                                        <div [ngClass]="{'subtext-mobile': configService.isMobile}">{{nameMapping[gridGameService.gridDict['yAxis'][i-1].value]}}</div>
                                     </div>
                                     <div *ngIf="gridGameService.gridDict['yAxis'][i-1]?.type == 'stat'" class="center-text">
                                         <div [ngClass]="{'jersey-num-mobile': configService.isMobile, 'jersey-num': !configService.isMobile}">{{getStatThresholdDisplay(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
-                                        <div class="light_bg_color" [ngClass]="{'subtext-desc-mobile': configService.isMobile}">{{getStatCategory(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
-                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}">{{getStatScopeString(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
-                                        <div class="light_bg_color" [ngClass]="{'subtext-mobile': configService.isMobile}" *ngIf="gridGameService.gridDict['yAxis'][i-1]?.value != 'only1Team'">Since 1999</div>
+                                        <div [ngClass]="{'subtext-desc-mobile': configService.isMobile}">{{getStatCategory(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
+                                        <div [ngClass]="{'subtext-mobile': configService.isMobile}">{{getStatScopeString(gridGameService.gridDict['yAxis'][i-1]?.value)}}</div>
+                                        <div [ngClass]="{'subtext-mobile': configService.isMobile}" *ngIf="gridGameService.gridDict['yAxis'][i-1]?.value != 'only1Team'">Since 1999</div>
                                     </div>
                                 </div>
                                 <div *ngIf="j !== 0 && i !== 0 && gridGameService.gridResults[j][i]" style="text-align-last: center;">
@@ -113,13 +113,13 @@
             </mat-menu>
         </div>
     </div>
-    <div fxFlex="15%" fxFlex.xs="100%" fxFlex.sm="40%" style="display: block" *ngIf="gridGameService.gridDict['event']" [ngStyle]="!configService.isMobile ? {'padding-top': '10%'} : {}" >
+    <div fxFlex="25%" fxFlex.xs="100%" fxFlex.sm="40%" style="display: block" *ngIf="gridGameService.gridDict['event']" [ngStyle]="!configService.isMobile ? {'padding-top': '10%'} : {}" >
         <div class="center-text margin-top-25">
-            <div class="event-name">{{gridGameService.gridDict['event']}}</div>
+            <div class="event-name" style="font-size: 20px;">{{gridGameService.gridDict['event']}}</div>
             <ng-container *ngIf="gridGameService.leaderboard.length > 0">
-                <div *ngFor="let game of gridGameService.leaderboard; let i = index" class="leaderboard-entry"
+                <div *ngFor="let game of gridGameService.leaderboard; let i = index" class="leaderboard-entry" style="font-size: 20px;"
                     [class.odd]="i % 2 == 1">
-                    <span>{{i + 1}}. {{game.name}}</span><span class="container-spacer"></span>
+                    <span>{{i + 1}}. {{game.name}}</span> <span class="small-text__light" style="padding-left: 2px;">{{game.date}}</span><span class="container-spacer"></span>
                     <span class="button-right">{{game.score}}</span>
                 </div>
             </ng-container>

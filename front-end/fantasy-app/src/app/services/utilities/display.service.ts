@@ -56,6 +56,8 @@ export const GsisIdToName = {
   '00-0021140': 'Julius Peppers'
 }
 
+export const MonthsAbbr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 @Injectable({
   providedIn: 'root'
 })

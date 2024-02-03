@@ -7,7 +7,7 @@ import psycopg2
 
 SupportedYTypes = ['team', 'team', 'team', 'team', 'team', 'team', 'stat',
                    'stat', 'stat', 'stat', 'stat', 'draftedBy', 
-                   'playedWith', 'playedWith', 'playedWith']
+                   'playedWith', 'playedWith']
 
 SupportedXTypes = ['award', 'stat', 'stat', 'stat', 'stat', 'playedWith']
 
