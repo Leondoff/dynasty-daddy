@@ -172,7 +172,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      * Open twitter account
      */
     openTwitter(): void {
-        window.open('https://twitter.com/nflgridirongame', '_blank');
+        window.open('https://twitter.com/GridironTrivia', '_blank');
     }
 
     /**

@@ -5,6 +5,7 @@ import { ConfigKeyDictionary, ConfigService, LocalStorageDictionary } from "src/
 import { GridPlayer } from "../model/gridPlayer";
 import { delay } from "rxjs/operators";
 import { TriviaApiService } from "src/app/services/api/trivia/trivia-api.service";
+import { MonthsAbbr } from "src/app/services/utilities/display.service";
 
 @Injectable({
   providedIn: 'root'
@@ -74,7 +75,7 @@ export class GridGameService {
   gamesPlayed: number = 1;
 
   /** leaderboard for events */
-  leaderboard: { name: string, score: number }[] = [];
+  leaderboard: { name: string, score: number, date: string }[] = [];
 
   /** loading leaderboard status */
   leaderboardStatus: Status = Status.NONE;
@@ -303,7 +304,8 @@ export class GridGameService {
       res.forEach(p => {
         const picks = p.game_json['grid'] as any[];
         const score = this.calcScoresForGrid(picks);
-        newScores.push({ name: p.name, score: Math.round(score) })
+        const date = new Date(p.created_at)
+        newScores.push({ name: p.name, score: Math.round(score), date: `${MonthsAbbr[date.getMonth()]} ${date.getDate()}` })
       })
       this.leaderboard = newScores.sort((b, a) => b.score - a.score);
       this.leaderboardStatus = Status.DONE;
