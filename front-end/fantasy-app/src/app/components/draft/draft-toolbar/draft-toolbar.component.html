@@ -4,8 +4,7 @@
     {{!toggleTools ? '' : 'Draft Tools'}}
 </div>
 
-<div class="margin-top-15" style="overflow: hidden" *ngIf="toggleTools && !draftService.isOrderMode">
-
+<div class="margin-top-15" style="overflow: hidden" *ngIf="draftService.mockPlayers.length === 0 && toggleTools && !draftService.isOrderMode">
     <div class="center-text">
         <div *ngIf="leagueService.completedDrafts.length > 0">
             <mat-form-field appearance="outline" color="accent">
@@ -19,17 +18,23 @@
                     </mat-optgroup>
                     <mat-optgroup label="Mock Draft" *ngIf="draftService.teamPicks.length > 0">
                         <mat-option (click)="draftService.selectedDraft = 'upcoming'" value="upcoming">Mock Draft: {{draftService.teamPicks.length /
-                            leagueService.selectedLeague.totalRosters}} Rounds</mat-option>
+                            (leagueService.selectedLeague?.totalRosters || draftService.mockTeamCount)}} Rounds</mat-option>
                     </mat-optgroup>
                     <mat-option *ngIf="draftService.teamPicks.length === 0" (click)="openMockDraftModal()">Create
                         Mock
                         Draft</mat-option>
                 </mat-select>
             </mat-form-field>
-            <button mat-icon-button (click)="openMockDraftModal()" class="margin-top-10" *ngIf="draftService.selectedDraft === 'upcoming'"><mat-icon>settings</mat-icon></button>
+            <button mat-icon-button (click)="openMockDraftModal()" *ngIf="draftService.selectedDraft === 'upcoming'"><mat-icon class="rm-mat-icon-padding">settings</mat-icon></button>
+            <div *ngIf="draftService.selectedDraft === 'upcoming'">
+                <button mat-raised-button color="primary" (click)="openMockDraftModal(true)"><mat-icon>live_tv</mat-icon>Live</button>
+            </div>
         </div>
-        <div *ngIf="!leagueService.selectedLeague || leagueService.completedDrafts.length == 0">
-            <button mat-raised-button color="accent" (click)="openMockDraftModal()" class="margin-top-10">Edit Draft Configurations</button>
+        <div *ngIf="!leagueService.selectedLeague && leagueService.completedDrafts.length == 0">
+            <div class="margin-top-10">
+                <button mat-raised-button color="accent" (click)="openMockDraftModal()" style="margin-right: 2px;"><mat-icon>settings</mat-icon>Edit Draft</button>
+                <button mat-raised-button color="primary" (click)="openMockDraftModal(true)" style="margin-left: 2px;"><mat-icon>live_tv</mat-icon>Live</button>
+            </div>
             <mat-form-field color="accent" style="width: 70%" class="margin-top-25">
                 <mat-label>Sleeper Draft ID</mat-label>
                     <input matInput type="text" [(ngModel)]="draftService.sleeperDraftId">
@@ -41,7 +46,7 @@
     </div>
 
     <div class="center-text margin-top-10">
-        <mat-form-field color="accent" style="width: 100%">
+        <mat-form-field color="accent" style="width: 100%" appearance="outline">
         <mat-label>Search Players...</mat-label>
             <input matInput type="text" (keyup)="searchSubject$.next()" [(ngModel)]="draftService.searchVal">
             <button mat-button *ngIf="searchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearTextSearch()">
@@ -93,10 +98,58 @@
         <button mat-stroked-button (click)="exportMockDraft()" style="margin-right: 2px;"><mat-icon>download</mat-icon> Download</button>
         <button mat-stroked-button (click)="toggleTradePickMode()" style="margin-left: 2px;"><mat-icon>edit_square</mat-icon> Edit Order</button>
     </div>
+</div> 
+
+<div *ngIf="toggleTools && !draftService.isOrderMode && draftService.mockPlayers.length > 0 && draftService.selectedDraft === 'upcoming'" style="min-width: 300px">
+    <div class="on-the-clock" [class.active]="draftService.teamPicks[draftService.selectablePlayers.length]?.rosterId === draftService.selectedMockDraftTeam">On the clock: {{onClockTeams[draftService.teamPicks[draftService.selectablePlayers.length]?.rosterId]|truncate:15:'mid'}}</div>
+    <div class="center-text margin-top-15">
+        <button mat-button (click)="togglePause()" style="margin-right: 2px;"><mat-icon class="rm-mat-icon-padding">{{!draftService.isPaused ? 'pause' : 'play_arrow'}}</mat-icon></button>
+        <button mat-stroked-button (click)="toggleTradePickMode()" style="margin-left: 2px; margin-right: 2px;"><mat-icon>edit_square</mat-icon> Trade Pick</button>
+        <button mat-stroked-button (click)="draftService.endLiveDraft()" style="margin-left: 2px;"><mat-icon>delete</mat-icon> End</button>
+    </div>
+    <div *ngIf="!draftService.isOrderMode && draftService.teamPicks[draftService.selectablePlayers.length]?.rosterId === draftService.selectedMockDraftTeam">
+        <div class="margin-top-10">
+            <mat-form-field color="accent" style="width:100%" appearance="outline">
+                <mat-label>Search Player</mat-label>
+                <input matInput [(ngModel)]="draftboardSearchVal" (keyup)="filterDraftboard()">
+                <button mat-button *ngIf="draftboardSearchVal" matSuffix mat-icon-button aria-label="Clear" (click)="clearTextSearchDraftboard()">
+                    <mat-icon>close</mat-icon>
+                </button>
+              </mat-form-field>
+        </div>
+        <div class="center-text">
+            <mat-checkbox color="accent" [(ngModel)]="mockDraftFilters['QB']" (change)="filterDraftboard()" style="padding-right: 10px">QB</mat-checkbox>
+            <mat-checkbox color="accent" [(ngModel)]="mockDraftFilters['RB']" (change)="filterDraftboard()" style="padding-right: 10px">RB</mat-checkbox>
+            <mat-checkbox color="accent" [(ngModel)]="mockDraftFilters['WR']" (change)="filterDraftboard()" style="padding-right: 10px">WR</mat-checkbox>
+            <mat-checkbox color="accent" [(ngModel)]="mockDraftFilters['TE']" (change)="filterDraftboard()">TE</mat-checkbox>
+        </div>
+        <div class="margin-top-10">
+            <div class="center-text margin-top-10 margin-bot-10">Make your pick...</div>
+            <div *ngFor="let p of draftboardPlayers.slice(0, 15 * draftboardPage); let i = index" class="mock-draft-item-container" 
+                [class.odd]="i % 2 == 0" (click)="draftService.selectPlayer(p)">
+                <div class="left-content">
+                    <mat-icon>add</mat-icon>
+                    <div class="mock-draft-name">
+                        <div class="small-text__light">{{ p.first_name }}</div>
+                        <div style="font-weight: bold">{{ p.last_name }}</div>
+                    </div>
+                </div>
+                <div class="mock-draft-info">
+                    <div class="small-text__light">{{ p.sf_trade_value }}</div>
+                    <div style="font-weight: bold">{{ p.position }} {{ p.sf_position_rank }}</div>
+                </div>
+            </div>            
+        </div>
+        <div class="center-text margin-top-15">
+            <button mat-stroked-button (click)="draftboardPage = draftboardPage + 1" style="margin-left: 2px;"><mat-icon>more</mat-icon> More</button>
+        </div>
+    </div>
 </div>
 
 <div *ngIf="toggleTools && draftService.isOrderMode" class="center-text">
-    <button mat-raised-button color="warn" (click)="toggleTradePickMode()" class="margin-top-10 pulse-button" style="margin: 40px">Finish Editing Order</button>
+    <div>
+        <button mat-raised-button color="warn" (click)="toggleTradePickMode()" class="margin-top-10 pulse-button" style="margin: 40px">Finish Editing Order</button>
+    </div>
 
     <mat-form-field color="accent">
         <mat-label>Team To Override</mat-label>

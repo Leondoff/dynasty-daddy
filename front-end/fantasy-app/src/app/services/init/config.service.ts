@@ -73,7 +73,7 @@ export class ConfigService extends BaseComponent {
 
   configValuesLoaded$: Subject<void> = new Subject<void>();
 
-  toggleToolbar$: Subject<void> = new Subject<void>();
+  toggleToolbar$: Subject<boolean> = new Subject<boolean>();
 
   /** config options list for application */
   configOptions: ConfigOption[] = [];

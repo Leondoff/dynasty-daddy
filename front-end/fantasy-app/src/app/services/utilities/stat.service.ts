@@ -91,4 +91,24 @@ export class StatService {
     }
     return groups.reverse();
   }
+
+  pickWeightedRandom<T>(array: T[], weights: number[]): T {
+    // Calculate the total sum of weights
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+
+    // Generate a random number between 0 and totalWeight
+    const randomValue = Math.random() * totalWeight;
+
+    // Find the index where the random number falls within the cumulative sum of weights
+    let cumulativeWeight = 0;
+    for (let i = 0; i < weights.length; i++) {
+        cumulativeWeight += weights[i];
+        if (randomValue <= cumulativeWeight) {
+            return array[i];
+        }
+    }
+
+    // This should not happen, but return the last element just in case
+    return array[array.length - 1];
+}
 }
