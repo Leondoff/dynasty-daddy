@@ -1,3 +1,9 @@
+<div *ngIf="configService.isMobile && isMockDraft && teamPicks.length > 0">
+  <h2 class="center-text mid-bold-text margin-top-10 margin-bot-25">
+    <button mat-raised-button color="accent" (click)="configService.toggleToolbar$.next()"><mat-icon>settings</mat-icon> Edit Draft</button>
+  </h2>
+</div>
+
 <div *ngIf="teamPicks.length > 0" class="margin-top-10 draft-table">
   <table>
     <thead>
@@ -13,13 +19,13 @@
     <tbody>
       <ng-container *ngFor="let row of formattedRows">
         <tr>
-          <td *ngFor="let cell of row" class="draft-player-cell" style="background-color: {{getPickColor(cell)}}" [ngClass]="{'filtered-pick': isFilteredOut(cell, playerOrder[cell.pickNumber - 1]), 'edit-draft-player': mockDraftService.isOrderMode}">
+          <td *ngFor="let cell of row" class="draft-player-cell" style="background-color: {{getPickColor(cell)}}" [ngClass]="{'filtered-pick': !mockDraftService.isOrderMode && isFilteredOut(cell, playerOrder[cell.pickNumber - 1]), 'edit-draft-player': mockDraftService.isOrderMode}">
             <div class="player-content" (click)="handlePickOnClick(playerOrder[cell.pickNumber - 1], cell.pickNumber)">
               <div>{{draft?.type === 3 ? '$' + cell.bidAmount : cell.pickdisplay}} {{getPlayerPositionRank(playerOrder[cell.pickNumber - 1])}} <span class="player-value-label">({{getDisplayValue(cell)}})</span></div>
               <div class="player-value-label">{{playerOrder[cell.pickNumber - 1]?.first_name || cell?.firstName || ''}}</div>
               <div>{{(playerOrder[cell.pickNumber - 1]?.last_name || cell?.lastName || '') | truncate:12}}</div>
-              <img #image [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + playerOrder[cell.pickNumber - 1]?.sleeper_id + '.jpg'" *ngIf="cell.originalRosterId === cell.rosterId"
-                alt="Football Player" onerror="this.src='https://www.pff.com/images/webui/player_default.png';" [hidden]="image.hidden" class="player-draft-image">
+              <img #image [src]="playerOrder[cell.pickNumber - 1] ? 'https://sleepercdn.com/content/nfl/players/thumb/' + playerOrder[cell.pickNumber - 1]?.sleeper_id + '.jpg' : '../../../assets/img/players/player_default.webp'" *ngIf="cell.originalRosterId === cell.rosterId"
+                alt="Football Player" class="player-draft-image" onerror="this.src='../../../assets/img/players/player_default.webp';" [hidden]="image.hidden">
               <div class="traded-pick-text" *ngIf="draft?.type === 3 || cell.originalRosterId != cell.rosterId">
                 <div class="trade-content">
                   <mat-icon class="trade-arrow-icon">arrow_forward</mat-icon> {{getOwnerNameByRosterId(cell.rosterId) | truncate:10:'mid'}}

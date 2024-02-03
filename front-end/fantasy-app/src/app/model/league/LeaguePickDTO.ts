@@ -20,13 +20,14 @@ export class LeaguePickDTO {
   constructor() {
   }
 
-  fromMockDraft(num: number, display: string, ownerName: string, teamName: string, rosterId: number, originalRosterId: number): LeaguePickDTO {
+  fromMockDraft(num: number, display: string, ownerName: string, teamName: string, rosterId: number, originalRosterId: number, round: number): LeaguePickDTO {
     this.pickNumber = num;
     this.pickdisplay = display;
     this.pickOwner = ownerName;
     this.pickTeam = teamName;
     this.rosterId = rosterId;
     this.originalRosterId = originalRosterId;
+    this.round = round;
     return this;
   }
 

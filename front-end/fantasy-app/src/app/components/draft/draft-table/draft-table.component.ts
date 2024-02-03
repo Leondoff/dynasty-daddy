@@ -66,17 +66,26 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
       this.initializeMockDraft();
     }
     this.addSubscriptions(this.mockDraftService.updateDraft$
-      .subscribe(refresh => {
-        this.setCellColorCache();
-        if (refresh) {
-          this.initializeMockDraft();
-        } else {
-          this.cdr.markForCheck();
+      .subscribe(status => {
+        switch (status) {
+          case 'refresh':
+            this.initializeMockDraft();
+            break;
+          default:
+            this.setCellColorCache();
+            this.cdr.markForCheck();
+            break;
         }
       }),
+      this.mockDraftService.liveDraftStatus$
+        .subscribe(status => {
+          if (status != 'end')
+            this.playerOrder = this.getDraftOrder();
+          this.cdr.markForCheck();
+        }),
       this.playerService.playerValuesUpdated$.pipe(delay(500)).subscribe(_ => {
         this.mockDraftService.generateDraft();
-        this.mockDraftService.updateDraft$.next(true);
+        this.mockDraftService.updateDraft$.next('refresh');
       }))
   }
 
@@ -86,15 +95,8 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
 
   initializeMockDraft(): void {
     this.formattedRows = [];
-    this.playerOrder = this.isMockDraft ?
-      this.mockDraftService.getDraftOrder() :
-      this.teamPicks.map(p =>
-        this.playerService.getPlayerByPlayerPlatformId(
-          p.playerId,
-          this.leagueService.selectedLeague.leaguePlatform
-        ) || null
-      )
-    const teamCount = this.leagueService.selectedLeague ? this.leagueService.leagueTeamDetails.length : 12;
+    this.playerOrder = this.getDraftOrder();
+    const teamCount = this.leagueService.selectedLeague ? this.leagueService.leagueTeamDetails.length : this.mockDraftService.mockTeamCount;
     // set draft order
     if (!this.isMockDraft) {
       this.teamOrder =
@@ -105,7 +107,7 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
       this.teamOrder = this.leagueService.selectedLeague ? this.teamPicks.slice(0, teamCount)
         .map(p =>
           this.leagueService.leagueTeamDetails.find(t => t.roster.rosterId === p.originalRosterId)
-        ) : Array.from({ length: 12 }, (_, index) => new LeagueTeam(null, null).createMockTeam(index + 1));
+        ) : Array.from({ length: teamCount }, (_, index) => new LeagueTeam(null, null).createMockTeam(index + 1));
     }
     this.setCellColorCache();
     // map players to the draft
@@ -130,13 +132,24 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
     this.cdr.markForCheck();
   }
 
+  getDraftOrder(): FantasyPlayer[] {
+    return this.isMockDraft ?
+      this.mockDraftService.getDraftOrder() :
+      this.teamPicks.map(p =>
+        this.playerService.getPlayerByPlayerPlatformId(
+          p.playerId,
+          this.leagueService.selectedLeague.leaguePlatform
+        ) || null
+      )
+  }
+
   setCellColorCache(): void {
     this.colorCache = {};
     if (!this.isMockDraft) {
       switch (this.mockDraftService.completedConfig) {
         case 'value':
           this.colorCache['min'] = this.mockDraftService
-            .getPickValueAdded(this.teamPicks[0], this.draft?.type === DraftOrderType.Auction);
+            ?.getPickValueAdded(this.teamPicks[0], this.draft?.type === DraftOrderType.Auction) || 0;
           this.colorCache['max'] = this.colorCache['min'];
           this.teamPicks.forEach(p => {
             const val = this.mockDraftService.getPickValueAdded(p, this.draft.type === DraftOrderType.Auction);
@@ -300,7 +313,7 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
         this.mockDraftService.filterTeam = null :
         this.mockDraftService.filterTeam = rosterId;
     }
-    this.mockDraftService.updateDraft$.next(false);
+    this.mockDraftService.updateDraft$.next();
   }
 
   /**
@@ -309,16 +322,16 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
    */
   getPickColor(pick: LeaguePickDTO): string {
     if (this.isMockDraft) {
-      if (this.mockDraftService.alreadyDraftedList.includes(this.playerOrder[pick.pickNumber - 1]?.name_id))
+      if (this.mockDraftService.alreadyDraftedList.includes(this.playerOrder[pick?.pickNumber - 1]?.name_id))
         return '#67678e';
       switch (this.mockDraftService.mockDraftConfig) {
         case 'tiers':
-          return DraftPosColorPallette[this.colorCache['tiers']?.[this.playerOrder[pick.pickNumber - 1]?.name_id]];
+          return DraftPosColorPallette[this.colorCache['tiers']?.[this.playerOrder[pick?.pickNumber - 1]?.name_id]];
         case 'trending':
-          const val = this.mockDraftService.isSuperflex ? this.playerOrder[pick.pickNumber - 1]?.sf_change : this.playerOrder[pick.pickNumber - 1]?.standard_change;
+          const val = this.mockDraftService.isSuperflex ? this.playerOrder[pick?.pickNumber - 1]?.sf_change : this.playerOrder[pick?.pickNumber - 1]?.standard_change;
           return val >= 0 ? this.colorCache['values'][val] : this.colorCache['badValues'][Math.abs(val)];
         default:
-          return this.colorService.getDraftColorForPos(this.playerOrder[pick.pickNumber - 1]?.position)
+          return this.colorService.getDraftColorForPos(this.playerOrder[pick?.pickNumber - 1]?.position)
       }
     } else {
       switch (this.mockDraftService.completedConfig) {
@@ -342,7 +355,7 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
   handlePickOnClick(player: FantasyPlayer, pickNum: number): void {
     if (this.mockDraftService.isOrderMode) {
       this.mockDraftService.teamPicks[pickNum - 1].rosterId = this.mockDraftService.overrideRosterId;
-      this.mockDraftService.updateDraft$.next(false);
+      this.mockDraftService.updateDraft$.next();
     } else {
       if (player && ['QB', 'RB', 'WR', 'TE'].includes(player.position)) {
         this.dialog.open(PlayerDetailsModalComponent

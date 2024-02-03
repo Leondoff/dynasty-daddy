@@ -270,7 +270,8 @@ export class SleeperService implements OnDestroy {
                   t.owner?.ownerName,
                   t.owner?.teamName,
                   t.roster.rosterId,
-                  pick.originalRosterId || t.roster.rosterId))
+                  pick.originalRosterId || t.roster.rosterId,
+                  pick.round))
               )
             });
             league.upcomingDrafts.push(new CompletedDraft(draft, picks));

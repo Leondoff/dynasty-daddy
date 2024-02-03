@@ -24,11 +24,19 @@ export class StandardPageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.configService.toggleToolbar$.subscribe(toolbar => {
-      if (!this.drawerTool.opened) {
-        this.drawerTool.open();
+    this.configService.toggleToolbar$.subscribe(toolbarOverride => {
+      if (toolbarOverride !== undefined) {
+        if (toolbarOverride) {
+          this.drawerTool.open();
+        } else {
+          this.drawerTool.close();
+        }
       } else {
-        this.drawerTool.close();
+        if (!this.drawerTool.opened) {
+          this.drawerTool.open();
+        } else {
+          this.drawerTool.close();
+        }
       }
       this.cdr.markForCheck();
     });

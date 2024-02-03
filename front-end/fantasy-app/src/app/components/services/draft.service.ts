@@ -7,9 +7,13 @@ import { LeaguePickDTO } from 'src/app/model/league/LeaguePickDTO';
 import { PlayerService } from 'src/app/services/player.service';
 import { PowerRankingsService } from './power-rankings.service';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
-import { Subject } from 'rxjs';
+import { Observable, Subject, interval, of } from 'rxjs';
 import { SleeperApiService } from 'src/app/services/api/sleeper/sleeper-api.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
+import { filter, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs/operators';
+import { ConfigService } from 'src/app/services/init/config.service';
+import { StatService } from 'src/app/services/utilities/stat.service';
+import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -40,11 +44,14 @@ export class DraftService {
   /** number of mock draft rounds */
   mockDraftRounds: number = 30;
 
+  /** number of teams in draft */
+  mockTeamCount: number = 12;
+
   /** filter value used for filtering */
   filterTeam: number;
 
   /** update filtering draft table*/
-  updateDraft$: Subject<boolean> = new Subject<boolean>();
+  updateDraft$: Subject<string> = new Subject<string>();
 
   /** dict for postion filter dropdown */
   filteredPositions: {} = {}
@@ -76,12 +83,33 @@ export class DraftService {
   /** override roster id for order mode */
   overrideRosterId: number = 1;
 
+  /** is live draft paused */
+  isPaused: boolean = false;
+
+  /** mock draft players yet to be selected */
+  mockPlayers: FantasyPlayer[] = [];
+
+  /** manually select players for this team */
+  selectedMockDraftTeam: number = 1;
+
+  /** live draft events */
+  pauseLiveDraft$: Subject<boolean> = new Subject<boolean>();
+
+  /** live draft status */
+  liveDraftStatus$: Subject<string> = new Subject<string>();
+
+  liveDraftSpeed: number = 500;
+
+  liveDraftRandomness: number = 1;
+
   constructor(
     public leagueService: LeagueService,
     private playerService: PlayerService,
     private sleeperApiService: SleeperApiService,
     private displayService: DisplayService,
-    private powerRankingsService: PowerRankingsService
+    private configService: ConfigService,
+    private powerRankingsService: PowerRankingsService,
+    private statService: StatService
   ) {
   }
 
@@ -89,35 +117,44 @@ export class DraftService {
    * generate draft order
    */
   generateDraft(): void {
-    if (this.mockDraftPlayerType === MockDraftPlayerType.Rookies) { // rookies only
-      this.selectablePlayers = this.playerService.playerValues.slice().filter(player => {
-        return player.experience === 0 && player.position !== 'PI';
-      });
-      if (this.selectablePlayers.length < 20) {
-        this.selectablePlayers = this.playerService.playerValues.slice().filter(player => {
-          return player.experience === 1 && player.position !== 'PI';
-        });
-      }
-    } else if (this.mockDraftPlayerType === MockDraftPlayerType.Vets) { // vets only
-      this.selectablePlayers = this.playerService.playerValues.slice().filter(player => {
-        return player.experience !== 0 && player.position !== 'PI';
-      });
-    } else { // all players
-      this.selectablePlayers = this.playerService.playerValues.slice().filter(player => {
-        return player.position !== 'PI';
-      });
-    }
-    // sort players by value
-    this.selectablePlayers = this.playerService.sortListOfPlayers(
-      this.selectablePlayers,
-      this.isSuperflex
-    )
+    this.selectablePlayers = this.getMockDraftPlayerList();
     this.filteredPositions = {
       QB: false,
       RB: false,
       WR: false,
       TE: false
     };
+  }
+
+  /**
+   * Get mock draft player list for system
+   */
+  getMockDraftPlayerList(): FantasyPlayer[] {
+    let selectablePlayers = [];
+    if (this.mockDraftPlayerType === MockDraftPlayerType.Rookies) { // rookies only
+      selectablePlayers = this.playerService.playerValues.slice().filter(player => {
+        return player.experience === 0 && player.position !== 'PI';
+      });
+      if (selectablePlayers.length < 20) {
+        selectablePlayers = this.playerService.playerValues.slice().filter(player => {
+          return player.experience === 1 && player.position !== 'PI';
+        });
+      }
+    } else if (this.mockDraftPlayerType === MockDraftPlayerType.Vets) { // vets only
+      selectablePlayers = this.playerService.playerValues.slice().filter(player => {
+        return player.experience !== 0 && player.position !== 'PI';
+      });
+    } else { // all players
+      selectablePlayers = this.playerService.playerValues.slice().filter(player => {
+        return player.position !== 'PI';
+      });
+    }
+    // sort players by value
+    selectablePlayers = this.playerService.sortListOfPlayers(
+      selectablePlayers,
+      this.isSuperflex
+    )
+    return selectablePlayers;
   }
 
   /**
@@ -134,7 +171,7 @@ export class DraftService {
     };
     this.searchVal = '';
     this.ageFilter = [21, 40]
-    this.updateDraft$.next(false);
+    this.updateDraft$.next();
   }
 
   /**
@@ -142,29 +179,33 @@ export class DraftService {
    * @param teams fantasy teams
    */
   mapDraftObjects(teams: LeagueTeam[]): void {
+    const realDrafts = this.leagueService.completedDrafts.filter(d => !d.draft.leagueId.includes('mock')).length;
     if (this.teamPicks.length > 0) return;
     if (!this.leagueService.selectedLeague) {
       for (let rd = 0; rd < this.mockDraftRounds; rd++) {
         teams.forEach((t, ind) => {
-          this.teamPicks.push(new LeaguePickDTO().fromMockDraft((rd * 12) + ind + 1,
+          this.teamPicks.push(new LeaguePickDTO().fromMockDraft((rd * this.mockTeamCount) + ind + 1,
             this.displayService.createPickString(rd + 1, ind + 1),
             t.owner.ownerName,
             t.owner.teamName,
             t.roster.rosterId,
-            t.roster.rosterId));
+            t.roster.rosterId,
+            rd));
         });
       }
-    } else if (this.leagueService.upcomingDrafts.length > 0) {
-        this.teamPicks = this.leagueService.upcomingDrafts[0].picks;
-        this.alreadyDraftedList = this.leagueService.upcomingDrafts[0].picks
-          .filter(p => p.playerId)
-          .map(p => this.playerService.getPlayerByPlayerPlatformId(p.playerId, this.leagueService.selectedLeague.leaguePlatform)?.name_id)
+    } else if (this.leagueService.upcomingDrafts.length > 0 && realDrafts === 0) {
+      this.teamPicks = this.leagueService.upcomingDrafts[0].picks;
+      this.alreadyDraftedList = this.leagueService.upcomingDrafts[0].picks
+        .filter(p => p.playerId)
+        .map(p => this.playerService.getPlayerByPlayerPlatformId(p.playerId, this.leagueService.selectedLeague.leaguePlatform)?.name_id)
     } else {
       const projectedDraftOrder =
         this.powerRankingsService.powerRankings.slice().sort((a, b) => b.starterRank - a.starterRank).map(it => it.team.roster.rosterId)
+      const draftYear = realDrafts > 0 ?
+        (Number(this.leagueService.selectedLeague.season) + 1).toString() : this.leagueService.selectedLeague.season;
       teams.map(team => {
         for (const pick of team.futureDraftCapital) {
-          if (pick.year === this.leagueService.selectedLeague.season) {
+          if (pick.year === draftYear) {
             // fleaflicker sets league picks but other platforms do not
             const pickNum = this.leagueService.selectedLeague.leaguePlatform === LeaguePlatform.FLEAFLICKER ? pick.pick : projectedDraftOrder.indexOf(pick.originalRosterId) + 1
             this.teamPicks.push(new LeaguePickDTO().fromMockDraft(((pick.round - 1) * projectedDraftOrder.length) + pickNum,
@@ -172,13 +213,14 @@ export class DraftService {
               team.owner?.ownerName,
               team.owner?.teamName,
               team.roster.rosterId,
-              pick.originalRosterId || team.roster.rosterId));
+              pick.originalRosterId || team.roster.rosterId,
+              pick.round));
           }
         }
       });
       // if not current year still preload draft with picks
       if (this.teamPicks.length === 0) {
-        for (let rd = 1; rd <= 5; rd++) {
+        for (let rd = 1; rd <= this.mockDraftRounds; rd++) {
           projectedDraftOrder.forEach((teamOrder, index) => {
             const team = teams.find(t => t.roster.rosterId == teamOrder);
             this.teamPicks.push(new LeaguePickDTO().fromMockDraft(((rd - 1) * projectedDraftOrder.length) + (index + 1),
@@ -186,7 +228,8 @@ export class DraftService {
               team.owner?.ownerName,
               team.owner?.teamName,
               team.roster.rosterId,
-              team.roster.rosterId));
+              team.roster.rosterId,
+              rd));
           })
         }
       }
@@ -206,7 +249,8 @@ export class DraftService {
               pick.pickOwner,
               pick.pickTeam,
               pick.rosterId,
-              pick.rosterId));
+              pick.rosterId,
+              roundCount + i));
           });
         }
       }
@@ -276,9 +320,10 @@ export class DraftService {
   */
   createMockDraft(): void {
     this.teamPicks = [];
+    this.mockPlayers = [];
     this.selectedDraft = 'upcoming';
     const teams = this.leagueService.selectedLeague ? this.leagueService.leagueTeamDetails :
-      Array.from({ length: 12 }, (_, index) => new LeagueTeam(null, null).createMockTeam(index + 1))
+      Array.from({ length: this.mockTeamCount }, (_, index) => new LeagueTeam(null, null).createMockTeam(index + 1))
     this.mapDraftObjects(teams);
   }
 
@@ -301,7 +346,7 @@ export class DraftService {
    */
   getPickValueAdded(pick: LeaguePickDTO, isAuction: boolean = false): number {
     const player = this.playerService.getPlayerByPlayerPlatformId(pick.playerId,
-      this.leagueService.selectedLeague.leaguePlatform)
+      this.leagueService.selectedLeague?.leaguePlatform || LeaguePlatform.SLEEPER)
     const playerValue = this.isSuperflex ? (player?.sf_trade_value || 0) : (player?.trade_value || 0);
     // if auction count value for dollar spent
     if (isAuction) {
@@ -325,16 +370,17 @@ export class DraftService {
    */
   generateAVGValuePerRound(selectedDraft: CompletedDraft) {
     const roundValue = [];
+    const teamCount = this.leagueService.selectedLeague?.totalRosters || this.mockTeamCount;
     for (let round = 0; round < selectedDraft.draft.rounds; round++) {
       let totalValue = 0;
-      for (let pickNum = 0; pickNum < this.leagueService.selectedLeague.totalRosters; pickNum++) {
+      for (let pickNum = 0; pickNum < teamCount; pickNum++) {
         const player = this.playerService.getPlayerByPlayerPlatformId(
-          selectedDraft.picks[round * this.leagueService.selectedLeague.totalRosters + pickNum]?.playerId,
+          selectedDraft.picks[round * teamCount + pickNum]?.playerId,
           this.leagueService.selectedLeague.leaguePlatform
         );
         totalValue += (this.isSuperflex ? player?.sf_trade_value : player?.trade_value) || 0;
       }
-      roundValue.push(Math.round(totalValue / this.leagueService.selectedLeague.totalRosters));
+      roundValue.push(Math.round(totalValue / teamCount));
     }
     this.roundPickValue = roundValue;
   }
@@ -386,10 +432,151 @@ export class DraftService {
    * load a sleeper draft id for the draft table filtering
    */
   loadCustomSleeperLeague(): void {
-    this.sleeperApiService.getSleeperCompletedDraftsByDraftId(this.sleeperDraftId, 12).subscribe(res => {
+    this.sleeperApiService.getSleeperCompletedDraftsByDraftId(this.sleeperDraftId, this.mockTeamCount).subscribe(res => {
       this.alreadyDraftedList = res.map(p => this.playerService.getPlayerByPlayerPlatformId(p.playerId, LeaguePlatform.SLEEPER)?.name_id);
       this.updateDraft$.next();
     });
+  }
+
+  createLiveDraftSource(): Observable<number> {
+    return interval(this.liveDraftSpeed).pipe(
+      takeWhile(() => this.selectablePlayers.length !== this.teamPicks.length),
+      filter(() => !this.isPaused), // Add filter to continue only if not paused
+      tap(() => {
+        this.pickMockPlayer();
+      })
+    );
+  }
+
+  /**
+   * handler for starting a live draft
+   */
+  startLiveDraft(): void {
+    this.selectablePlayers = [];
+    this.mockPlayers = this.getMockDraftPlayerList();
+    if (this.teamPicks[0].rosterId === this.selectedMockDraftTeam)
+      this.pauseEvent();
+    else
+      this.resumeEvent();
+
+    const liveDraftObservable$ = this.createLiveDraftSource();
+
+    liveDraftObservable$.pipe(
+      takeUntil(this.pauseLiveDraft$)
+    ).subscribe();
+    this.liveDraftStatus$.next('start');
+  }
+
+  // Method to pause the event emission
+  pauseEvent(): void {
+    this.isPaused = true;
+    if (this.configService.isMobile) this.configService.toggleToolbar$.next(true);
+    this.pauseLiveDraft$.next(true);
+  }
+
+  // Method to resume the event emission
+  resumeEvent(): void {
+    this.isPaused = false;
+    this.pauseLiveDraft$.next(false);
+    if (this.configService.isMobile) this.configService.toggleToolbar$.next(false);
+    if (this.teamPicks[this.selectablePlayers.length].rosterId !== this.selectedMockDraftTeam) {
+      const liveDraftObservable$ = this.createLiveDraftSource();
+
+      liveDraftObservable$.pipe(
+        takeUntil(this.pauseLiveDraft$)
+      ).subscribe();
+    }
+  }
+
+  /**
+   * mock draft automated draft pick
+   */
+  pickMockPlayer(): void {
+    let weights = [];
+    switch (this.liveDraftRandomness) {
+      case 1:
+        weights = [9, 2, 2, 1];
+        break;
+      case 2:
+        weights = [8, 4, 3, 2, 2, 1, 1, 1];
+        break;
+      case 3:
+        weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+        break;
+      default:
+        weights = [1];
+        break;
+    }
+    // Slice weights array if its length is greater than mockPlayers array
+    if (weights.length > this.mockPlayers.length) {
+      weights = weights.slice(0, this.mockPlayers.length);
+    }
+    const player = this.statService.pickWeightedRandom(this.mockPlayers, weights);
+    const ind = this.mockPlayers.findIndex(p => p.name_id === player.name_id);
+    this.mockPlayers.splice(ind, 1);
+    this.selectablePlayers.push(player);
+    this.liveDraftStatus$.next('pick');
+    if (!this.teamPicks[this.selectablePlayers.length])
+      this.endLiveDraft();
+    if (this.teamPicks[this.selectablePlayers.length].rosterId === this.selectedMockDraftTeam)
+      this.pauseEvent();
+  }
+
+  /**
+   * Select a player in a live draft
+   * @param picked player selected in live draft
+   */
+  selectPlayer(picked: FantasyPlayer): void {
+    const ind = this.mockPlayers.findIndex(p => p.name_id === picked.name_id);
+    const player = this.mockPlayers.splice(ind, 1)[0];
+    this.selectablePlayers.push(player);
+    this.liveDraftStatus$.next('pick');
+    if (!this.teamPicks[this.selectablePlayers.length])
+      this.endLiveDraft();
+    else if (this.teamPicks[this.selectablePlayers.length].rosterId === this.selectedMockDraftTeam)
+      this.pauseEvent();
+    else
+      this.resumeEvent();
+  }
+
+  /**
+   * end live draft
+   */
+  endLiveDraft(): void {
+    // if logged in create a new completed draft
+    if (this.leagueService.selectedLeague) {
+      const draftId = this.leagueService.completedDrafts.length;
+      const draftOrder = {}
+      this.teamPicks.slice(0, this.mockTeamCount).forEach((p, ind) =>
+        draftOrder[ind] = p.originalRosterId
+      );
+      const draftYear = this.leagueService.completedDrafts.filter(d => !d.draft.leagueId.includes('mock')).length > 0 ?
+        (Number(this.leagueService.selectedLeague.season) + 1).toString() : this.leagueService.selectedLeague.season;
+      const draft = new LeagueRawDraftOrderDTO().fromSleeper(
+        draftId.toString(),
+        'mock_' + draftId,
+        'completed',
+        this.mockDraftConfig,
+        {},
+        draftOrder,
+        draftYear,
+        { 'player_type': this.mockDraftPlayerType, 'rounds': this.teamPicks.length / (this.leagueService.selectedLeague?.totalRosters || this.mockTeamCount) }
+      )
+      const updatedPicks = this.teamPicks;
+      this.teamPicks.forEach((p, ind) => {
+        if (!this.selectablePlayers[ind]) return;
+        updatedPicks[ind].playerId = this.playerService.getPlayerPlatformId(
+          this.selectablePlayers[ind],
+          this.leagueService.selectedLeague?.leaguePlatform || LeaguePlatform.SLEEPER
+        );
+      }
+      )
+      this.leagueService.completedDrafts.push(new CompletedDraft(draft, updatedPicks));
+      this.selectedDraft = this.leagueService.completedDrafts[draftId];
+    }
+    this.mockPlayers = [];
+    this.pauseEvent();
+    this.liveDraftStatus$.next('end');
   }
 }
 
