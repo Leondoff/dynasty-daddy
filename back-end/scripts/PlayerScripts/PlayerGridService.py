@@ -9,7 +9,7 @@ SupportedYTypes = ['team', 'team', 'team', 'team', 'team', 'team', 'stat',
                    'stat', 'stat', 'stat', 'stat', 'draftedBy', 
                    'playedWith', 'playedWith']
 
-SupportedXTypes = ['award', 'stat', 'stat', 'stat', 'stat', 'playedWith']
+SupportedXTypes = ['award', 'award', 'stat', 'stat', 'stat', 'stat', 'stat', 'playedWith']
 
 SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET',
                   'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']
@@ -44,7 +44,13 @@ SupportedPlayedWith = ['00-0026498',
                '00-0012478',
                '00-0027656',
                '00-0027949',
-               '00-0021140']
+               '00-0021140',
+               '00-0033055',
+               '00-0025401',
+               '00-0027940',
+               '00-0031388',
+               '00-0021377',
+               '00-0020337']
 
 SupportedStats = ['rushYd1000',
                   'recYd1000',
@@ -202,7 +208,6 @@ def SetNewPlayerGrid():
         }
 
     jsonGrid = json.dumps(output_dict)
-
     setTodaysGridStatement = '''UPDATE config
         SET
         config_value = %s WHERE config_key = \'daily_grid\';'''

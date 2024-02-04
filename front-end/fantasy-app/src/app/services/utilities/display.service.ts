@@ -53,7 +53,13 @@ export const GsisIdToName = {
   '00-0012478': 'Terrell Owens',
   '00-0027656': 'Rob Gronkowski',
   '00-0027949': 'J.J. Watt',
-  '00-0021140': 'Julius Peppers'
+  '00-0021140': 'Julius Peppers',
+  '00-0033055': 'Jalen Ramsey',
+  '00-0025401': 'Darrelle Revis',
+  '00-0027940': 'Von Miller',
+  '00-0031388': 'Aaron Donald',
+  '00-0021377': 'Ed Reed',
+  '00-0020337': 'Steve Smith'
 }
 
 export const MonthsAbbr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

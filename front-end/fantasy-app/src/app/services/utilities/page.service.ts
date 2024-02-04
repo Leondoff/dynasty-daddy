@@ -1,6 +1,7 @@
 import { DOCUMENT } from "@angular/common";
 import { Injectable, Inject } from "@angular/core";
 import { Meta, Title } from "@angular/platform-browser";
+import { AdService } from "./ad.service";
 
 @Injectable({
     providedIn: 'root'
@@ -19,11 +20,14 @@ export class PageService {
     constructor(
         private meta: Meta,
         @Inject(DOCUMENT) private doc,
-        private title: Title
+        private title: Title,
+        private adService: AdService,
     ) { }
 
     setUpPageSEO(title: string, keywords: string[], description: string, image: string = this.DYNASTY_DADDY_IMG): void {
         this.createLinkForCanonicalURL();
+        if (!(title === 'Home' && new URLSearchParams(window.location.search).get('code')))
+            this.adService.loadFreestarScripts();
         if (title == 'Home') {
             this.title.setTitle('Dynasty Daddy - Fantasy Football Tools, and Rankings');
         } else {

@@ -9,7 +9,6 @@ import { GridResultModalComponent } from "../modals/grid-result-modal/grid-resul
 import { PageService } from "src/app/services/utilities/page.service";
 import { SimpleTextModalComponent } from "../sub-components/simple-text-modal/simple-text-modal.component";
 import { Observable } from "rxjs";
-import { AdService } from "src/app/services/utilities/ad.service";
 import { TriviaApiService } from "src/app/services/api/trivia/trivia-api.service";
 import { GsisIdToName } from "src/app/services/utilities/display.service";
 
@@ -74,7 +73,6 @@ export class GridGameComponent extends BaseComponent implements OnInit {
         private dialog: MatDialog,
         private pageService: PageService,
         private triviaApiService: TriviaApiService,
-        private adService: AdService,
         public gridGameService: GridGameService) {
         super();
         this.pageService.setUpPageSEO('NFL Immaculate Gridiron',
@@ -86,7 +84,6 @@ export class GridGameComponent extends BaseComponent implements OnInit {
 
     ngOnInit(): void {
         this.gridGameService.status = Status.LOADING;
-        this.adService.loadFreestarScripts();
         this.addSubscriptions(
             this.configService.configValuesLoaded$.subscribe(_ => {
                 this.initGridGame();
