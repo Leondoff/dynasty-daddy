@@ -386,7 +386,13 @@ def UpdatePlayedWithCategory(cursor):
                '00-0012478',
                '00-0027656',
                '00-0027949',
-               '00-0021140']
+               '00-0021140',
+               '00-0033055',
+               '00-0025401',
+               '00-0027940',
+               '00-0031388',
+               '00-0021377',
+               '00-0020337']
     
     with open('C:\\Users\\Jeremy\\Desktop\\roster.csv', 'r') as file:
         csvreader = csv.reader(file)

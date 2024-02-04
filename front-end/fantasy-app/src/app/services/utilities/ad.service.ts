@@ -6,12 +6,15 @@ import { UserService } from '../user.service';
   providedIn: 'root',
 })
 export class AdService {
+
+  private isScriptsLoaded = false;
+
   constructor(@Inject(DOCUMENT) private document: Document,
   private userService: UserService) {}
 
   loadFreestarScripts(): void {
     // if patreon don't show ads
-    if (this.userService.user) {
+    if (this.isScriptsLoaded || this.userService.user) {
         return;
     }
     const head = this.document.head;
@@ -56,5 +59,7 @@ export class AdService {
       freestar.initCallback = function () { (freestar.config.enabled_slots.length === 0) ? freestar.initCallbackCalled = false : freestar.newAdSlots(freestar.config.enabled_slots) }
     `;
     head.appendChild(inlineScript);
+
+    this.isScriptsLoaded = true;
   }
 }
