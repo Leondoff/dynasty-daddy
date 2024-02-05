@@ -3,12 +3,15 @@ from datetime import date
 import random
 import json
 import os
-from Constants import TeamACCException
+from Constants import SupportedPlayedWith, TeamACCException, SupportedColleges, SupportedTeams
 import psycopg2
+from DatabaseConnService import GetDatabaseConn
 
-teamCategory = ['sameTeam', 'sameTeamColor', 'sameTeamDivision', 'sameTeamCategory']
+TeamCategory = ['sameTeam', 'sameTeamColor', 'sameTeamDivision', 'sameTeamCategory']
 
-playerCategory = ['position', 'position', 'age', 'experience']
+PlayerCategory = ['position']
+
+NichePlayerCategories = ['age', 'experience', 'playedWith', 'draftedBy', 'superbowlWin', 'mvp', 'roty', 'sb_mvp', '1stRdPick', 'undrafted', 'top10Pick', 'over100Pick', 'college', ]
 
 statCategory = ['rushYd100',
                   'recYd100',
@@ -26,7 +29,7 @@ statCategory = ['rushYd100',
                   'defTd',
                   'rush20']
 
-statYears = [2020, 2021, 2022, 2023]
+statYears = [2023]
 
 TeamColorMap = {
     'ARI': ['red', 'yellow', 'black'],
@@ -81,9 +84,6 @@ TeamFunCategoryMap = {
     'No_Super_Bowl_Appearance': ['CLE', 'DET', 'JAX', 'HOU'],
 }
 
-SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET',
-                  'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']
-
 SupportedColors = ['red', 'blue', 'navy', 'silver', 'black', 'gold', 'yellow', 'green', 'orange', 'gray', 'purple', 'teal']
 
 SupportedDivision = ['NFC_South', 'NFC_North', 'NFC_West', 'NFC_East', 'AFC_North', 'AFC_South', 'AFC_West', 'AFC_East']
@@ -96,27 +96,24 @@ SupportedExperiences = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
 SupportedAges = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37]
 
+SupportedRookieYears = [2017, 2018, 2019, 2020, 2021, 2022, 2023]
+
 def SetNewConnectionsGame():
 
-    # Connect to local test database
-    # conn = psycopg2.connect(
-    #     database="dynasty_daddy", user='postgres', password='postgres', host='localhost', port='5432'
-    # )
-
-    conn = psycopg2.connect(
-        database=os.environ['DO_DATABASE'], user=os.environ['DO_DB_USER'], password=os.environ[
-            'DO_DB_PASSWORD'], host=os.environ['DO_DB_HOST'], port=os.environ['DO_DB_PORT']
-    )
-
-    # Setting auto commit false
-    conn.autocommit = True
+    conn = GetDatabaseConn(True)
 
     # Creating a cursor object using the cursor() method
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM mat_vw_players;')
+    cursor.execute('''SELECT p.*, pg.college, pg.awards_json, pg.rookie_year, pg.draft_pick, pg.draft_club, pg.played_with FROM mat_vw_players p 
+        inner join player_grid pg on pg.sleeper_id = p.sleeper_id 
+        where p.position != 'PI' and p.sleeper_id notnull  
+        AND p.most_recent_data_point::date >= CURRENT_DATE - INTERVAL '2 days';''')
     rows = cursor.fetchall()
     # defensive players from database
-    cursor.execute('SELECT * FROM mat_vw_def_players;')
+    cursor.execute('''SELECT p.*, pg.college, pg.awards_json, pg.rookie_year, pg.draft_pick, pg.draft_club, pg.played_with FROM mat_vw_def_players p 
+        inner join player_grid pg on pg.sleeper_id = p.sleeper_id 
+        where p.position != 'DF' and p.sleeper_id notnull  
+        AND p.most_recent_data_point::date >= CURRENT_DATE - INTERVAL '2 days';''')
     defRows = cursor.fetchall()
     
     # important values
@@ -130,22 +127,21 @@ def SetNewConnectionsGame():
     yesterdaysCategories = yesterdaysConnection['categories']
 
     # generate first category for player grouping
-    players = [person for person in (rows + defRows) if person[11] != 'PI' and person[11] != 'DF' and person[10] != None and person[10] != 'FA']
+    players = [person for person in (rows + defRows) if person[10] != None and person[10] != 'FA']
     while True:
-        catOne = random.choice(playerCategory if yesterdaysCategories[0]['type'] == 'position' else [player for player in playerCategory if player != yesterdaysCategories[0]['type']])
-        valueInd = getPlayerIndForField(catOne)
+        catOne = random.choice(PlayerCategory if yesterdaysCategories[0]['type'] == 'position' else [player for player in PlayerCategory if player != yesterdaysCategories[0]['type']])
         filterValue = getValueForPlayerCategory(catOne, yesterdaysCategories)
-        catOnePlayers = [person for person in players if person[valueInd] == filterValue]
+        catOnePlayers = [person for person in players if isPlayerValueMatch(catOne, person, filterValue)]
         if len(catOnePlayers) >= 4:
             playerNames = [{'category': 1, 'name': player[7]} for player in catOnePlayers]
             connectionPlayers = connectionPlayers + random.sample(playerNames, 4)
             categories.append({'type': catOne, 'value': filterValue})
-            players = [person for person in players if person[valueInd] != filterValue]
+            players = [person for person in players if isPlayerValueMatch(catOne, person, filterValue) == False]
             break
        
     # generate second category for team grouping 
     while True:
-        catTwo = random.choice(teamCategory)
+        catTwo = random.choice(TeamCategory)
         filterValue = getValueForTeamCategory(catTwo, yesterdaysCategories)
         catTwoPlayers = [person for person in players if isInTeamCategory(person, catTwo, filterValue)]
         if len(catTwoPlayers) >= 4:
@@ -156,18 +152,15 @@ def SetNewConnectionsGame():
             break
     
     # Get stats for third group
-    statYear = random.choice(statYears)
-    cursor.execute('SELECT * FROM player_gamelogs WHERE season = %s;', (statYear,))
-    seasonStats = cursor.fetchall()
-    
     while True:
-        statCat = random.choice([player for player in statCategory if player != yesterdaysCategories[2]['value'] and player != yesterdaysCategories[3]['value']])
-        catStatPlayers = [person for person in players if hasMetStatCategory(person, statCat, seasonStats)]
-        if len(catStatPlayers) >= 4:
-            playerNames = [{'category': 3, 'name': player[7]} for player in catStatPlayers]
+        nicheCat = random.choice([player for player in NichePlayerCategories if player != yesterdaysCategories[2]['value']])
+        filterValue = getValueForTeamCategory(catTwo, yesterdaysCategories)
+        catNichePlayers = [person for person in players if isPlayerValueMatch(nicheCat, person, filterValue)]
+        if len(catNichePlayers) >= 4:
+            playerNames = [{'category': 3, 'name': player[7]} for player in catNichePlayers]
             connectionPlayers = connectionPlayers + random.sample(playerNames, 4)
             categories.append({'type': 'stat', 'value': statCat})
-            players = [person for person in players if hasMetStatCategory(person, statCat, seasonStats) == False]
+            players = [person for person in players if isPlayerValueMatch(nicheCat, person, filterValue) == False]
             break
         
     # Get stats for fourth group
@@ -176,7 +169,7 @@ def SetNewConnectionsGame():
     seasonStats = cursor.fetchall()
     
     while True:
-        statCat = random.choice([player for player in statCategory if player != yesterdaysCategories[2]['value'] and player != yesterdaysCategories[3]['value']])
+        statCat = random.choice([player for player in statCategory if player != yesterdaysCategories[3]['value']])
         catStatPlayers = [person for person in players if hasMetStatCategory(person, statCat, seasonStats)]
         if len(catStatPlayers) >= 4:
             playerNames = [{'category': 4, 'name': player[7]} for player in catStatPlayers]
@@ -217,6 +210,14 @@ def getValueForPlayerCategory(cat, yesterdaysCategories):
         return random.choice([pos for pos in SupportedPositions if pos != yesterdaysCategories[0]['value']])
     elif cat is 'experience':
         return random.choice(SupportedExperiences)
+    elif cat is 'draftedBy':
+        return random.choice(SupportedTeams)
+    elif cat is 'playedWith':
+        return random.choice(SupportedPlayedWith)
+    elif cat is 'college':
+        return random.choice(SupportedColleges)
+    elif cat is 'rookieYear':
+        return random.choice(SupportedRookieYears)
     else:
         return random.choice(SupportedAges)
     
@@ -232,15 +233,39 @@ def getValueForTeamCategory(cat, yesterdaysCategories):
         return random.choice([div for div in SupportedDivision if div != yesterdaysCategories[1]['value']])
 
 # get player array index for field
-def getPlayerIndForField(field):
-    if field is 'position':
-        return 11
+def isPlayerValueMatch(field, player, filterValue):
+    if field is 'college':
+        return player[16] == filterValue
+    elif field is 'rookieYear':
+        return player[18] == filterValue
+    elif field is '1stRdPick':
+        return player[19] <= 32
+    elif field is 'undrafted':
+        return player[19] == None
+    elif field is 'top10Pick':
+        return player[19] <= 10 
+    elif field is 'over100Pick':
+        return player[19] >= 100  
+    elif field is 'superbowlWin':
+        return player[17]['sb'] == '1'
+    elif field is 'mvp':
+        return player[17]['mvp'] == '1'
+    elif field is 'roty':
+        return player[17]['roty'] == '1'
+    elif field is 'sb_mvp':
+        return player[17]['sb_mvp'] == '1'
+    elif field is 'draftedBy':
+        return player[18] == filterValue
+    elif field is 'playedWith':
+        return player[19] != None and filterValue in player[19]
+    elif field is 'position':
+        return player[11] == filterValue
     elif field is 'age':
-        return 12
+        return player[12] == filterValue
     elif field is 'experience':
-        return 13
+        return player[13] == filterValue
     else:
-        return 10
+        return player[10] == filterValue
 
 # is the player in the team category
 def isInTeamCategory(player, cat, value):
