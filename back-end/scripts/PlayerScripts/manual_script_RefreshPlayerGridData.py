@@ -401,7 +401,7 @@ def UpdatePlayedWithCategory(cursor):
             playerMap[p] = {}
         # build player career game dict
         for row in csvreader:
-            if row[6].strip() in players and (row[16] == 'ACT' or row[16] == 'RES'):
+            if row[6].strip() in players and (row[16] == 'ACT' or row[16] == 'RES' or row[16] == 'TRD' or row[16] == 'CUT'):
                 if row[6] not in playerMap:
                     playerMap[row[6]] = {}
                 if row[3] not in playerMap[row[6]]:
@@ -414,7 +414,7 @@ def UpdatePlayedWithCategory(cursor):
         playedWithMap = {}
         csvreader = csv.reader(file)
         for row in csvreader:
-            if (row[16] == 'ACT' or row[16] == 'RES'):
+            if (row[16] == 'ACT' or row[16] == 'RES' or row[16] == 'TRD' or row[16] == 'CUT'):
                 for match in players:
                     if match != row[6]:
                         # check player map
