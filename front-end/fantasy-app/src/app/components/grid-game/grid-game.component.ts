@@ -200,7 +200,7 @@ export class GridGameComponent extends BaseComponent implements OnInit {
      * @param stat string of stat
      */
     getStatScopeString(stat: string): string {
-        if (['top10Pick', '1stRdPick', 'over100Pick']) return '';
+        if (['top10Pick', '1stRdPick', 'over100Pick'].includes(stat)) return '';
         if (this.seasonStats.includes(stat)) {
             return !this.configService.isMobile ? 'in a season' : 'Season'
         }

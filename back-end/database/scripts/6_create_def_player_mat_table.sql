@@ -17,7 +17,8 @@ CREATE MATERIALIZED VIEW if not exists mat_vw_def_players AS
         player_info.position as position,
         player_info.age as age,
         player_info.experience as experience,
-        player_info.injury_status as injury_status
+        player_info.injury_status as injury_status,
+        player_info.updated_at as most_recent_data_point
     FROM player_info
     LEFT JOIN player_ids pi on player_info.name_id = pi.name_id
     WHERE player_info.active is not false

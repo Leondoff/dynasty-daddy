@@ -64,6 +64,47 @@ TeamACCException = {
     'PHX': 'ARI'
 }
 
+# supported played with players for trivia
+SupportedPlayedWith = [
+    '00-0026498',
+    '00-0019596',
+    '00-0010346',
+    '00-0022803',
+    '00-0023459',
+    '00-0020531',
+    '00-0022942', 
+    '00-0022924',
+    '00-0033873',
+    '00-0027939',
+    '00-0022921',
+    '00-0027793',
+    '00-0027944',
+    '00-0011754',
+    '00-0033280',
+    '00-0032764',
+    '00-0025394',
+    '00-0025399',
+    '00-0020536',
+    '00-0012478',
+    '00-0027656',
+    '00-0027949',
+    '00-0021140',
+    '00-0033055',
+    '00-0025401',
+    '00-0027940',
+    '00-0031388',
+    '00-0021377',
+    '00-0020337'
+]
+
+# supported colleges for trivia
+SupportedColleges = ['Michigan', 'Texas Christian', 'Georgia', 'Ohio State', 'Florida', 'Alabama', 'Southern California', 'Louisiana State', 'Miami',
+                     'Clemson', 'South Carolina', 'North Carolina State', 'North Carolina', 'Wisconsin', 'Oregon', 'Florida State', 'Texas', 'Oklahoma', 'Notre Dame']
+
+# supported teams for trivia
+SupportedTeams = ['CAR', 'NO', 'TB', 'ATL', 'LA', 'SEA', 'SF', 'ARI', 'DAL', 'NYG', 'PHI', 'WAS', 'GB', 'MIN', 'DET',
+                  'CHI', 'KC', 'LV', 'LAC', 'DEN', 'HOU', 'TEN', 'IND', 'JAX', 'CLE', 'PIT', 'BAL', 'CIN', 'BUF', 'MIA', 'NYJ', 'NE']
+
 # MFL Player API
 MFL_URL = "https://api.myfantasyleague.com/2023/export?TYPE=players&L=&APIKEY=&DETAILS=&SINCE=&PLAYERS=&JSON=1"
 
