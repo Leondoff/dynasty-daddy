@@ -120,13 +120,13 @@ KEEP_TRADE_CUT_SF_REDRAFT_URL = "https://keeptradecut.com/fantasy-rankings?forma
 KEEP_TRADE_CUT_STD_REDRAFT_URL = "https://keeptradecut.com/fantasy-rankings?format=1"
 
 # fantasy calc apis
-FANTASY_CALC_SF_URL = "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2"
+FANTASY_CALC_SF_URL = "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&_source=dynastydaddy"
 
-FANTASY_CALC_STD_URL = "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=1"
+FANTASY_CALC_STD_URL = "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=1&_source=dynastydaddy"
 
-FANTASY_CALC_SF_REDRAFT_URL = "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=12&ppr=1&includeAdp=false"
+FANTASY_CALC_SF_REDRAFT_URL = "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=12&ppr=1&includeAdp=false&_source=dynastydaddy"
 
-FANTASY_CALC_STD_REDRAFT_URL = "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1&includeAdp=false"
+FANTASY_CALC_STD_REDRAFT_URL = "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1&includeAdp=false&_source=dynastydaddy"
 
 # Sleeper apis
 SLEEPER_BASE_URL = "https://api.sleeper.app/v1/league/"

@@ -13,9 +13,9 @@ def createNameIdFCMap():
 # fetch historical std and sf values for fantasy calc id and merge maps
 def fetchHistoricalValuesFromFC(fcPlayerId):
     stdResponse = requests.get(
-        "https://api.fantasycalc.com/trades/implied/" + fcPlayerId + "?isDynasty=true&numQbs=1")
+        "https://api.fantasycalc.com/trades/implied/" + fcPlayerId + "?isDynasty=true&numQbs=1&_source=dynastydaddy")
     sfResponse = requests.get(
-        "https://api.fantasycalc.com/trades/implied/" + fcPlayerId + "?isDynasty=true&numQbs=2")
+        "https://api.fantasycalc.com/trades/implied/" + fcPlayerId + "?isDynasty=true&numQbs=2&_source=dynastydaddy")
     stdData = stdResponse.json()['historicalValues']
     sfData = sfResponse.json()['historicalValues']
     dateMap = {}
