@@ -61,6 +61,7 @@ import {
   SaveEventGameEndpoint
 } from '../controllers';
 import { GetESPNLeagueEndpoint, GetESPNTransactionsEndpoint } from '../controllers/espnWrapperController';
+import { GetDraftADPDetailsEndpoint, GetDraftADPEndpoint } from '../controllers/draftController';
 
 const indexRouter = express.Router();
 indexRouter.get('/', indexPage);
@@ -89,6 +90,8 @@ indexRouter.post('/user/leagues', AddLeaguesToUserEndpoint);
 indexRouter.post('/user/presets/pr', AddPRPresetsToUserEndpoint);
 indexRouter.post('/user/presets/lf', AddLFPresetsToUserEndpoint);
 indexRouter.post('/user/profile', UpdateUserProfileEndpoint);
+indexRouter.post('/draft/adp', GetDraftADPEndpoint);
+indexRouter.post('/draft/adp/details', GetDraftADPDetailsEndpoint);
 
 // Article Endpoints
 indexRouter.post('/user/:userId/article/post', WriteArticleEnpoint);

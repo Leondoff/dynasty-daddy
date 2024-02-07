@@ -14,6 +14,8 @@ import { filter, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs/operato
 import { ConfigService } from 'src/app/services/init/config.service';
 import { StatService } from 'src/app/services/utilities/stat.service';
 import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
+import { UntypedFormControl } from '@angular/forms';
+import { LeagueDTO } from 'src/app/model/league/LeagueDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +44,7 @@ export class DraftService {
   mockDraftOrder: DraftOrderType = DraftOrderType.Snake;
 
   /** number of mock draft rounds */
-  mockDraftRounds: number = 30;
+  mockDraftRounds: number = 22;
 
   /** number of teams in draft */
   mockTeamCount: number = 12;
@@ -98,9 +100,46 @@ export class DraftService {
   /** live draft status */
   liveDraftStatus$: Subject<string> = new Subject<string>();
 
+  /** live draft speed ms per pick */
   liveDraftSpeed: number = 500;
 
+  /** live draft randomness tier */
   liveDraftRandomness: number = 1;
+
+  /** fantasy draft fantasy market num */
+  fantasyMarket: number;
+
+  /** update player ADP details, passes in sleeper id */
+  updatePlayerADPDetails$: Subject<string> = new Subject<string>();
+
+  marketOptions: any[] = [
+    {
+      label: 'Real Draft ADPs',
+      options: [
+        { 'num': 100, 'value': 'Dynasty Daddy ADP' },
+      ]
+    }
+  ];
+
+  adpScoringFormat = new UntypedFormControl([0, 0.5, 1.0, 2.0]);
+
+  /** form control for scoring filter dropdown */
+  adpTepFormat = new UntypedFormControl([0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5]);
+
+  /** form control for scoring filter dropdown */
+  adpStartersFormat = new UntypedFormControl([6, 7, 8, 9, 10, 11, 12, 13, 14]);
+
+  /** form control for scoring filter dropdown */
+  adpLeagueTypeFormat: string = 'Dynasty';
+
+  /** form control for scoring filter dropdown */
+  adpTeamFormat = new UntypedFormControl([4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]);
+
+  /** adp started at date filter */
+  adpStartedAt: Date;
+
+  /** is auction toggle for adp */
+  isAuction: boolean = false;
 
   constructor(
     public leagueService: LeagueService,
@@ -124,6 +163,8 @@ export class DraftService {
       WR: false,
       TE: false
     };
+    if (this.fantasyMarket === 100)
+      this.updateDraft$.next('refresh');
   }
 
   /**
@@ -150,10 +191,17 @@ export class DraftService {
       });
     }
     // sort players by value
-    selectablePlayers = this.playerService.sortListOfPlayers(
-      selectablePlayers,
-      this.isSuperflex
-    )
+    if (this.fantasyMarket < 100) {
+      selectablePlayers = this.playerService.sortListOfPlayers(
+        selectablePlayers,
+        this.isSuperflex
+      )
+    } else {
+      const adp = this.playerService.sleeperADP
+      selectablePlayers = selectablePlayers
+        .sort((a, b) => this.isAuction ? (adp[b.sleeper_id] || 0) - (adp[a.sleeper_id] || 0) :
+          (adp[a.sleeper_id] || 500) - (adp[b.sleeper_id] || 500))
+    }
     return selectablePlayers;
   }
 
@@ -170,7 +218,15 @@ export class DraftService {
       TE: false
     };
     this.searchVal = '';
-    this.ageFilter = [21, 40]
+    this.ageFilter = [21, 40];
+    this.adpStartersFormat.setValue([8, 9, 10, 11, 12, 13, 14]);
+    this.adpTeamFormat.setValue([8, 10, 12, 14]);
+    this.adpScoringFormat.setValue([0, 0.5, 1.0]);
+    this.adpTepFormat.setValue([0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5]);
+    this.adpScoringFormat.setValue([0, 0.5, 1]);
+    const date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    this.adpStartedAt = date;
     this.updateDraft$.next();
   }
 
@@ -308,11 +364,13 @@ export class DraftService {
    * resets mock draft service varibles
    * TODO create an abstract feature service that requires reset functions
    */
-  resetLeague(): void {
+  resetLeague(league: LeagueDTO = null): void {
     this.selectedDraft = null;
     this.selectablePlayers = [];
     this.teamPicks = [];
     this.mockDraftConfig = 'player';
+    this.isSuperflex = league.isSuperflex;
+    this.adpLeagueTypeFormat = league.type == 0 ? 'Redraft' : 'Dynasty';
   }
 
   /**
@@ -578,12 +636,30 @@ export class DraftService {
     this.pauseEvent();
     this.liveDraftStatus$.next('end');
   }
+
+  /** helper to refresh draft adp */
+  refreshADP(): void {
+    this.playerService.updateSleeperADP(
+      this.mockDraftPlayerType,
+      this.isSuperflex,
+      this.adpStartersFormat.value,
+      this.adpTeamFormat.value,
+      this.adpLeagueTypeFormat,
+      this.adpScoringFormat.value,
+      this.adpTepFormat.value,
+      false,
+      this.isAuction,
+      this.adpStartedAt
+    ).subscribe(_ => {
+      this.generateDraft();
+    });
+  }
 }
 
 export enum MockDraftPlayerType {
+  All,
   Rookies,
-  Vets,
-  All
+  Vets
 }
 
 export enum DraftOrderType {

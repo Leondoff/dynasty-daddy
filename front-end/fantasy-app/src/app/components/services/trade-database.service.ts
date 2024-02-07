@@ -12,7 +12,7 @@ import { FantasyPlayerApiService } from 'src/app/services/api/fantasy-player-api
 export class TradeDatabaseService {
 
   /** form control for scoring filter dropdown */
-  selectedScoringFormat = new UntypedFormControl([0, 0.5, 1.0]);
+  selectedScoringFormat = new UntypedFormControl([0, 0.5, 1.0, 2.0]);
 
   /** form control for scoring filter dropdown */
   selectedTepFormat = new UntypedFormControl([0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5]);

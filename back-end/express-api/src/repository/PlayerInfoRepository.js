@@ -186,7 +186,7 @@ export const GetPlayerValuesForMarket = async (market) => {
     }
     // Invalid fantasy market
     default:
-      return null;
+      throw new Error('Unsupported Market Type: ', market);
   }
   const data = await playersModel.selectQuery(`
   SELECT

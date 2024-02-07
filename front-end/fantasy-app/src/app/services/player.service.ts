@@ -62,6 +62,9 @@ export class PlayerService {
   /** currently selected market fantasy market */
   selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
+  /** sleeper ADP dict */
+  sleeperADP: {} = {};
+
   constructor(private fantasyPlayerApiService: FantasyPlayerApiService,
     private sleeperApiService: SleeperApiService,
     private nflService: NflService) {
@@ -626,5 +629,52 @@ export class PlayerService {
       playerList.push(players[key] as FantasyPlayer);
     }
     return playerList;
+  }
+
+  /**
+   * update sleeper adp data search
+   * @param playerType 
+   * @param isSuperflex 
+   * @param starters 
+   * @param teams 
+   * @param leagueType 
+   * @param ppr 
+   * @param tep 
+   * @param isIDP 
+   * @param isAuction 
+   * @param startedAt 
+   * @param endedAt 
+   */
+  updateSleeperADP(
+    playerType: number,
+    isSuperflex: boolean,
+    starters: number[],
+    teams: number[],
+    leagueType: string,
+    ppr: number[],
+    tep: number[],
+    isIDP: boolean = false,
+    isAuction: boolean = false,
+    startedAt: Date = null,
+    endedAt: Date = new Date()
+    ): Observable<void> {
+    let lastMonth = new Date();
+    if (startedAt === null) {
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+    }
+    return this.fantasyPlayerApiService.searchDraftADP(
+      playerType, isSuperflex, starters, teams, leagueType, ppr, tep, isIDP, isAuction, startedAt || lastMonth, endedAt
+    ).pipe(map(res => {
+      const adp = {};
+      adp['total'] = res?.['total'] || 0;
+      const adpRes = res?.['adps'] || [];
+      const players = this.cleanOldPlayerData()
+      adpRes.forEach(a => {
+        const player = players.find(p => p.sleeper_id == a.player_id)
+        if (player || !player && a.count > Math.round(adpRes.length / 10))
+          adp[a.player_id] = isAuction ? Math.round(a.average_budget_ratio * 10000) / 100 : Math.round(a.average_adp * 100) / 100;
+      });
+      this.sleeperADP = adp;
+    }));
   }
 }

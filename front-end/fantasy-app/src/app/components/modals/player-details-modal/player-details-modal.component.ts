@@ -5,7 +5,7 @@ import { PlayerInsights } from "../../model/playerInsights";
 import { Status } from "../../model/status";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ConfigService } from "src/app/services/init/config.service";
+import { ConfigKeyDictionary, ConfigService } from "src/app/services/init/config.service";
 import { LeagueService } from "src/app/services/league.service";
 import { PlayerService } from "src/app/services/player.service";
 
@@ -46,9 +46,11 @@ export class PlayerDetailsModalComponent extends BaseComponent implements OnInit
   /** name id url param for player to load */
   NAME_ID_URL_PARAM: string = 'playerNameId';
 
+  draftCount: number;
+
   constructor(
     private dialogRef: MatDialogRef<PlayerDetailsModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { player: FantasyPlayer, isSuperFlex: boolean },
+    @Inject(MAT_DIALOG_DATA) public data: { player: FantasyPlayer, isSuperFlex: boolean, view: string },
     private fantasyPlayerApiService: FantasyPlayerApiService,
     public configService: ConfigService,
     public leagueService: LeagueService,
@@ -58,6 +60,7 @@ export class PlayerDetailsModalComponent extends BaseComponent implements OnInit
   }
 
   ngOnInit(): void {
+    this.draftCount = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.DRAFT_COUNT)?.configValue || 1000);
     this.playerDetailStatus = Status.LOADING;
     this.selectedPlayer = this.data.player;
     this.addSubscriptions(this.fantasyPlayerApiService.getPlayerDetailsByNameId(this.selectedPlayer.name_id).subscribe((data) => {

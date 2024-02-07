@@ -31,19 +31,8 @@ export class TradeDatabaseCardComponent implements OnInit {
 
         this.dateString = daysAgo <= 0 ? 'Today' : `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
 
-        switch (Number(this.trade.ppr)) {
-            case 1:
-                this.pprStr = 'Full';
-                break;
-            case 0.5:
-                this.pprStr = 'Half';
-                break;
-            case 0:
-                this.pprStr = "No";
-                break;
-            default:
-                this.pprStr = Number(this.trade.ppr).toString();
-        }
+        this.pprStr = this.displayService.getPPRFormatDisplay(Number(this.trade.ppr))
+       
         this.tepStr = Number(this.trade.tep) === 0 ? "No" : Number(this.trade.tep).toString()
     }
 

@@ -237,4 +237,21 @@ export class DisplayService {
     return round.toString() + '.' + (pick > 9 ? pick.toString() : '0' + pick.toString());
   }
 
+  /**
+   * Returns a string format for PPR number
+   * @param ppr number to format for ppr
+   */
+  getPPRFormatDisplay(ppr: number): string {
+    switch (ppr) {
+      case 1:
+        return 'Full';
+      case 0.5:
+        return 'Half';
+      case 0:
+        return "No";
+      default:
+        return Number(ppr).toString();
+    }
+  }
+
 }

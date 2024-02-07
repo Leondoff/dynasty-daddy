@@ -24,6 +24,8 @@ import { TradeCenterPlayerValuesComponent } from "src/app/components/trade-cente
 import { TradeCenterComponent } from "src/app/components/trade-center/trade-center.component";
 import { PlayerDetailsModalComponent } from "src/app/components/modals/player-details-modal/player-details-modal.component";
 import { TradeCenterPlayerDemandComponent } from "src/app/components/trade-center/trade-center-player-demand/trade-center-player-demand.component";
+import { EditDraftADPModalComponent } from "src/app/components/modals/edit-draft-adp-modal/edit-draft-adp-modal.component";
+import { PlayerDetailsADPComponent } from "src/app/components/player-details/player-details-adp/player-details-adp.component";
 
 @NgModule({
   imports: [
@@ -54,6 +56,8 @@ import { TradeCenterPlayerDemandComponent } from "src/app/components/trade-cente
     PlayerDetailsWeeklyStatsLineChartComponent,
     PlayerTradeMarketComponent,
     PlayerDetailsModalComponent,
+    EditDraftADPModalComponent,
+    PlayerDetailsADPComponent,
     TradeValueLineChartComponent,
     FilterPlayerValuesModalComponent,
     PlayerComparisonsComponent,
