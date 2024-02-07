@@ -8,9 +8,9 @@ import psycopg2
 
 SupportedYTypes = ['team', 'team', 'team', 'team', 'stat',
                    'stat', 'stat', 'stat', 'stat', 
-                   'playedWith', 'playedWith']
+                   'playedWith']
 
-SupportedXTypes = ['award', 'award', 'stat', 'stat', 'stat', 'stat', 'stat', 'playedWith']
+SupportedXTypes = ['award', 'award', 'award', 'stat', 'stat', 'stat', 'stat', 'stat', 'stat', 'playedWith']
 
 SupportedJerseyNumbers = ['12', '18', '89', '85', '26', '22', '27', '95',
                           '97', '98', '91', '90', '23', '25', '2', '35', '30', '38', '59', '69']
