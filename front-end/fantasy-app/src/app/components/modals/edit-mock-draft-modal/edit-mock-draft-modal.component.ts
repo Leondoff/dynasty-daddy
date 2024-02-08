@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { DraftService } from "../../services/draft.service";
+import { DraftService, MockDraftPlayerType } from "../../services/draft.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { LeagueService } from "src/app/services/league.service";
 import { LeagueType } from "src/app/model/league/LeagueDTO";
@@ -47,7 +47,7 @@ export class EditMockDraftModalComponent implements OnInit {
         this.mockDraftRounds = this.leagueService.selectedLeague?.type === LeagueType.DYNASTY ? 5 : 22;
         this.mockDraftOrder = this.leagueService.selectedLeague?.type === LeagueType.DYNASTY ? 0 : 1;
         this.mockDraftPlayerType = this.leagueService.selectedLeague?.type === LeagueType.DYNASTY ? 1 : 0;
-        this.isSuperFlex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : true;
+        this.isSuperFlex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : this.draftService.isSuperflex;
         this.mockTeamCount = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.totalRosters : this.draftService.mockTeamCount;
         this.liveDraftTeams = this.leagueService.selectedLeague ? this.leagueService.leagueTeamDetails.slice().sort((a, b) => a.roster.rosterId - b.roster.rosterId).map(p =>
             p.owner.ownerName
@@ -109,6 +109,20 @@ export class EditMockDraftModalComponent implements OnInit {
     updateMarket(): void {
         if (this.mockLeagueType === 0 && [4, 5].includes(this.selectedMarket)) this.selectedMarket = 0;
         if (this.mockLeagueType === 1 && [0, 1, 2, 3].includes(this.selectedMarket)) this.selectedMarket = 5;
+    }
+
+    /**
+     * update defaults when toggling player type
+     * rookie drafts tend to be linear
+     */
+    validateDraftType(): void {
+        if (this.mockDraftPlayerType == MockDraftPlayerType.Rookies) {
+            this.mockDraftRounds = this.mockDraftRounds == 22 ? 5 : this.mockDraftRounds;
+            this.mockDraftOrder = 0;
+        } else {
+            this.mockDraftRounds = this.mockDraftRounds == 5 ? 22 : this.mockDraftRounds;
+            this.mockDraftOrder = 1;
+        }
     }
 
 }

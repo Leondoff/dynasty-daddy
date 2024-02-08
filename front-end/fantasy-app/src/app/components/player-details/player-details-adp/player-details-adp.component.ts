@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges } from "@angular/core";
 import { BaseComponent } from "../../base-component.abstract";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
 import { DraftService, MockDraftPlayerType } from "../../services/draft.service";
@@ -7,7 +7,6 @@ import { ColorService, ComparisonColorPalette } from "src/app/services/utilities
 import { ChartDataSets, ChartOptions } from "chart.js";
 import { BaseChartDirective, Label } from "ng2-charts";
 import { DisplayService } from "src/app/services/utilities/display.service";
-import { PlayerService } from "src/app/services/player.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EditDraftADPModalComponent } from "../../modals/edit-draft-adp-modal/edit-draft-adp-modal.component";
 import { ConfigService } from "src/app/services/init/config.service";
@@ -20,7 +19,7 @@ import { LeagueService } from "src/app/services/league.service";
     styleUrls: ['./player-details-adp.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlayerDetailsADPComponent extends BaseComponent implements OnInit {
+export class PlayerDetailsADPComponent extends BaseComponent implements OnInit, OnChanges {
 
     @Input()
     selectedPlayer: FantasyPlayer;
@@ -161,6 +160,11 @@ export class PlayerDetailsADPComponent extends BaseComponent implements OnInit {
         )
         this.draftService.updatePlayerADPDetails$.next(this.selectedPlayer.sleeper_id);
         this.probGradient = this.colorService.getProbGradient();
+    }
+
+    ngOnChanges(): void {
+        this.draftService.isSuperflex = this.isSuperflex;
+        this.draftService.updatePlayerADPDetails$.next(this.selectedPlayer.sleeper_id);
     }
 
     openFilterDialog(): void {

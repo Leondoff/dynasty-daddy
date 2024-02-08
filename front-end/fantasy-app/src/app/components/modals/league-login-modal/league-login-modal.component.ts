@@ -38,7 +38,7 @@ export class LeagueLoginModalComponent implements OnInit {
 
     ngOnInit(): void {
         const currentDate = new Date();
-        currentDate.setMonth(currentDate.getMonth() - 2);
+        currentDate.setMonth(currentDate.getMonth() - 1);
         this.selectedYear = currentDate.getFullYear().toString();
     }
 

@@ -8,6 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ConfigKeyDictionary, ConfigService } from "src/app/services/init/config.service";
 import { LeagueService } from "src/app/services/league.service";
 import { PlayerService } from "src/app/services/player.service";
+import { DraftService } from "../../services/draft.service";
 
 @Component({
   selector: 'player-details-modal',
@@ -54,7 +55,8 @@ export class PlayerDetailsModalComponent extends BaseComponent implements OnInit
     private fantasyPlayerApiService: FantasyPlayerApiService,
     public configService: ConfigService,
     public leagueService: LeagueService,
-    public playerService: PlayerService
+    public playerService: PlayerService,
+    private draftService: DraftService,
   ) {
     super();
   }
@@ -69,6 +71,9 @@ export class PlayerDetailsModalComponent extends BaseComponent implements OnInit
       this.profileUpdatedDate = data.profile[0]?.last_updated?.substring(0, 10);
       this.tradeData = data.tradeData[0];
       this.playerDetailStatus = Status.DONE;
+    }),
+    this.draftService.updatePlayerADPDetails$.subscribe(_ => {
+      this.isSuperflex = this.draftService.isSuperflex;
     }));
   }
 
