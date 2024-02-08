@@ -1164,6 +1164,10 @@ button.pulse-button {
   padding: 0;
 }
 
+.mat-dialog-content.mobile {
+  max-height: 50vh !important;
+}
+
 /** mat card insight spacing */
 .insight__row {
   margin-top: 12px;

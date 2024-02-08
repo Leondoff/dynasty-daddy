@@ -6,7 +6,7 @@ import { DraftService } from '../services/draft.service';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { delay } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import { ConfigService } from 'src/app/services/init/config.service';
+import { ConfigKeyDictionary, ConfigService } from 'src/app/services/init/config.service';
 import { PageService } from 'src/app/services/utilities/page.service';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
 
@@ -17,7 +17,7 @@ import { LeagueType } from 'src/app/model/league/LeagueDTO';
 })
 export class DraftComponent extends BaseComponent implements OnInit {
 
-  pageDescription = 'Prepare for your fantasy season with the Dynasty Daddy Mock Draft Tool. Sync with your league and filter out results to gain an edge. Or look at completed drafts to see who came out on top.';
+  pageDescription = 'Prepare for your fantasy season with the Fantasy Mock Draft Tool. Sync with your fantasy league and generate mock draft using fantasy markets (KeepTradeCut, etc.) or Average Draft Position (ADP) across 1,000+ real drafts!';
 
   /** show advanced settings  */
   showAdvancedSettings: boolean = false;
@@ -27,6 +27,8 @@ export class DraftComponent extends BaseComponent implements OnInit {
 
   /** error loading draft from league message */
   errorLoadingMsg = 'Error generating draft. Please try reloading league.'
+
+  draftCount: number;
 
   constructor(public leagueService: LeagueService,
     public playerService: PlayerService,
@@ -44,6 +46,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.draftCount = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.DRAFT_COUNT)?.configValue || 1000);
     if (this.playerService.playerValues.length !== 0) {
       this.initServices();
     } else {
@@ -68,6 +71,8 @@ export class DraftComponent extends BaseComponent implements OnInit {
    * @private
    */
   private initServices(): void {
+    if (!this.mockDraftService.fantasyMarket)
+      this.mockDraftService.fantasyMarket = this.playerService.selectedMarket;
     this.mockDraftService.clearFilters();
     if (this.leagueService.selectedLeague) {
       this.mockDraftService.mockDraftRounds = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 5 : 30;
@@ -75,7 +80,7 @@ export class DraftComponent extends BaseComponent implements OnInit {
       this.mockDraftService.mockDraftPlayerType = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 0 : 2;
     }
     this.mockDraftService.isSuperflex = this.leagueService.selectedLeague ?
-      this.leagueService.selectedLeague?.isSuperflex : this.mockDraftService.isSuperflex;
+      this.leagueService.selectedLeague?.isSuperflex : this.mockDraftService.isSuperflex || true;
     this.mockDraftService.selectedDraft = this.leagueService.completedDrafts?.length > 0 ? this.leagueService.completedDrafts[0] : 'upcoming';
     this.mockDraftService.generateDraft();
     if (this.mockDraftService.selectedDraft === 'upcoming')

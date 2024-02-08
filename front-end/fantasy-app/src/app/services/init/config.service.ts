@@ -5,7 +5,7 @@ import { ConfigOption } from '../../model/config/ConfigOption';
 import { ConfigApiService } from '../api/config/config-api.service';
 import { BaseComponent } from '../../components/base-component.abstract';
 import { DisplayService } from '../utilities/display.service';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { PwaService } from '../utilities/pwa.service';
 import { SimpleTextCategory } from 'src/app/model/config/SimpleTextCategory';
 import { HttpClient } from '@angular/common/http';
@@ -30,6 +30,7 @@ export const ConfigKeyDictionary = {
   GRIDIRON_WRITE_BACK: 'daily_grid_write_back',
   LEAGUE_FORMAT_SEASON: 'league_format_default_season',
   TRADE_COUNT: 'trade_count',
+  DRAFT_COUNT: 'draft_count',
   LEAGUE_COUNT: 'league_count'
 } as const;
 

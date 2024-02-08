@@ -70,7 +70,7 @@ export class LeagueSwitchService extends BaseComponent {
     this.leagueService.resetLeague();
     this.powerRankingService.reset();
     this.playerValueService.reset(true);
-    this.mockDraftService.resetLeague();
+    this.mockDraftService.resetLeague(value);
     this.playoffCalculatorService.reset();
     this.matchupService.reset();
     this.playersService.resetOwners();

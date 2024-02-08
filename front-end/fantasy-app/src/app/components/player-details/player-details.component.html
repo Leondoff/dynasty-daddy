@@ -110,6 +110,16 @@
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
+        <mat-icon class="margin-right-5">scatter_plot</mat-icon>
+        {{configService.isMobile ? '' : 'ADP'}}
+      </ng-template>
+      <div class="mid-bold-text margin-top-10 center-text">Current Player ADP</div>
+      <div class="margin-top-10 center-text">Current ADP from our ADP database of <span class="warning__alert">{{draftCount || '1000+'}}</span> real drafts.
+      </div>
+      <player-details-adp [selectedPlayer]="selectedPlayer" [isSuperflex]="isSuperflex"></player-details-adp>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
         <mat-icon class="margin-right-5">library_books</mat-icon>
         {{configService.isMobile ? '' : 'Gamelogs'}}
     </ng-template>

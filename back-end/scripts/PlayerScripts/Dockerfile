@@ -16,9 +16,10 @@ RUN echo "00 4 * * * /usr/local/bin/python /app/InsertESPNPlayerIdsJob.py >> /va
 RUN echo "30 3 * * * /usr/local/bin/python /app/InsertFleaflickerPlayerIdsJob.py >> /var/log/InsertFleaflickerPlayerIdsJob.log 2>&1" >> /etc/cron.d/ff_ids_crontab
 RUN echo "00 3 * * * /usr/local/bin/python /app/InsertFFPCPlayerIdsJob.py >> /var/log/InsertFFPCPlayerIdsJob.log 2>&1" >> /etc/cron.d/ffpc_ids_crontab
 RUN echo "0 0 * * SAT /usr/local/bin/python /app/HistoricalTradeDatabaseJob.py >> /var/log/HistoricalTradeDatabaseJob.log 2>&1" >> /etc/cron.d/historical_trade_job_crontab
+RUN echo "0 2,14 * * * /usr/local/bin/python /app/LeagueDraftsService.py >> /var/log/drafts_cron.log 2>&1" >> /etc/cron.d/drafts-crontab
 
 # Combine the contents of both crontabs into a single file
-RUN cat /etc/cron.d/ktc-crontab /etc/cron.d/trade-crontab /etc/cron.d/rankings_crontab /etc/cron.d/trending_crontab /etc/cron.d/espn_ids_crontab /etc/cron.d/ff_ids_crontab /etc/cron.d/ffpc_ids_crontab /etc/cron.d/historical_trade_job_crontab > /etc/cron.d/combined-crontab
+RUN cat /etc/cron.d/ktc-crontab /etc/cron.d/trade-crontab /etc/cron.d/rankings_crontab /etc/cron.d/trending_crontab /etc/cron.d/espn_ids_crontab /etc/cron.d/ff_ids_crontab /etc/cron.d/ffpc_ids_crontab /etc/cron.d/historical_trade_job_crontab /etc/cron.d/drafts-crontab > /etc/cron.d/combined-crontab
 
 # Apply the combined crontab
 RUN crontab /etc/cron.d/combined-crontab
@@ -35,5 +36,6 @@ RUN touch /var/log/InsertESPNPlayerIdsJob.log
 RUN touch /var/log/InsertFleaflickerPlayerIdsJob.log
 RUN touch /var/log/InsertFFPCPlayerIdsJob.log
 RUN touch /var/log/HistoricalTradeDatabaseJob.log
+RUN touch /var/log/drafts_cron.log
 
 CMD printenv > /etc/environment && cron -f && tail -f /var/log/cron.log
