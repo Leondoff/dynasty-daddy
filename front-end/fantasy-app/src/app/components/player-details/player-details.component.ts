@@ -6,11 +6,12 @@ import { FantasyPlayerApiService } from '../../services/api/fantasy-player-api.s
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { LeagueService } from '../../services/league.service';
 import { PlayerComparisonService } from '../services/player-comparison.service';
-import { ConfigService } from '../../services/init/config.service';
+import { ConfigKeyDictionary, ConfigService } from '../../services/init/config.service';
 import { PlayerInsights } from '../model/playerInsights';
 import { LeagueSwitchService } from '../services/league-switch.service';
 import { PageService } from 'src/app/services/utilities/page.service';
 import { Status } from '../model/status';
+import { DraftService } from '../services/draft.service';
 
 @Component({
   selector: 'app-player-details',
@@ -51,11 +52,14 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
   /** name id url param for player to load */
   NAME_ID_URL_PARAM: string = 'playerNameId';
 
+  draftCount: number;
+
   constructor(public playerService: PlayerService,
     private fantasyPlayerApiService: FantasyPlayerApiService,
     private route: ActivatedRoute,
     public leagueService: LeagueService,
     private router: Router,
+    private draftService: DraftService,
     private activatedRoute: ActivatedRoute,
     private playerComparisonService: PlayerComparisonService,
     public leagueSwitchService: LeagueSwitchService,
@@ -65,6 +69,7 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.draftCount = Number(this.configService.getConfigOptionByKey(ConfigKeyDictionary.DRAFT_COUNT)?.configValue || 1000);
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       this.playerDetailStatus = Status.LOADING;
       this.historicalTradeValue = null;
@@ -100,6 +105,9 @@ export class PlayerDetailsComponent extends BaseComponent implements OnInit {
         ),
         this.route.queryParams.subscribe(params => {
           this.leagueSwitchService.loadFromQueryParams(params);
+        }),
+        this.draftService.updatePlayerADPDetails$.subscribe(_ => {
+          this.isSuperflex = this.draftService.isSuperflex;
         })
       );
     });

@@ -732,7 +732,8 @@ export class TradeCenterComponent extends BaseComponent implements OnInit, After
       this.dialog.open(PlayerDetailsModalComponent
         , {
           data: {
-            player
+            player,
+            view: 'trade'
           },
           width: this.configService.isMobile ? '100%' : '80%',
           maxWidth: this.configService.isMobile ? '100%' : '1400px',

@@ -7,8 +7,6 @@ import { PlayerService } from 'src/app/services/player.service';
 import { LeagueService } from 'src/app/services/league.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
 import { LeagueFormatService } from '../../services/league-format.service';
-import { Status } from '../../model/status';
-import { tap, delay } from 'rxjs/operators';
 
 @Component({
     selector: 'app-league-format-chart',

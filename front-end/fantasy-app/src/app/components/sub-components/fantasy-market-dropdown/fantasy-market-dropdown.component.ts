@@ -15,6 +15,9 @@ export class FantasyMarketDropdownComponent implements OnInit {
     @Input()
     selectedMarket: FantasyMarket = FantasyMarket.KeepTradeCut;
 
+    @Input()
+    additionalOptions: any[] = [];
+
     @Output()
     selectedMarketChange: EventEmitter<FantasyMarket> = new EventEmitter<FantasyMarket>();
 
@@ -45,8 +48,12 @@ export class FantasyMarketDropdownComponent implements OnInit {
 
     changeMarket($event: any) {
         this.gaService.event('click', `click_${$event.value}`, 'fantasy_market')
-        this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
+        if ($event.value >= 100) {
             this.selectedMarketChange.emit($event.value);
-        });
+        } else {
+            this.playerService.loadPlayerValuesForFantasyMarket$($event.value).subscribe(() => {
+                this.selectedMarketChange.emit($event.value);
+            });
+        }
     }
 }

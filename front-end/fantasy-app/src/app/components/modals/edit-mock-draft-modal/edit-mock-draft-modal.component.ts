@@ -38,15 +38,15 @@ export class EditMockDraftModalComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: { isLive: boolean },
         public draftService: DraftService,
         private playerService: PlayerService,
-        private configService: ConfigService,
+        public configService: ConfigService,
     ) {
 
     }
 
     ngOnInit(): void {
-        this.mockDraftRounds = this.leagueService.selectedLeague?.type === LeagueType.DYNASTY ? 5 : 30;
+        this.mockDraftRounds = this.leagueService.selectedLeague?.type === LeagueType.DYNASTY ? 5 : 22;
         this.mockDraftOrder = this.leagueService.selectedLeague?.type === LeagueType.DYNASTY ? 0 : 1;
-        this.mockDraftPlayerType = this.leagueService.selectedLeague?.type === LeagueType.DYNASTY ? 0 : 2;
+        this.mockDraftPlayerType = this.leagueService.selectedLeague?.type === LeagueType.DYNASTY ? 1 : 0;
         this.isSuperFlex = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.isSuperflex : true;
         this.mockTeamCount = this.leagueService.selectedLeague ? this.leagueService.selectedLeague.totalRosters : this.draftService.mockTeamCount;
         this.liveDraftTeams = this.leagueService.selectedLeague ? this.leagueService.leagueTeamDetails.slice().sort((a, b) => a.roster.rosterId - b.roster.rosterId).map(p =>
@@ -56,6 +56,21 @@ export class EditMockDraftModalComponent implements OnInit {
     }
 
     createMockDraft(isLive: boolean = false): void {
+        if (this.draftService.fantasyMarket === 100) {
+            this.playerService.updateSleeperADP(
+                this.mockDraftPlayerType,
+                this.isSuperFlex, null, null,
+                this.mockLeagueType == 1 ? "Redraft" : "Dynasty",
+                null, null,
+                false, this.draftService.isAuction).subscribe(_ => {
+                    this, this.createMockDraftHelper(isLive);
+                })
+        } else {
+            this.createMockDraftHelper(isLive)
+        }
+    }
+
+    private createMockDraftHelper(isLive: boolean = false): void {
         this.draftService.mockDraftRounds = this.mockDraftRounds;
         this.draftService.mockDraftOrder = this.mockDraftOrder;
         this.draftService.mockDraftPlayerType = this.mockDraftPlayerType;
@@ -85,12 +100,15 @@ export class EditMockDraftModalComponent implements OnInit {
      * @param market new market
      */
     onMarketChange(market: FantasyMarket): void {
-        this.playerService.selectedMarket = market;
+        this.draftService.fantasyMarket = market;
+        if (market.valueOf() < 100) {
+            this.playerService.selectedMarket = market;
+        }
     }
 
     updateMarket(): void {
-        if (this.mockLeagueType === 0 && [4,5].includes(this.selectedMarket)) this.selectedMarket = 0;
-        if (this.mockLeagueType === 1 && [0,1,2,3].includes(this.selectedMarket)) this.selectedMarket = 5;
+        if (this.mockLeagueType === 0 && [4, 5].includes(this.selectedMarket)) this.selectedMarket = 0;
+        if (this.mockLeagueType === 1 && [0, 1, 2, 3].includes(this.selectedMarket)) this.selectedMarket = 5;
     }
 
 }

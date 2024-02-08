@@ -32,6 +32,10 @@ export class FantasyPlayerApiConfigService {
 
   private _getPlayerTradeEndpoint = '';
 
+  private _searchDraftADPEndpoint = '';
+
+  private _searchDraftADPDetailsEndpoint = '';
+
   get getPlayerValuesForTodayEndpoint(): string {
     return this._getPlayerValuesForTodayEndpoint;
   }
@@ -134,5 +138,21 @@ export class FantasyPlayerApiConfigService {
 
   set getRecentTradeVolumeEndpoint(value: string) {
     this._getRecentTradeVolumeEndpoint = value;
+  }
+
+  get searchDraftADPEndpoint(): string {
+    return this._searchDraftADPEndpoint;
+  }
+
+  set searchDraftADPEndpoint(value: string) {
+    this._searchDraftADPEndpoint = value;
+  }
+
+  get searchDraftADPDetailsEndpoint(): string {
+    return this._searchDraftADPDetailsEndpoint;
+  }
+
+  set searchDraftADPDetailsEndpoint(value: string) {
+    this._searchDraftADPDetailsEndpoint = value;
   }
 }

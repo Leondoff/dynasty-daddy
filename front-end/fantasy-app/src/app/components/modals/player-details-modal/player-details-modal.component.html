@@ -7,6 +7,20 @@
 </div>
 <div class="player-modal">
     <mat-tab-group mat-align-tabs="center" class="player-modal-container margin-bot-25">
+        <mat-tab *ngIf="data?.view == 'draft'">
+            <ng-template mat-tab-label>
+              <mat-icon class="margin-right-5">scatter_plot</mat-icon>
+              {{configService.isMobile ? '' : 'ADP'}}
+            </ng-template>
+            <div *ngIf="false else adpTemplate"></div>
+        </mat-tab>
+        <mat-tab *ngIf="data?.view == 'trade'">
+            <ng-template mat-tab-label>
+                <mat-icon class="margin-right-5">compare_arrows</mat-icon>
+                {{configService.isMobile ? '' : 'Trades'}}
+            </ng-template>
+            <div *ngIf="false else tradeTemplate"></div>
+        </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
                 <mat-icon class="margin-right-5">multiline_chart</mat-icon>
@@ -39,15 +53,19 @@
                 [selectedMarket]="playerService.selectedMarket"
                 [isSuperflex]="isSuperflex"></app-player-details-insights>
         </mat-tab>
-        <mat-tab>
+        <mat-tab *ngIf="data?.view != 'trade'">
             <ng-template mat-tab-label>
                 <mat-icon class="margin-right-5">compare_arrows</mat-icon>
                 {{configService.isMobile ? '' : 'Trades'}}
             </ng-template>
-            <div class="mid-bold-text margin-top-10 center-text">Player Trade Market</div>
-            <div class="margin-top-10 center-text">Trade value and recent trades including {{selectedPlayer.full_name}}.
-            </div>
-            <player-trade-market [tradeData]="tradeData"></player-trade-market>
+            <div *ngIf="false else tradeTemplate"></div>
+        </mat-tab>
+        <mat-tab *ngIf="data?.view != 'draft'">
+            <ng-template mat-tab-label>
+              <mat-icon class="margin-right-5">scatter_plot</mat-icon>
+              {{configService.isMobile ? '' : 'ADP'}}
+            </ng-template>
+            <div *ngIf="false else adpTemplate"></div>
         </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
@@ -72,3 +90,17 @@
         </mat-tab>
     </mat-tab-group>
 </div>
+
+<ng-template #adpTemplate>
+    <div class="mid-bold-text margin-top-10 center-text">Current Player ADP</div>
+    <div class="margin-top-10 center-text">Current ADP from our ADP database of <span class="warning__alert">{{draftCount || '1000+'}}</span> real drafts.
+    </div>
+    <player-details-adp [selectedPlayer]="selectedPlayer" [isSuperflex]="isSuperflex"></player-details-adp>
+</ng-template>
+
+<ng-template #tradeTemplate>
+    <div class="mid-bold-text margin-top-10 center-text">Player Trade Market</div>
+    <div class="margin-top-10 center-text">Trade value and recent trades including {{selectedPlayer.full_name}}.
+    </div>
+    <player-trade-market [tradeData]="tradeData"></player-trade-market>
+</ng-template>

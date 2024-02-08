@@ -1,0 +1,54 @@
+.center-table {
+    margin: 0 auto;
+}
+
+.adp-draft-cell {
+    position: relative; 
+    text-align: center; 
+    vertical-align: middle; 
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+}
+
+.adp-pick {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.filter-but {
+    text-align-last: right;
+}
+
+.filter-but.desktop {
+    padding-right: 10%;
+}
+
+.adp-percent {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.adp-pick-table {
+    width: 960px;
+    margin: 0 auto;
+}
+
+.adp-scatter-chart {
+    min-width: 700px;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.adp-scatter-chart.mobile {
+    width: 100%;
+}
+
+.adp-pick-table-container {
+    min-width: 300px;
+    overflow-x: auto;
+    text-align: center;
+}
