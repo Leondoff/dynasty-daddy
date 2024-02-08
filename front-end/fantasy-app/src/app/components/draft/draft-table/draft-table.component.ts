@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { FantasyPlayer } from '../../../model/assets/FantasyPlayer';
-import { DraftService, DraftOrderType } from '../../services/draft.service';
+import { DraftService } from '../../services/draft.service';
 import { LeagueService } from '../../../services/league.service';
 import { PlayerService } from 'src/app/services/player.service';
 import { ConfigService } from 'src/app/services/init/config.service';
@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PlayerDetailsModalComponent } from '../../modals/player-details-modal/player-details-modal.component';
 import { BaseComponent } from '../../base-component.abstract';
 import { LeaguePickDTO } from 'src/app/model/league/LeaguePickDTO';
-import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
+import { DraftOrderType, LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 import { StatService } from 'src/app/services/utilities/stat.service';
 import { delay } from 'rxjs/operators';
 import { MatMenuTrigger } from '@angular/material/menu';

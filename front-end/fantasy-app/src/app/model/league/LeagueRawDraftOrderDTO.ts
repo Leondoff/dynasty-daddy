@@ -1,5 +1,3 @@
-import { DraftOrderType } from "src/app/components/services/draft.service";
-
 export class LeagueRawDraftOrderDTO {
 
   draftOrder: any;
@@ -59,7 +57,7 @@ export class LeagueRawDraftOrderDTO {
       slotOrder[ind + 1] = rosterIdMap[team]
     });
     this.slotToRosterId = slotOrder;
-    this.playerType = playerType === 'Rookie' ? 0 : 1;
+    this.playerType = playerType === 'Rookie' ? DraftPlayerType.Rookies : DraftPlayerType.All;
     this.rounds = rounds;
     this.draftId = draftId;
     this.leagueId = leagueId;
@@ -76,7 +74,7 @@ export class LeagueRawDraftOrderDTO {
 
   fromESPN(draft: any, rounds: number, draftId: string, leagueId: string, slotOrder: {}): LeagueRawDraftOrderDTO {
     this.slotToRosterId = slotOrder;
-    this.playerType = 1;
+    this.playerType = DraftPlayerType.All;
     this.rounds = rounds;
     this.draftId = draftId;
     this.leagueId = leagueId;
@@ -92,10 +90,10 @@ export class LeagueRawDraftOrderDTO {
       (draft.orderedSelections?.length > 100 ||
         !draft.orderedSelections[0]?.player?.proPlayer?.isRookie)
     ) {
-      this.playerType = 1;
+      this.playerType = DraftPlayerType.All;
       this.type = DraftOrderType.Snake;
     } else {
-      this.playerType = 0;
+      this.playerType = DraftPlayerType.Rookies;
       this.type = DraftOrderType.Linear;
     }
     this.rounds = rounds;
@@ -108,10 +106,10 @@ export class LeagueRawDraftOrderDTO {
   fromFFPC(picks: any, rounds: number, draftId: string, leagueId: string, status: string, slotOrder: {}): LeagueRawDraftOrderDTO {
     this.slotToRosterId = slotOrder;
     if (picks?.length > 100) {
-      this.playerType = 1;
+      this.playerType = DraftPlayerType.All;
       this.type = DraftOrderType.Snake;
     } else {
-      this.playerType = 0;
+      this.playerType = DraftPlayerType.Rookies;
       this.type = DraftOrderType.Linear;
     }
     this.rounds = rounds;
@@ -120,4 +118,17 @@ export class LeagueRawDraftOrderDTO {
     this.status = status;
     return this;
   }
+}
+
+export enum DraftPlayerType {
+  All,
+  Rookies,
+  Vets
+}
+
+export enum DraftOrderType {
+  Linear,
+  Snake,
+  RoundReversal,
+  Auction
 }

@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LeagueService } from 'src/app/services/league.service';
 import { PlayerService } from 'src/app/services/player.service';
-import { DraftOrderType, DraftService } from '../../services/draft.service';
+import { DraftService } from '../../services/draft.service';
 import { LeagueSwitchService } from '../../services/league-switch.service';
 import { WrappedService } from '../../services/wrapped.service';
 import { FadeGrowStagger, FadeSlideInOut } from '../animations/fade.animation';
+import { DraftOrderType } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 
 @Component({
   selector: 'app-wrapped-draft',

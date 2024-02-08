@@ -7,13 +7,13 @@ import { LeaguePickDTO } from 'src/app/model/league/LeaguePickDTO';
 import { PlayerService } from 'src/app/services/player.service';
 import { PowerRankingsService } from './power-rankings.service';
 import { LeaguePlatform } from 'src/app/model/league/FantasyPlatformDTO';
-import { Observable, Subject, interval, of } from 'rxjs';
+import { Observable, Subject, interval } from 'rxjs';
 import { SleeperApiService } from 'src/app/services/api/sleeper/sleeper-api.service';
 import { DisplayService } from 'src/app/services/utilities/display.service';
-import { filter, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs/operators';
+import { filter, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { ConfigService } from 'src/app/services/init/config.service';
 import { StatService } from 'src/app/services/utilities/stat.service';
-import { LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
+import { DraftOrderType, DraftPlayerType, LeagueRawDraftOrderDTO } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 import { UntypedFormControl } from '@angular/forms';
 import { LeagueDTO } from 'src/app/model/league/LeagueDTO';
 
@@ -38,7 +38,7 @@ export class DraftService {
   roundPickValue: number[] = [];
 
   /** Mock Draft Player Type */
-  mockDraftPlayerType: MockDraftPlayerType = MockDraftPlayerType.All;
+  mockDraftPlayerType: DraftPlayerType = DraftPlayerType.All;
 
   /** Mock Draft Order */
   mockDraftOrder: DraftOrderType = DraftOrderType.Snake;
@@ -172,7 +172,7 @@ export class DraftService {
    */
   getMockDraftPlayerList(): FantasyPlayer[] {
     let selectablePlayers = [];
-    if (this.mockDraftPlayerType === MockDraftPlayerType.Rookies) { // rookies only
+    if (this.mockDraftPlayerType === DraftPlayerType.Rookies) { // rookies only
       selectablePlayers = this.playerService.playerValues.slice().filter(player => {
         return player.experience === 0 && player.position !== 'PI';
       });
@@ -181,7 +181,7 @@ export class DraftService {
           return player.experience === 1 && player.position !== 'PI';
         });
       }
-    } else if (this.mockDraftPlayerType === MockDraftPlayerType.Vets) { // vets only
+    } else if (this.mockDraftPlayerType === DraftPlayerType.Vets) { // vets only
       selectablePlayers = this.playerService.playerValues.slice().filter(player => {
         return player.experience !== 0 && player.position !== 'PI';
       });
@@ -654,17 +654,4 @@ export class DraftService {
       this.generateDraft();
     });
   }
-}
-
-export enum MockDraftPlayerType {
-  All,
-  Rookies,
-  Vets
-}
-
-export enum DraftOrderType {
-  Linear,
-  Snake,
-  RoundReversal,
-  Auction
 }

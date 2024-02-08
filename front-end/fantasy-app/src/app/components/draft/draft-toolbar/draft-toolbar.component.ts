@@ -6,7 +6,7 @@ import { PlayerService } from "src/app/services/player.service";
 import { DownloadService } from "src/app/services/utilities/download.service";
 import { FantasyPlayer } from "src/app/model/assets/FantasyPlayer";
 import { Subject } from "rxjs";
-import { debounceTime, delay } from "rxjs/operators";
+import { debounceTime } from "rxjs/operators";
 import { LabelType, Options } from "@angular-slider/ngx-slider";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfigService } from "src/app/services/init/config.service";

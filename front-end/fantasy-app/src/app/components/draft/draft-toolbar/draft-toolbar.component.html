@@ -30,12 +30,12 @@
                 <button mat-raised-button color="primary" (click)="openMockDraftModal(true)"><mat-icon>live_tv</mat-icon>Live</button>
             </div>
         </div>
-        <div *ngIf="!leagueService.selectedLeague && leagueService.completedDrafts.length == 0">
+        <div *ngIf="!leagueService.selectedLeague || leagueService.completedDrafts.length == 0">
             <div class="margin-top-10">
                 <button mat-raised-button color="accent" (click)="openMockDraftModal()" style="margin-right: 2px;"><mat-icon>settings</mat-icon>Edit Draft</button>
                 <button mat-raised-button color="primary" (click)="openMockDraftModal(true)" style="margin-left: 2px;"><mat-icon>live_tv</mat-icon>Live</button>
             </div>
-            <mat-form-field color="accent" style="width: 70%" class="margin-top-25">
+            <mat-form-field color="accent" style="width: 70%" class="margin-top-25" *ngIf="!leagueService.selectedLeague">
                 <mat-label>Sleeper Draft ID</mat-label>
                     <input matInput type="text" [(ngModel)]="draftService.sleeperDraftId">
                     <button mat-icon-button matSuffix (click)="draftService.loadCustomSleeperLeague()">
