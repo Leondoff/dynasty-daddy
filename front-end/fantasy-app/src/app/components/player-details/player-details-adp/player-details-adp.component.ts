@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges } from "@angular/core";
 import { BaseComponent } from "../../base-component.abstract";
 import { FantasyPlayerApiService } from "src/app/services/api/fantasy-player-api.service";
-import { DraftService, MockDraftPlayerType } from "../../services/draft.service";
+import { DraftService } from "../../services/draft.service";
 import { FantasyPlayer } from "src/app/model/assets/FantasyPlayer";
 import { ColorService, ComparisonColorPalette } from "src/app/services/utilities/color.service";
 import { ChartDataSets, ChartOptions } from "chart.js";
@@ -12,6 +12,7 @@ import { EditDraftADPModalComponent } from "../../modals/edit-draft-adp-modal/ed
 import { ConfigService } from "src/app/services/init/config.service";
 import { switchMap } from "rxjs/operators";
 import { LeagueService } from "src/app/services/league.service";
+import { DraftPlayerType } from "src/app/model/league/LeagueRawDraftOrderDTO";
 
 @Component({
     selector: 'player-details-adp',
@@ -194,7 +195,7 @@ export class PlayerDetailsADPComponent extends BaseComponent implements OnInit, 
                 draftboard.push({ pick: (i+1) + '%', percent, color: Math.round(percent * 100) })
             }
         } else {
-            const rds = this.draftService.mockDraftPlayerType == MockDraftPlayerType.Rookies ? 5 : 24;
+            const rds = this.draftService.mockDraftPlayerType == DraftPlayerType.Rookies ? 5 : 24;
             const tms = this.leagueService.selectedLeague ? this.leagueService.selectedLeague?.totalRosters || 12 : 12;
             for (let i = 0; i < (rds * tms); i++) {
                 let isPicked = 0;

@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { DraftService, MockDraftPlayerType } from "../../services/draft.service";
+import { DraftService } from "../../services/draft.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { LeagueService } from "src/app/services/league.service";
 import { LeagueType } from "src/app/model/league/LeagueDTO";
 import { FantasyMarket } from "src/app/model/assets/FantasyPlayer";
 import { PlayerService } from "src/app/services/player.service";
 import { ConfigService } from "src/app/services/init/config.service";
+import { DraftPlayerType } from "src/app/model/league/LeagueRawDraftOrderDTO";
 
 @Component({
     selector: 'app-edit-mock-draft-modal',
@@ -116,7 +117,7 @@ export class EditMockDraftModalComponent implements OnInit {
      * rookie drafts tend to be linear
      */
     validateDraftType(): void {
-        if (this.mockDraftPlayerType == MockDraftPlayerType.Rookies) {
+        if (this.mockDraftPlayerType == DraftPlayerType.Rookies) {
             this.mockDraftRounds = this.mockDraftRounds == 22 ? 5 : this.mockDraftRounds;
             this.mockDraftOrder = 0;
         } else {

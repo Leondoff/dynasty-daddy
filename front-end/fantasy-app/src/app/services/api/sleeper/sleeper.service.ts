@@ -7,14 +7,13 @@ import { LeagueTeamMatchUpDTO } from '../../../model/league/LeagueTeamMatchUpDTO
 import { LeagueRosterDTO } from '../../../model/league/LeagueRosterDTO';
 import { LeagueTeam } from '../../../model/league/LeagueTeam';
 import { LeagueOwnerDTO } from '../../../model/league/LeagueOwnerDTO';
-import { LeagueRawDraftOrderDTO } from '../../../model/league/LeagueRawDraftOrderDTO';
+import { DraftOrderType, LeagueRawDraftOrderDTO } from '../../../model/league/LeagueRawDraftOrderDTO';
 import { LeagueRawTradePicksDTO } from '../../../model/league/LeagueRawTradePicksDTO';
 import { LeagueTeamTransactionDTO } from '../../../model/league/LeagueTeamTransactionDTO';
 import { FantasyPlatformDTO, LeaguePlatform } from '../../../model/league/FantasyPlatformDTO';
 import { CompletedDraft } from '../../../model/league/CompletedDraft';
 import { DraftCapital } from '../../../model/assets/DraftCapital';
 import { Status } from 'src/app/components/model/status';
-import { DraftOrderType } from 'src/app/components/services/draft.service';
 import { LeaguePickDTO } from 'src/app/model/league/LeaguePickDTO';
 
 @Injectable({

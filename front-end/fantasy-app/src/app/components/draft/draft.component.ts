@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ConfigKeyDictionary, ConfigService } from 'src/app/services/init/config.service';
 import { PageService } from 'src/app/services/utilities/page.service';
 import { LeagueType } from 'src/app/model/league/LeagueDTO';
+import { DraftOrderType, DraftPlayerType } from 'src/app/model/league/LeagueRawDraftOrderDTO';
 
 @Component({
   selector: 'app-draft',
@@ -75,9 +76,9 @@ export class DraftComponent extends BaseComponent implements OnInit {
       this.mockDraftService.fantasyMarket = this.playerService.selectedMarket;
     this.mockDraftService.clearFilters();
     if (this.leagueService.selectedLeague) {
-      this.mockDraftService.mockDraftRounds = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 5 : 30;
-      this.mockDraftService.mockDraftOrder = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 0 : 1;
-      this.mockDraftService.mockDraftPlayerType = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 0 : 2;
+      this.mockDraftService.mockDraftRounds = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? 5 : 22;
+      this.mockDraftService.mockDraftOrder = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? DraftOrderType.Linear : DraftOrderType.Snake;
+      this.mockDraftService.mockDraftPlayerType = this.leagueService.selectedLeague.type === LeagueType.DYNASTY ? DraftPlayerType.Rookies : DraftPlayerType.All;
     }
     this.mockDraftService.isSuperflex = this.leagueService.selectedLeague ?
       this.leagueService.selectedLeague?.isSuperflex : this.mockDraftService.isSuperflex || true;
