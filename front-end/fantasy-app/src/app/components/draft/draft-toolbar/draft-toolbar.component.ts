@@ -275,4 +275,13 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
 
     this.downloadService.downloadCSVFile(formattedDraftData, filename);
   }
+
+  /**
+   * helper to reload adp for draft
+   */
+  reloadADP(): void {
+    this.draftService.refreshADP();
+    if (this.configService.isMobile)
+      this.configService.toggleToolbar$.next(false);
+  }
 }

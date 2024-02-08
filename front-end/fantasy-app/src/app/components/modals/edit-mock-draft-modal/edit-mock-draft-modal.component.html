@@ -11,6 +11,16 @@
         </mat-form-field>
     </div>
     <div class="center-text margin-top-10">
+        <mat-form-field appearance="standard" color="accent">
+            <mat-label>Mock Draft Type</mat-label>
+            <mat-select [(ngModel)]="mockDraftPlayerType" (selectionChange)="validateDraftType()">
+                <mat-option [value]="0">All Players</mat-option>
+                <mat-option [value]="1">Rookies</mat-option>
+                <mat-option [value]="2">Vets Only</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="center-text margin-top-10">
         <span>
             <mat-form-field color="accent" style="width: 56px;">
                 <mat-label>Rounds</mat-label>
@@ -27,16 +37,6 @@
                 </mat-select>
             </mat-form-field>
         </span>
-    </div>
-    <div class="center-text margin-top-10">
-        <mat-form-field appearance="standard" color="accent">
-            <mat-label>Mock Draft Players</mat-label>
-            <mat-select [(ngModel)]="mockDraftPlayerType">
-                <mat-option [value]="0">All Players</mat-option>
-                <mat-option [value]="1">Rookies</mat-option>
-                <mat-option [value]="2">Vets Only</mat-option>
-            </mat-select>
-        </mat-form-field>
     </div>
     <div class="center-text margin-top-10">
         <mat-slide-toggle [(ngModel)]="isSuperFlex">SuperFlex
