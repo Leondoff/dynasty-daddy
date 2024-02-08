@@ -56,7 +56,7 @@
     </div>
 
     <div class="center-text margin-top-10">
-        <fantasy-market-dropdown [selectedMarket]="playerService.selectedMarket"
+        <fantasy-market-dropdown [selectedMarket]="draftService.fantasyMarket" [additionalOptions]="draftService.marketOptions"
             (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
     </div>
 
@@ -97,6 +97,81 @@
     <div class="center-text margin-top-15" *ngIf="draftService.selectedDraft === 'upcoming'">
         <button mat-stroked-button (click)="exportMockDraft()" style="margin-right: 2px;"><mat-icon>download</mat-icon> Download</button>
         <button mat-stroked-button (click)="toggleTradePickMode()" style="margin-left: 2px;"><mat-icon>edit_square</mat-icon> Edit Order</button>
+    </div>
+
+    <div class="center-text margin-top-10 center-text" *ngIf="draftService.fantasyMarket >= 100">
+        <div class="margin-top-10 margin-bot-10 mid-bold-text">Filter Dynasty Daddy ADP</div>
+        <div class="margin-top-10"><span class="warning__alert">{{playerService.sleeperADP['total']}}</span> filtered drafts</div>
+        <div>
+            <mat-form-field appearance="standard" color="accent" class="adp-option">
+                <mat-label>Draft Type</mat-label>
+                <mat-select [(ngModel)]="draftService.adpLeagueTypeFormat">
+                    <mat-option [value]="'Dynasty'">Dynasty</mat-option>
+                    <mat-option [value]="'Redraft'">Redraft</mat-option>
+                </mat-select>
+            </mat-form-field>
+                <mat-slide-toggle [(ngModel)]="draftService.isSuperflex" class="adp-option">SuperFlex
+                </mat-slide-toggle>
+        </div>
+        <div>
+            <mat-form-field appearance="outline" color="accent">
+                <mat-label>Drafts since this date...</mat-label>
+                <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="draftService.adpStartedAt">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker ></mat-datepicker>
+              </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline" color="accent" class="adp-option">
+                <mat-label>Scoring Format</mat-label>
+                <mat-select [formControl]="draftService.adpScoringFormat" multiple>
+                    <mat-select-trigger>
+                    {{draftService.adpScoringFormat?.value ? draftService.adpScoringFormat?.value : ''}}
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let scoring of scoringFormat" [value]="scoring">{{scoring}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" color="accent" class="adp-option">
+                <mat-label>Team Count</mat-label>
+                <mat-select [formControl]="draftService.adpTeamFormat" multiple>
+                    <mat-select-trigger>
+                    {{draftService.adpTeamFormat?.value ? draftService.adpTeamFormat?.value.join(',') : ''}}
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let scoring of teamFormat" [value]="scoring">{{scoring}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline" color="accent" class="adp-option">
+                <mat-label>Starter Count</mat-label>
+                <mat-select [formControl]="draftService.adpStartersFormat" multiple>
+                    <mat-select-trigger>
+                    {{draftService.adpStartersFormat?.value ? draftService.adpStartersFormat?.value.join(',') : ''}}
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let scoring of starterFormat" [value]="scoring">{{scoring}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" color="accent" class="adp-option">
+                <mat-label>Tight End Premium</mat-label>
+                <mat-select [formControl]="draftService.adpTepFormat" multiple>
+                    <mat-select-trigger>
+                    {{draftService.adpTepFormat?.value ? draftService.adpTepFormat?.value.join(',') : ''}}
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let scoring of tepFormat" [value]="scoring">{{scoring}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="margin-bot-15 center-text">
+            <mat-slide-toggle [(ngModel)]="draftService.isAuction" color="primary" class="adp-option">Auction
+            </mat-slide-toggle>
+            <div class="small-text__light">If Auction, it shows % of budget used on player</div>
+        </div>
+        <div class="margin-top-15 center-text" *ngIf="leagueService.selectedLeague">
+            <button mat-button (click)="useMyLeague()"><mat-icon>tune</mat-icon> Use My League Settings</button>
+        </div>
+        <div>
+            <button mat-raised-button color="accent" (click)="draftService.refreshADP()">Refresh ADP</button>
+        </div>
     </div>
 </div> 
 

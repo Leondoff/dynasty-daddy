@@ -275,4 +275,22 @@ export class FantasyPlayerApiService {
       }));
   }
 
+  searchDraftADP(playerType: number, isSuperflex: boolean, starters: number[], teams: number[], leagueType: string, ppr: number[], tep: number[], isIDP: boolean, isAuction: boolean, startedAt: Date, endedAt: Date = new Date()): Observable<any[]> {
+    return this.http.post<any>(this.fantasyPlayerApiConfigService.searchDraftADPEndpoint, { playerType, isSuperflex, starters, teams, leagueType, ppr, tep, isIDP, isAuction, startedAt: startedAt.toISOString(), endedAt: endedAt.toISOString() })
+      .pipe(map(res => {
+        return res;
+      }));
+  }
+
+  searchDraftADPDetails(sleeperId: string, playerType: number, isSuperflex: boolean, starters: number[], teams: number[], leagueType: string, ppr: number[], tep: number[], isIDP: boolean, isAuction: boolean, startedAt: Date = null, endedAt: Date = new Date()): Observable<any[]> {
+    let lastMonth = new Date();
+    if (startedAt === null || startedAt > endedAt) {
+      startedAt = null
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+    }
+    return this.http.post<any>(this.fantasyPlayerApiConfigService.searchDraftADPDetailsEndpoint, { sleeperId, playerType, isSuperflex, starters, teams, leagueType, ppr, tep, isIDP, isAuction, startedAt: startedAt?.toISOString() || lastMonth.toISOString(), endedAt: endedAt.toISOString() })
+      .pipe(map(res => {
+        return res;
+      }));
+  }
 }

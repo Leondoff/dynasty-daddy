@@ -1,6 +1,6 @@
 <div mat-dialog-title>Mock Draft Settings</div>
 
-<div class="margin-top-10" mat-dialog-content>
+<div class="margin-top-10" mat-dialog-content [class.mobile]="configService.isMobile">
     <div class="center-text" *ngIf="(!leagueService.selectedLeague || leagueService.selectedLeague.leaguePlatform === 0) && !data?.isLive">
         <mat-form-field color="accent" style="width: 70%" >
             <mat-label>Sleeper Draft ID</mat-label>
@@ -32,9 +32,9 @@
         <mat-form-field appearance="standard" color="accent">
             <mat-label>Mock Draft Players</mat-label>
             <mat-select [(ngModel)]="mockDraftPlayerType">
-                <mat-option [value]="0">Rookies</mat-option>
-                <mat-option [value]="1">Vets Only</mat-option>
-                <mat-option [value]="2">All Players</mat-option>
+                <mat-option [value]="0">All Players</mat-option>
+                <mat-option [value]="1">Rookies</mat-option>
+                <mat-option [value]="2">Vets Only</mat-option>
             </mat-select>
         </mat-form-field>
     </div>
@@ -60,7 +60,7 @@
     <div *ngIf="data?.isLive">
         <div class="mid-bold-text center-text margin-top-10">Live Draft Configurations</div>
         <div class="center-text margin-top-10">
-            <fantasy-market-dropdown [selectedMarket]="selectedMarket"></fantasy-market-dropdown>
+            <fantasy-market-dropdown [selectedMarket]="selectedMarket" [additionalOptions]="draftService.marketOptions" (selectedMarketChange)="onMarketChange($event)"></fantasy-market-dropdown>
         </div>
         <div class="center-text margin-top-10">
             <mat-form-field appearance="standard" color="accent">

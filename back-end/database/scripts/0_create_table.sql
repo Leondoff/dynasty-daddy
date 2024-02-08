@@ -364,3 +364,43 @@ CREATE TABLE trivia_events_games (
     game_json JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- league drafts table
+CREATE TABLE league_drafts (
+    draft_id VARCHAR(20) PRIMARY key UNIQUE,
+    status VARCHAR(50),
+    season INTEGER,
+    player_type INTEGER,
+    draft_type VARCHAR(50),
+    rounds INTEGER,
+    round_reversal INTEGER,
+    started_at TIMESTAMP,
+    ended_at TIMESTAMP,
+    platform platform_enum DEFAULT 'Sleeper' NOT NULL,
+    league_id VARCHAR(20) REFERENCES league_info(league_id),
+    is_scraped BOOLEAN DEFAULT false,
+    is_idp BOOLEAN default false,
+    auction_budget INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create index league_draft_year_index on league_drafts (season);
+create index league_draft_player_type_index on league_drafts (player_type);
+create index league_draft_ended_at_index on league_drafts (ended_at);
+
+CREATE TABLE league_draft_picks (
+    id SERIAL PRIMARY KEY,
+    player_id VARCHAR(10),
+    pick_no INTEGER,
+    round INTEGER,
+    auction_amount INTEGER,
+    budget_ratio DECIMAL,
+    platform platform_enum DEFAULT 'Sleeper' NOT NULL,
+    draft_id VARCHAR(20) REFERENCES league_drafts(draft_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create index league_draft_picks_player_id on league_draft_picks (player_id);
+
+ALTER TABLE league_drafts
+ADD CONSTRAINT unique_draft_id_season_platform UNIQUE (draft_id, season, platform);

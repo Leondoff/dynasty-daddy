@@ -237,17 +237,22 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
    * @param pick draft pick to get value for
    */
   getDisplayValue(pick: LeaguePickDTO): number {
+    const player = this.playerOrder[pick.pickNumber - 1];
     if (this.isMockDraft) {
-      return this.playerService.getCurrentPlayerValue(this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0
+      if (this.mockDraftService.fantasyMarket === 100)
+        return this.mockDraftService.isAuction ? (this.playerService.sleeperADP[player?.sleeper_id]?.toString() || '0').slice(0, 5) + '%' :
+          (this.playerService.sleeperADP[player?.sleeper_id]?.toString() || '500+').slice(0, 5)
+      else
+        return this.playerService.getCurrentPlayerValue(player, this.mockDraftService.isSuperflex) || 0;
     } else {
       switch (this.mockDraftService.completedConfig) {
         case 'overall':
-          return this.playerService.getCurrentPlayerValue(
-            this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0;
+          return this.playerService.getCurrentPlayerValue(player, this.mockDraftService.isSuperflex) || 0;
         case 'value':
           return this.mockDraftService.getPickValueAdded(pick, this.draft?.type === DraftOrderType.Auction);
         default:
-          return this.playerService.getCurrentPlayerValue(this.playerOrder[pick.pickNumber - 1], this.mockDraftService.isSuperflex) || 0
+          return this.mockDraftService.fantasyMarket === 100 ? (this.playerService.sleeperADP[player?.sleeper_id]?.toString() || '500+').slice(0, 5) :
+            this.playerService.getCurrentPlayerValue(player, this.mockDraftService.isSuperflex) || 0;
       }
     }
   }
@@ -361,7 +366,8 @@ export class DraftTableComponent extends BaseComponent implements OnInit, OnChan
         this.dialog.open(PlayerDetailsModalComponent
           , {
             data: {
-              player
+              player,
+              view: 'draft'
             },
             width: this.configService.isMobile ? '100%' : '80%',
             maxWidth: this.configService.isMobile ? '100%' : '1400px',

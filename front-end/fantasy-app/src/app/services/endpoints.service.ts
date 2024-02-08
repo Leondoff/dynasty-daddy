@@ -50,6 +50,8 @@ export class EndpointsService {
     this.fantasyPlayerApiConfigService.postLeaguesToDatabaseEndpoint = this.baseUrl + '/v1/league/add';
     this.fantasyPlayerApiConfigService.searchTradeDatabaseEndpoint = this.baseUrl + '/v1/trade/search';
     this.fantasyPlayerApiConfigService.getRecentTradeVolumeEndpoint = this.baseUrl + '/v1/trade/volume';
+    this.fantasyPlayerApiConfigService.searchDraftADPEndpoint = this.baseUrl + '/v1/draft/adp';
+    this.fantasyPlayerApiConfigService.searchDraftADPDetailsEndpoint = this.baseUrl + '/v1/draft/adp/details';
 
     // trivia game endpoints
     this.triviaApiConfigService.searchGridPlayersEndpoint = this.baseUrl + '/v1/grid/players';
