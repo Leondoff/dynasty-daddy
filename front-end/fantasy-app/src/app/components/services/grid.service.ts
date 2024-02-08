@@ -303,7 +303,7 @@ export class GridGameService {
       const newScores = [];
       res.forEach(p => {
         const picks = p.game_json['grid'] as any[];
-        const score = this.calcScoresForGrid(picks);
+        const score = p.game_json?.['score'] ? p.game_json?.['score'] : this.calcScoresForGrid(picks);
         const date = new Date(p.created_at)
         newScores.push({ name: p.name, score: Math.round(score), date: `${MonthsAbbr[date.getMonth()]} ${date.getDate()}` })
       })
