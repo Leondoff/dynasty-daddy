@@ -10,9 +10,11 @@ import { DisplayService } from "src/app/services/utilities/display.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EditDraftADPModalComponent } from "../../modals/edit-draft-adp-modal/edit-draft-adp-modal.component";
 import { ConfigService } from "src/app/services/init/config.service";
-import { switchMap } from "rxjs/operators";
+import { switchMap, tap } from "rxjs/operators";
 import { LeagueService } from "src/app/services/league.service";
 import { DraftPlayerType } from "src/app/model/league/LeagueRawDraftOrderDTO";
+import { DownloadService } from "src/app/services/utilities/download.service";
+import { Status } from "../../model/status";
 
 @Component({
     selector: 'player-details-adp',
@@ -123,7 +125,10 @@ export class PlayerDetailsADPComponent extends BaseComponent implements OnInit, 
 
     probGradient: {} = {};
 
+    ADPStatus: Status = Status.LOADING;
+
     constructor(
+        private downloadService: DownloadService,
         private draftService: DraftService,
         private displayService: DisplayService,
         private dialog: MatDialog,
@@ -136,28 +141,34 @@ export class PlayerDetailsADPComponent extends BaseComponent implements OnInit, 
     }
 
     ngOnInit(): void {
-        this.addSubscriptions(this.draftService.updatePlayerADPDetails$.pipe(
-            switchMap(sleeperId => this.fantasyPlayerApiService.searchDraftADPDetails(
-                sleeperId,
-                this.draftService.mockDraftPlayerType,
-                this.isSuperflex,
-                this.draftService.adpStartersFormat.value,
-                this.draftService.adpTeamFormat.value,
-                this.draftService.adpLeagueTypeFormat,
-                this.draftService.adpScoringFormat.value,
-                this.draftService.adpTepFormat.value,
-                false,
-                this.draftService.isAuction,
-                this.draftService.adpStartedAt
-            ))
-        ).subscribe(
-            res => {
-                this.playerDataPoints = res;
-                this.updateScatterChart();
-                this.setDraftboard();
+        this.addSubscriptions(this.draftService.updatePlayerADPDetails$
+            .pipe(tap(_ => {
+                this.ADPStatus = Status.LOADING;
                 this.cdr.markForCheck();
-            }
-        )
+            }))
+            .pipe(
+                switchMap(sleeperId => this.fantasyPlayerApiService.searchDraftADPDetails(
+                    sleeperId,
+                    this.draftService.mockDraftPlayerType,
+                    this.isSuperflex,
+                    this.draftService.adpStartersFormat.value,
+                    this.draftService.adpTeamFormat.value,
+                    this.draftService.adpLeagueTypeFormat,
+                    this.draftService.adpScoringFormat.value,
+                    this.draftService.adpTepFormat.value,
+                    false,
+                    this.draftService.isAuction,
+                    this.draftService.adpStartedAt
+                ))
+            ).subscribe(
+                res => {
+                    this.playerDataPoints = res;
+                    this.updateScatterChart();
+                    this.setDraftboard();
+                    this.ADPStatus = Status.DONE;
+                    this.cdr.markForCheck();
+                }
+            )
         )
         this.draftService.updatePlayerADPDetails$.next(this.selectedPlayer.sleeper_id);
         this.probGradient = this.colorService.getProbGradient();
@@ -192,7 +203,7 @@ export class PlayerDetailsADPComponent extends BaseComponent implements OnInit, 
                         isPicked++;
                 });
                 const percent = 1 - (isPicked / this.playerDataPoints.length)
-                draftboard.push({ pick: (i+1) + '%', percent, color: Math.round(percent * 100) })
+                draftboard.push({ pick: (i + 1) + '%', percent, color: Math.round(percent * 100) })
             }
         } else {
             const rds = this.draftService.mockDraftPlayerType == DraftPlayerType.Rookies ? 5 : 24;
@@ -249,5 +260,25 @@ export class PlayerDetailsADPComponent extends BaseComponent implements OnInit, 
             this.chart.chart.data.datasets = this.chartData;
             this.chart.chart.data.labels = this.chartLabels;
         }
+    }
+
+    downloadADP(): void {
+        const draftData: any[][] = []
+        const name = this.selectedPlayer.full_name;
+        draftData.push([`Dynasty Daddy ADP for ${this.selectedPlayer.full_name}`]);
+        draftData.push([]);
+        draftData.push(['Date', this.draftService.isAuction ? 'Budget_Ratio' : 'Pick No', 'QB Format', 'Team Count', 'Starters', 'PPR', 'TEP'])
+        this.playerDataPoints.sort((a, b) => new Date(b.ended_at).getTime() - new Date(a.ended_at).getTime()).forEach((pick, ind) => {
+            const playerRow = [new Date(pick.ended_at).toISOString().slice(0, 10), this.draftService.isAuction ? Math.round(pick.budget_ratio * 10000) / 100 : pick.pick_no,
+            this.draftService.isSuperflex ? 'Superflex' : '1 QB', pick.teams, pick.starters, pick.ppr, pick.tep
+            ]
+            draftData.push(playerRow);
+        });
+
+        const formattedDraftData = draftData.map(e => e.join(',')).join('\n');
+
+        const filename = `${name.replace(/ /g, '_')}_Dynasty_Daddy_ADP_${new Date().toISOString().slice(0, 10)}.csv`;
+
+        this.downloadService.downloadCSVFile(formattedDraftData, filename)
     }
 }

@@ -263,7 +263,8 @@ export class DraftToolbarComponent extends BaseComponent implements OnInit {
       let playerRow = [];
       if (player) {
         playerRow = [player?.full_name, player?.position, player?.age,
-        this.draftService.isSuperflex ? player?.sf_trade_value : player?.trade_value
+        this.draftService.fantasyMarket === 100 ? this.playerService.sleeperADP[player?.sleeper_id] : 
+        (this.draftService.isSuperflex ? player?.sf_trade_value : player?.trade_value)
         ];
       }
       draftData.push(row.concat(playerRow));
