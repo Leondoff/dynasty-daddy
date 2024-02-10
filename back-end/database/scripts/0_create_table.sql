@@ -404,3 +404,17 @@ create index league_draft_picks_player_id on league_draft_picks (player_id);
 
 ALTER TABLE league_drafts
 ADD CONSTRAINT unique_draft_id_season_platform UNIQUE (draft_id, season, platform);
+
+-- Indexes for league_drafts table
+CREATE INDEX idx_player_type ON league_drafts(player_type);
+CREATE INDEX idx_ended_at ON league_drafts(ended_at);
+CREATE INDEX idx_is_idp ON league_drafts(is_idp);
+CREATE INDEX idx_draft_type ON league_drafts(draft_type);
+
+-- Indexes for league_info table
+CREATE INDEX idx_is_superflex ON league_info(is_superflex);
+CREATE INDEX idx_starters ON league_info(starters);
+CREATE INDEX idx_teams ON league_info(teams);
+CREATE INDEX idx_league_type ON league_info(league_type);
+CREATE INDEX idx_ppr ON league_info(ppr);
+CREATE INDEX idx_tep ON league_info(tep);
