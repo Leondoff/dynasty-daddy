@@ -8,9 +8,9 @@ export class DraftCapital {
     this.originalRosterId = originalRosterId;
   }
 
-  isFirstOwner: boolean;
-  round: number;
-  pick: number;
-  year: string;
-  originalRosterId: number;
+  // isFirstOwner: boolean;
+  // round: number;
+  // pick: number;
+  // year: string;
+  // originalRosterId: number;
 }
