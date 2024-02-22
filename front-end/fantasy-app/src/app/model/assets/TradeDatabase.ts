@@ -13,4 +13,5 @@ export class TradeDatabaseItem {
     tep: string;
     transaction_date: string;
     transaction_id: string;
+    transaction_value: number;
 }
